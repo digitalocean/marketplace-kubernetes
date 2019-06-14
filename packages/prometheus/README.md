@@ -1,3 +1,5 @@
+# Prometheus
+
 Create namespace prometheus -
 kubectl create namespace prometheus 
 

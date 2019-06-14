@@ -1,3 +1,5 @@
+# Grafana
+
 Create namespace grafana -
 kubectl create namespace grafana
 
