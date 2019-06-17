@@ -197,7 +197,7 @@ metadata:
     release: grafana
     heritage: Tiller
 spec:
-  type: ClusterIP
+  type: LoadBalancer
   ports:
     - name: service
       port: 80

@@ -1,2 +1,5 @@
 adminUser: admin
 adminPassword: changethis
+
+service:
+  type: LoadBalancer
