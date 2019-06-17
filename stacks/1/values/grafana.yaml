@@ -1,5 +1,8 @@
 adminUser: admin
 adminPassword: changethis
 
+plugins:
+  - grafana-kubernetes-app
+
 service:
   type: LoadBalancer
