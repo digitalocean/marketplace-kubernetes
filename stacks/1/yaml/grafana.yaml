@@ -99,6 +99,16 @@ data:
     plugins = /var/lib/grafana/plugins
     provisioning = /etc/grafana/provisioning
 
+  datasources.yaml: |
+    apiVersion: 1
+    datasources:
+    - access: proxy
+      isDefault: true
+      name: Prometheus
+      type: prometheus
+      url: http://prometheus-server.prometheus.svc.cluster.local
+    
+
 ---
 # Source: grafana/templates/serviceaccount.yaml
 
@@ -235,7 +245,7 @@ spec:
         app: grafana
         release: grafana
       annotations:
-        checksum/config: 71036d1d2ca8de8ff28bcdf8e65dd076ad77377a8522ae9e3df37b74cdee7517
+        checksum/config: 3e378f684d9719ccc2af51b08f9e5eb486e9e136b56f50c3fc2ad8a11362b712
         checksum/dashboards-json-config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
         checksum/sc-dashboard-provider-config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
         checksum/secret: a8df98461b31c2d96ac4abc0250acf4d0f5dd5a2e7b225851edea96cfd8f37db
@@ -258,6 +268,9 @@ spec:
               subPath: ldap.toml
             - name: storage
               mountPath: "/var/lib/grafana"
+            - name: config
+              mountPath: "/etc/grafana/provisioning/datasources/datasources.yaml"
+              subPath: datasources.yaml
           ports:
             - name: service
               containerPort: 80
