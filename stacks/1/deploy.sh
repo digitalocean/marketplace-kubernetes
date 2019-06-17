@@ -22,6 +22,6 @@ EOF
 
 #spinning up the solution stack
 #prometheus
-kubectl apply -f "$ROOT_DIR"/stacks/1/yaml/prometheus.yaml
+kubectl apply -f "$ROOT_DIR"/stacks/1/yaml/prometheus.yaml -n prometheus
 #grafana
-kubectl apply -f "$ROOT_DIR"/stacks/1/yaml/grafana.yaml
+kubectl apply -f "$ROOT_DIR"/stacks/1/yaml/grafana.yaml -n grafana
