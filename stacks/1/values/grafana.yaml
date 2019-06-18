@@ -11,8 +11,5 @@ datasources:
      access: proxy
      isDefault: true
 
-plugins:
-  - grafana-kubernetes-app
-
 service:
   type: LoadBalancer

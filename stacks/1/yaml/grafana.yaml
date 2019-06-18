@@ -85,7 +85,6 @@ metadata:
     release: grafana
     heritage: Tiller
 data:
-  plugins: grafana-kubernetes-app
   grafana.ini: |
     [analytics]
     check_for_updates = true
@@ -245,7 +244,7 @@ spec:
         app: grafana
         release: grafana
       annotations:
-        checksum/config: 3e378f684d9719ccc2af51b08f9e5eb486e9e136b56f50c3fc2ad8a11362b712
+        checksum/config: de063576d65b81f19caef98c2e0b3ce4a390af3a758dba174c434e20a2901076
         checksum/dashboards-json-config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
         checksum/sc-dashboard-provider-config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
         checksum/secret: a8df98461b31c2d96ac4abc0250acf4d0f5dd5a2e7b225851edea96cfd8f37db
@@ -289,11 +288,6 @@ spec:
                 secretKeyRef:
                   name: grafana
                   key: admin-password
-            - name: GF_INSTALL_PLUGINS
-              valueFrom:
-                configMapKeyRef:
-                  name: grafana
-                  key: plugins
           livenessProbe:
             failureThreshold: 10
             httpGet:
