@@ -27,8 +27,7 @@ kubectl -n prometheus rollout status deployment/prometheus-server
 
 # deploy grafana dashboards
 kubectl -n grafana apply -f \
-  https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/package_prometheus_grafana/stacks/1/yaml/k8s-mixin-dashboards.yaml
-
+  https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/package_prometheus_grafana/stacks/1/yaml/k8s-mixin-dashboards.yaml?token=AABGCTKKNBUH6TPXZLUDFOC5CJUGM
 # deploy grafana
 kubectl -n grafana apply -f \
   https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/package_prometheus_grafana/stacks/1/yaml/grafana.yaml?token=AHIGBPA77LSWUNDJ4XR3ECS5CIP36
