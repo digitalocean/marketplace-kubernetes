@@ -2,6 +2,8 @@
 
 set -e
 
+ROOT_DIR=$(git rev-parse --show-toplevel)
+
 # create prometheus-operator namespace
 cat <<EOF | kubectl apply -f -
 apiVersion: v1
@@ -10,13 +12,13 @@ metadata:
   name: prometheus-operator
 EOF
 
-ROOT_DIR=$(git rev-parse --show-toplevel)
+# set kubectl namespace
+kubectl config set-context --current --namespace=prometheus-operator
 
 # deploy prometheus-operator
-kubectl -n prometheus-operator apply -f \
-  "$ROOT_DIR"/stacks/1/yaml/prometheus-operator.yaml
+kubectl apply -f "$ROOT_DIR"/stacks/1/yaml/prometheus-operator.yaml
 
 # ensure services are running
-kubectl -n prometheus-operator rollout status deployment/prometheus-operator-grafana
-kubectl -n prometheus-operator rollout status deployment/prometheus-operator-kube-state-metrics
-kubectl -n prometheus-operator rollout status deployment/prometheus-operator-operator
+kubectl rollout status deployment/prometheus-operator-grafana
+kubectl rollout status deployment/prometheus-operator-kube-state-metrics
+kubectl rollout status deployment/prometheus-operator-operator
