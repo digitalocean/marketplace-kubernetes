@@ -21259,7 +21259,7 @@ spec:
           image: "quay.io/coreos/prometheus-operator:v0.30.1"
           imagePullPolicy: "IfNotPresent"
           args:
-            - --kubelet-service=kube-system/prometheus-operator-kubelet
+            - --kubelet-service=prometheus-operator/prometheus-operator-kubelet
             - --logtostderr=true
             - --crd-apigroup=monitoring.coreos.com
             - --localhost=127.0.0.1
@@ -22954,7 +22954,7 @@ spec:
   jobLabel: k8s-app
   namespaceSelector:
     matchNames:
-    - kube-system
+    - prometheus-operator
   selector:
     matchLabels:
       k8s-app: kubelet

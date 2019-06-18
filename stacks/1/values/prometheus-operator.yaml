@@ -1,0 +1,6 @@
+kubelet:
+  namespace: prometheus-operator
+
+prometheusOperator:
+  kubeletService:
+    namespace: prometheus-operator
