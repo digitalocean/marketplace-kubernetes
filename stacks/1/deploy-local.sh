@@ -2,38 +2,21 @@
 
 set -e
 
-# create prometheus namespace
+# create prometheus-operator namespace
 cat <<EOF | kubectl apply -f -
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: prometheus
-EOF
-
-# create grafana namespace
-cat <<EOF | kubectl apply -f -
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: grafana
+  name: prometheus-operator
 EOF
 
 ROOT_DIR=$(git rev-parse --show-toplevel)
 
-# deploy prometheus
-kubectl -n prometheus apply -f \
-  "$ROOT_DIR"/stacks/1/yaml/prometheus.yaml
+# deploy prometheus-operator
+kubectl -n prometheus-operator apply -f \
+  "$ROOT_DIR"/stacks/1/yaml/prometheus-operator.yaml
 
-# ensure prometheus is running
-kubectl -n prometheus rollout status deployment/prometheus-server
-
-# deploy grafana dashboards
-kubectl -n grafana apply -f \
-  "$ROOT_DIR"/stacks/1/yaml/k8s-mixin-dashboards.yaml
-
-# deploy grafana
-kubectl -n grafana apply -f \
-  "$ROOT_DIR"/stacks/1/yaml/grafana.yaml
-
-# ensure grafana is running
-kubectl -n grafana rollout status deployment/grafana
+# ensure services are running
+kubectl -n prometheus-operator rollout status deployment/prometheus-operator-grafana
+kubectl -n prometheus-operator rollout status deployment/prometheus-operator-kube-state-metrics
+kubectl -n prometheus-operator rollout status deployment/prometheus-operator-operator
