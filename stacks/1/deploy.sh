@@ -2,35 +2,23 @@
 
 set -e
 
-# create prometheus namespace
+ROOT_DIR=$(git rev-parse --show-toplevel)
+
+# create prometheus-operator namespace
 cat <<EOF | kubectl apply -f -
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: prometheus
+  name: prometheus-operator
 EOF
 
-# create grafana namespace
-cat <<EOF | kubectl apply -f -
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: grafana
-EOF
+# set kubectl namespace
+kubectl config set-context --current --namespace=prometheus-operator
 
-# deploy prometheus
-kubectl -n prometheus apply -f \
-  https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/package_prometheus_grafana/stacks/1/yaml/prometheus.yaml?token=AHIGBPHKOYBL6EDHYW3GMRS5CIP6W
+# deploy prometheus-operator
+kubectl apply -f TODO
 
-# ensure prometheus is running
-kubectl -n prometheus rollout status deployment/prometheus-server
-
-# deploy grafana dashboards
-kubectl -n grafana apply -f \
-  https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/package_prometheus_grafana/stacks/1/yaml/k8s-mixin-dashboards.yaml?token=AABGCTKKNBUH6TPXZLUDFOC5CJUGM
-# deploy grafana
-kubectl -n grafana apply -f \
-  https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/package_prometheus_grafana/stacks/1/yaml/grafana.yaml?token=AHIGBPA77LSWUNDJ4XR3ECS5CIP36
-
-# ensure grafana is running
-kubectl -n grafana rollout status deployment/grafana
+# ensure services are running
+kubectl rollout status deployment/prometheus-operator-grafana
+kubectl rollout status deployment/prometheus-operator-kube-state-metrics
+kubectl rollout status deployment/prometheus-operator-operator
