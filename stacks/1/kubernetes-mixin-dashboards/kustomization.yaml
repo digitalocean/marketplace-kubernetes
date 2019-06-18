@@ -4,20 +4,26 @@ kind: Kustomization
 namespace: grafana
 
 configMapGenerator:
-- name: k8s-mixin-dashboards
+- name: k8s-mixin-dashboards-1
   files:
     - apiserver.json
     - controller-manager.json
     - k8s-cluster-rsrc-use.json
     - k8s-node-rsrc-use.json
+- name: k8s-mixin-dashboards-2
+  files:
     - k8s-resources-cluster.json
     - k8s-resources-namespace.json
     - k8s-resources-pod.json
     - k8s-resources-workload.json
+- name: k8s-mixin-dashboards-3
+  files:
     - k8s-resources-workloads-namespace.json
     - kubelet.json
     - nodes.json
     - persistentvolumesusage.json
+- name: k8s-mixin-dashboards-4
+  files:
     - pods.json
     - proxy.json
     - scheduler.json

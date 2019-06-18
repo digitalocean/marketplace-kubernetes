@@ -23,5 +23,5 @@ kubectl -n prometheus apply -f \
   https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/package_prometheus_grafana/stacks/1/yaml/prometheus.yaml?token=AHIGBPHKOYBL6EDHYW3GMRS5CIP6W
 
 # deploy grafana
-kubectl  -n grafana apply -f \
+kubectl -n grafana apply -f \
   https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/package_prometheus_grafana/stacks/1/yaml/grafana.yaml?token=AHIGBPA77LSWUNDJ4XR3ECS5CIP36
