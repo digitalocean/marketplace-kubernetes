@@ -2,8 +2,6 @@
 
 set -e 
 
-ROOT_DIR=$(git rev-parse --show-toplevel)
-
 #creating prometheus namespace
 cat <<EOF | kubectl apply -f -
 apiVersion: v1
@@ -22,6 +20,6 @@ EOF
 
 #spinning up the solution stack
 #prometheus
-kubectl apply -f "$ROOT_DIR"/stacks/1/yaml/prometheus.yaml -n prometheus
+kubectl apply -f https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/package_prometheus_grafana/stacks/1/yaml/prometheus.yaml?token=AHIGBPHKOYBL6EDHYW3GMRS5CIP6W -n prometheus
 #grafana
-kubectl apply -f "$ROOT_DIR"/stacks/1/yaml/grafana.yaml -n grafana
+kubectl apply -f https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/package_prometheus_grafana/stacks/1/yaml/grafana.yaml?token=AHIGBPA77LSWUNDJ4XR3ECS5CIP36 -n grafana
