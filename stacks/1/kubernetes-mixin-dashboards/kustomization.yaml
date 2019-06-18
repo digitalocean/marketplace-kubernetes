@@ -3,6 +3,9 @@ kind: Kustomization
 
 namespace: grafana
 
+commonLabels:
+    grafana_dashboard: "true"
+
 configMapGenerator:
 - name: k8s-mixin-dashboards-1
   files:

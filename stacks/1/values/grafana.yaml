@@ -13,3 +13,8 @@ datasources:
 
 service:
   type: LoadBalancer
+
+sidecar:
+  dashboards:
+    enabled: true
+    label: grafana_dashboard

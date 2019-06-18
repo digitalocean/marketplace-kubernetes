@@ -73,6 +73,31 @@ data:
   ldap-toml: ""
 
 ---
+# Source: grafana/templates/configmap-dashboard-provider.yaml
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+    app: grafana
+    chart: grafana-3.4.2
+    release: grafana
+    heritage: Tiller
+  name: grafana-config-dashboards
+  namespace: grafana
+data:
+  provider.yaml: |-
+    apiVersion: 1
+    providers:
+    - name: 'default'
+      orgId: 1
+      folder: ''
+      type: file
+      disableDeletion: false
+      options:
+        path: /tmp/dashboards
+
+---
 # Source: grafana/templates/configmap.yaml
 apiVersion: v1
 kind: ConfigMap
@@ -134,7 +159,10 @@ metadata:
     release: grafana
     heritage: Tiller
   name: grafana-clusterrole
-rules: []
+rules:
+- apiGroups: [""] # "" indicates the core API group
+  resources: ["configmaps"]
+  verbs: ["get", "watch", "list"]
 
 ---
 # Source: grafana/templates/clusterrolebinding.yaml
@@ -246,7 +274,7 @@ spec:
       annotations:
         checksum/config: de063576d65b81f19caef98c2e0b3ce4a390af3a758dba174c434e20a2901076
         checksum/dashboards-json-config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
-        checksum/sc-dashboard-provider-config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
+        checksum/sc-dashboard-provider-config: 3bba70e0c81882fe0b4c96b02f355b4c97e3983c2857bee03e69dac49ec28e72
         checksum/secret: a8df98461b31c2d96ac4abc0250acf4d0f5dd5a2e7b225851edea96cfd8f37db
     spec:
       serviceAccountName: grafana
@@ -255,6 +283,20 @@ spec:
         runAsUser: 472
         
       containers:
+        - name: grafana-sc-dashboard
+          image: "kiwigrid/k8s-sidecar:0.0.16"
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: LABEL
+              value: "grafana_dashboard"
+            - name: FOLDER
+              value: "/tmp/dashboards"
+          resources:
+            {}
+            
+          volumeMounts:
+            - name: sc-dashboard-volume
+              mountPath: "/tmp/dashboards"
         - name: grafana
           image: "grafana/grafana:6.2.2"
           imagePullPolicy: IfNotPresent
@@ -270,6 +312,11 @@ spec:
             - name: config
               mountPath: "/etc/grafana/provisioning/datasources/datasources.yaml"
               subPath: datasources.yaml
+            - name: sc-dashboard-volume
+              mountPath: "/tmp/dashboards"
+            - name: sc-dashboard-provider
+              mountPath: "/etc/grafana/provisioning/dashboards/sc-dashboardproviders.yaml"
+              subPath: provider.yaml
           ports:
             - name: service
               containerPort: 80
@@ -316,10 +363,11 @@ spec:
                 path: ldap.toml
         - name: storage
           emptyDir: {}
-
----
-# Source: grafana/templates/configmap-dashboard-provider.yaml
-
+        - name: sc-dashboard-volume
+          emptyDir: {}
+        - name: sc-dashboard-provider
+          configMap:
+            name: grafana-config-dashboards
 
 ---
 # Source: grafana/templates/dashboards-json-configmap.yaml

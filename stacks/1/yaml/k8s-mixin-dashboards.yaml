@@ -3811,6 +3811,8 @@ data:
     }
 kind: ConfigMap
 metadata:
+  labels:
+    grafana_dashboard: "true"
   name: k8s-mixin-dashboards-1-d4688cc8hh
   namespace: grafana
 ---
@@ -7578,6 +7580,8 @@ data:
     }
 kind: ConfigMap
 metadata:
+  labels:
+    grafana_dashboard: "true"
   name: k8s-mixin-dashboards-2-fkfcd9m8k2
   namespace: grafana
 ---
@@ -12314,6 +12318,8 @@ data:
     }
 kind: ConfigMap
 metadata:
+  labels:
+    grafana_dashboard: "true"
   name: k8s-mixin-dashboards-3-44b6f899k9
   namespace: grafana
 ---
@@ -15704,5 +15710,7 @@ data:
     }
 kind: ConfigMap
 metadata:
+  labels:
+    grafana_dashboard: "true"
   name: k8s-mixin-dashboards-4-7fd7558d7b
   namespace: grafana
