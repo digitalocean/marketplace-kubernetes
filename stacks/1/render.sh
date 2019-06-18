@@ -33,3 +33,6 @@ helm template \
   --namespace prometheus \
   --values 1/values/prometheus.yaml \
   "$PROMETHEUS_CHART_VERSION" > "$ROOT_DIR"/stacks/1/yaml/prometheus.yaml
+
+# render kuberentes-mixin dashboards
+kubectl kustomize 1/kubernetes-mixin-dashboards > "$ROOT_DIR"/stacks/1/yaml/k8s-mixin-dashboards.yaml
