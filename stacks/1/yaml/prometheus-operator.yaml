@@ -318,7 +318,7 @@ metadata:
 type: Opaque
 data:
   admin-user: "YWRtaW4="
-  admin-password: "cHJvbS1vcGVyYXRvcg=="
+  admin-password: "Y2hhbmdlbWU="
   ldap-toml: ""
 
 ---
@@ -21003,7 +21003,7 @@ spec:
         checksum/config: c91520bf2b2be027a77c095ef42155b03997f3ce1bb5c0cf2fe73ffdaab0fbf1
         checksum/dashboards-json-config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
         checksum/sc-dashboard-provider-config: bf4c8db719e02c4805011f112a765c8be34fe3968d7d8d445b2676f43d924407
-        checksum/secret: 7181e24a2daebc9bd1f0d708196a1f6c95430543e9e08920c9a5b2cb639c7799
+        checksum/secret: f9d376b37f9dc18416e436ca3e1f0454ee6447621babfa375a05155712e8741f
     spec:
       serviceAccountName: prometheus-operator-grafana
       securityContext:
@@ -21339,7 +21339,7 @@ spec:
   logFormat:  logfmt
   listenLocal: false
   enableAdminAPI: false
-  retention: "10d"
+  retention: "1m"
   routePrefix: "/"
   serviceAccountName: prometheus-operator-prometheus
   serviceMonitorSelector:
