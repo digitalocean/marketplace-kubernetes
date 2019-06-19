@@ -6,7 +6,7 @@ kubelet:
 
 prometheus:
   prometheusSpec:
-    retention: 1m
+    retention: 30d
 
 prometheusOperator:
   kubeletService:

@@ -21339,7 +21339,7 @@ spec:
   logFormat:  logfmt
   listenLocal: false
   enableAdminAPI: false
-  retention: "1m"
+  retention: "30d"
   routePrefix: "/"
   serviceAccountName: prometheus-operator-prometheus
   serviceMonitorSelector:
