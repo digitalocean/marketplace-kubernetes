@@ -20656,7 +20656,7 @@ metadata:
     release: prometheus-operator
     heritage: Tiller
 spec:
-  type: ClusterIP
+  type: LoadBalancer
   ports:
     - name: service
       port: 80
