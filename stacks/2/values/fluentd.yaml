@@ -1,0 +1,13 @@
+configMaps:
+  forward-input.conf: |
+    <source>
+      @type forward
+      port 24284
+      bind 0.0.0.0
+    </source>
+
+  output.conf: |
+    <match **>
+      @type stdout
+    </match>
+

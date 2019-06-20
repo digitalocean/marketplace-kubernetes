@@ -1,0 +1,200 @@
+---
+# Source: fluent-bit/templates/secret.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: "fluent-bit-es-tls-secret"
+  labels:
+    app: fluent-bit
+    chart: fluent-bit-2.0.5
+    heritage: Tiller
+    release: fluent-bit
+type: Opaque
+data:
+  es-tls-ca.crt: ""
+
+---
+# Source: fluent-bit/templates/config.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fluent-bit-config
+  labels:
+    app: fluent-bit
+    chart: fluent-bit-2.0.5
+    heritage: Tiller
+    release: fluent-bit
+data:
+  fluent-bit-service.conf: |-
+    [SERVICE]
+        Flush        1
+        Daemon       Off
+        Log_Level    info
+        Parsers_File parsers.conf
+
+  fluent-bit-input.conf: |-
+    [INPUT]
+        Name             tail
+        Path             /var/log/containers/*.log
+        Parser           docker
+        Tag              kube.*
+        Refresh_Interval 5
+        Mem_Buf_Limit    5MB
+        Skip_Long_Lines  On
+        
+
+  fluent-bit-filter.conf: |-
+    [FILTER]
+        Name                kubernetes
+        Match               kube.*
+        Kube_Tag_Prefix     kube.var.log.containers.
+        Kube_URL            https://kubernetes.default.svc:443
+        Kube_CA_File        /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+        Kube_Token_File     /var/run/secrets/kubernetes.io/serviceaccount/token
+        Merge_Log           On
+        K8S-Logging.Parser  On
+        K8S-Logging.Exclude On
+        
+
+  fluent-bit-output.conf: |-
+
+    [OUTPUT]
+        Name          forward
+        Match         *
+        Host          fluentd
+        Port          24284
+        Retry_Limit False
+
+        
+
+
+  fluent-bit.conf: |-
+    @INCLUDE fluent-bit-service.conf
+    @INCLUDE fluent-bit-input.conf
+    @INCLUDE fluent-bit-filter.conf
+    @INCLUDE fluent-bit-output.conf
+
+  parsers.conf: |-
+---
+# Source: fluent-bit/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app: fluent-bit
+    chart: fluent-bit-2.0.5
+    heritage: Tiller
+    release: fluent-bit
+  name: fluent-bit
+---
+# Source: fluent-bit/templates/cluster-role.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app: fluent-bit
+    chart: fluent-bit-2.0.5
+    heritage: Tiller
+    release: fluent-bit
+  name: fluent-bit
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+    verbs:
+      - get
+---
+# Source: fluent-bit/templates/cluster-rolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app: fluent-bit
+    chart: fluent-bit-2.0.5
+    heritage: Tiller
+    release: fluent-bit
+  name: fluent-bit
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: fluent-bit
+subjects:
+  - kind: ServiceAccount
+    name: fluent-bit
+    namespace: logging
+---
+# Source: fluent-bit/templates/daemonset.yaml
+apiVersion: extensions/v1beta1
+kind: DaemonSet
+metadata:
+  name: fluent-bit
+  labels:
+    app: fluent-bit
+    chart: fluent-bit-2.0.5
+    heritage: Tiller
+    release: fluent-bit
+spec:
+  updateStrategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: fluent-bit
+        release: fluent-bit
+      annotations:
+        checksum/config: 6869bb5a2b0fdaddfa2d7a3ced3c38c2e5b79d257e7d70602cbabf955d8e951b
+    spec:
+      hostNetwork: false
+      dnsPolicy: ClusterFirst
+      serviceAccountName: fluent-bit
+      containers:
+      - name: fluent-bit
+        image: "fluent/fluent-bit:1.1.2"
+        imagePullPolicy: "Always"
+        env:
+          []
+          
+        resources:
+          {}
+          
+        volumeMounts:
+        - name: varlog
+          mountPath: /var/log
+        - name: varlibdockercontainers
+          mountPath: /var/lib/docker/containers
+          readOnly: true
+        - name: config
+          mountPath: /fluent-bit/etc/fluent-bit.conf
+          subPath: fluent-bit.conf
+        - name: config
+          mountPath: /fluent-bit/etc/fluent-bit-service.conf
+          subPath: fluent-bit-service.conf
+        - name: config
+          mountPath: /fluent-bit/etc/fluent-bit-input.conf
+          subPath: fluent-bit-input.conf
+        - name: config
+          mountPath: /fluent-bit/etc/fluent-bit-filter.conf
+          subPath: fluent-bit-filter.conf
+        - name: config
+          mountPath: /fluent-bit/etc/fluent-bit-output.conf
+          subPath: fluent-bit-output.conf
+
+      terminationGracePeriodSeconds: 10
+      
+      volumes:
+      - name: varlog
+        hostPath:
+          path: /var/log
+      - name: varlibdockercontainers
+        hostPath:
+          path: /var/lib/docker/containers
+      - name: config
+        configMap:
+          name: fluent-bit-config
+
+
+---
+# Source: fluent-bit/templates/service.yaml
+
+

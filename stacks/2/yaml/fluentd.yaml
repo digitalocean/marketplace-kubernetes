@@ -1,0 +1,161 @@
+---
+# Source: fluentd/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fluentd
+  labels:
+    app: fluentd
+    chart: fluentd-1.10.0
+    release: fluentd
+    heritage: Tiller
+data:
+  forward-input.conf: |-
+    <source>
+      @type forward
+      port 24284
+      bind 0.0.0.0
+    </source>
+    
+  general.conf: |-
+    # Prevent fluentd from handling records containing its own logs. Otherwise
+    # it can lead to an infinite loop, when error in sending one message generates
+    # another message which also fails to be sent and so on.
+    <match fluentd.**>
+      @type null
+    </match>
+    
+    # Used for health checking
+    <source>
+      @type http
+      port 9880
+      bind 0.0.0.0
+    </source>
+    
+    # Emits internal metrics to every minute, and also exposes them on port
+    # 24220. Useful for determining if an output plugin is retryring/erroring,
+    # or determining the buffer queue length.
+    <source>
+      @type monitor_agent
+      bind 0.0.0.0
+      port 24220
+      tag fluentd.monitor.metrics
+    </source>
+    
+  output.conf: |-
+    <match **>
+      @type stdout
+    </match>
+    
+  system.conf: |-
+    <system>
+      root_dir /tmp/fluentd-buffers/
+    </system>
+
+---
+# Source: fluentd/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: fluentd
+  labels:
+    app: fluentd
+    chart: fluentd-1.10.0
+    release: fluentd
+    heritage: Tiller
+spec:
+  type: ClusterIP
+  ports:
+    - name: monitor-agent
+      port: 24220
+      targetPort: 24220
+      protocol: TCP
+  
+  selector:
+    app: fluentd
+    release: fluentd
+
+---
+# Source: fluentd/templates/deployment.yaml
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: fluentd
+  labels:
+    app: fluentd
+    chart: fluentd-1.10.0
+    release: fluentd
+    heritage: Tiller
+spec:
+  replicas: 
+  selector:
+    matchLabels:
+      app: fluentd
+      release: fluentd
+  template:
+    metadata:
+      labels:
+        app: fluentd
+        release: fluentd
+      annotations:
+        checksum/configmap: 4f1fbb4a33612d718c9cffa2c01e153af398c8cf2c58f5a2ad354419f715937b
+    spec:
+      containers:
+      - name: fluentd
+        image: "gcr.io/google-containers/fluentd-elasticsearch:v2.4.0"
+        imagePullPolicy: IfNotPresent
+        env:
+          - name: OUTPUT_HOST
+            value: "elasticsearch-client.default.svc.cluster.local"
+          - name: OUTPUT_PORT
+            value: "9200"
+          - name: OUTPUT_SCHEME
+            value: "http"
+          - name: OUTPUT_SSL_VERSION
+            value: "TLSv1"
+          - name: OUTPUT_BUFFER_CHUNK_LIMIT
+            value: "2M"
+          - name: OUTPUT_BUFFER_QUEUE_LIMIT
+            value: "8"
+        resources:
+            {}
+            
+        ports:
+          - name: monitor-agent
+            containerPort: 24220
+            protocol: TCP
+          - name: http-input
+            containerPort: 9880
+            protocol: TCP
+        livenessProbe:
+          httpGet:
+            # Use percent encoding for query param.
+            # The value is {"log": "health check"}.
+            # the endpoint itself results in a new fluentd
+            # tag 'fluentd.pod-healthcheck'
+            path: /fluentd.pod.healthcheck?json=%7B%22log%22%3A+%22health+check%22%7D
+            port: 9880
+          initialDelaySeconds: 5
+          timeoutSeconds: 1
+        volumeMounts:
+        - name: config-volume-fluentd
+          mountPath: /etc/fluent/config.d
+        - name: buffer
+          mountPath: "/var/log/fluentd-buffers"
+      volumes:
+        - name: config-volume-fluentd
+          configMap:
+            name: fluentd
+        - name: buffer
+          emptyDir: {}
+
+---
+# Source: fluentd/templates/ingress.yaml
+
+---
+# Source: fluentd/templates/pvc.yml
+
+---
+# Source: fluentd/templates/servicemonitor.yaml
+
+
