@@ -19,5 +19,3 @@ cp -r "$ROOT_DIR"/packages/metrics-server/"$METRICS_SERVER_VERSION"/ "$ROOT_DIR"
 cp -r "$ROOT_DIR"/packages/metrics-server/"$METRICS_SERVER_VERSION"/"$METRICS_SERVER_DEPLOYMENT" "$BUILD_DIR"
 cp -r "$ROOT_DIR"/stacks/3/patch/ "$BUILD_DIR"
 kubectl kustomize "$BUILD_DIR" > "$ROOT_DIR"/stacks/3/yaml/"$METRICS_SERVER_DEPLOYMENT"
-
-

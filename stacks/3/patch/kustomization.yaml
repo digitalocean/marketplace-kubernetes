@@ -3,5 +3,6 @@ kind: Kustomization
 
 resources:
 - metrics-server-deployment.yaml
+
 patchesStrategicMerge:
 - patch.yaml

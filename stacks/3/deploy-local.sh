@@ -9,4 +9,3 @@ kubectl apply -f "$ROOT_DIR"/stacks/3/yaml/.
 
 # ensure services are running
 kubectl rollout status deployment/metrics-server -n kube-system
-
