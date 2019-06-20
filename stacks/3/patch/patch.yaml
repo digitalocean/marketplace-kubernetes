@@ -1,0 +1,16 @@
+#patch for metrics-server
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: metrics-server
+spec:
+  template:
+    spec:
+      containers:
+      - name: metrics-server
+        command:
+          - /metrics-server
+          - --kubelet-preferred-address-types=InternalIP
+          - --kubelet-insecure-tls
+
+
