@@ -1,0 +1,12 @@
+#!/bin/sh
+
+set -e
+
+# set kubectl namespace
+kubectl config set-context --current --namespace=kube-system
+
+# deploy metrics-server
+kubectl apply -f https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/3/yaml/metrics-server.yaml
+
+# ensure services are running
+kubectl rollout status deployment/metrics-server
