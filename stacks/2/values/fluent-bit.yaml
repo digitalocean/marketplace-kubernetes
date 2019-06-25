@@ -1,0 +1,5 @@
+backend:
+  type: forward
+  forward:
+    host: fluentd
+    port: 24284

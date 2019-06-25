@@ -6,7 +6,7 @@ metadata:
   name: "fluent-bit-es-tls-secret"
   labels:
     app: fluent-bit
-    chart: fluent-bit-2.0.5
+    chart: fluent-bit-2.0.6
     heritage: Tiller
     release: fluent-bit
 type: Opaque
@@ -21,7 +21,7 @@ metadata:
   name: fluent-bit-config
   labels:
     app: fluent-bit
-    chart: fluent-bit-2.0.5
+    chart: fluent-bit-2.0.6
     heritage: Tiller
     release: fluent-bit
 data:
@@ -82,7 +82,7 @@ kind: ServiceAccount
 metadata:
   labels:
     app: fluent-bit
-    chart: fluent-bit-2.0.5
+    chart: fluent-bit-2.0.6
     heritage: Tiller
     release: fluent-bit
   name: fluent-bit
@@ -93,7 +93,7 @@ kind: ClusterRole
 metadata:
   labels:
     app: fluent-bit
-    chart: fluent-bit-2.0.5
+    chart: fluent-bit-2.0.6
     heritage: Tiller
     release: fluent-bit
   name: fluent-bit
@@ -111,7 +111,7 @@ kind: ClusterRoleBinding
 metadata:
   labels:
     app: fluent-bit
-    chart: fluent-bit-2.0.5
+    chart: fluent-bit-2.0.6
     heritage: Tiller
     release: fluent-bit
   name: fluent-bit
@@ -131,7 +131,7 @@ metadata:
   name: fluent-bit
   labels:
     app: fluent-bit
-    chart: fluent-bit-2.0.5
+    chart: fluent-bit-2.0.6
     heritage: Tiller
     release: fluent-bit
 spec:
@@ -143,14 +143,14 @@ spec:
         app: fluent-bit
         release: fluent-bit
       annotations:
-        checksum/config: 6869bb5a2b0fdaddfa2d7a3ced3c38c2e5b79d257e7d70602cbabf955d8e951b
+        checksum/config: f794fbc954daedb1efcc0fd71ef6ef7c7fea843cec07f56c34663aade8d6a726
     spec:
       hostNetwork: false
       dnsPolicy: ClusterFirst
       serviceAccountName: fluent-bit
       containers:
       - name: fluent-bit
-        image: "fluent/fluent-bit:1.1.2"
+        image: "fluent/fluent-bit:1.1.3"
         imagePullPolicy: "Always"
         env:
           []

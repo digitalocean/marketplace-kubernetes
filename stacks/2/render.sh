@@ -15,7 +15,7 @@ mkdir "$BUILD_DIR"/fluentd
 cp -r "$ROOT_DIR/charts/fluent-bit/$FLUENT_BIT_CHART_VERSION" "$BUILD_DIR"/fluent-bit
 cp -r "$ROOT_DIR/charts/fluentd/$FLUENTD_CHART_VERSION" "$BUILD_DIR"/fluentd
 
-cd $BUILD_DIR
+cd "$BUILD_DIR"
 
 # Remove test templates
 find "fluent-bit/$FLUENT_BIT_CHART_VERSION" -type d -name tests -print0 | xargs -0 rm -rf
@@ -26,11 +26,14 @@ rm -rf "$ROOT_DIR"/stacks/2/yaml
 mkdir -p "$ROOT_DIR"/stacks/2/yaml
 
 # render fluent-bit
+# note: sed is necessary since the chart defaults to the wrong rbac api version
 helm template \
   --name fluent-bit \
   --namespace logging \
   --values "$STACK_DIR"/values/fluent-bit.yaml \
-  "$BUILD_DIR/fluent-bit/$FLUENT_BIT_CHART_VERSION" > "$STACK_DIR"/yaml/fluent-bit.yaml
+  "$BUILD_DIR/fluent-bit/$FLUENT_BIT_CHART_VERSION" \
+  | sed -E 's/rbac\.authorization\.k8s\.io\/v1alpha1/rbac\.authorization\.k8s\.io\/v1/g' \
+  > "$STACK_DIR"/yaml/fluent-bit.yaml
 
 # render fluentd
 helm template \
