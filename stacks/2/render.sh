@@ -6,7 +6,7 @@ BUILD_DIR=$(mktemp -d)
 ROOT_DIR=$(git rev-parse --show-toplevel)
 STACK_DIR="$ROOT_DIR"/stacks/2
 
-FLUENT_BIT_CHART_VERSION="2.0.5"
+FLUENT_BIT_CHART_VERSION="2.0.6"
 FLUENTD_CHART_VERSION="1.10.0"
 
 mkdir "$BUILD_DIR"/fluent-bit
