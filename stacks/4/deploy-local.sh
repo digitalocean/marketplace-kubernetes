@@ -19,5 +19,5 @@ kubectl config set-context --current --namespace=nginx-ingress
 kubectl apply -f "$ROOT_DIR"/stacks/4/yaml/nginx-ingress.yaml
 
 # ensure services are running
-kubectl rollout status deployment/nginx-ingress-default-backend
 kubectl rollout status deployment/nginx-ingress-controller
+kubectl rollout status deployment/nginx-ingress-default-backend
