@@ -189,6 +189,31 @@ subjects:
     name: nginx-ingress
     namespace: nginx-ingress
 ---
+# Source: nginx-ingress/templates/controller-metrics-service.yaml
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: nginx-ingress
+    chart: nginx-ingress-1.6.18
+    component: "controller"
+    heritage: Tiller
+    release: nginx-ingress
+  name: nginx-ingress-controller-metrics
+spec:
+  clusterIP: ""
+  ports:
+    - name: metrics
+      port: 9913
+      targetPort: metrics
+  selector:
+    app: nginx-ingress
+    component: "controller"
+    release: nginx-ingress
+  type: "ClusterIP"
+
+---
 # Source: nginx-ingress/templates/controller-service.yaml
 apiVersion: v1
 kind: Service
@@ -202,6 +227,7 @@ metadata:
   name: nginx-ingress-controller
 spec:
   clusterIP: ""
+  externalTrafficPolicy: "Local"
   ports:
     - name: http
       port: 80
@@ -314,6 +340,9 @@ spec:
             - name: https
               containerPort: 443
               protocol: TCP
+            - name: metrics
+              containerPort: 10254
+              protocol: TCP
           readinessProbe:
             httpGet:
               path: /healthz
@@ -386,10 +415,6 @@ spec:
 
 ---
 # Source: nginx-ingress/templates/controller-hpa.yaml
-
-
----
-# Source: nginx-ingress/templates/controller-metrics-service.yaml
 
 
 ---
