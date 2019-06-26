@@ -14,7 +14,7 @@ EOF
 kubectl config set-context --current --namespace=prometheus-operator
 
 # deploy prometheus-operator
-kubectl apply -f https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/1/yaml/prometheus-operator.yaml
+kubectl apply -f https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/prometheus-operator/yaml/prometheus-operator.yaml
 
 # ensure services are running
 kubectl rollout status deployment/prometheus-operator-grafana

@@ -14,7 +14,7 @@ EOF
 kubectl config set-context --current --namespace=nginx-ingress
 
 # deploy nginx-ingress
-kubectl apply -f https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/4/yaml/nginx-ingress.yaml
+kubectl apply -f https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/nginx-ingress/yaml/nginx-ingress.yaml
 
 # ensure services are running
 kubectl rollout status deployment/nginx-ingress-controller

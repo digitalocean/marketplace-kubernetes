@@ -16,7 +16,7 @@ EOF
 kubectl config set-context --current --namespace=nginx-ingress
 
 # deploy nginx-ingress
-kubectl apply -f "$ROOT_DIR"/stacks/4/yaml/nginx-ingress.yaml
+kubectl apply -f "$ROOT_DIR"/stacks/nginx-ingress/yaml/nginx-ingress.yaml
 
 # ensure services are running
 kubectl rollout status deployment/nginx-ingress-controller
