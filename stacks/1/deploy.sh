@@ -2,8 +2,6 @@
 
 set -e
 
-ROOT_DIR=$(git rev-parse --show-toplevel)
-
 # create prometheus-operator namespace
 cat <<EOF | kubectl apply -f -
 apiVersion: v1
