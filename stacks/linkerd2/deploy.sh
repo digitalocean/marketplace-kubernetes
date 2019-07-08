@@ -2,13 +2,16 @@
 
 set -e
 
+# set kubectl namespace
+kubectl config set-context --current --namespace=linkerd
+
 # deploy linkerd yaml
 linkerd install --ignore-cluster | kubectl apply -f -
 
 # ensure services are running
-kubectl -n linkerd rollout status deployment/linkerd-controller
-kubectl -n linkerd rollout status deployment/linkerd-grafana
-kubectl -n linkerd rollout status deployment/linkerd-identity
-kubectl -n linkerd rollout status deployment/linkerd-prometheus
-kubectl -n linkerd rollout status deployment/linkerd-sp-validator
-kubectl -n linkerd rollout status deployment/linkerd-web
+kubectl rollout status deployment/linkerd-controller
+kubectl rollout status deployment/linkerd-grafana
+kubectl rollout status deployment/linkerd-identity
+kubectl rollout status deployment/linkerd-prometheus
+kubectl rollout status deployment/linkerd-sp-validator
+kubectl rollout status deployment/linkerd-web
