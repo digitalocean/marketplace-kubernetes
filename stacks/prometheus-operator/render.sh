@@ -7,7 +7,7 @@ ROOT_DIR=$(git rev-parse --show-toplevel)
 
 PROMETHEUS_OPERATOR_CHART_VERSION="5.12.3"
 
-cp -r "$ROOT_DIR"/charts/prometheus-operator/"$PROMETHEUS_OPERATOR_CHART_VERSION" $BUILD_DIR
+cp -r "$ROOT_DIR"/src/prometheus-operator/"$PROMETHEUS_OPERATOR_CHART_VERSION" $BUILD_DIR
 cp -r "$ROOT_DIR"/stacks/prometheus-operator $BUILD_DIR
 
 cd $BUILD_DIR

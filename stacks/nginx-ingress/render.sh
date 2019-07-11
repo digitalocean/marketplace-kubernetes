@@ -7,7 +7,7 @@ ROOT_DIR=$(git rev-parse --show-toplevel)
 
 NGINX_INGRESS_CHART_VERSION="1.6.18"
 
-cp -r "$ROOT_DIR"/charts/nginx-ingress/"$NGINX_INGRESS_CHART_VERSION" $BUILD_DIR
+cp -r "$ROOT_DIR"/src/nginx-ingress/"$NGINX_INGRESS_CHART_VERSION" $BUILD_DIR
 cp -r "$ROOT_DIR"/stacks/nginx-ingress $BUILD_DIR
 
 cd $BUILD_DIR
