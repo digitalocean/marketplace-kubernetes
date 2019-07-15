@@ -39,6 +39,18 @@ mkdir $VERSION
 
 1. Run `STACK_NAME=$APP_NAME ./generate-stack.sh` to generate the files necessary to render and deploy your application. They will be located in `stacks/$APP_NAME`.
 2. Modify the generated files so that they work best for your application.
-3. Render the YAML used to deploy your application by running: `./stacks/$APP_NAME/render.sh`
+3. Render the YAML used to deploy your application by running: `./stacks/$APP_NAME/render.sh`. Whenever you add a new version to `src`, you should
+re-render the YAML so that your stack always points to the latest version of your application.
 4. To ensure that the rendered YAML works as expected, deploy it to a test Kubernetes cluster by running: `./stacks/$APP_NAME/deploy-local.sh`
 5. Once everything looks good, commit your changes and open a PR.
+
+## How to deploy your application in production
+
+At DigitalOcean, we have a service dedicated to deploying stacks onto clusters. This is accomplished
+by simply CURLing a specific `deploy.sh` file, and piping it to `sh`. For example, if you wanted to deploy
+the [monitoring](https://github.com/digitalocean/marketplace-kubernetes/tree/master/stacks/monitoring) stack from your local machine onto a cluster you manager, you could run the rollowing:
+
+```bash
+curl --location --silent --show-error \
+  https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/monitoring/deploy.sh | sh
+```
