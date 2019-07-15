@@ -1,6 +1,6 @@
 # Contributing
 
-When adding your application to the digitalocean/marketplace-kubernetes repository, you’ll need
+When adding your application to the [digitalocean/marketplace-kubernetes](https://github.com/digitalocean/marketplace-kubernetes) repository, you’ll need
 to make modifications within 2 directories: **src** and **stacks**. **src** will
 contain the Helm template or raw YAML for your application. **stacks** will contain
 the rendered YAML manifest and deployment scripts necessary to deploy your application
@@ -11,8 +11,8 @@ custom Helm values (if applicable), kustomize, or a combination of both.
 
 ### Step 1: add your application to src
 
-1. Clone the digitalocean/marketplace-kubernetes repository
-2. Create a branch for your app
+1. Clone the [digitalocean/marketplace-kubernetes](https://github.com/digitalocean/marketplace-kubernetes) repository
+2. Create a branch for your application
 3. If you’re application is deployed using Helm:
 
 ```bash
@@ -35,7 +35,7 @@ mkdir $VERSION
 # commit your changes
 ```
 
-### Step 2: add your application to stacks
+### Step 2: create your application stack
 
 1. Run `STACK_NAME=$APP_NAME ./generate-stack.sh` to generate the files necessary to render and deploy your application. They will be located in `stacks/$APP_NAME`.
 2. Modify the generated files so that they work best for your application.
