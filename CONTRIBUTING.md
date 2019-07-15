@@ -46,11 +46,14 @@ re-render the YAML so that your stack always points to the latest version of you
 
 ## How to deploy your application in production
 
-At DigitalOcean, we have a service dedicated to deploying stacks onto clusters. This is accomplished
-by simply CURLing a specific `deploy.sh` file, and piping it to `sh`. For example, if you wanted to deploy
-the [monitoring](https://github.com/digitalocean/marketplace-kubernetes/tree/master/stacks/monitoring) stack from your local machine onto a cluster you manager, you could run the rollowing:
+At DigitalOcean, we have an internal service dedicated to deploying stacks onto clusters. This is accomplished
+by simply CURLing a specific `deploy.sh` file, and piping it to `sh`.
+
+If you want to deploy a stack from your local machine (for example, the [monitoring](https://github.com/digitalocean/marketplace-kubernetes/tree/master/stacks/monitoring) stack), you would run the rollowing:
 
 ```bash
 curl --location --silent --show-error \
   https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/monitoring/deploy.sh | sh
 ```
+
+Note, for this example to work, you would need to have `kubectl` installed and configured to talk to a Kubernetes cluster.
