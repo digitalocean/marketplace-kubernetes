@@ -3,7 +3,7 @@
 set -e
 
 ROOT_DIR=$(git rev-parse --show-toplevel)
-LINKERD2_VERSION="stable-2.3.2"
+LINKERD2_VERSION="stable-2.4.0"
 
 # check OS type
 if [ "$(uname -s)" = "Darwin" ]; then
