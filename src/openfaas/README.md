@@ -30,3 +30,21 @@ STACK_NAME=$APP_NAME ./generate-stack.sh
 cd ..
 ./stacks/$APP_NAME/render.sh
 ```
+
+## Get your gateway URL and password
+
+```
+kubectl get secret -n openfaas basic-auth -o jsonpath="{.data.basic-auth-password}" | base64 --decode > password.txt
+
+export OPENFAAS_URL=$(kubectl get svc -n openfaas gateway-external -o  jsonpath='{.status.loadBalancer.ingress[*].ip}'):8080
+
+echo "Your gateway URL is: ${OPENFAAS_URL}"
+
+cat password.txt | faas-cli login --username admin --password-stdin
+
+faas-cli store deploy nodeinfo
+
+faas-cli list -v
+
+faas-cli describe nodeinfo
+```
