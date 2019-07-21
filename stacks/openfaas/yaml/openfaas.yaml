@@ -1,0 +1,911 @@
+---
+# Source: openfaas/templates/alertmanager-cfg.yaml
+
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  labels:
+    app: openfaas
+    chart: openfaas-4.4.0
+    component: alertmanager-config
+    heritage: Tiller
+    release: openfaas
+  name: alertmanager-config
+  namespace: "openfaas"
+data:
+  alertmanager.yml: |
+    route:
+      group_by: ['alertname', 'cluster', 'service']
+      group_wait: 5s
+      group_interval: 10s
+      repeat_interval: 30s
+      receiver: scale-up
+      routes:
+      - match:
+          service: gateway
+          receiver: scale-up
+          severity: major
+
+    inhibit_rules:
+    - source_match:
+        severity: 'critical'
+      target_match:
+        severity: 'warning'
+      equal: ['alertname', 'cluster', 'service']
+
+    receivers:
+    - name: 'scale-up'
+      webhook_configs:
+        - url: http://gateway.openfaas:8080/system/alert
+          send_resolved: true
+          http_config:
+            basic_auth:
+              username: admin
+              password_file: /var/secrets/basic-auth-password
+---
+# Source: openfaas/templates/prometheus-cfg.yaml
+
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  labels:
+    app: openfaas
+    chart: openfaas-4.4.0
+    component: prometheus-config
+    heritage: Tiller
+    release: openfaas
+  name: prometheus-config
+  namespace: "openfaas"
+data:
+  prometheus.yml: |
+    global:
+      scrape_interval:     15s
+      evaluation_interval: 15s
+      external_labels:
+          monitor: 'faas-monitor'
+
+    rule_files:
+        - 'alert.rules.yml'
+
+    scrape_configs:
+      - job_name: 'prometheus'
+        scrape_interval: 5s
+        static_configs:
+          - targets: ['localhost:9090']
+
+      - job_name: 'kubernetes-pods'
+        scrape_interval: 5s
+        honor_labels: false
+        kubernetes_sd_configs:
+          - role: pod
+            namespaces:
+              names:
+                - openfaas
+        relabel_configs:
+        - action: labelmap
+          regex: __meta_kubernetes_pod_label_(.+)
+        - source_labels: [__meta_kubernetes_namespace]
+          action: replace
+          target_label: kubernetes_namespace
+        - source_labels: [__meta_kubernetes_pod_name]
+          action: replace
+          target_label: kubernetes_pod_name
+        - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+          action: keep
+          regex: true
+        - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+          action: replace
+          regex: ([^:]+)(?::\d+)?;(\d+)
+          replacement: $1:$2
+          target_label: __address__
+
+    alerting:
+      alertmanagers:
+      - static_configs:
+        - targets:
+          - alertmanager:9093
+
+  alert.rules.yml: |
+    groups:
+      - name: openfaas
+        rules:
+        - alert: service_down
+          expr: up == 0
+        - alert: APIHighInvocationRate
+          expr: sum(rate(gateway_function_invocation_total{code="200"}[10s])) BY (function_name) > 5
+          for: 5s
+          labels:
+            service: gateway
+            severity: major
+          annotations:
+            description: High invocation total on "{{$labels.function_name}}"
+            summary: High invocation total on "{{$labels.function_name}}"
+---
+# Source: openfaas/templates/controller-rbac.yaml
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app: openfaas
+    chart: openfaas-4.4.0
+    component: faas-controller
+    heritage: Tiller
+    release: openfaas
+  name: openfaas-controller
+  namespace: "openfaas"
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: Role
+metadata:
+  labels:
+    app: openfaas
+    chart: openfaas-4.4.0
+    component: faas-controller
+    heritage: Tiller
+    release: openfaas
+  name: openfaas-controller
+  namespace: "openfaas-fn"
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - services
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - delete
+      - update
+  - apiGroups:
+      - extensions
+      - apps
+    resources:
+      - deployments
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - delete
+      - update
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+      - pods/log
+    verbs:
+      - get
+      - list
+      - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: RoleBinding
+metadata:
+  labels:
+    app: openfaas
+    chart: openfaas-4.4.0
+    component: faas-controller
+    heritage: Tiller
+    release: openfaas
+  name: openfaas-controller
+  namespace: "openfaas-fn"
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: openfaas-controller
+subjects:
+  - kind: ServiceAccount
+    name: openfaas-controller
+    namespace: "openfaas"
+
+---
+# Source: openfaas/templates/prometheus-rbac.yaml
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: openfaas-prometheus
+  namespace: "openfaas"
+  labels:
+    app: openfaas
+    chart: openfaas-4.4.0
+    component: prometheus
+    heritage: Tiller
+    release: openfaas
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: openfaas-prometheus
+  namespace: "openfaas"
+  labels:
+    app: openfaas
+    chart: openfaas-4.4.0
+    component: prometheus
+    heritage: Tiller
+    release: openfaas
+rules:
+- apiGroups: [""]
+  resources:
+    - services
+    - endpoints
+    - pods
+  verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: openfaas-prometheus
+  namespace: "openfaas"
+  labels:
+    app: openfaas
+    chart: openfaas-4.4.0
+    component: prometheus
+    heritage: Tiller
+    release: openfaas
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: openfaas-prometheus
+subjects:
+- kind: ServiceAccount
+  name: openfaas-prometheus
+  namespace: "openfaas"
+---
+# Source: openfaas/templates/alertmanager-svc.yaml
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: openfaas
+    chart: openfaas-4.4.0
+    component: alertmanager
+    heritage: Tiller
+    release: openfaas
+  name: alertmanager
+  namespace: "openfaas"
+spec:
+  type: ClusterIP
+  ports:
+    - port: 9093
+      protocol: TCP
+  selector:
+    app: alertmanager
+---
+# Source: openfaas/templates/basic-auth-plugin-svc.yaml
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: openfaas
+    chart: openfaas-4.4.0
+    component: basic-auth-plugin
+    heritage: Tiller
+    release: openfaas
+  name: basic-auth-plugin
+  namespace: "openfaas"
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8080
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app: basic-auth-plugin
+---
+# Source: openfaas/templates/gateway-external-svc.yaml
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: openfaas
+    chart: openfaas-4.4.0
+    component: gateway
+    heritage: Tiller
+    release: openfaas
+  name: gateway-external
+  namespace: "openfaas"
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 8080
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    app: gateway
+---
+# Source: openfaas/templates/gateway-svc.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: openfaas
+    chart: openfaas-4.4.0
+    component: gateway
+    heritage: Tiller
+    release: openfaas
+  name: gateway
+  namespace: "openfaas"
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8080
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app: gateway
+
+---
+# Source: openfaas/templates/nats-svc.yaml
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: openfaas
+    chart: openfaas-4.4.0
+    component: nats
+    heritage: Tiller
+    release: openfaas
+  name: nats
+  namespace: "openfaas"
+spec:
+  type: ClusterIP
+  ports:
+    - port: 4222
+      protocol: TCP
+      name: clients
+  selector:
+    app: nats
+
+---
+# Source: openfaas/templates/prometheus-svc.yaml
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: openfaas
+    chart: openfaas-4.4.0
+    component: prometheus
+    heritage: Tiller
+    release: openfaas
+  name: prometheus
+  namespace: "openfaas"
+spec:
+  type: ClusterIP
+  ports:
+    - port: 9090
+      protocol: TCP
+  selector:
+    app: prometheus
+---
+# Source: openfaas/templates/alertmanager-dep.yaml
+
+---
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: openfaas
+    chart: openfaas-4.4.0
+    component: alertmanager
+    heritage: Tiller
+    release: openfaas
+  name: alertmanager
+  namespace: "openfaas"
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: alertmanager
+      annotations:
+        sidecar.istio.io/inject: "false"
+        checksum/alertmanager-config: "92b3816feabd13d9b22c8c69e56b57dd4e45d4955ffb141db56beb2ab89105c0"
+    spec:
+      containers:
+      - name: alertmanager
+        image: prom/alertmanager:v0.16.1
+        imagePullPolicy: Always
+        command:
+          - "alertmanager"
+          - "--config.file=/alertmanager.yml"
+          - "--storage.path=/alertmanager"
+        livenessProbe:
+          httpGet:
+            path: /-/ready
+            port: 9093
+          timeoutSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /-/ready
+            port: 9093
+          timeoutSeconds: 30
+        ports:
+        - containerPort: 9093
+          protocol: TCP
+        resources:
+            limits:
+              memory: 50Mi
+            requests:
+              memory: 25Mi
+            
+        volumeMounts:
+        - mountPath: /alertmanager.yml
+          name: alertmanager-config
+          subPath: alertmanager.yml
+        - name: auth
+          readOnly: true
+          mountPath: "/var/secrets"
+      volumes:
+        - name: alertmanager-config
+          configMap:
+            name: alertmanager-config
+            items:
+              - key: alertmanager.yml
+                path: alertmanager.yml
+                mode: 0644
+        - name: auth
+          secret:
+            secretName: basic-auth
+
+---
+# Source: openfaas/templates/basic-auth-plugin-dep.yaml
+
+---
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: openfaas
+    chart: openfaas-4.4.0
+    component: basic-auth-plugin
+    heritage: Tiller
+    release: openfaas
+  name: basic-auth-plugin
+  namespace: "openfaas"
+spec:
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        prometheus.io.scrape: "false"
+      labels:
+        app: basic-auth-plugin
+    spec:
+      volumes:
+      - name: auth
+        secret:
+          secretName: basic-auth
+      containers:
+      - name:  basic-auth-plugin
+        resources:
+            requests:
+              cpu: 20m
+              memory: 50Mi
+            
+        image: openfaas/basic-auth-plugin:0.1.1
+        imagePullPolicy: Always
+        securityContext:
+          readOnlyRootFilesystem: true
+          runAsUser: 10001
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          timeoutSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          timeoutSeconds: 5
+        env:
+        - name: secret_mount_path
+          value: "/var/secrets"
+        - name: basic_auth
+          value: "true"
+        volumeMounts:
+        - name: auth
+          readOnly: true
+          mountPath: "/var/secrets"
+        ports:
+        - name: http
+          containerPort: 8080
+          protocol: TCP
+
+---
+# Source: openfaas/templates/faas-idler-dep.yaml
+
+---
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: faas-idler
+  namespace: "openfaas"
+  labels:
+    app: openfaas
+    chart: openfaas-4.4.0
+    component: faas-idler
+    heritage: Tiller
+    release: openfaas
+spec:
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        prometheus.io.scrape: "false"
+      labels:
+        app: faas-idler
+    spec:
+      containers:
+        - name: faas-idler
+          resources:
+            requests:
+              memory: 64Mi
+            
+          image: openfaas/faas-idler:0.1.9
+          imagePullPolicy: Always
+          env:
+            - name: gateway_url
+              value: "http://gateway.openfaas:8080/"
+            - name: prometheus_host
+              value: "prometheus.openfaas"
+            - name: prometheus_port
+              value: "9090"
+            - name: inactivity_duration
+              value: 15m
+            - name: reconcile_interval
+              value: 1m
+          command:
+            - /home/app/faas-idler
+            - -dry-run=true
+          volumeMounts:
+            - name: auth
+              readOnly: true
+              mountPath: "/var/secrets/"
+      volumes:
+        - name: auth
+          secret:
+            secretName: basic-auth
+---
+# Source: openfaas/templates/gateway-dep.yaml
+
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: openfaas
+    chart: openfaas-4.4.0
+    component: gateway
+    heritage: Tiller
+    release: openfaas
+  name: gateway
+  namespace: "openfaas"
+spec:
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        prometheus.io.scrape: "true"
+        prometheus.io.port: "8082"
+      labels:
+        app: gateway
+    spec:
+      serviceAccountName: openfaas-controller
+      volumes:
+      - name: auth
+        secret:
+          secretName: basic-auth
+      containers:
+      - name: gateway
+        resources:
+            requests:
+              cpu: 50m
+              memory: 120Mi
+            
+        image: openfaas/gateway:0.15.0
+        imagePullPolicy: Always
+        securityContext:
+          readOnlyRootFilesystem: true
+          runAsUser: 10001
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+          timeoutSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+          timeoutSeconds: 5
+        env:
+        - name: read_timeout
+          value: "65s"
+        - name: write_timeout
+          value: "65s"
+        - name: upstream_timeout
+          value: "60s"
+        - name: functions_provider_url
+          value: "http://127.0.0.1:8081/"
+        - name: direct_functions
+          value: "true"
+        - name: direct_functions_suffix
+          value: "openfaas-fn.svc.cluster.local"
+        - name: faas_nats_address
+          value: "nats.openfaas.svc.cluster.local"
+        - name: faas_nats_port
+          value: "4222"
+        - name: basic_auth
+          value: "true"
+        - name: secret_mount_path
+          value: "/var/secrets"
+        - name: auth_proxy_url
+          value: "http://basic-auth-plugin.openfaas:8080/validate"
+        - name: auth_pass_body
+          value: "false"
+        - name: scale_from_zero
+          value: "true"
+        - name: max_idle_conns
+          value: "1024"
+        - name: max_idle_conns_per_host
+          value: "1024"
+        volumeMounts:
+        - name: auth
+          readOnly: true
+          mountPath: "/var/secrets"
+        ports:
+        - name: http
+          containerPort: 8080
+          protocol: TCP
+      - name: faas-netes
+        resources:
+            requests:
+              cpu: 50m
+              memory: 120Mi
+            
+        image: openfaas/faas-netes:0.8.1
+        imagePullPolicy: 
+        securityContext:
+          readOnlyRootFilesystem: true
+          runAsUser: 10001
+        env:
+        - name: port
+          value: "8081"
+        - name: function_namespace
+          value: "openfaas-fn"
+        - name: read_timeout
+          value: "60s"
+        - name: write_timeout
+          value: "60s"
+        - name: image_pull_policy
+          value: "Always"
+        - name: http_probe
+          value: "true"
+        - name: set_nonroot_user
+          value: "false"
+        - name: readiness_probe_initial_delay_seconds
+          value: "2"
+        - name: readiness_probe_timeout_seconds
+          value: "1"
+        - name: readiness_probe_period_seconds
+          value: "2"
+        - name: liveness_probe_initial_delay_seconds
+          value: "2"
+        - name: liveness_probe_timeout_seconds
+          value: "1"
+        - name: liveness_probe_period_seconds
+          value: "2"
+        ports:
+        - containerPort: 8081
+          protocol: TCP
+
+---
+# Source: openfaas/templates/nats-dep.yaml
+
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: openfaas
+    chart: openfaas-4.4.0
+    component: nats
+    heritage: Tiller
+    release: openfaas
+  name: nats
+  namespace: "openfaas"
+spec:
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+        prometheus.io.scrape: "false"
+      labels:
+        app: nats
+    spec:
+      containers:
+      - name:  nats
+        resources:
+            requests:
+              memory: 120Mi
+            
+        image: nats-streaming:0.11.2
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 4222
+          protocol: TCP
+        command: ["/nats-streaming-server"]
+        args:
+          - --store
+          - memory
+          - --cluster_id
+          - faas-cluster
+
+---
+# Source: openfaas/templates/prometheus-dep.yaml
+
+---
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: openfaas
+    chart: openfaas-4.4.0
+    component: prometheus
+    heritage: Tiller
+    release: openfaas
+  name: prometheus
+  namespace: "openfaas"
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: prometheus
+      annotations:
+        sidecar.istio.io/inject: "false"
+        checksum/prometheus-config: "e262edbd9780a70fc1ac2210857c48581c716bc53d1809b05893510d4a7d3c6c"
+    spec:
+      serviceAccountName: openfaas-prometheus
+      containers:
+      - name: prometheus
+        resources:
+            requests:
+              memory: 512Mi
+            
+        image: prom/prometheus:v2.7.1
+        command:
+          - "prometheus"
+          - "--config.file=/etc/prometheus/prometheus.yml"
+        imagePullPolicy: Always
+        livenessProbe:
+          httpGet:
+            path: /-/healthy
+            port: 9090
+          timeoutSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /-/healthy
+            port: 9090
+          timeoutSeconds: 30
+        ports:
+        - containerPort: 9090
+          protocol: TCP
+        volumeMounts:
+        - mountPath: /etc/prometheus/prometheus.yml
+          name: prometheus-config
+          subPath: prometheus.yml
+        - mountPath: /etc/prometheus/alert.rules.yml
+          name: prometheus-config
+          subPath: alert.rules.yml
+        - mountPath: /prometheus/data
+          name: prom-data
+      volumes:
+        - name: prometheus-config
+          configMap:
+            name: prometheus-config
+            items:
+              - key: prometheus.yml
+                path: prometheus.yml
+                mode: 0644
+              - key: alert.rules.yml
+                path: alert.rules.yml
+                mode: 0644
+        - name: prom-data
+          emptyDir: {}
+
+---
+# Source: openfaas/templates/queueworker-dep.yaml
+
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: openfaas
+    chart: openfaas-4.4.0
+    component: queue-worker
+    heritage: Tiller
+    release: openfaas
+  name: queue-worker
+  namespace: "openfaas"
+spec:
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        prometheus.io.scrape: "false"
+      labels:
+        app: queue-worker
+    spec:
+      volumes:
+      - name: auth
+        secret:
+          secretName: basic-auth
+      containers:
+      - name:  queue-worker
+        resources:
+            requests:
+              cpu: 50m
+              memory: 120Mi
+            
+        image: openfaas/queue-worker:0.7.2
+        imagePullPolicy: Always
+        env:
+        - name: faas_nats_address
+          value: "nats.openfaas.svc.cluster.local"
+        - name: faas_gateway_address
+          value: "gateway.openfaas.svc.cluster.local"
+        - name: "gateway_invoke"
+          value: "true"
+        - name: faas_function_suffix
+          value: ".openfaas-fn.svc.cluster.local"
+        - name: ack_wait    # Max duration of any async task / request
+          value: 60s
+        - name: secret_mount_path
+          value: "/var/secrets"
+        - name: basic_auth
+          value: "true"
+        volumeMounts:
+        - name: auth
+          readOnly: true
+          mountPath: "/var/secrets"
+
+---
+# Source: openfaas/templates/crd.yaml
+
+
+---
+# Source: openfaas/templates/ingress.yaml
+
+---
+# Source: openfaas/templates/operator-rbac.yaml
+

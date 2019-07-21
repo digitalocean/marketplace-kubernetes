@@ -13,9 +13,14 @@ custom Helm values (if applicable), kustomize, or a combination of both.
 
 1. Clone the [digitalocean/marketplace-kubernetes](https://github.com/digitalocean/marketplace-kubernetes) repository
 2. Create a branch for your application
-3. If you’re application is deployed using Helm:
+3. If your application is deployed using Helm:
 
 ```bash
+
+export APP_NAME=""
+export HELM_CHART_NAME=""
+export HELM_CHART_VERSION=""
+
 # create a new directory for your application in src
 mkdir src/$APP_NAME
 cd src/$APP_NAME
