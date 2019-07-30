@@ -1,7 +1,5 @@
 grafana:
   adminPassword: changeme
-  service:
-    type: LoadBalancer
 
 kubelet:
   namespace: prometheus-operator
