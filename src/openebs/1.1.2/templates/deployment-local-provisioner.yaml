@@ -58,7 +58,7 @@ spec:
         - name: OPENEBS_IO_HELPER_IMAGE
           value: "{{ .Values.localprovisioner.helperImage }}:{{ .Values.localprovisioner.helperImageTag }}"
         - name: OPENEBS_IO_INSTALLER_TYPE
-          value: "charts-helm"
+          value: "openebs-do-marketplace"
         livenessProbe:
           exec:
             command:

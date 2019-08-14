@@ -1,0 +1,799 @@
+---
+# Source: openebs/templates/cm-node-disk-manager.yaml
+# This is the node-disk-manager related config.
+# It can be used to customize the disks probes and filters
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: openebs-ndm-config
+  namespace: openebs
+  labels:
+    app: openebs
+    chart: openebs-1.1.2
+    release: openebs
+    heritage: Tiller
+    component: ndm-config
+data:
+  # udev-probe is default or primary probe which should be enabled to run ndm
+  # filterconfigs contails configs of filters - in ther form fo include
+  # and exclude comma separated strings
+  node-disk-manager.config: |
+    probeconfigs:
+      - key: udev-probe
+        name: udev probe
+        state: true
+      - key: seachest-probe
+        name: seachest probe
+        state: true
+      - key: smart-probe
+        name: smart probe
+        state: true
+    filterconfigs:
+      - key: os-disk-exclude-filter
+        name: os disk exclude filter
+        state: true
+        exclude: "/,/etc/hosts,/boot"
+      - key: vendor-filter
+        name: vendor filter
+        state: true
+        include: ""
+        exclude: "CLOUDBYT,OpenEBS"
+      - key: path-filter
+        name: path filter
+        state: true
+        include: ""
+        exclude: "loop,fd0,sr0,/dev/ram,/dev/dm-,/dev/md"
+---
+
+---
+# Source: openebs/templates/serviceaccount.yaml
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: openebs-maya-operator
+  namespace: openebs
+  labels:
+    app: openebs
+    chart: openebs-1.1.2
+    release: openebs
+    heritage: Tiller
+
+---
+# Source: openebs/templates/clusterrole.yaml
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: openebs-maya-operator
+  labels:
+    app: openebs
+    chart: openebs-1.1.2
+    release: openebs
+    heritage: Tiller
+rules:
+- apiGroups: ["*"]
+  resources: ["nodes", "nodes/proxy"]
+  verbs: ["*"]
+- apiGroups: ["*"]
+  resources: ["namespaces", "services", "pods", "deployments", "events", "endpoints", "configmaps", "jobs"]
+  verbs: ["*"]
+- apiGroups: ["*"]
+  resources: ["storageclasses", "persistentvolumeclaims", "persistentvolumes"]
+  verbs: ["*"]
+- apiGroups: ["volumesnapshot.external-storage.k8s.io"]
+  resources: ["volumesnapshots", "volumesnapshotdatas"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+- apiGroups: ["apiextensions.k8s.io"]
+  resources: ["customresourcedefinitions"]
+  verbs: [ "get", "list", "create", "update", "delete", "patch"]
+- apiGroups: ["*"]
+  resources: [ "disks", "blockdevices", "blockdeviceclaims"]
+  verbs: ["*" ]
+- apiGroups: ["*"]
+  resources: [ "storagepoolclaims", "storagepoolclaims/finalizers","storagepools"]
+  verbs: ["*" ]
+- apiGroups: ["*"]
+  resources: [ "castemplates", "runtasks"]
+  verbs: ["*" ]
+- apiGroups: ["*"]
+  resources: [ "cstorpools", "cstorpools/finalizers", "cstorvolumereplicas", "cstorvolumes", "cstorvolumeclaims"]
+  verbs: ["*" ]
+- apiGroups: ["*"]
+  resources: [ "cstorbackups", "cstorrestores", "cstorcompletedbackups"]
+  verbs: ["*" ]
+- apiGroups: ["*"]
+  resources: [ "upgradetasks"]
+  verbs: ["*" ]
+- nonResourceURLs: ["/metrics"]
+  verbs: ["get"]
+
+---
+# Source: openebs/templates/clusterrolebinding.yaml
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: openebs-maya-operator
+  labels:
+    app: openebs
+    chart: openebs-1.1.2
+    release: openebs
+    heritage: Tiller
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: openebs-maya-operator
+subjects:
+- kind: ServiceAccount
+  name: openebs-maya-operator
+  namespace: openebs
+
+---
+# Source: openebs/templates/service-admission-server.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: admission-server-svc
+  namespace: openebs
+  labels:
+    app: admission-webhook
+    chart: openebs-1.1.2
+    release: openebs
+    heritage: Tiller
+spec:
+  ports:
+  - port: 443
+    targetPort: 443
+  selector:
+    app: admission-webhook
+
+---
+# Source: openebs/templates/service-maya-apiserver.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: openebs-apiservice
+  namespace: openebs
+  labels:
+    app: openebs
+    chart: openebs-1.1.2
+    release: openebs
+    heritage: Tiller
+spec:
+  ports:
+  - name: api
+    port: 5656
+    targetPort: 5656
+    protocol: TCP
+  selector:
+    app: openebs
+    release: openebs
+    component: apiserver
+  sessionAffinity: None
+
+---
+# Source: openebs/templates/daemonset-ndm.yaml
+apiVersion: extensions/v1beta1
+kind: DaemonSet
+metadata:
+  name: openebs-ndm
+  namespace: openebs
+  labels:
+    app: openebs
+    chart: openebs-1.1.2
+    release: openebs
+    heritage: Tiller
+    component: ndm
+spec:
+  updateStrategy:
+    type: "RollingUpdate"
+  selector:
+    matchLabels:
+      app: openebs
+      release: openebs
+      component: ndm
+  template:
+    metadata:
+      labels:
+        app: openebs
+        release: openebs
+        component: ndm
+        openebs.io/component-name: ndm
+        name: openebs-ndm
+        openebs.io/version: 1.1.0
+    spec:
+      serviceAccountName: openebs-maya-operator
+      hostNetwork: true
+      containers:
+      - name: openebs-ndm
+        image: "quay.io/openebs/node-disk-manager-amd64:v0.4.1"
+        imagePullPolicy: IfNotPresent
+        securityContext:
+          privileged: true
+        env:
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        # pass hostname as env variable using downward API to the NDM container
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        # specify the directory where the sparse files need to be created.
+        # if not specified, then sparse files will not be created.
+        - name: SPARSE_FILE_DIR
+          value: "/var/openebs/sparse"
+        # Size(bytes) of the sparse file to be created.
+        - name: SPARSE_FILE_SIZE
+          value: "10737418240"
+        # Specify the number of sparse files to be created
+        - name: SPARSE_FILE_COUNT
+          value: "1"
+        livenessProbe:
+          exec:
+            command:
+            - pgrep
+            - ".*ndm"
+          initialDelaySeconds: 30
+          periodSeconds: 60
+        volumeMounts:
+        - name: config
+          mountPath: /host/node-disk-manager.config
+          subPath: node-disk-manager.config
+          readOnly: true
+        - name: udev
+          mountPath: /run/udev
+        - name: procmount
+          mountPath: /host/proc
+          readOnly: true
+        - name: sparsepath
+          mountPath: /var/openebs/sparse
+      volumes:
+      - name: config
+        configMap:
+          name: openebs-ndm-config
+      - name: udev
+        hostPath:
+          path: /run/udev
+          type: Directory
+      # mount /proc (to access mount file of process 1 of host) inside container
+      # to read mount-point of disks and partitions
+      - name: procmount
+        hostPath:
+          path: /proc
+          type: Directory
+      - name: sparsepath
+        hostPath:
+          path: /var/openebs/sparse
+      # By default the node-disk-manager will be run on all kubernetes nodes
+      # If you would like to limit this to only some nodes, say the nodes
+      # that have storage attached, you could label those node and use
+      # nodeSelector.
+      #
+      # e.g. label the storage nodes with - "openebs.io/nodegroup"="storage-node"
+      # kubectl label node <node-name> "openebs.io/nodegroup"="storage-node"
+      #nodeSelector:
+      #  "openebs.io/nodegroup": "storage-node"
+
+---
+# Source: openebs/templates/deployment-admission-server.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openebs-admission-server
+  namespace: openebs
+  labels:
+    app: admission-webhook
+    chart: openebs-1.1.2
+    release: openebs
+    heritage: Tiller
+    component: admission-webhook
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: admission-webhook
+  template:
+    metadata:
+      labels:
+        app: admission-webhook
+        name: admission-webhook
+        openebs.io/version: 1.1.0
+        openebs.io/component-name: admission-webhook
+    spec:
+      serviceAccountName: openebs-maya-operator
+      containers:
+        - name: admission-webhook
+          image: "quay.io/openebs/admission-server:1.1.0"
+          imagePullPolicy: IfNotPresent
+          args:
+            - -tlsCertFile=/etc/webhook/certs/cert.pem
+            - -tlsKeyFile=/etc/webhook/certs/key.pem
+            - -alsologtostderr
+            - -v=8
+            - 2>&1
+          volumeMounts:
+            - name: webhook-certs
+              mountPath: /etc/webhook/certs
+              readOnly: true
+      volumes:
+        - name: webhook-certs
+          secret:
+            secretName: admission-server-certs
+
+---
+# Source: openebs/templates/deployment-local-provisioner.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openebs-localpv-provisioner
+  namespace: openebs
+  labels:
+    app: openebs
+    chart: openebs-1.1.2
+    release: openebs
+    heritage: Tiller
+    component: localpv-provisioner
+    openebs.io/component-name: openebs-localpv-provisioner
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: openebs
+      release: openebs
+  template:
+    metadata:
+      labels:
+        app: openebs
+        release: openebs
+        component: localpv-provisioner
+        name: openebs-localpv-provisioner
+        openebs.io/component-name: openebs-localpv-provisioner
+        openebs.io/version: 1.1.0
+    spec:
+      serviceAccountName: openebs-maya-operator
+      containers:
+      - name: openebs-localpv-provisioner
+        image: "quay.io/openebs/provisioner-localpv:1.1.0"
+        imagePullPolicy: IfNotPresent
+        env:
+        # OPENEBS_IO_K8S_MASTER enables openebs provisioner to connect to K8s
+        # based on this address. This is ignored if empty.
+        # This is supported for openebs provisioner version 0.5.2 onwards
+        #- name: OPENEBS_IO_K8S_MASTER
+        #  value: "http://10.128.0.12:8080"
+        # OPENEBS_IO_KUBE_CONFIG enables openebs provisioner to connect to K8s
+        # based on this config. This is ignored if empty.
+        # This is supported for openebs provisioner version 0.5.2 onwards
+        #- name: OPENEBS_IO_KUBE_CONFIG
+        #  value: "/home/ubuntu/.kube/config"
+        # OPENEBS_NAMESPACE is the namespace that this provisioner will
+        # lookup to find maya api service
+        - name: OPENEBS_NAMESPACE
+          value: "openebs"
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        # OPENEBS_IO_BASE_PATH is the environment variable that provides the
+        # default base path on the node where host-path PVs will be provisioned.
+        - name: OPENEBS_IO_ENABLE_ANALYTICS
+          value: "true"
+        - name: OPENEBS_IO_BASE_PATH
+          value: "/var/openebs/local"
+        - name: OPENEBS_IO_HELPER_IMAGE
+          value: "quay.io/openebs/openebs-tools:3.8"
+        - name: OPENEBS_IO_INSTALLER_TYPE
+          value: "openebs-do-marketplace"
+        livenessProbe:
+          exec:
+            command:
+            - pgrep
+            - ".*localpv"
+          initialDelaySeconds: 30
+          periodSeconds: 60
+
+---
+# Source: openebs/templates/deployment-maya-apiserver.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openebs-apiserver
+  namespace: openebs
+  labels:
+    app: openebs
+    chart: openebs-1.1.2
+    release: openebs
+    heritage: Tiller
+    component: apiserver
+    name: maya-apiserver
+    openebs.io/component-name: maya-apiserver
+    openebs.io/version: 1.1.0
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: openebs
+      release: openebs
+  template:
+    metadata:
+      labels:
+        app: openebs
+        release: openebs
+        component: apiserver
+        name: maya-apiserver
+        openebs.io/component-name: maya-apiserver
+        openebs.io/version: 1.1.0
+    spec:
+      serviceAccountName: openebs-maya-operator
+      containers:
+      - name: openebs-apiserver
+        image: "quay.io/openebs/m-apiserver:1.1.0"
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 5656
+        env:
+        # OPENEBS_IO_KUBE_CONFIG enables maya api service to connect to K8s
+        # based on this config. This is ignored if empty.
+        # This is supported for maya api server version 0.5.2 onwards
+        #- name: OPENEBS_IO_KUBE_CONFIG
+        #  value: "/home/ubuntu/.kube/config"
+        # OPENEBS_IO_K8S_MASTER enables maya api service to connect to K8s
+        # based on this address. This is ignored if empty.
+        # This is supported for maya api server version 0.5.2 onwards
+        #- name: OPENEBS_IO_K8S_MASTER
+        #  value: "http://172.28.128.3:8080"
+        # OPENEBS_IO_INSTALL_DEFAULT_CSTOR_SPARSE_POOL decides whether default cstor sparse pool should be
+        # configured as a part of openebs installation.
+        # If "true" a default cstor sparse pool will be configured, if "false" it will not be configured.
+        - name: OPENEBS_IO_INSTALL_DEFAULT_CSTOR_SPARSE_POOL
+          value: "false"
+        - name: OPENEBS_IO_CSTOR_POOL_SPARSE_DIR
+          value: "/var/openebs/sparse"
+        - name: OPENEBS_IO_CREATE_DEFAULT_STORAGE_CONFIG
+          value: "true"
+        - name: OPENEBS_IO_CSTOR_TARGET_DIR
+          value: "/var/openebs/sparse"
+        # OPENEBS_NAMESPACE provides the namespace of this deployment as an
+        # environment variable
+        - name: OPENEBS_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        # OPENEBS_SERVICE_ACCOUNT provides the service account of this pod as
+        # environment variable
+        - name: OPENEBS_SERVICE_ACCOUNT
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.serviceAccountName
+        # OPENEBS_MAYA_POD_NAME provides the name of this pod as
+        # environment variable
+        - name: OPENEBS_MAYA_POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: OPENEBS_IO_JIVA_CONTROLLER_IMAGE
+          value: "quay.io/openebs/jiva:1.1.0"
+        - name: OPENEBS_IO_JIVA_REPLICA_IMAGE
+          value: "quay.io/openebs/jiva:1.1.0"
+        - name: OPENEBS_IO_JIVA_REPLICA_COUNT
+          value: "3"
+        - name: OPENEBS_IO_CSTOR_TARGET_IMAGE
+          value: "quay.io/openebs/cstor-istgt:1.1.0"
+        - name: OPENEBS_IO_CSTOR_POOL_IMAGE
+          value: "quay.io/openebs/cstor-pool:1.1.0"
+        - name: OPENEBS_IO_CSTOR_POOL_MGMT_IMAGE
+          value: "quay.io/openebs/cstor-pool-mgmt:1.1.0"
+        - name: OPENEBS_IO_CSTOR_VOLUME_MGMT_IMAGE
+          value: "quay.io/openebs/cstor-volume-mgmt:1.1.0"
+        - name: OPENEBS_IO_VOLUME_MONITOR_IMAGE
+          value: "quay.io/openebs/m-exporter:1.1.0"
+        - name: OPENEBS_IO_CSTOR_POOL_EXPORTER_IMAGE
+          value: "quay.io/openebs/m-exporter:1.1.0"
+        # OPENEBS_IO_ENABLE_ANALYTICS if set to true sends anonymous usage
+        # events to Google Analytics
+        - name: OPENEBS_IO_ENABLE_ANALYTICS
+          value: "true"
+        # OPENEBS_IO_ANALYTICS_PING_INTERVAL can be used to specify the duration (in hours)
+        # for periodic ping events sent to Google Analytics. Default is 24 hours.
+        - name: OPENEBS_IO_ANALYTICS_PING_INTERVAL
+          value: "24h"
+        - name: OPENEBS_IO_INSTALLER_TYPE
+          value: "openebs-do-marketplace"
+        livenessProbe:
+          exec:
+            command:
+            - /usr/local/bin/mayactl
+            - version
+          initialDelaySeconds: 30
+          periodSeconds: 60
+
+---
+# Source: openebs/templates/deployment-maya-provisioner.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openebs-provisioner
+  namespace: openebs
+  labels:
+    app: openebs
+    chart: openebs-1.1.2
+    release: openebs
+    heritage: Tiller
+    component: provisioner
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: openebs
+      release: openebs
+  template:
+    metadata:
+      labels:
+        app: openebs
+        release: openebs
+        component: provisioner
+        name: openebs-provisioner
+        openebs.io/component-name: openebs-provisioner
+        openebs.io/version: 1.1.0
+    spec:
+      serviceAccountName: openebs-maya-operator
+      containers:
+      - name: openebs-provisioner
+        image: "quay.io/openebs/openebs-k8s-provisioner:1.1.0"
+        imagePullPolicy: IfNotPresent
+        env:
+        # OPENEBS_IO_K8S_MASTER enables openebs provisioner to connect to K8s
+        # based on this address. This is ignored if empty.
+        # This is supported for openebs provisioner version 0.5.2 onwards
+        #- name: OPENEBS_IO_K8S_MASTER
+        #  value: "http://10.128.0.12:8080"
+        # OPENEBS_IO_KUBE_CONFIG enables openebs provisioner to connect to K8s
+        # based on this config. This is ignored if empty.
+        # This is supported for openebs provisioner version 0.5.2 onwards
+        #- name: OPENEBS_IO_KUBE_CONFIG
+        #  value: "/home/ubuntu/.kube/config"
+        # OPENEBS_NAMESPACE is the namespace that this provisioner will
+        # lookup to find maya api service
+        - name: OPENEBS_NAMESPACE
+          value: "openebs"
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        # OPENEBS_MAYA_SERVICE_NAME provides the maya-apiserver K8s service name,
+        # that provisioner should forward the volume create/delete requests.
+        # If not present, "maya-apiserver-service" will be used for lookup.
+        # This is supported for openebs provisioner version 0.5.3-RC1 onwards
+        - name: OPENEBS_MAYA_SERVICE_NAME
+          value: "openebs-apiservice"
+        # The following values will be set as annotations to the PV object.
+        # Refer : https://github.com/openebs/external-storage/pull/15
+        #- name: OPENEBS_MONITOR_URL
+        #  value: ""
+        #- name: OPENEBS_MONITOR_VOLKEY
+        #  value: ""
+        #- name: MAYA_PORTAL_URL
+        #  value: ""
+        livenessProbe:
+          exec:
+            command:
+            - pgrep
+            - ".*openebs"
+          initialDelaySeconds: 30
+          periodSeconds: 60
+
+---
+# Source: openebs/templates/deployment-maya-snapshot-operator.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openebs-snapshot-operator
+  namespace: openebs
+  labels:
+    app: openebs
+    chart: openebs-1.1.2
+    release: openebs
+    heritage: Tiller
+    component: snapshot-operator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: openebs
+      release: openebs
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: openebs
+        release: openebs
+        component: snapshot-operator
+        name: openebs-snapshot-operator
+        openebs.io/version: 1.1.0
+        openebs.io/component-name: openebs-snapshot-operator
+    spec:
+      serviceAccountName: openebs-maya-operator
+      containers:
+      - name: openebs-snapshot-controller
+        image: "quay.io/openebs/snapshot-controller:1.1.0"
+        imagePullPolicy: IfNotPresent
+        env:
+        # OPENEBS_IO_K8S_MASTER enables openebs snapshot controller to connect to K8s
+        # based on this address. This is ignored if empty.
+        # This is supported for openebs snapshot controller version 0.6-RC1 onwards
+        #- name: OPENEBS_IO_K8S_MASTER
+        #  value: "http://10.128.0.12:8080"
+        # OPENEBS_IO_KUBE_CONFIG enables openebs snapshot controller to connect to K8s
+        # based on this config. This is ignored if empty.
+        # This is supported for openebs snapshot controller version 0.6-RC1 onwards
+        #- name: OPENEBS_IO_KUBE_CONFIG
+        #  value: "/home/ubuntu/.kube/config"
+        # OPENEBS_NAMESPACE is the namespace that this snapshot controller will
+        # lookup to find maya api service
+        - name: OPENEBS_NAMESPACE
+          value: "openebs"
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        # OPENEBS_MAYA_SERVICE_NAME provides the maya-apiserver K8s service name,
+        # that snapshot controller should forward the volume snapshot requests.
+        # If not present, "maya-apiserver-service" will be used for lookup.
+        # This is supported for openebs snapshot controller version 0.6-RC1 onwards
+        - name: OPENEBS_MAYA_SERVICE_NAME
+          value: "openebs-apiservice"
+        livenessProbe:
+          exec:
+            command:
+            - pgrep
+            - ".*controller"
+          initialDelaySeconds: 30
+          periodSeconds: 60
+      - name: openebs-snapshot-provisioner
+        image: "quay.io/openebs/snapshot-provisioner:1.1.0"
+        imagePullPolicy: IfNotPresent
+        env:
+        # OPENEBS_IO_K8S_MASTER enables openebs snapshot provisioner to connect to K8s
+        # based on this address. This is ignored if empty.
+        # This is supported for openebs snapshot provisioner version 0.6-RC1 onwards
+        #- name: OPENEBS_IO_K8S_MASTER
+        #  value: "http://10.128.0.12:8080"
+        # OPENEBS_IO_KUBE_CONFIG enables openebs snapshot provisioner to connect to K8s
+        # based on this config. This is ignored if empty.
+        # This is supported for openebs snapshot provisioner version 0.6-RC1 onwards
+        #- name: OPENEBS_IO_KUBE_CONFIG
+        #  value: "/home/ubuntu/.kube/config"
+        # OPENEBS_NAMESPACE is the namespace that this snapshot provisioner will
+        # lookup to find maya api service
+        - name: OPENEBS_NAMESPACE
+          value: "openebs"
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        # OPENEBS_MAYA_SERVICE_NAME provides the maya-apiserver K8s service name,
+        # that snapshot provisioner should forward the volume snapshot PV requests.
+        # If not present, "maya-apiserver-service" will be used for lookup.
+        # This is supported for openebs snapshot provisioner version 0.6-RC1 onwards
+        - name: OPENEBS_MAYA_SERVICE_NAME
+          value: "openebs-apiservice"
+        livenessProbe:
+          exec:
+            command:
+            - pgrep
+            - ".*provisioner"
+          initialDelaySeconds: 30
+          periodSeconds: 60
+
+---
+# Source: openebs/templates/deployment-ndm-operator.yaml
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openebs-ndm-operator
+  namespace: openebs
+  labels:
+    app: openebs
+    chart: openebs-1.1.2
+    release: openebs
+    heritage: Tiller
+    component: ndm-operator
+    openebs.io/component-name: ndm-operator
+    name: ndm-operator
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: openebs
+      release: openebs
+  template:
+    metadata:
+      labels:
+        app: openebs
+        release: openebs
+        component: ndm-operator
+        name: ndm-operator
+        openebs.io/component-name: ndm-operator
+        openebs.io/version: 1.1.0
+    spec:
+      serviceAccountName: openebs-maya-operator
+      containers:
+      - name: openebs-ndm-operator
+        image: "quay.io/openebs/node-disk-operator-amd64:v0.4.1"
+        imagePullPolicy: IfNotPresent
+        readinessProbe:
+          exec:
+            command:
+            - stat
+            - /tmp/operator-sdk-ready
+          initialDelaySeconds: 4
+          periodSeconds: 10
+          failureThreshold: 1
+        env:
+        - name: WATCH_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: OPERATOR_NAME
+          value: "node-disk-operator"
+        - name: CLEANUP_JOB_IMAGE
+          value: "quay.io/openebs/linux-utils:3.9"
+
+---
+# Source: openebs/templates/validationwebhook.yaml
+
+---
+apiVersion: admissionregistration.k8s.io/v1beta1
+kind: ValidatingWebhookConfiguration
+metadata:
+  name: openebs-validation-webhook-cfg
+  labels:
+    app: openebs
+    chart: openebs-1.1.2
+    release: openebs
+    heritage: Tiller
+    component: admission-webhook
+    openebs.io/component-name: admission-webhook
+webhooks:
+# failurePolicy Fail means that an error calling the webhook causes the admission to fail.
+  - name: admission-webhook.openebs.io
+    failurePolicy: Fail
+    clientConfig:
+      service:
+        name: admission-server-svc
+        namespace: openebs
+        path: "/validate"
+      caBundle: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURDVENDQWZHZ0F3SUJBZ0lSQUwzN1ZJME0xV0wvUVRERjg5OGgzK0l3RFFZSktvWklodmNOQVFFTEJRQXcKSGpFY01Cb0dBMVVFQXhNVFlXUnRhWE56YVc5dUxYTmxjblpsY2kxallUQWVGdzB4T1RBNE1UUXhNVE14TkRCYQpGdzB5T1RBNE1URXhNVE14TkRCYU1CNHhIREFhQmdOVkJBTVRFMkZrYldsemMybHZiaTF6WlhKMlpYSXRZMkV3CmdnRWlNQTBHQ1NxR1NJYjNEUUVCQVFVQUE0SUJEd0F3Z2dFS0FvSUJBUURCSmkzbWhvTDdYZGhFeFVwZ0JEY3gKQUNkbmVpV2F5TFF5ZVVQdVhXQi9HREs1enppMjlIQVFhbURxVGgwN0JzT2RaSFNyTWp3eE5JV1dRNmUwNlQ0awpEeTBXOUFrc01jZzBpaVhZajJTVkk0K3dwdERyUHh5YktCcUg0YUswTVpGWmJ2RzAxNTFxVUd0OWlpYVZUdVdXCkdKYVp6Z2NkTjkrS25aaGpaUUwyMWw5TlpEa01VelBmNTBhN0FhWmNTRTRjSkVCNTRybTZpY2dEUDY5Q3JDTSsKMldMeS8zelRTdjlzdjdSSHppQ2xpYmUvVzRNekVRVlRBeHlKZ1p4NTJUdjFQZGdhNjZ6a3ZNMTdQY1lXMUwzOQpLaVJHSVZpWnkySHFtYkhuMi9FRDByckNmVkZiSm1IU0xvVXpUQW1DM2tSdWhnTWl3bm5QcmxEMzU0ZEtuN0t2CkFnTUJBQUdqUWpCQU1BNEdBMVVkRHdFQi93UUVBd0lDcERBZEJnTlZIU1VFRmpBVUJnZ3JCZ0VGQlFjREFRWUkKS3dZQkJRVUhBd0l3RHdZRFZSMFRBUUgvQkFVd0F3RUIvekFOQmdrcWhraUc5dzBCQVFzRkFBT0NBUUVBYXBHVQpPeHdnRWxibWV5dm9aME9ZRjZXTXlkNk5rNXNOdFVWTTA5OVJOTlV6MjlqQ2NpRDBDY1dWQXZnOVhPMlZaYlR1CkxOa0FvL1lLRmpYTE1VTkt4YnUweGRqRjdHYmxkZnMrTE9wMmU1N2VtYUVFY2hqdVFXQkpoZE9STnRnRDk1TzIKVTk0a01mWmhxYlJDd2I5cmdVaExQWlZWenBBUkY1L1J6TStMYXVlNE13V3FvcmVNN3R2Sk02NXNZbWJJUGh5eAo0WXdIb2FQOEtHMy8ydy8rU3hMU3hnM29pT0lpdG1IZ1J2ZTd2L09ET0VDekxFYmtoQ2pqMGFXa253c2FmbHJ4Cm5OaXBTb1liU3VlUlk4QmUySVpKOTVkdjZ4QkZUVzJDeVZVcDRMb0dlamh3R2ZkVldhTUNQSG5KbzdWOWFvcWEKNXcydXNDeUljL3RiNU43amh3PT0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=
+    rules:
+      - operations: [ "CREATE", "DELETE" ]
+        apiGroups: ["*"]
+        apiVersions: ["*"]
+        resources: ["persistentvolumeclaims"]
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: admission-server-certs
+  namespace: openebs
+  labels:
+    app: openebs
+    chart: openebs-1.1.2
+    release: openebs
+    heritage: Tiller
+    openebs.io/component-name: admission-webhook
+type: Opaque
+data:
+  cert.pem: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURVekNDQWp1Z0F3SUJBZ0lRZS9qSk9JZGdTS0F0MEZpZkp6N3RiVEFOQmdrcWhraUc5dzBCQVFzRkFEQWUKTVJ3d0dnWURWUVFERXhOaFpHMXBjM05wYjI0dGMyVnlkbVZ5TFdOaE1CNFhEVEU1TURneE5ERXhNekUwTUZvWApEVEk1TURneE1URXhNekUwTUZvd0h6RWRNQnNHQTFVRUF4TVVZV1J0YVhOemFXOXVMWE5sY25abGNpMXpkbU13CmdnRWlNQTBHQ1NxR1NJYjNEUUVCQVFVQUE0SUJEd0F3Z2dFS0FvSUJBUURCMjFWVFRaY29zaGxxbWhuY1dXNlIKMU1ZR2dKcWZJbGVxV0pDT3QyMExiaFdHT01GUFVqTXhJcFRvMzJJbUdvSzE2ZXBKdUN2UGlUZXZ2cCs2MUxjNAp2Mnlzc0pOV01ITDgydW9ybVg1QmEyUGttTXNEQnBwdm4xbUZwSkpocU5qVzg2QklGU1R3cWVaMnFGVFBvTGQ0CnFVZUtGSkJwV2VpS1FlQW40eVIwaU1Nbkk1SkZNbjVhQVJtK0dIY1BNQnZJTnJQM1lJeDgwdUJyVGJJVWUxU20Kbm4xeHBRbEE5VGZJMXUvSXhPY0FOYlhwSEVRNDBJVGdBRXFiMVJYL3ZUbG45WEFWYzVPQnFIRTc5WWNPMVRLSQpQL1ZsQ2VRMGNWenZ6ektJbzNBZ3pqekJHWWFiUWw2cmlZeng1RHlsN3Y1UWhVV2I4RGVjZzF3SmVaZjhXclpmCkFnTUJBQUdqZ1lzd2dZZ3dEZ1lEVlIwUEFRSC9CQVFEQWdXZ01CMEdBMVVkSlFRV01CUUdDQ3NHQVFVRkJ3TUIKQmdnckJnRUZCUWNEQWpBTUJnTlZIUk1CQWY4RUFqQUFNRWtHQTFVZEVRUkNNRUNDSEdGa2JXbHpjMmx2YmkxegpaWEoyWlhJdGMzWmpMbTl3Wlc1bFluT0NJR0ZrYldsemMybHZiaTF6WlhKMlpYSXRjM1pqTG05d1pXNWxZbk11CmMzWmpNQTBHQ1NxR1NJYjNEUUVCQ3dVQUE0SUJBUUFyQ09wdHlCMG8wRW8wZncrVW50RWUycTdweFYzSkdIMEUKVjk4Nmtkc2QzNElPd3FUWW1GeDlpcEZKRkZGUXVCQnFQZE5RVDBlNmVGWHFneUU2dm5lb0JGZEU0bEtBRWVneQpOOThxNlRjdTlpOUozSHJUcmJIQk9GcFNHQkYxT05NRW5aQUdOWlg0ditVQXNTbzdsYklnaTZNb3NUUjJ5ODVpCnlHMXRoTTMzc2VtT0VJUXJTaXBCbFhaUjVEM1daZ2hnNkJxNG1TWlhxcWVvS29wclNxVlpweE10eUZyUE9KNFUKODlWTWtFZDJOaXdyOXBIeG4xVHYrcmgrcWtvVUM3Q2NKbWpNYThrVU9SNThERjhXNHpRanRPWklKTkVYTDNzcwoybURHcTV5WTNVS3JIVmh5bElVRWhOWFBIckJ3T21vZndNeGhSZUpvelJEYUpnYVE0ZW8zCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K
+  key.pem: LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlFcFFJQkFBS0NBUUVBd2R0VlUwMlhLTElaYXBvWjNGbHVrZFRHQm9DYW55SlhxbGlRanJkdEMyNFZoampCClQxSXpNU0tVNk45aUpocUN0ZW5xU2Jncno0azNyNzZmdXRTM09MOXNyTENUVmpCeS9OcnFLNWwrUVd0ajVKakwKQXdhYWI1OVpoYVNTWWFqWTF2T2dTQlVrOEtubWRxaFV6NkMzZUtsSGloU1FhVm5vaWtIZ0orTWtkSWpESnlPUwpSVEorV2dFWnZoaDNEekFieURhejkyQ01mTkxnYTAyeUZIdFVwcDU5Y2FVSlFQVTN5TmJ2eU1UbkFEVzE2UnhFCk9OQ0U0QUJLbTlVVi83MDVaL1Z3RlhPVGdhaHhPL1dIRHRVeWlELzFaUW5rTkhGYzc4OHlpS053SU00OHdSbUcKbTBKZXE0bU04ZVE4cGU3K1VJVkZtL0EzbklOY0NYbVgvRnEyWHdJREFRQUJBb0lCQVFDYTRTbWlqSE1nU0dxVwpDTmh3ZStNakQrUEdmaWtLeXQxUGM4TEt3ekdUMkRmS0xMNEZLWjlNdWx4T1VXcVJGczBubWVOZFVvOXVHQ3N0CmRoY1hwYXRjNDFOb0JRc3g2VE4xWVZHRjAvUlRRQUZuT2N1NGR5WWIyQ3dsNGY0eG1Eem1QMjduS0QyREticS8KUW0zQUZKK0EvMzN3aTgxMDNpZ3pqYjRSSUNDWUdPZ2FUK2hQUUNuZS9XUmcycmlHQkRGYkFUdGpoS3hoeVF4NgpzY3ArWXpYenh5U3drcmVRdEdjUXZ5YnFYWTVJT2JDdG45RGt1b3NVdGNZZEhUMlNVam9sbkhVS282SWhiYVRqCmc2a0ZFRGFmMXJLYTFweUwzc1NLTEdWOFM2c0tPOTBwT1lrWGIwV3kwTWttalZENkcrcFJVaTlaVk1NL1YwRGoKaVpnK1JLdEJBb0dCQU43UmF5MEFnOFNZOTRKZ2NxbW5pOUpXMXJrUStMRUljdHo4NlFtODhwcFlmWjc0R3dQdgpjMS9lUXJ5N0JOV00wRE9VblMxbFZ3NHhmVTRnMUxMYWZxcnBRMGF2dnBxRG1KeHhFb0hVR2U4c0VQdzdyU1VqCjZSSGtMSUdMSFcrbDIyTzhaVmxnS3U2eGExcHdKU2tXRXlpeUJVQkNYU3Q4MkJwOWpSc2d4MUYxQW9HQkFONjUKMEFIc1hIYTNrMVZ0c0ZFM0FBME9GMlNGODJCeStzR1ZsLzBaeU5wc0xwaUFZeEFPMW55amVvcmJXWXd6YUF3TgpucWxJL3FXcE9pUjYxQ0xzTjZhVy9oR1UxZlljeEcyUXdzNjloYWkrTFQyR2FIdkcwMlBDd3dwSXA4eXFLaFJVClJJalVwcEdrMFcvREp2Y00vOEluYW1NK3VPTWN3eWRKblJ0M0Izb0RBb0dBZWFDYS9sK3ZqZHRxRUJNUnhDWWYKSHR3a0xiVmo2MDhQVkM0Q0R6ekN1Um5neUt2cUkwWE1GdUsrVDBOUEtqckpVNzZsNWFmUjAzK1VSTmVMQTI1ZApnbkgrTlZHdG02NkYyYStuU0pNODdOK0REZ3lOUVI3UEZPTVdvRWdOODJuM3pnT0MxenkxY3NJS05iM05xeFhQCnM0RXBlS0JCTjRIWWZPMVgzeDBQY0JrQ2dZRUEwZXVkNG9JczcvTzhHTE9Ha0RWZmhlNTNHOWFvZVlwRlQzbTQKUStRdWk3ZVUvMFZhbVFMekk0eE5ibHlwZk52aXdDR0NIaG5mY0xJY1M4Kzg2NkZxSGtpSDlIZ3NaWWZkbDBydQpZVDc5bi9xRzEwczhaUlVUbmg0dUNCNU1rVGo4NmlZMlppVFBUY3hqWFl3NHlIYm5BODUwbGsvQ29NUTJKMnhaCmVFNXFySk1DZ1lFQXJnaHE1ODhGOG54SW0rUHRJN3FNQkordkozdmsrWU1pbWFSWm90a0k0MHFzOU1VUUJjOWEKTXRzYVZnZmpmVGcrWHBLb0FuQlEzZkZ0R2lOaUhhT2pqMlZVU0twdEVDNUpibjIyNzA3MGhSTDh4Q0ZBelpweQpCdXhmTlRDUDVHSXJ1WlFmOWYzbU1iMTRtbisvcFVZYkVQbEFIaVhJUitOamZucHpjT1JoYmxZPQotLS0tLUVORCBSU0EgUFJJVkFURSBLRVktLS0tLQo=
+
