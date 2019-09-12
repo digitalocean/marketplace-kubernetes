@@ -10,4 +10,3 @@ spec:
         command:
           - /metrics-server
           - --kubelet-preferred-address-types=InternalIP
-          - --kubelet-insecure-tls
