@@ -9,8 +9,12 @@ metadata:
     heritage: {{ .Release.Service }}
     component: localpv-provisioner
     openebs.io/component-name: openebs-localpv-provisioner
+    openebs.io/version: {{ .Values.release.version }}
 spec:
   replicas: {{ .Values.localprovisioner.replicas }}
+  strategy:
+    type: "Recreate"
+    rollingUpdate: null
   selector:
     matchLabels:
       app: {{ template "openebs.name" . }}
@@ -58,7 +62,7 @@ spec:
         - name: OPENEBS_IO_HELPER_IMAGE
           value: "{{ .Values.localprovisioner.helperImage }}:{{ .Values.localprovisioner.helperImageTag }}"
         - name: OPENEBS_IO_INSTALLER_TYPE
-          value: "openebs-do-marketplace"
+          value: "charts-helm"
         livenessProbe:
           exec:
             command:
