@@ -1,0 +1,121 @@
+---
+# Source: op-scim/templates/op-scim.yaml
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: op-scim-bridge
+  labels: &ScimDeploymentLabels
+    app.kubernetes.io/application: op-scim-bridge
+    app.kubernetes.io/component: op-scim-bridge
+spec:
+  selector:
+    matchLabels: *ScimDeploymentLabels
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels: *ScimDeploymentLabels
+    spec:
+      containers:
+      - name: op-scim-bridge
+        image: 1password/scim:v1.0
+        imagePullPolicy: Always
+        command: ["/op-scim/op-scim"]
+        args: ["--redis-host=op-scim-bridge-redis-svc", "--session=/secret/scimsession", "--port=8080"]
+        env:
+        # - name: OP_DOMAIN
+        #   value: 
+        ports:
+        - containerPort: 8080
+        - containerPort: 8443
+        volumeMounts:
+        - name: op-scim-bridge-scimsession
+          mountPath: "/secret"
+          readOnly: false
+      volumes:
+      - name: op-scim-bridge-scimsession
+        persistentVolumeClaim:
+          claimName: op-scim-bridge-pvc
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: op-scim-bridge-bridge-svc
+  labels:
+    app.kubernetes.io/application: op-scim-bridge
+    app.kubernetes.io/component: op-scim-bridge
+spec:
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 8080
+  - name: scim-bridge-https-port
+    port: 443
+    protocol: TCP
+    targetPort: 8443
+  selector:
+    app.kubernetes.io/application: op-scim-bridge
+    app.kubernetes.io/component: op-scim-bridge
+  type: LoadBalancer
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: op-scim-bridge-pvc
+  labels:
+    app.kubernetes.io/application: op-scim-bridge
+    app.kubernetes.io/component: op-scim-bridge
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: do-block-storage
+---
+# Source: op-scim/templates/redis.yaml
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: redis
+  labels: &RedisDeploymentLabels
+    app.kubernetes.io/application: op-scim-bridge
+    app.kubernetes.io/component: op-scim-redis
+spec:
+  selector:
+    matchLabels: *RedisDeploymentLabels
+  replicas: 1
+  template:
+    metadata:
+      labels: *RedisDeploymentLabels
+    spec:
+      containers:
+      - name: redis
+        image: redis:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 6379
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: op-scim-bridge-redis-svc
+  labels:
+    app.kubernetes.io/application: op-scim-bridge
+    app.kubernetes.io/component: op-scim-redis
+spec:
+  ports:
+  - name: redis
+    port: 6379
+  selector:
+    app.kubernetes.io/application: op-scim-bridge
+    app.kubernetes.io/component: op-scim-redis
+  clusterIP: None
