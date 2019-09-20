@@ -76,8 +76,8 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 10Mi
-  storageClassName: standard
+      storage: 1Gi
+  storageClassName: do-block-storage
 ---
 # Source: op-scim/templates/redis.yaml
 apiVersion: apps/v1beta2
