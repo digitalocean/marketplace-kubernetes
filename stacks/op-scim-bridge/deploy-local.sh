@@ -13,7 +13,7 @@ metadata:
 EOF
 
 # set kubectl namespace
-# kubectl config set-context --current --namespace=op-scim-bridge
+kubectl config set-context --current --namespace=op-scim-bridge
 
 # deploy op-scim-bridge
 kubectl apply -f "$ROOT_DIR"/stacks/op-scim-bridge/yaml/op-scim-bridge.yaml
