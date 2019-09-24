@@ -16,7 +16,13 @@ mkdir "$NEW_DIR_PATH"
 # copy files
 cp -r "$ROOT_DIR"/utils/stack-templates/* "$NEW_DIR_PATH"
 
+UNAME=$(uname)
+
 for file in "$NEW_DIR_PATH"/*
 do
-  sed -i '' "s/{{STACK_NAME}}/$STACK_NAME/g" $file
+  if [ "$UNAME" = "Darwin" ] ; then
+    sed -i '' "s/{{STACK_NAME}}/$STACK_NAME/g" "$file"
+  else
+    sed -i "s/{{STACK_NAME}}/$STACK_NAME/g" "$file"
+  fi
 done
