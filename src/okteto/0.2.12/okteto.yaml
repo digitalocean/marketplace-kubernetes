@@ -8,7 +8,7 @@ metadata:
     seccomp.security.alpha.kubernetes.io/allowedProfileNames: '*'
   labels:
     app.kubernetes.io/name: "do-okteto-enterprise-permissive"
-    helm.sh/chart: okteto-enterprise-0.2.11
+    helm.sh/chart: okteto-enterprise-0.2.12
     app.kubernetes.io/instance: do
     app.kubernetes.io/managed-by: Tiller
 spec:
@@ -46,7 +46,7 @@ metadata:
     seccomp.security.alpha.kubernetes.io/defaultProfileName: docker/default
   labels:
     app.kubernetes.io/name: "do-okteto-enterprise-restrictive"
-    helm.sh/chart: okteto-enterprise-0.2.11
+    helm.sh/chart: okteto-enterprise-0.2.12
     app.kubernetes.io/instance: do
     app.kubernetes.io/managed-by: Tiller
 spec:
@@ -128,7 +128,7 @@ metadata:
   name: do-okteto-enterprise
   labels:
     app.kubernetes.io/name: "do-okteto-enterprise-secret"
-    helm.sh/chart: okteto-enterprise-0.2.11
+    helm.sh/chart: okteto-enterprise-0.2.12
     app.kubernetes.io/instance: do
     app.kubernetes.io/managed-by: Tiller
     app.kubernetes.io/component: "api"
@@ -212,10 +212,10 @@ metadata:
   name: do-okteto-enterprise
   labels:
     app: do-okteto-enterprise
-    chart: "okteto-enterprise-0.2.11"
+    chart: "okteto-enterprise-0.2.12"
     release: "do"
     heritage: "Tiller"
-    dev.okteto.com/token: "WF7ePAXzZnR7lwFGmqsldEIKKx68sC6C"
+    dev.okteto.com/token: "EUw2s5vDslNwffQpyXB5YyVxUqu8NzTH"
   annotations:
     dev.okteto.com/super: "true"
 
@@ -407,7 +407,7 @@ metadata:
   name: do-okteto-enterprise-psp
   labels:
     app.kubernetes.io/name: do-okteto-enterprise-psp
-    helm.sh/chart: okteto-enterprise-0.2.11
+    helm.sh/chart: okteto-enterprise-0.2.12
     app.kubernetes.io/instance: do
     app.kubernetes.io/managed-by: Tiller
 rules:
@@ -577,7 +577,7 @@ metadata:
   name: do-okteto-enterprise-role-binding
   labels:
     app: do-okteto-enterprise
-    chart: "okteto-enterprise-0.2.11"
+    chart: "okteto-enterprise-0.2.12"
     release: "do"
     heritage: "Tiller"
 roleRef:
@@ -680,7 +680,7 @@ metadata:
   name: "do-okteto-enterprise-internal"
   labels:
     app.kubernetes.io/name: "do-okteto-enterprise-internal"
-    helm.sh/chart: okteto-enterprise-0.2.11
+    helm.sh/chart: okteto-enterprise-0.2.12
     app.kubernetes.io/instance: do
     app.kubernetes.io/managed-by: Tiller
 rules:
@@ -701,7 +701,7 @@ metadata:
   name: "do-okteto-enterprise-internal"
   labels:
     app.kubernetes.io/name: "do-okteto-enterprise-internal"
-    helm.sh/chart: okteto-enterprise-0.2.11
+    helm.sh/chart: okteto-enterprise-0.2.12
     app.kubernetes.io/instance: do
     app.kubernetes.io/managed-by: Tiller
 subjects:
@@ -833,7 +833,7 @@ metadata:
     app.kubernetes.io/component: "api"
     app.kubernetes.io/part-of: "okteto"
     app.kubernetes.io/name: "do-okteto-enterprise-api"
-    helm.sh/chart: okteto-enterprise-0.2.11
+    helm.sh/chart: okteto-enterprise-0.2.12
     app.kubernetes.io/instance: do
     app.kubernetes.io/managed-by: Tiller
 spec:
@@ -855,7 +855,7 @@ metadata:
     app.kubernetes.io/component: "frontend"
     app.kubernetes.io/part-of: "okteto"
     app.kubernetes.io/name: "do-okteto-enterprise-frontend"
-    helm.sh/chart: okteto-enterprise-0.2.11
+    helm.sh/chart: okteto-enterprise-0.2.12
     app.kubernetes.io/instance: do
     app.kubernetes.io/managed-by: Tiller
 spec:
@@ -877,7 +877,7 @@ metadata:
     app.kubernetes.io/component: "webhook"
     app.kubernetes.io/part-of: "okteto"
     app.kubernetes.io/name: "do-okteto-enterprise-mutation-webhook"
-    helm.sh/chart: okteto-enterprise-0.2.11
+    helm.sh/chart: okteto-enterprise-0.2.12
     app.kubernetes.io/instance: do
     app.kubernetes.io/managed-by: Tiller
 spec:
@@ -898,7 +898,7 @@ metadata:
   name: "do-okteto-enterprise-inotify"
   labels:
     app.kubernetes.io/name: "do-okteto-enterprise-inotify"
-    helm.sh/chart: okteto-enterprise-0.2.11
+    helm.sh/chart: okteto-enterprise-0.2.12
     app.kubernetes.io/instance: do
     app.kubernetes.io/managed-by: Tiller
 spec:
@@ -912,7 +912,7 @@ spec:
         app.kubernetes.io/name: "do-okteto-enterprise-inotify"
         app.kubernetes.io/instance: do
       annotations:
-        app.kubernetes.io/version: "do-okteto-enterprise-0.2.11"
+        app.kubernetes.io/version: "do-okteto-enterprise-0.2.12"
     spec:
       terminationGracePeriodSeconds: 0
       serviceAccountName: do-okteto-enterprise
@@ -1237,7 +1237,7 @@ metadata:
     app.kubernetes.io/component: "api"
     app.kubernetes.io/part-of: "okteto"
     app.kubernetes.io/name: "do-okteto-enterprise-api"
-    helm.sh/chart: okteto-enterprise-0.2.11
+    helm.sh/chart: okteto-enterprise-0.2.12
     app.kubernetes.io/instance: do
     app.kubernetes.io/managed-by: Tiller
 spec:
@@ -1252,7 +1252,7 @@ spec:
         app.kubernetes.io/name: "do-okteto-enterprise-api"
         app.kubernetes.io/instance: do
       annotations:
-        checksum/secrets: b1a2935a14a6f2d30cc7eb2724c57a89bb55ef1c9e52c4ec3869cadf64206da3
+        checksum/secrets: d3d88fdbbab64c918f028e16558e323c5adc0cb42fe73ef24e97ada92dbd63a1
     spec:
       serviceAccountName: do-okteto-enterprise
       containers:
@@ -1308,7 +1308,7 @@ metadata:
     app.kubernetes.io/component: "frontend"
     app.kubernetes.io/part-of: "okteto"
     app.kubernetes.io/name: "do-okteto-enterprise-frontend"
-    helm.sh/chart: okteto-enterprise-0.2.11
+    helm.sh/chart: okteto-enterprise-0.2.12
     app.kubernetes.io/instance: do
     app.kubernetes.io/managed-by: Tiller
 spec:
@@ -1360,7 +1360,7 @@ metadata:
     app.kubernetes.io/component: "webhook"
     app.kubernetes.io/part-of: "okteto"
     app.kubernetes.io/name: "do-okteto-enterprise-mutation-webhook"
-    helm.sh/chart: okteto-enterprise-0.2.11
+    helm.sh/chart: okteto-enterprise-0.2.12
     app.kubernetes.io/instance: do
     app.kubernetes.io/managed-by: Tiller
 spec:
@@ -1375,7 +1375,7 @@ spec:
         app.kubernetes.io/name: "do-okteto-enterprise-mutation-webhook"
         app.kubernetes.io/instance: do
       annotations:
-        checksum/secrets: 0afed2714e466607de55de95bf9a4e8b9b70c5bde5ca1f96aab83fc60039d60a
+        checksum/secrets: c6182458bae8d3a24e660e26630cc31fab0a642521f11c6a5852ab3f72d15674
     spec:
       serviceAccountName: do-okteto-enterprise
       volumes:
@@ -1410,7 +1410,7 @@ metadata:
   name: do-okteto-enterprise
   labels:
     app.kubernetes.io/name: okteto-enterprise
-    helm.sh/chart: okteto-enterprise-0.2.11
+    helm.sh/chart: okteto-enterprise-0.2.12
     app.kubernetes.io/instance: do
     app.kubernetes.io/managed-by: Tiller
     app.kubernetes.io/part-of: "okteto"
@@ -1596,7 +1596,7 @@ metadata:
   name: "do-okteto-enterprise-mutation-webhook"
   labels:
     app.kubernetes.io/name: "do-okteto-enterprise-mutation-webhook"
-    helm.sh/chart: okteto-enterprise-0.2.11
+    helm.sh/chart: okteto-enterprise-0.2.12
     app.kubernetes.io/instance: do
     app.kubernetes.io/managed-by: Tiller
 webhooks:
@@ -1607,7 +1607,7 @@ webhooks:
         name: "do-okteto-enterprise-mutation-webhook"
         path: "/mutate/ingress"
         namespace: "okteto"
-      caBundle: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUM5VENDQWQyZ0F3SUJBZ0lSQUpNNG9QM0ZOdnJVTXBaNGcvTk1mS0F3RFFZSktvWklodmNOQVFFTEJRQXcKRkRFU01CQUdBMVVFQXhNSmIydDBaWFJ2TFdOaE1CNFhEVEU1TURreU5ERTJOVE15TTFvWERUSTVNRGt5TVRFMgpOVE15TTFvd0ZERVNNQkFHQTFVRUF4TUpiMnQwWlhSdkxXTmhNSUlCSWpBTkJna3Foa2lHOXcwQkFRRUZBQU9DCkFROEFNSUlCQ2dLQ0FRRUF0dnJwbm5uQzZkZi9ZVzZwR251M2VTaDY5Tis1NE05ZUlSSEkydHgyR1hHSkNmVnoKaEEwNDdiOXFZbWlrTkhCTWtTUmVhMUtBc0RpQVloYyt3SWJUc05WdEdlODAvVFpnQnRleFYyRGhiVFR5emE4VApiUUpnanpsWHkzWmo5UVg4TEduVmwwbDgvQW5ucFBTZFlibnBwelArZUtGZWphMGJzaWhPZG5neHI2S0QvTTlkCjM5UEt2YndRbnFSRmY0Sy9EaDB5NHNvU3dmbEsxVjVlNTNNdkoyYWYxREFwejJadXNPUjBDOUFnRkxFeHAyTHAKMzlLQUtnQjJFUHN4TUFyUGlhU05IbkhQTmZGYUFwellNM28rS1BEakcyT2dlU3NBWXEvNnZDeFBnVTFqK1hIVgpDVVkySlNYY0lOZ0VhMGVTUFpldGdlaGtGenFvN0VFWk1UeHdJd0lEQVFBQm8wSXdRREFPQmdOVkhROEJBZjhFCkJBTUNBcVF3SFFZRFZSMGxCQll3RkFZSUt3WUJCUVVIQXdFR0NDc0dBUVVGQndNQ01BOEdBMVVkRXdFQi93UUYKTUFNQkFmOHdEUVlKS29aSWh2Y05BUUVMQlFBRGdnRUJBRDhXZG9KTGRwbHIwbVNSRWxIQ2dYL2xZR2pQdENSbgpSbVVXalF6SzJIazUvL2F1c0ZXVUFoWWJzQllDSEhwejhTK205SEJPd2gxOVFIVnNZVXppWElBbFM4OVd5R3VMCkRXdWxJTytPbWxrR3FkM0EyRFJIWXpJZjBoYWJXaEhBdzBZSTRoMmRwbDE0UFhPclpxRHQ5UlVDY3d4UVJHcGkKMVI2WUp3Z2pZVWhXQXY4RjhwS3ZvSEV1MFM0OEdkU1d5QmhrSFVmcGZUdEZrUmlDNWs0VCtZbTFFR1NiOWkvegpadCtocUtlZDZDK3IxbWFqbFpnbnRPR2R6RWI4TDR3SFg2OUdFVlMrOGJaK3ltUSt2Y1ord3ZxdURHYWIxZXdZCmJ3dlhVVVVsWW5Dd205ZEhxUTB3MUZLeEczZ2FBQTZ2d1VFNlI2Q3BnSGxwZnlMMW5MRU5JeW89Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K
+      caBundle: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUM5VENDQWQyZ0F3SUJBZ0lSQUtLNC91b3MyMXYzNHhnYml0SjB6dXd3RFFZSktvWklodmNOQVFFTEJRQXcKRkRFU01CQUdBMVVFQXhNSmIydDBaWFJ2TFdOaE1CNFhEVEU1TURreU5USXdNVFUwT1ZvWERUSTVNRGt5TWpJdwpNVFUwT1Zvd0ZERVNNQkFHQTFVRUF4TUpiMnQwWlhSdkxXTmhNSUlCSWpBTkJna3Foa2lHOXcwQkFRRUZBQU9DCkFROEFNSUlCQ2dLQ0FRRUF1UzVVN1lheDJFeEdPbHB0SWhHbmNhN2ZRNlZReU1GS0RwSkUyMTlLNER4Z3pibXcKK29XMjVORS8wblQwUnpxMWlUa0l5Qk8xU216cTVBMHFWK1BoNjJ1NzlWTVhNME83RGdRYWFEK096eHZabTA2dQp1b2hnNVN6QWNSRnBDclJHS2RteGl5TDQxUGxjS0I0dUE0WHVIckZ1N05PS2NWMXhjZThXamYzVTFHYXBXZmIwCkpRNU1hOVRMMFkyM0d0WmlLSC9Zc2R2cVRmMGptMjRoZm1JbmZuakNjSGhHY29jajBjZXN5cXplNGMvUWRtZGoKejlhdEpnYVZ0ZFFPeFN0SWlVQlRUT2xFUGlQSU50TnZtNGdoQ3FheDNDb3VFYURCU2x1d2xRM3E0QTVvWk1UUwpHdzBXM2dNUmdPeG1kbmxsRjV2M2ptcTIvdHhLMkhSV3JKMm83UUlEQVFBQm8wSXdRREFPQmdOVkhROEJBZjhFCkJBTUNBcVF3SFFZRFZSMGxCQll3RkFZSUt3WUJCUVVIQXdFR0NDc0dBUVVGQndNQ01BOEdBMVVkRXdFQi93UUYKTUFNQkFmOHdEUVlKS29aSWh2Y05BUUVMQlFBRGdnRUJBRGZUS0JMdjhBSTdnUFZacEUwZ0g3U2FTWDZDM0ZXUApJdnBwRDdlYXNneWVFeU9wV1dQWkpPRk91Rk85VmRXeXhXMmdPa2wwbjZ4d3ZzaGpYdVBXcHBpSkN3UjNBdGVCCkdPNVZOZVlzYVFsM2xncHRnbHUxMDN1U3h6UlZqS2lqWC9jZ1FUcGMrZGQ2eFlob2pYcFlpcFRhWjFSSGxUZVUKZjFQeUM2d0xqaW41TUZhUVEwMmxVN0QremNPMm5pNnYrcERycm9hVjBuODJSMDVpZ1NzQmRRWFM3NXE4alNqcgpyak55MmtvUnc4WmQ1ZGRkQTlxeHR4eVpSQTFDaDlwOVhZY3FudUxrSDVCR28yVHEwd0pkNkk1UGpEMUdzYjZVCjdHdnRlQVlUZjQ0WVNqVXdkcUhmUGJWdmlwUGQwaWFoSllaNjk4QVk5WWtDMWNoTDRaeGYrNnc9Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K
     rules:
       - operations: [ "CREATE", "UPDATE" ]
         apiGroups: ["extensions"]
@@ -1622,7 +1622,7 @@ webhooks:
         name: "do-okteto-enterprise-mutation-webhook"
         path: "/mutate/service"
         namespace: "okteto"
-      caBundle: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUM5VENDQWQyZ0F3SUJBZ0lSQUpNNG9QM0ZOdnJVTXBaNGcvTk1mS0F3RFFZSktvWklodmNOQVFFTEJRQXcKRkRFU01CQUdBMVVFQXhNSmIydDBaWFJ2TFdOaE1CNFhEVEU1TURreU5ERTJOVE15TTFvWERUSTVNRGt5TVRFMgpOVE15TTFvd0ZERVNNQkFHQTFVRUF4TUpiMnQwWlhSdkxXTmhNSUlCSWpBTkJna3Foa2lHOXcwQkFRRUZBQU9DCkFROEFNSUlCQ2dLQ0FRRUF0dnJwbm5uQzZkZi9ZVzZwR251M2VTaDY5Tis1NE05ZUlSSEkydHgyR1hHSkNmVnoKaEEwNDdiOXFZbWlrTkhCTWtTUmVhMUtBc0RpQVloYyt3SWJUc05WdEdlODAvVFpnQnRleFYyRGhiVFR5emE4VApiUUpnanpsWHkzWmo5UVg4TEduVmwwbDgvQW5ucFBTZFlibnBwelArZUtGZWphMGJzaWhPZG5neHI2S0QvTTlkCjM5UEt2YndRbnFSRmY0Sy9EaDB5NHNvU3dmbEsxVjVlNTNNdkoyYWYxREFwejJadXNPUjBDOUFnRkxFeHAyTHAKMzlLQUtnQjJFUHN4TUFyUGlhU05IbkhQTmZGYUFwellNM28rS1BEakcyT2dlU3NBWXEvNnZDeFBnVTFqK1hIVgpDVVkySlNYY0lOZ0VhMGVTUFpldGdlaGtGenFvN0VFWk1UeHdJd0lEQVFBQm8wSXdRREFPQmdOVkhROEJBZjhFCkJBTUNBcVF3SFFZRFZSMGxCQll3RkFZSUt3WUJCUVVIQXdFR0NDc0dBUVVGQndNQ01BOEdBMVVkRXdFQi93UUYKTUFNQkFmOHdEUVlKS29aSWh2Y05BUUVMQlFBRGdnRUJBRDhXZG9KTGRwbHIwbVNSRWxIQ2dYL2xZR2pQdENSbgpSbVVXalF6SzJIazUvL2F1c0ZXVUFoWWJzQllDSEhwejhTK205SEJPd2gxOVFIVnNZVXppWElBbFM4OVd5R3VMCkRXdWxJTytPbWxrR3FkM0EyRFJIWXpJZjBoYWJXaEhBdzBZSTRoMmRwbDE0UFhPclpxRHQ5UlVDY3d4UVJHcGkKMVI2WUp3Z2pZVWhXQXY4RjhwS3ZvSEV1MFM0OEdkU1d5QmhrSFVmcGZUdEZrUmlDNWs0VCtZbTFFR1NiOWkvegpadCtocUtlZDZDK3IxbWFqbFpnbnRPR2R6RWI4TDR3SFg2OUdFVlMrOGJaK3ltUSt2Y1ord3ZxdURHYWIxZXdZCmJ3dlhVVVVsWW5Dd205ZEhxUTB3MUZLeEczZ2FBQTZ2d1VFNlI2Q3BnSGxwZnlMMW5MRU5JeW89Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K
+      caBundle: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUM5VENDQWQyZ0F3SUJBZ0lSQUtLNC91b3MyMXYzNHhnYml0SjB6dXd3RFFZSktvWklodmNOQVFFTEJRQXcKRkRFU01CQUdBMVVFQXhNSmIydDBaWFJ2TFdOaE1CNFhEVEU1TURreU5USXdNVFUwT1ZvWERUSTVNRGt5TWpJdwpNVFUwT1Zvd0ZERVNNQkFHQTFVRUF4TUpiMnQwWlhSdkxXTmhNSUlCSWpBTkJna3Foa2lHOXcwQkFRRUZBQU9DCkFROEFNSUlCQ2dLQ0FRRUF1UzVVN1lheDJFeEdPbHB0SWhHbmNhN2ZRNlZReU1GS0RwSkUyMTlLNER4Z3pibXcKK29XMjVORS8wblQwUnpxMWlUa0l5Qk8xU216cTVBMHFWK1BoNjJ1NzlWTVhNME83RGdRYWFEK096eHZabTA2dQp1b2hnNVN6QWNSRnBDclJHS2RteGl5TDQxUGxjS0I0dUE0WHVIckZ1N05PS2NWMXhjZThXamYzVTFHYXBXZmIwCkpRNU1hOVRMMFkyM0d0WmlLSC9Zc2R2cVRmMGptMjRoZm1JbmZuakNjSGhHY29jajBjZXN5cXplNGMvUWRtZGoKejlhdEpnYVZ0ZFFPeFN0SWlVQlRUT2xFUGlQSU50TnZtNGdoQ3FheDNDb3VFYURCU2x1d2xRM3E0QTVvWk1UUwpHdzBXM2dNUmdPeG1kbmxsRjV2M2ptcTIvdHhLMkhSV3JKMm83UUlEQVFBQm8wSXdRREFPQmdOVkhROEJBZjhFCkJBTUNBcVF3SFFZRFZSMGxCQll3RkFZSUt3WUJCUVVIQXdFR0NDc0dBUVVGQndNQ01BOEdBMVVkRXdFQi93UUYKTUFNQkFmOHdEUVlKS29aSWh2Y05BUUVMQlFBRGdnRUJBRGZUS0JMdjhBSTdnUFZacEUwZ0g3U2FTWDZDM0ZXUApJdnBwRDdlYXNneWVFeU9wV1dQWkpPRk91Rk85VmRXeXhXMmdPa2wwbjZ4d3ZzaGpYdVBXcHBpSkN3UjNBdGVCCkdPNVZOZVlzYVFsM2xncHRnbHUxMDN1U3h6UlZqS2lqWC9jZ1FUcGMrZGQ2eFlob2pYcFlpcFRhWjFSSGxUZVUKZjFQeUM2d0xqaW41TUZhUVEwMmxVN0QremNPMm5pNnYrcERycm9hVjBuODJSMDVpZ1NzQmRRWFM3NXE4alNqcgpyak55MmtvUnc4WmQ1ZGRkQTlxeHR4eVpSQTFDaDlwOVhZY3FudUxrSDVCR28yVHEwd0pkNkk1UGpEMUdzYjZVCjdHdnRlQVlUZjQ0WVNqVXdkcUhmUGJWdmlwUGQwaWFoSllaNjk4QVk5WWtDMWNoTDRaeGYrNnc9Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K
     rules:
       - operations: [ "CREATE", "UPDATE", "DELETE"]
         apiGroups: [""]
@@ -1637,7 +1637,7 @@ webhooks:
         name: "do-okteto-enterprise-mutation-webhook"
         path: "/mutate/pod"
         namespace: "okteto"
-      caBundle: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUM5VENDQWQyZ0F3SUJBZ0lSQUpNNG9QM0ZOdnJVTXBaNGcvTk1mS0F3RFFZSktvWklodmNOQVFFTEJRQXcKRkRFU01CQUdBMVVFQXhNSmIydDBaWFJ2TFdOaE1CNFhEVEU1TURreU5ERTJOVE15TTFvWERUSTVNRGt5TVRFMgpOVE15TTFvd0ZERVNNQkFHQTFVRUF4TUpiMnQwWlhSdkxXTmhNSUlCSWpBTkJna3Foa2lHOXcwQkFRRUZBQU9DCkFROEFNSUlCQ2dLQ0FRRUF0dnJwbm5uQzZkZi9ZVzZwR251M2VTaDY5Tis1NE05ZUlSSEkydHgyR1hHSkNmVnoKaEEwNDdiOXFZbWlrTkhCTWtTUmVhMUtBc0RpQVloYyt3SWJUc05WdEdlODAvVFpnQnRleFYyRGhiVFR5emE4VApiUUpnanpsWHkzWmo5UVg4TEduVmwwbDgvQW5ucFBTZFlibnBwelArZUtGZWphMGJzaWhPZG5neHI2S0QvTTlkCjM5UEt2YndRbnFSRmY0Sy9EaDB5NHNvU3dmbEsxVjVlNTNNdkoyYWYxREFwejJadXNPUjBDOUFnRkxFeHAyTHAKMzlLQUtnQjJFUHN4TUFyUGlhU05IbkhQTmZGYUFwellNM28rS1BEakcyT2dlU3NBWXEvNnZDeFBnVTFqK1hIVgpDVVkySlNYY0lOZ0VhMGVTUFpldGdlaGtGenFvN0VFWk1UeHdJd0lEQVFBQm8wSXdRREFPQmdOVkhROEJBZjhFCkJBTUNBcVF3SFFZRFZSMGxCQll3RkFZSUt3WUJCUVVIQXdFR0NDc0dBUVVGQndNQ01BOEdBMVVkRXdFQi93UUYKTUFNQkFmOHdEUVlKS29aSWh2Y05BUUVMQlFBRGdnRUJBRDhXZG9KTGRwbHIwbVNSRWxIQ2dYL2xZR2pQdENSbgpSbVVXalF6SzJIazUvL2F1c0ZXVUFoWWJzQllDSEhwejhTK205SEJPd2gxOVFIVnNZVXppWElBbFM4OVd5R3VMCkRXdWxJTytPbWxrR3FkM0EyRFJIWXpJZjBoYWJXaEhBdzBZSTRoMmRwbDE0UFhPclpxRHQ5UlVDY3d4UVJHcGkKMVI2WUp3Z2pZVWhXQXY4RjhwS3ZvSEV1MFM0OEdkU1d5QmhrSFVmcGZUdEZrUmlDNWs0VCtZbTFFR1NiOWkvegpadCtocUtlZDZDK3IxbWFqbFpnbnRPR2R6RWI4TDR3SFg2OUdFVlMrOGJaK3ltUSt2Y1ord3ZxdURHYWIxZXdZCmJ3dlhVVVVsWW5Dd205ZEhxUTB3MUZLeEczZ2FBQTZ2d1VFNlI2Q3BnSGxwZnlMMW5MRU5JeW89Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K
+      caBundle: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUM5VENDQWQyZ0F3SUJBZ0lSQUtLNC91b3MyMXYzNHhnYml0SjB6dXd3RFFZSktvWklodmNOQVFFTEJRQXcKRkRFU01CQUdBMVVFQXhNSmIydDBaWFJ2TFdOaE1CNFhEVEU1TURreU5USXdNVFUwT1ZvWERUSTVNRGt5TWpJdwpNVFUwT1Zvd0ZERVNNQkFHQTFVRUF4TUpiMnQwWlhSdkxXTmhNSUlCSWpBTkJna3Foa2lHOXcwQkFRRUZBQU9DCkFROEFNSUlCQ2dLQ0FRRUF1UzVVN1lheDJFeEdPbHB0SWhHbmNhN2ZRNlZReU1GS0RwSkUyMTlLNER4Z3pibXcKK29XMjVORS8wblQwUnpxMWlUa0l5Qk8xU216cTVBMHFWK1BoNjJ1NzlWTVhNME83RGdRYWFEK096eHZabTA2dQp1b2hnNVN6QWNSRnBDclJHS2RteGl5TDQxUGxjS0I0dUE0WHVIckZ1N05PS2NWMXhjZThXamYzVTFHYXBXZmIwCkpRNU1hOVRMMFkyM0d0WmlLSC9Zc2R2cVRmMGptMjRoZm1JbmZuakNjSGhHY29jajBjZXN5cXplNGMvUWRtZGoKejlhdEpnYVZ0ZFFPeFN0SWlVQlRUT2xFUGlQSU50TnZtNGdoQ3FheDNDb3VFYURCU2x1d2xRM3E0QTVvWk1UUwpHdzBXM2dNUmdPeG1kbmxsRjV2M2ptcTIvdHhLMkhSV3JKMm83UUlEQVFBQm8wSXdRREFPQmdOVkhROEJBZjhFCkJBTUNBcVF3SFFZRFZSMGxCQll3RkFZSUt3WUJCUVVIQXdFR0NDc0dBUVVGQndNQ01BOEdBMVVkRXdFQi93UUYKTUFNQkFmOHdEUVlKS29aSWh2Y05BUUVMQlFBRGdnRUJBRGZUS0JMdjhBSTdnUFZacEUwZ0g3U2FTWDZDM0ZXUApJdnBwRDdlYXNneWVFeU9wV1dQWkpPRk91Rk85VmRXeXhXMmdPa2wwbjZ4d3ZzaGpYdVBXcHBpSkN3UjNBdGVCCkdPNVZOZVlzYVFsM2xncHRnbHUxMDN1U3h6UlZqS2lqWC9jZ1FUcGMrZGQ2eFlob2pYcFlpcFRhWjFSSGxUZVUKZjFQeUM2d0xqaW41TUZhUVEwMmxVN0QremNPMm5pNnYrcERycm9hVjBuODJSMDVpZ1NzQmRRWFM3NXE4alNqcgpyak55MmtvUnc4WmQ1ZGRkQTlxeHR4eVpSQTFDaDlwOVhZY3FudUxrSDVCR28yVHEwd0pkNkk1UGpEMUdzYjZVCjdHdnRlQVlUZjQ0WVNqVXdkcUhmUGJWdmlwUGQwaWFoSllaNjk4QVk5WWtDMWNoTDRaeGYrNnc9Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K
     rules:
       - operations: [ "CREATE"]
         apiGroups: [""]
@@ -1653,13 +1653,13 @@ metadata:
   name: "do-okteto-enterprise-mutation-webhook"
   labels:
     app.kubernetes.io/name: "do-okteto-enterprise-mutation-webhook"
-    helm.sh/chart: okteto-enterprise-0.2.11
+    helm.sh/chart: okteto-enterprise-0.2.12
     app.kubernetes.io/instance: do
     app.kubernetes.io/managed-by: Tiller
 type: Opaque
 data:
-  tls.crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURlakNDQW1LZ0F3SUJBZ0lRRmtTOWF0czEzanpFZ0JBdUZ3K3dxREFOQmdrcWhraUc5dzBCQVFzRkFEQVUKTVJJd0VBWURWUVFERXdsdmEzUmxkRzh0WTJFd0hoY05NVGt3T1RJME1UWTFNekl6V2hjTk1qa3dPVEl4TVRZMQpNekl6V2pBd01TNHdMQVlEVlFRREV5VmtieTF2YTNSbGRHOHRaVzUwWlhKd2NtbHpaUzF0ZFhSaGRHbHZiaTEzClpXSm9iMjlyTUlJQklqQU5CZ2txaGtpRzl3MEJBUUVGQUFPQ0FROEFNSUlCQ2dLQ0FRRUF1QkpDQ21VMFA2c2cKbW1xb0hCZUJQUTFPMVRScm56Q05jaEtFVHJhVUQrWEdEVHBCVUcrSEppdDZFblFQbllBTWZGcmswYTN1NktVTwpuWDZqS3huL3J0dlhUVUNsak9YT29LWkFsRGMyMWxVdmlJek4vUXFtSlZudnRUUndqakZYZ3pLcVJxSE9RVWl2CmpmUXBKN2dKckI0NlpnMUEwNXFmaU1XTU95UVFnZHBJNERJelRxdmZpMUtua1FrR0IyWmlEcDcwU2ZpYncrVmkKVUZzR0VYY1BmK1Q4YlU4Q3lzNGdycUE5QVp2TDRYNEFEN3RsSU5PcHRNMXNlalBhZUU3RURlQ0RjZnpoV1p4WAo2UFRsMEduaFFvbk14cmp1RWZvYVd6TDFUT1ROY01aQ3YvbGtycnEyY3F0NVBNOERTT21ya2IxLzlBMkduNy9SClIvcURvU2Znb1FJREFRQUJvNEdyTUlHb01BNEdBMVVkRHdFQi93UUVBd0lGb0RBZEJnTlZIU1VFRmpBVUJnZ3IKQmdFRkJRY0RBUVlJS3dZQkJRVUhBd0l3REFZRFZSMFRBUUgvQkFJd0FEQnBCZ05WSFJFRVlqQmdnaXhrYnkxdgphM1JsZEc4dFpXNTBaWEp3Y21selpTMXRkWFJoZEdsdmJpMTNaV0pvYjI5ckxtOXJkR1YwYjRJd1pHOHRiMnQwClpYUnZMV1Z1ZEdWeWNISnBjMlV0YlhWMFlYUnBiMjR0ZDJWaWFHOXZheTV2YTNSbGRHOHVjM1pqTUEwR0NTcUcKU0liM0RRRUJDd1VBQTRJQkFRQko3NkRnN2MreWdLOHJCZVA5UGMyVkVqVllzRFlGU3Q2cEpOVEpUbGp1d0MrSQpObmxaUDdJNG0vRW1laXlYS2VudnNCZTZrSEVxSVBqY1FMalZwNGlMRDFmdytXWmFMRWd6VU5pL1pUK3QwMXJ0CjRVaDVRL0kxSW00REJrOW9WRWJVV0hoZlhRT3NKRFlOLzV1WjRUU2M4NFU4VlFKa242SGhEdFpLS3NiaFQzaFcKdUhXMi8zbmNvV2dqYVZDRjN2MTVsK0tYZ3diZDBNMkRLSy9ONHBLeE1oRXF5K1hxOU8yZVh5VUhycWpsVzh3RQpkRXVienZGcEhiUHJDeTVYNDgvem9VeEtscE1BUmRSNzhHTkhCTXk5L2c1QnloSDlNVGowMG9pWUluSjE5VXVUClI0eUhjcEtyellPV2xJZ0xMSzVsU1JidUxRY0hzMDFZWHVXdTdEdGEKLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=
-  tls.key: LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlFcFFJQkFBS0NBUUVBdUJKQ0NtVTBQNnNnbW1xb0hCZUJQUTFPMVRScm56Q05jaEtFVHJhVUQrWEdEVHBCClVHK0hKaXQ2RW5RUG5ZQU1mRnJrMGEzdTZLVU9uWDZqS3huL3J0dlhUVUNsak9YT29LWkFsRGMyMWxVdmlJek4KL1FxbUpWbnZ0VFJ3ampGWGd6S3FScUhPUVVpdmpmUXBKN2dKckI0NlpnMUEwNXFmaU1XTU95UVFnZHBJNERJegpUcXZmaTFLbmtRa0dCMlppRHA3MFNmaWJ3K1ZpVUZzR0VYY1BmK1Q4YlU4Q3lzNGdycUE5QVp2TDRYNEFEN3RsCklOT3B0TTFzZWpQYWVFN0VEZUNEY2Z6aFdaeFg2UFRsMEduaFFvbk14cmp1RWZvYVd6TDFUT1ROY01aQ3YvbGsKcnJxMmNxdDVQTThEU09tcmtiMS85QTJHbjcvUlIvcURvU2Znb1FJREFRQUJBb0lCQVFDdkFVVGlwMGZleEsreAp3SGZtaFg1dGNrcWlNRDJtVXo0WDEzME5iVThtTWpwemR4Q0VEaFU3ZUJpT2xPUUh4YWVaVDcyL2tSUFZBcUQ3Cm9sdzE3WGtIWWFLNG94OEM3N2JkVEZPWDEwcit5bXp2OFpjaTNzNEtNeERSZ25NRTdlcWJKVDk0K2Z1a1hCdjAKNWM5L0lOMnBVL0FIK00vS24zYlFUYW0rek5JWThiZXowRzlCOG5oQjV6VXAyZGtISEpjK1FMWTExYmVtMmJHQgo2c2trU21iMkRkc2xEUGkrMjZhTEQ0aTlJNGo0MEVtSEpmY0FRSkUvaVJIYjl0NmhrcnVCYkFaQ0VwWVFqaWlyClgwdHdKaExvUEhZYXRGUEJPdEdnaDN3NlIzNW55VnplWWhzc2xKenplekJQaVVGam9Td2VBZG5jYmg1UEF4WDgKYldKRkVoVmxBb0dCQU10bzFaek9xZnRjNDhXanBrSWt6YWNlWHpRTnhwSGJZRVhiMjdMUDRSdUhwcW91VlhZeQpUNUtNRDB5d09lR29RWFFSY2Y2a3JtVnRzdk5vbU0xWkhHYlNIa3lyMEJuL2o2MlBmVHplblVXSHRQNEdtNjVqCjE4alVOUml1bHdmcU40bXM3VmM2bTZlK0RzT09GZXI4dUVQd0V5UHAzQU5VcGFkUlp1SDRsa1JUQW9HQkFPZXAKZWk1NFJyVjBCN2gwalpuNllPUzhScWJCZUJacnJReUlLdjBZYVdQODAwSjhaOHQvbFNKYU5ET0V6dUs5ajBpVwpLRTgxaG45cmhDZmExTjVYREFUS3drVElyWHVXNDFjMDRZRmRiK3hWbEJtL1VjeWxoamJvRTR3NUhwTGovOVU1CklSOS82ZXRYd1F6OGdQNHVGVXVNZlhkRUhKODI3b0t4alNwMWpTaTdBb0dCQUs3YUgwWDhJUUtDaHdtTjg0MUkKTmNCQ3kzUGpvNTRlQmxRRytvUnJUZ1pzUlVobEsvRytyY2c3dmFzZWthTDVEOHJHZEVlQktLam44N3hwWFhDbgorVklwclFJYmIzZnB4NGhhb0QyQzM0NjFhVkEwUGY5YXRGTmVsNFh3RHNRdkFpN0hCLzdEMHFvUEpvSFQwZU45CitxZnI1NGducjRqdGFyaTVzTWJ1K2IwaEFvR0JBSm85R2w0cU1sbkpnUUpzaDRMSFV3KzMwd3Bmc1lhcjlqRnIKejhObkozUXM5ck5EaFEvV1NBTHhMK1JGUGtGMG1CdHA3amllbUlmcG03bTFWeGtadDZUUkluc05hWVBwdUQ5dApzOTZmeVU3K3czWkpEVHRGMFpCby8rclNkT3F6NXJlZUs5Ri9KczFNUmZwUmU4akFBZW1sQmp3TUcwcGVGbnJwCm4rVnZFcWJWQW9HQUMzaU9qb1FEMFZHakhCOG1Da2k4R2NJelpUanlUMUpTcVJ3Y0p1T2N0dnVoVVo0NWFKWGcKaElnYnN5VEFsMUJRWXVPQlpsUHFXTllxcGlLZlM1dno5RjVWVUt3aWlrbS9EYnlRTXA0UXNyQUhYcnhhVlJPYQpGVUFNSkU5c0VPYXl0RVhLbDRtSFNlMnJUa0s1QjV1U2RPLzBYZlVqc2Nta0k1NU5PcWtOd3ZzPQotLS0tLUVORCBSU0EgUFJJVkFURSBLRVktLS0tLQo=
+  tls.crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURlekNDQW1PZ0F3SUJBZ0lSQUlmWktIN1N4QUQvelE0MzFrVERWdVl3RFFZSktvWklodmNOQVFFTEJRQXcKRkRFU01CQUdBMVVFQXhNSmIydDBaWFJ2TFdOaE1CNFhEVEU1TURreU5USXdNVFUwT1ZvWERUSTVNRGt5TWpJdwpNVFUwT1Zvd01ERXVNQ3dHQTFVRUF4TWxaRzh0YjJ0MFpYUnZMV1Z1ZEdWeWNISnBjMlV0YlhWMFlYUnBiMjR0CmQyVmlhRzl2YXpDQ0FTSXdEUVlKS29aSWh2Y05BUUVCQlFBRGdnRVBBRENDQVFvQ2dnRUJBTjZvTktyYXdvQVEKRFErSk5lOEV6MEVXUjNwK083ZXQzTjBleFRkejdSRmFiUHVBYjR5NVNDejZ0UktEVU8vWUZJNUJOdkt1RmFSWgpqQmdZOU1mZ3hDcnVLcG1NMjF4b1RlYUEwRm9PN056WE1SSEc0STBFaEo3RVAvVHMwcmlWNzYwZ2F6ZFBUZlRGCjdCQTVFcUp4dVF1MUZmSFk0Wml3T0NNNmttZFNBOTZVcG10NHorYTk1NEQ2Z2RlenpEbVZNU2xYdnVseUhGMzcKUzk2N1g0ajVjdmdmZ1piSFcrSm1KeVVGMUJnRkMrTWNabFpZUllNSWFmM0NrU0pFdE15cEg3VmxsZFRjUUZyYQpiK0laU0hTSEE3Y0ZKa3FTc1dzNVFiRDdhcTRyMjNIK1BySXhqdGc5SXZzU00vUzVYOTJHV3l5cXU4Z3lRV0FNCklZYWtYaW8wakxjQ0F3RUFBYU9CcXpDQnFEQU9CZ05WSFE4QkFmOEVCQU1DQmFBd0hRWURWUjBsQkJZd0ZBWUkKS3dZQkJRVUhBd0VHQ0NzR0FRVUZCd01DTUF3R0ExVWRFd0VCL3dRQ01BQXdhUVlEVlIwUkJHSXdZSUlzWkc4dApiMnQwWlhSdkxXVnVkR1Z5Y0hKcGMyVXRiWFYwWVhScGIyNHRkMlZpYUc5dmF5NXZhM1JsZEcrQ01HUnZMVzlyCmRHVjBieTFsYm5SbGNuQnlhWE5sTFcxMWRHRjBhVzl1TFhkbFltaHZiMnN1YjJ0MFpYUnZMbk4yWXpBTkJna3EKaGtpRzl3MEJBUXNGQUFPQ0FRRUFaRlppcnZWbTkvV3RUaU5CZlExQVhjY0p3enovMVZFTkt4Unl6N28wRlV5bQpqVDhXYThod3prYkJlOVNKS21DbDQ4MExYSFQ3a3FsT3lkSng2S0p6akp6MXFPQzFLR29HMmE0VjZ6anRjVVMyCmdlS3dPWWxoWjVaVDB5RjFvcE5kMkZnNTV5LzBIajMwNWVDcFJ6cWFrODRjLzZzUFRLdXhMeXl6UlZ2RjN6ZjcKd0F3dGl4ZDkrQUhxSGd5WVIzaUVYMzFuSTd4QXlDMGM4UnJKN25wWGdEd0laYTFQVU51VTAzQU85UjBoQnFWSAplTkU5a3RUbWhFSTlPcE9MZVVGL2o1MDgzS1RTOVRXY05iTlNRUUZNKzFYT2UrSWdyY0c5UWpXL29xYUZ0ZzF4CkRtRVVoc2pVWjVyTUs5VnpDQ1BVS3QzTUhNTlRxZ0RWYkhXMjNnMkt2QT09Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K
+  tls.key: LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlFb3dJQkFBS0NBUUVBM3FnMHF0ckNnQkFORDRrMTd3VFBRUlpIZW40N3Q2M2MzUjdGTjNQdEVWcHMrNEJ2CmpMbElMUHExRW9OUTc5Z1Vqa0UyOHE0VnBGbU1HQmoweCtERUt1NHFtWXpiWEdoTjVvRFFXZzdzM05jeEVjYmcKalFTRW5zUS85T3pTdUpYdnJTQnJOMDlOOU1Yc0VEa1Nvbkc1QzdVVjhkamhtTEE0SXpxU1oxSUQzcFNtYTNqUAo1cjNuZ1BxQjE3UE1PWlV4S1ZlKzZYSWNYZnRMM3J0ZmlQbHkrQitCbHNkYjRtWW5KUVhVR0FVTDR4eG1WbGhGCmd3aHAvY0tSSWtTMHpLa2Z0V1dWMU54QVd0cHY0aGxJZEljRHR3VW1TcEt4YXpsQnNQdHFyaXZiY2Y0K3NqR08KMkQwaSt4SXo5TGxmM1laYkxLcTd5REpCWUF3aGhxUmVLalNNdHdJREFRQUJBb0lCQUFpeHFyVE5LL0VTTDJCZQo3RE0wRGQrdHZnYkRiUk9ELzI3RzU4NTlnVkUvSmFoQVlKcXZGV2xrTkxQUFd0YXlxa0xQdXhTSXhhR1FPWThyClVrdUh0RUUwNFliellCRmdwVUlOMzVUVXBsME5MZ1pTckt2MDlEUzYxd0I2U3RRWVRxNkU2SXJWVnVicTM0ZlcKb3FxakpDV1g0WTU2K0h3Y3pXUmF3aUswcWlBRHZVSzBaSit0Z1FTL3BGVURiSUQwbnNnL3BSV1g0ZkdlcE1hbgp2U1B2cXByWmZOUTJBL0J1RUo4WFRJSTFzdXZPZHI1bzZSOStvMks1SHRkbU8rMFZFT1BGRFdxM0JXY08rTDZTCm1sMnNMOTVNUWxrZ1RUTUVDSlJhTnQ3QTg3MDdLOFNMUHNqenBDZmhGbTg5MHVER1hxMGpCd0VXaGg5eGVyRkEKQitlUkhWRUNnWUVBNzRuVUovamQ3c2NndFova2syT1dIMmFsRzVTdi9vOWpJcE5QZnlVcWZvQ0tWME5HK1lwVgpwcWdpVVA1anpxQTc4ZHI0M0pvWmVTaXgvNHdHcTBiZ0Z3TUxYQ0VISmpoTDJHRTM4S3hNS3ZjNFc0ZnFraU55CjhQcnNETEhjczdUZ3orMHJNRnowd0RnZjh3ZjR5NUZybEJ5SUtJaHkyTTQ3T2hCKzcyMmVsQ2tDZ1lFQTdmVmkKc29hNHlXSFpzSXFxamxUVllScktIU2VrMmU0bDRJbExTTU5kZE4yZEFDUE1aaG5XK1d0anpXRFdQellpSUNsZwpEb2k0T3ptblJXZTNjN3VCenhjeWwxekJMcnd0K1VtR0hRZ1plc09XdE5BeWNaU3Vja2tqV2ttT29YZk1BRUZGCnFURHBQT1VKQi9nN0hYMnkvZThOUUxTS1hkNWl2MTkzREluZE5kOENnWUJYeDFwSGk1dElkUkEzZm5CMDBubWcKNkN4NC92Ty9oU3YrNzV5aUt5eDNUd05qRnZSYlhhWWxmRmVXOXFIOGhodHhkWnpjdWx1N1duNWY5eUE2ZzY1Ngp3RkxaWUFFT3NIS2F5SVdIWEp4TTRtdDBuMG9HWTVjclY4aElucVVSOWFhc2kyellQRGcwZUZ5ODRwNzVla0RCCjlmS3ZaOUV1UWVUU1Vsa3h4Q25vZ1FLQmdRRG43SW1rbk1BUHJ5b2Y4aGJub0hGVU1tc1pYV0ZEOHVQQjQ2NlgKbmFwQjFCbElZSnZBUzZFRitoQU14VHdyNGRRQzZyQ3ZtYnVPSmRRTlJsZzhHVjRjZkd5WHNCU3RPMFhIdVV4WQprV05jRHJPZFNXcFEzMnZqQWJ2T0xQRXlHUE9nci8xNE9LNnE1a1FXRzI5cWYrL3JwWW1TTGlUSjlvemlIdWFHCk52eCttd0tCZ0FOakcwd1gyaVRWeWpqT2NxMUY1UHBUZkZGdTNnZVkxV3RKSjk5RlRTa0xLVjYzNFc2eSt1eHcKYjg3Z0V5cWdYVXpvT1pvb0tJdEFZUmRYdis4VE1RdUJOWE4xTk5GWHhmd3Z0RndpWFlreDFESjh3U0pwdnNBbwp1VmVkaXFFVnRQQnFRc0FQcnZhTFJZd1BibHNLWGxtUGgzUnhEblJTRTVTZTlwY3VpUTNNCi0tLS0tRU5EIFJTQSBQUklWQVRFIEtFWS0tLS0tCg==
 ---
 # Source: okteto-enterprise/charts/nginx-ingress/templates/addheaders-configmap.yaml
 
