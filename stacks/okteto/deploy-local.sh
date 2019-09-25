@@ -27,5 +27,11 @@ PASSWORD=$(head -c 12 /dev/urandom | shasum| cut -d' ' -f1)
 kubectl label sa do-okteto-enterprise dev.okteto.com/token=$PASSWORD --overwrite
 
 # ensure services are running
+kubectl rollout status deployment/do-cainjector
+kubectl rollout status deployment/do-cert-manager
+kubectl rollout status deployment/do-nginx-ingress-controller
+kubectl rollout status deployment/do-nginx-ingress-default-backend
 kubectl rollout status deployment/do-okteto-enterprise-api
 kubectl rollout status deployment/do-okteto-enterprise-frontend
+kubectl rollout status deployment/do-okteto-enterprise-mutation-webhook
+kubectl rollout status deployment/do-webhook
