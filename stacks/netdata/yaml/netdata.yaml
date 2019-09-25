@@ -320,18 +320,10 @@ spec:
         name: database
       spec:
         accessModes: [ "ReadWriteOnce" ]
-        storageClassName: standard
+        storageClassName: do-block-storage
         resources:
           requests:
             storage: 2Gi
-    - metadata:
-        name: alarms
-      spec:
-        accessModes: [ "ReadWriteOnce" ]
-        storageClassName: standard
-        resources:
-          requests:
-            storage: 100Mi
   selector:
     matchLabels:
       app: netdata
@@ -402,8 +394,6 @@ spec:
               subPath: stream
             - name: database
               mountPath: /var/cache/netdata
-            - name: alarms
-              mountPath: /var/lib/netdata
           resources:
             {}
             

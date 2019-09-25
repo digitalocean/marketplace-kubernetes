@@ -24,4 +24,5 @@ helm template \
   --name netdata \
   --namespace netdata \
   --values $SRC_VERSION/values.yaml \
+  --values "$ROOT_DIR"/stacks/netdata/values.yaml \
   "$SRC_VERSION" > "$ROOT_DIR"/stacks/netdata/yaml/netdata.yaml
