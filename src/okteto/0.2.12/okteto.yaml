@@ -1,0 +1,1798 @@
+---
+# Source: okteto-enterprise/templates/permissive-psp.yaml
+apiVersion: extensions/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  name: "do-okteto-enterprise-permissive"
+  annotations:
+    seccomp.security.alpha.kubernetes.io/allowedProfileNames: '*'
+  labels:
+    app.kubernetes.io/name: "do-okteto-enterprise-permissive"
+    helm.sh/chart: okteto-enterprise-0.2.12
+    app.kubernetes.io/instance: do
+    app.kubernetes.io/managed-by: Tiller
+spec:
+  privileged: true
+  hostNetwork: true
+  allowPrivilegeEscalation: true
+  defaultAllowPrivilegeEscalation: true
+  hostPID: true
+  hostIPC: true
+  runAsUser:
+    rule: RunAsAny
+  fsGroup:
+    rule: RunAsAny
+  seLinux:
+    rule: RunAsAny
+  supplementalGroups:
+    rule: RunAsAny
+  hostPorts:
+  - min: 0
+    max: 65535
+  volumes:
+  - '*'
+  allowedCapabilities:
+  - '*'
+---
+# Source: okteto-enterprise/templates/restrictive-psp.yaml
+apiVersion: extensions/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  name: "do-okteto-enterprise-restrictive"
+  annotations:
+    apparmor.security.beta.kubernetes.io/allowedProfileNames: runtime/default
+    apparmor.security.beta.kubernetes.io/defaultProfileName: runtime/default
+    seccomp.security.alpha.kubernetes.io/allowedProfileNames: docker/default
+    seccomp.security.alpha.kubernetes.io/defaultProfileName: docker/default
+  labels:
+    app.kubernetes.io/name: "do-okteto-enterprise-restrictive"
+    helm.sh/chart: okteto-enterprise-0.2.12
+    app.kubernetes.io/instance: do
+    app.kubernetes.io/managed-by: Tiller
+spec:
+  privileged: false
+  hostNetwork: false
+  allowPrivilegeEscalation: false
+  defaultAllowPrivilegeEscalation: false
+  hostPID: false
+  hostIPC: false
+  runAsUser:
+    rule: RunAsAny
+  fsGroup:
+    rule: RunAsAny
+  seLinux:
+    rule: RunAsAny
+  supplementalGroups:
+    rule: RunAsAny
+  allowedHostPaths:
+    - pathPrefix: "/var/okteto/bin"
+      readOnly: true
+  volumes:
+  - hostPath
+  - configMap
+  - downwardAPI
+  - emptyDir
+  - persistentVolumeClaim
+  - secret
+  - projected
+  allowedCapabilities:
+  - '*'
+
+---
+# Source: okteto-enterprise/charts/nginx-ingress/templates/controller-poddisruptionbudget.yaml
+
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  labels:
+    app: nginx-ingress
+    chart: nginx-ingress-1.16.0
+    component: "controller"
+    heritage: Tiller
+    release: do
+  name: do-nginx-ingress-controller
+spec:
+  selector:
+    matchLabels:
+      app: nginx-ingress
+      release: do
+      component: "controller"
+  minAvailable: 1
+
+---
+# Source: okteto-enterprise/charts/nginx-ingress/templates/default-backend-poddisruptionbudget.yaml
+
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  labels:
+    app: nginx-ingress
+    chart: nginx-ingress-1.16.0
+    component: "default-backend"
+    heritage: Tiller
+    release: do
+  name: do-nginx-ingress-default-backend
+spec:
+  selector:
+    matchLabels:
+      app: nginx-ingress
+      release: do
+      component: "default-backend"
+  minAvailable: 1
+
+---
+# Source: okteto-enterprise/templates/secrets.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: do-okteto-enterprise
+  labels:
+    app.kubernetes.io/name: "do-okteto-enterprise-secret"
+    helm.sh/chart: okteto-enterprise-0.2.12
+    app.kubernetes.io/instance: do
+    app.kubernetes.io/managed-by: Tiller
+    app.kubernetes.io/component: "api"
+    app.kubernetes.io/part-of: "okteto"
+type: Opaque
+data:
+  githubClientSecret: ""
+
+---
+# Source: okteto-enterprise/charts/nginx-ingress/templates/controller-configmap.yaml
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+    app: nginx-ingress
+    chart: nginx-ingress-1.16.0
+    component: "controller"
+    heritage: Tiller
+    release: do
+  name: do-nginx-ingress-controller
+data:
+  custom-http-errors: 502,503
+  
+
+---
+# Source: okteto-enterprise/charts/cert-manager/charts/cainjector/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: do-cainjector
+  namespace: "okteto"
+  labels:
+    app: cainjector
+    chart: cainjector-v0.8.1
+    release: do
+    heritage: Tiller
+
+---
+# Source: okteto-enterprise/charts/cert-manager/charts/webhook/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: do-webhook
+  namespace: "okteto"
+  labels:
+    app: webhook
+    chart: webhook-v0.8.1
+    release: do
+    heritage: Tiller
+
+---
+# Source: okteto-enterprise/charts/cert-manager/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: do-cert-manager
+  namespace: "okteto"
+  labels:
+    app: cert-manager
+    chart: cert-manager-v0.8.1
+    release: do
+    heritage: Tiller
+
+---
+# Source: okteto-enterprise/charts/nginx-ingress/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app: nginx-ingress
+    chart: nginx-ingress-1.16.0
+    heritage: Tiller
+    release: do
+  name: do-nginx-ingress
+---
+# Source: okteto-enterprise/templates/service-account.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: do-okteto-enterprise
+  labels:
+    app: do-okteto-enterprise
+    chart: "okteto-enterprise-0.2.12"
+    release: "do"
+    heritage: "Tiller"
+    dev.okteto.com/token: "EUw2s5vDslNwffQpyXB5YyVxUqu8NzTH"
+  annotations:
+    dev.okteto.com/super: "true"
+
+
+---
+# Source: okteto-enterprise/charts/cert-manager/charts/cainjector/templates/rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRole
+metadata:
+  name: do-cainjector
+  labels:
+    app: cainjector
+    chart: cainjector-v0.8.1
+    release: do
+    heritage: Tiller
+rules:
+  - apiGroups: ["certmanager.k8s.io"]
+    resources: ["certificates"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["configmaps", "events"]
+    verbs: ["*"]
+  - apiGroups: ["admissionregistration.k8s.io"]
+    resources: ["validatingwebhookconfigurations", "mutatingwebhookconfigurations"]
+    verbs: ["*"]
+  - apiGroups: ["apiregistration.k8s.io"]
+    resources: ["apiservices"]
+    verbs: ["*"]
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  name: do-cainjector
+  labels:
+    app: cainjector
+    chart: cainjector-v0.8.1
+    release: do
+    heritage: Tiller
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: do-cainjector
+subjects:
+  - name: do-cainjector
+    namespace: "okteto"
+    kind: ServiceAccount
+---
+# Source: okteto-enterprise/charts/cert-manager/templates/rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRole
+metadata:
+  name: do-cert-manager
+  labels:
+    app: cert-manager
+    chart: cert-manager-v0.8.1
+    release: do
+    heritage: Tiller
+rules:
+  - apiGroups: ["certmanager.k8s.io"]
+    resources: ["certificates", "certificates/finalizers", "issuers", "clusterissuers", "orders", "orders/finalizers", "challenges",  "challenges/finalizers"]
+    verbs: ["*"]
+  - apiGroups: [""]
+    resources: ["configmaps", "secrets", "events", "services","pods"]
+    verbs: ["*"]
+  - apiGroups: ["extensions"]
+    resources: ["ingresses", "ingresses/finalizers"]
+    verbs: ["*"]
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  name: do-cert-manager
+  labels:
+    app: cert-manager
+    chart: cert-manager-v0.8.1
+    release: do
+    heritage: Tiller
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: do-cert-manager
+subjects:
+  - name: do-cert-manager
+    namespace: "okteto"
+    kind: ServiceAccount
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: do-cert-manager-view
+  labels:
+    app: cert-manager
+    chart: cert-manager-v0.8.1
+    release: do
+    heritage: Tiller
+    rbac.authorization.k8s.io/aggregate-to-view: "true"
+    rbac.authorization.k8s.io/aggregate-to-edit: "true"
+    rbac.authorization.k8s.io/aggregate-to-admin: "true"
+rules:
+  - apiGroups: ["certmanager.k8s.io"]
+    resources: ["certificates", "issuers"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: do-cert-manager-edit
+  labels:
+    app: cert-manager
+    chart: cert-manager-v0.8.1
+    release: do
+    heritage: Tiller
+    rbac.authorization.k8s.io/aggregate-to-edit: "true"
+    rbac.authorization.k8s.io/aggregate-to-admin: "true"
+rules:
+  - apiGroups: ["certmanager.k8s.io"]
+    resources: ["certificates", "issuers"]
+    verbs: ["create", "delete", "deletecollection", "patch", "update"]
+
+---
+# Source: okteto-enterprise/charts/nginx-ingress/templates/clusterrole.yaml
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRole
+metadata:
+  labels:
+    app: nginx-ingress
+    chart: nginx-ingress-1.16.0
+    heritage: Tiller
+    release: do
+  name: do-nginx-ingress
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+      - endpoints
+      - nodes
+      - pods
+      - secrets
+    verbs:
+      - list
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - nodes
+    verbs:
+      - get
+  - apiGroups:
+      - ""
+    resources:
+      - services
+    verbs:
+      - get
+      - list
+      - update
+      - watch
+  - apiGroups:
+      - extensions
+      - "networking.k8s.io" # k8s 1.14+
+    resources:
+      - ingresses
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - events
+    verbs:
+      - create
+      - patch
+  - apiGroups:
+      - extensions
+      - "networking.k8s.io" # k8s 1.14+
+    resources:
+      - ingresses/status
+    verbs:
+      - update
+---
+# Source: okteto-enterprise/templates/dev-cluster-role.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: do-okteto-enterprise-psp
+  labels:
+    app.kubernetes.io/name: do-okteto-enterprise-psp
+    helm.sh/chart: okteto-enterprise-0.2.12
+    app.kubernetes.io/instance: do
+    app.kubernetes.io/managed-by: Tiller
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  - pods/log
+  - pods/exec
+  - pods/attach
+  - pods/portforward
+  - configmaps
+  - secrets
+  - services
+  - endpoints
+  - events
+  - persistentvolumeclaims
+  - persistentvolumes
+  - replicationcontrollers
+  verbs:
+  - '*'
+- apiGroups:
+  - autoscaling
+  resources:
+  - horizontalpodautoscalers
+  verbs:
+  - '*'
+- apiGroups:
+  - apps
+  resources:
+  - daemonsets
+  - deployments
+  - replicasets
+  - statefulsets
+  verbs:
+  - '*'
+- apiGroups:
+  - batch
+  resources:
+  - cronjobs
+  - jobs
+  verbs:
+  - '*'
+- apiGroups:
+  - extensions
+  resources:
+  - deployments
+  - ingresses
+  - replicasets
+  verbs:
+  - '*'
+- apiGroups:
+  - ""
+  resources:
+  - events
+  - limitranges
+  - namespaces
+  - namespaces/status
+  - resourcequotas
+  - resourcequotas/status
+  verbs:
+  - get
+  - list
+- apiGroups:
+  - policy
+  resourceNames:
+  - "do-okteto-enterprise-restrictive"
+  resources:
+  - podsecuritypolicies
+  verbs:
+  - use
+---
+# Source: okteto-enterprise/charts/cert-manager/charts/webhook/templates/rbac.yaml
+### Webhook ###
+---
+# apiserver gets the auth-delegator role to delegate auth decisions to
+# the core apiserver
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  name: do-webhook:auth-delegator
+  labels:
+    app: webhook
+    chart: webhook-v0.8.1
+    release: do
+    heritage: Tiller
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: system:auth-delegator
+subjects:
+- apiGroup: ""
+  kind: ServiceAccount
+  name: do-webhook
+  namespace: okteto
+
+---
+
+# apiserver gets the ability to read authentication. This allows it to
+# read the specific configmap that has the requestheader-* entries to
+# api agg
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: RoleBinding
+metadata:
+  name: do-webhook:webhook-authentication-reader
+  namespace: kube-system
+  labels:
+    app: webhook
+    chart: webhook-v0.8.1
+    release: do
+    heritage: Tiller
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: extension-apiserver-authentication-reader
+subjects:
+- apiGroup: ""
+  kind: ServiceAccount
+  name: do-webhook
+  namespace: okteto
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: do-webhook:webhook-requester
+  labels:
+    app: webhook
+    chart: webhook-v0.8.1
+    release: do
+    heritage: Tiller
+rules:
+- apiGroups:
+  - admission.certmanager.k8s.io
+  resources:
+  - certificates
+  - issuers
+  - clusterissuers
+  verbs:
+  - create
+
+---
+# Source: okteto-enterprise/charts/nginx-ingress/templates/clusterrolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app: nginx-ingress
+    chart: nginx-ingress-1.16.0
+    heritage: Tiller
+    release: do
+  name: do-nginx-ingress
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: do-nginx-ingress
+subjects:
+  - kind: ServiceAccount
+    name: do-nginx-ingress
+    namespace: okteto
+---
+# Source: okteto-enterprise/templates/rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  name: do-okteto-enterprise-role-binding
+  labels:
+    app: do-okteto-enterprise
+    chart: "okteto-enterprise-0.2.12"
+    release: "do"
+    heritage: "Tiller"
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+- kind: ServiceAccount
+  name: do-okteto-enterprise
+  namespace: okteto
+---
+# Source: okteto-enterprise/charts/nginx-ingress/templates/role.yaml
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: Role
+metadata:
+  labels:
+    app: nginx-ingress
+    chart: nginx-ingress-1.16.0
+    heritage: Tiller
+    release: do
+  name: do-nginx-ingress
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - namespaces
+    verbs:
+      - get
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+      - pods
+      - secrets
+      - endpoints
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - services
+    verbs:
+      - get
+      - list
+      - update
+      - watch
+  - apiGroups:
+      - extensions
+      - "networking.k8s.io" # k8s 1.14+
+    resources:
+      - ingresses
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - extensions
+      - "networking.k8s.io" # k8s 1.14+
+    resources:
+      - ingresses/status
+    verbs:
+      - update
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+    resourceNames:
+      - ingress-controller-leader-nginx
+    verbs:
+      - get
+      - update
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+    verbs:
+      - create
+  - apiGroups:
+      - ""
+    resources:
+      - endpoints
+    verbs:
+      - create
+      - get
+      - update
+  - apiGroups:
+      - ""
+    resources:
+      - events
+    verbs:
+      - create
+      - patch
+---
+# Source: okteto-enterprise/templates/psp-rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: "do-okteto-enterprise-internal"
+  labels:
+    app.kubernetes.io/name: "do-okteto-enterprise-internal"
+    helm.sh/chart: okteto-enterprise-0.2.12
+    app.kubernetes.io/instance: do
+    app.kubernetes.io/managed-by: Tiller
+rules:
+- apiGroups:
+  - policy
+  resourceNames:
+  - "do-okteto-enterprise-permissive"
+  resources:
+  - podsecuritypolicies
+  verbs:
+  - use
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: "do-okteto-enterprise-internal"
+  labels:
+    app.kubernetes.io/name: "do-okteto-enterprise-internal"
+    helm.sh/chart: okteto-enterprise-0.2.12
+    app.kubernetes.io/instance: do
+    app.kubernetes.io/managed-by: Tiller
+subjects:
+- kind: ServiceAccount
+  name: "do-cainjector"
+  namespace: okteto
+- kind: ServiceAccount
+  name: "do-cert-manager"
+  namespace: okteto
+- kind: ServiceAccount
+  name: "do-nginx-ingress"
+  namespace: okteto
+- kind: ServiceAccount
+  name: "do-webhook"
+  namespace: okteto
+- kind: ServiceAccount
+  name: "do-okteto-enterprise"
+  namespace: okteto
+- kind: ServiceAccount
+  name: "default"
+  namespace: okteto
+roleRef:
+  kind: Role
+  name: "do-okteto-enterprise-internal"
+  apiGroup: rbac.authorization.k8s.io
+---
+# Source: okteto-enterprise/charts/nginx-ingress/templates/rolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: RoleBinding
+metadata:
+  labels:
+    app: nginx-ingress
+    chart: nginx-ingress-1.16.0
+    heritage: Tiller
+    release: do
+  name: do-nginx-ingress
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: do-nginx-ingress
+subjects:
+  - kind: ServiceAccount
+    name: do-nginx-ingress
+    namespace: okteto
+---
+# Source: okteto-enterprise/charts/cert-manager/charts/webhook/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: do-webhook
+  namespace: "okteto"
+  labels:
+    app: webhook
+    chart: webhook-v0.8.1
+    release: do
+    heritage: Tiller
+spec:
+  type: ClusterIP
+  ports:
+  - name: https
+    port: 443
+    targetPort: 6443
+  selector:
+    app: webhook
+    release: do
+
+---
+# Source: okteto-enterprise/charts/nginx-ingress/templates/controller-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: nginx-ingress
+    chart: nginx-ingress-1.16.0
+    component: "controller"
+    heritage: Tiller
+    release: do
+  name: do-nginx-ingress-controller
+spec:
+  clusterIP: ""
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: http
+    - name: https
+      port: 443
+      protocol: TCP
+      targetPort: https
+  selector:
+    app: nginx-ingress
+    component: "controller"
+    release: do
+  type: "LoadBalancer"
+
+---
+# Source: okteto-enterprise/charts/nginx-ingress/templates/default-backend-service.yaml
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: nginx-ingress
+    chart: nginx-ingress-1.16.0
+    component: "default-backend"
+    heritage: Tiller
+    release: do
+  name: do-nginx-ingress-default-backend
+spec:
+  clusterIP: ""
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: http
+  selector:
+    app: nginx-ingress
+    component: "default-backend"
+    release: do
+  type: "ClusterIP"
+
+---
+# Source: okteto-enterprise/templates/api-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: "do-okteto-enterprise-api"
+  labels:
+    app.kubernetes.io/component: "api"
+    app.kubernetes.io/part-of: "okteto"
+    app.kubernetes.io/name: "do-okteto-enterprise-api"
+    helm.sh/chart: okteto-enterprise-0.2.12
+    app.kubernetes.io/instance: do
+    app.kubernetes.io/managed-by: Tiller
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8080
+      name: api
+  selector:
+    app.kubernetes.io/name: "do-okteto-enterprise-api"
+    app.kubernetes.io/instance: do
+
+---
+# Source: okteto-enterprise/templates/frontend-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: "do-okteto-enterprise-frontend"
+  labels:
+    app.kubernetes.io/component: "frontend"
+    app.kubernetes.io/part-of: "okteto"
+    app.kubernetes.io/name: "do-okteto-enterprise-frontend"
+    helm.sh/chart: okteto-enterprise-0.2.12
+    app.kubernetes.io/instance: do
+    app.kubernetes.io/managed-by: Tiller
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8080
+      name: frontend
+  selector:
+    app.kubernetes.io/name: "do-okteto-enterprise-frontend"
+    app.kubernetes.io/instance: do
+
+---
+# Source: okteto-enterprise/templates/webhook-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: "do-okteto-enterprise-mutation-webhook"
+  labels:
+    app.kubernetes.io/component: "webhook"
+    app.kubernetes.io/part-of: "okteto"
+    app.kubernetes.io/name: "do-okteto-enterprise-mutation-webhook"
+    helm.sh/chart: okteto-enterprise-0.2.12
+    app.kubernetes.io/instance: do
+    app.kubernetes.io/managed-by: Tiller
+spec:
+  type: ClusterIP
+  ports:
+    - port: 443
+      name: webhook
+      targetPort: 8443
+  selector:
+    app.kubernetes.io/name: "do-okteto-enterprise-mutation-webhook"
+    app.kubernetes.io/instance: do
+
+---
+# Source: okteto-enterprise/templates/inotify-daemon.yaml
+apiVersion: apps/v1beta2
+kind: DaemonSet
+metadata:
+  name: "do-okteto-enterprise-inotify"
+  labels:
+    app.kubernetes.io/name: "do-okteto-enterprise-inotify"
+    helm.sh/chart: okteto-enterprise-0.2.12
+    app.kubernetes.io/instance: do
+    app.kubernetes.io/managed-by: Tiller
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: "do-okteto-enterprise-inotify"
+      app.kubernetes.io/instance: do
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: "do-okteto-enterprise-inotify"
+        app.kubernetes.io/instance: do
+      annotations:
+        app.kubernetes.io/version: "do-okteto-enterprise-0.2.12"
+    spec:
+      terminationGracePeriodSeconds: 0
+      serviceAccountName: do-okteto-enterprise
+      containers:
+        - name: inotify
+          image: okteto/bin:latest
+          securityContext:
+            privileged: true
+          command:
+            - /bin/sh
+            - -c
+            - "cp /usr/local/bin/* /var/okteto/bin && echo 10048576 > /proc-aux/sys/fs/inotify/max_user_watches && tail -f /dev/null"
+          volumeMounts:
+          - mountPath: /proc-aux
+            name: proc-volume
+          - mountPath: /var/okteto/bin
+            name: okteto-bin
+      volumes:
+      - name: proc-volume
+        hostPath:
+          path: /proc
+      - name: okteto-bin
+        hostPath:
+          path: /var/okteto/bin        
+---
+# Source: okteto-enterprise/charts/cert-manager/charts/cainjector/templates/deployment.yaml
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: do-cainjector
+  namespace: "okteto"
+  labels:
+    app: cainjector
+    chart: cainjector-v0.8.1
+    release: do
+    heritage: Tiller
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cainjector
+      release: do
+  template:
+    metadata:
+      labels:
+        app: cainjector
+        release: do
+      annotations:
+    spec:
+      serviceAccountName: do-cainjector
+      containers:
+        - name: cainjector
+          image: "quay.io/jetstack/cert-manager-cainjector:v0.8.1"
+          imagePullPolicy: IfNotPresent
+          args:
+          - --v=2
+          - --leader-election-namespace=$(POD_NAMESPACE)
+          env:
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          resources:
+            {}
+            
+
+---
+# Source: okteto-enterprise/charts/cert-manager/charts/webhook/templates/deployment.yaml
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: do-webhook
+  namespace: "okteto"
+  labels:
+    app: webhook
+    chart: webhook-v0.8.1
+    release: do
+    heritage: Tiller
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webhook
+      release: do
+  template:
+    metadata:
+      labels:
+        app: webhook
+        release: do
+      annotations:
+    spec:
+      serviceAccountName: do-webhook
+      containers:
+        - name: webhook
+          image: "quay.io/jetstack/cert-manager-webhook:v0.8.1"
+          imagePullPolicy: IfNotPresent
+          args:
+          - --v=2
+          - --secure-port=6443
+          - --tls-cert-file=/certs/tls.crt
+          - --tls-private-key-file=/certs/tls.key
+          env:
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          resources:
+            {}
+            
+          volumeMounts:
+          - name: certs
+            mountPath: /certs
+      volumes:
+      - name: certs
+        secret:
+          secretName: do-webhook-webhook-tls
+
+---
+# Source: okteto-enterprise/charts/cert-manager/templates/deployment.yaml
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: do-cert-manager
+  namespace: "okteto"
+  labels:
+    app: cert-manager
+    chart: cert-manager-v0.8.1
+    release: do
+    heritage: Tiller
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cert-manager
+      release: do
+  template:
+    metadata:
+      labels:
+        app: cert-manager
+        release: do
+      annotations:
+        prometheus.io/path: "/metrics"
+        prometheus.io/scrape: 'true'
+        prometheus.io/port: '9402'
+    spec:
+      serviceAccountName: do-cert-manager
+      containers:
+        - name: cert-manager
+          image: "quay.io/jetstack/cert-manager-controller:v0.8.1"
+          imagePullPolicy: IfNotPresent
+          args:
+          - --v=2
+          - --cluster-resource-namespace=$(POD_NAMESPACE)
+          - --leader-election-namespace=$(POD_NAMESPACE)
+          ports:
+          - containerPort: 9402
+          env:
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          resources:
+            {}
+            
+
+---
+# Source: okteto-enterprise/charts/nginx-ingress/templates/controller-deployment.yaml
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: nginx-ingress
+    chart: nginx-ingress-1.16.0
+    component: "controller"
+    heritage: Tiller
+    release: do
+  name: do-nginx-ingress-controller
+spec:
+  replicas: 2
+  revisionHistoryLimit: 10
+  strategy:
+    {}
+    
+  minReadySeconds: 0
+  template:
+    metadata:
+      labels:
+        app: nginx-ingress
+        component: "controller"
+        release: do
+    spec:
+      dnsPolicy: ClusterFirst
+      containers:
+        - name: nginx-ingress-controller
+          image: "quay.io/kubernetes-ingress-controller/nginx-ingress-controller:0.25.1"
+          imagePullPolicy: "IfNotPresent"
+          args:
+            - /nginx-ingress-controller
+            - --default-backend-service=okteto/do-nginx-ingress-default-backend
+            - --election-id=ingress-controller-leader
+            - --ingress-class=nginx
+            - --configmap=okteto/do-nginx-ingress-controller
+            - --default-ssl-certificate=$(POD_NAMESPACE)/default-ssl-certificate
+          securityContext:
+            capabilities:
+                drop:
+                - ALL
+                add:
+                - NET_BIND_SERVICE
+            runAsUser: 33
+            allowPrivilegeEscalation: true
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 10254
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 3
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+            - name: https
+              containerPort: 443
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 10254
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 3
+          resources:
+            {}
+            
+      hostNetwork: false
+      serviceAccountName: do-nginx-ingress
+      terminationGracePeriodSeconds: 60
+
+---
+# Source: okteto-enterprise/charts/nginx-ingress/templates/default-backend-deployment.yaml
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: nginx-ingress
+    chart: nginx-ingress-1.16.0
+    component: "default-backend"
+    heritage: Tiller
+    release: do
+  name: do-nginx-ingress-default-backend
+spec:
+  replicas: 2
+  revisionHistoryLimit: 10
+  template:
+    metadata:
+      labels:
+        app: nginx-ingress
+        component: "default-backend"
+        release: do
+    spec:
+      containers:
+        - name: nginx-ingress-default-backend
+          image: "okteto/custom-error-pages:0.1.0"
+          imagePullPolicy: "IfNotPresent"
+          args:
+          securityContext:
+            runAsUser: 65534
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 0
+            periodSeconds: 5
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 6
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          resources:
+            {}
+            
+      terminationGracePeriodSeconds: 60
+
+---
+# Source: okteto-enterprise/templates/api-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "do-okteto-enterprise-api"
+  labels:
+    app.kubernetes.io/component: "api"
+    app.kubernetes.io/part-of: "okteto"
+    app.kubernetes.io/name: "do-okteto-enterprise-api"
+    helm.sh/chart: okteto-enterprise-0.2.12
+    app.kubernetes.io/instance: do
+    app.kubernetes.io/managed-by: Tiller
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: "do-okteto-enterprise-api"
+      app.kubernetes.io/instance: do
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: "do-okteto-enterprise-api"
+        app.kubernetes.io/instance: do
+      annotations:
+        checksum/secrets: d3d88fdbbab64c918f028e16558e323c5adc0cb42fe73ef24e97ada92dbd63a1
+    spec:
+      serviceAccountName: do-okteto-enterprise
+      containers:
+        - name: api
+          image: "okteto/api:1.3.22"
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          env:
+            - name: OKTETO_BASE_DOMAIN
+              value: "local"
+            - name: OKTETO_PUBLIC_URL
+              value: "okteto.local"
+            - name: OKTETO_MULTITENANCY_HARD
+              value: "false"
+            - name: OKTETO_DEV_CLUSTER_ROLE
+              value: "do-okteto-enterprise-psp"
+            - name: CLUSTER_PUBLIC_ENDPOINT
+              value: ""
+            - name: GITHUB_CLIENTID
+              value: 
+            - name: OKTETO_GITHUB_WHITELIST
+              value: 
+            - name: GITHUB_CLIENTSECRET
+              valueFrom:
+                secretKeyRef:
+                  name: do-okteto-enterprise
+                  key: githubClientSecret
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          resources:
+            {}
+            
+---
+# Source: okteto-enterprise/templates/frontend-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "do-okteto-enterprise-frontend"
+  labels:
+    app.kubernetes.io/component: "frontend"
+    app.kubernetes.io/part-of: "okteto"
+    app.kubernetes.io/name: "do-okteto-enterprise-frontend"
+    helm.sh/chart: okteto-enterprise-0.2.12
+    app.kubernetes.io/instance: do
+    app.kubernetes.io/managed-by: Tiller
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: "do-okteto-enterprise-frontend"
+      app.kubernetes.io/instance: do
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: "do-okteto-enterprise-frontend"
+        app.kubernetes.io/instance: do
+    spec:
+      serviceAccountName: do-okteto-enterprise
+      containers:
+        - name: frontend
+          image: "okteto/frontend:1.3.22"
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          env:
+            - name: GITHUB_CLIENTID
+              value: 
+          livenessProbe:
+            httpGet:
+              path: /index.html
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /index.html
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 5          
+          resources:
+            {}
+            
+---
+# Source: okteto-enterprise/templates/webhook-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "do-okteto-enterprise-mutation-webhook"
+  labels:
+    app.kubernetes.io/component: "webhook"
+    app.kubernetes.io/part-of: "okteto"
+    app.kubernetes.io/name: "do-okteto-enterprise-mutation-webhook"
+    helm.sh/chart: okteto-enterprise-0.2.12
+    app.kubernetes.io/instance: do
+    app.kubernetes.io/managed-by: Tiller
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: "do-okteto-enterprise-mutation-webhook"
+      app.kubernetes.io/instance: do
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: "do-okteto-enterprise-mutation-webhook"
+        app.kubernetes.io/instance: do
+      annotations:
+        checksum/secrets: c6182458bae8d3a24e660e26630cc31fab0a642521f11c6a5852ab3f72d15674
+    spec:
+      serviceAccountName: do-okteto-enterprise
+      volumes:
+        - name: webhook-tls-certs
+          secret:
+            defaultMode: 420
+            secretName: "do-okteto-enterprise-mutation-webhook"
+      containers:
+        - name: server
+          image: "okteto/webhook:1.3.22"
+          imagePullPolicy: Always
+          ports:
+            - name: https
+              containerPort: 8443
+          env:
+            - name: OKTETO_BASE_DOMAIN
+              value: "local"
+            - name: PORT
+              value: "8443"
+          volumeMounts:
+            - name: webhook-tls-certs
+              mountPath: /run/secrets/tls
+              readOnly: true
+          resources:
+            {}
+            
+---
+# Source: okteto-enterprise/templates/ingress.yaml
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: do-okteto-enterprise
+  labels:
+    app.kubernetes.io/name: okteto-enterprise
+    helm.sh/chart: okteto-enterprise-0.2.12
+    app.kubernetes.io/instance: do
+    app.kubernetes.io/managed-by: Tiller
+    app.kubernetes.io/part-of: "okteto"
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+spec:
+  tls:
+  - hosts:
+    - okteto.local
+  rules:
+    - host: okteto.local
+      http:
+        paths:
+          - path: "/healthz"
+            backend:
+              serviceName: do-okteto-enterprise-api
+              servicePort: 8080
+          - path: "/github"
+            backend:
+              serviceName: do-okteto-enterprise-api
+              servicePort: 8080
+          - path: "/graphql"
+            backend:
+              serviceName: do-okteto-enterprise-api
+              servicePort: 8080
+          - path: "/auth"
+            backend:
+              serviceName: do-okteto-enterprise-api
+              servicePort: 8080
+          - path: "/"
+            backend:
+              serviceName: do-okteto-enterprise-frontend
+              servicePort: 8080
+---
+# Source: okteto-enterprise/charts/cert-manager/charts/webhook/templates/apiservice.yaml
+apiVersion: apiregistration.k8s.io/v1beta1
+kind: APIService
+metadata:
+  name: v1beta1.admission.certmanager.k8s.io
+  labels:
+    app: webhook
+    chart: webhook-v0.8.1
+    release: do
+    heritage: Tiller
+  annotations:
+    certmanager.k8s.io/inject-ca-from: "okteto/do-webhook-webhook-tls"
+spec:
+  group: admission.certmanager.k8s.io
+  groupPriorityMinimum: 1000
+  versionPriority: 15
+  service:
+    name: do-webhook
+    namespace: "okteto"
+  version: v1beta1
+
+---
+# Source: okteto-enterprise/charts/cert-manager/charts/webhook/templates/pki.yaml
+---
+# Create a selfsigned Issuer, in order to create a root CA certificate for
+# signing webhook serving certificates
+apiVersion: certmanager.k8s.io/v1alpha1
+kind: Issuer
+metadata:
+  name: do-webhook-selfsign
+  namespace: "okteto"
+  labels:
+    app: webhook
+    chart: webhook-v0.8.1
+    release: do
+    heritage: Tiller
+spec:
+  selfSigned: {}
+
+---
+
+# Generate a CA Certificate used to sign certificates for the webhook
+apiVersion: certmanager.k8s.io/v1alpha1
+kind: Certificate
+metadata:
+  name: do-webhook-ca
+  namespace: "okteto"
+  labels:
+    app: webhook
+    chart: webhook-v0.8.1
+    release: do
+    heritage: Tiller
+spec:
+  secretName: do-webhook-ca
+  duration: 43800h # 5y
+  issuerRef:
+    name: do-webhook-selfsign
+  commonName: "ca.webhook.cert-manager"
+  isCA: true
+
+---
+
+# Create an Issuer that uses the above generated CA certificate to issue certs
+apiVersion: certmanager.k8s.io/v1alpha1
+kind: Issuer
+metadata:
+  name: do-webhook-ca
+  namespace: "okteto"
+  labels:
+    app: webhook
+    chart: webhook-v0.8.1
+    release: do
+    heritage: Tiller
+spec:
+  ca:
+    secretName: do-webhook-ca
+
+---
+
+# Finally, generate a serving certificate for the webhook to use
+apiVersion: certmanager.k8s.io/v1alpha1
+kind: Certificate
+metadata:
+  name: do-webhook-webhook-tls
+  namespace: "okteto"
+  labels:
+    app: webhook
+    chart: webhook-v0.8.1
+    release: do
+    heritage: Tiller
+spec:
+  secretName: do-webhook-webhook-tls
+  duration: 8760h # 1y
+  issuerRef:
+    name: do-webhook-ca
+  dnsNames:
+  - do-webhook
+  - do-webhook.okteto
+  - do-webhook.okteto.svc
+
+---
+# Source: okteto-enterprise/templates/certificate.yaml
+apiVersion: certmanager.k8s.io/v1alpha1
+kind: Issuer
+metadata:
+  name: do-okteto-enterprise
+  labels:
+    app.kubernetes.io/part-of: "okteto"
+spec:
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email:  "admin@example.com"
+    privateKeySecretRef:
+      name: do-okteto-enterprise-letsencrypt
+    dns01:
+      providers:
+        - name: okteto
+          digitalocean:
+            tokenSecretRef:
+              name: okteto-dns
+              key: key
+---
+apiVersion: certmanager.k8s.io/v1alpha1
+kind: Certificate
+metadata:
+ name: default-ssl-certificate
+ labels:
+   app.kubernetes.io/part-of: "okteto"
+spec:
+ secretName: default-ssl-certificate
+ issuerRef:
+   name: do-okteto-enterprise
+   kind: Issuer
+ dnsNames:
+   - "*.local"
+ acme:
+   config:
+     - dns01:
+         provider: okteto
+       domains:
+        - "*.local"
+---
+# Source: okteto-enterprise/templates/webhook.yaml
+
+
+apiVersion: admissionregistration.k8s.io/v1beta1
+kind: MutatingWebhookConfiguration
+metadata:
+  name: "do-okteto-enterprise-mutation-webhook"
+  labels:
+    app.kubernetes.io/name: "do-okteto-enterprise-mutation-webhook"
+    helm.sh/chart: okteto-enterprise-0.2.12
+    app.kubernetes.io/instance: do
+    app.kubernetes.io/managed-by: Tiller
+webhooks:
+  - name: ingress.webhook.okteto.com
+    failurePolicy: Fail
+    clientConfig:
+      service:
+        name: "do-okteto-enterprise-mutation-webhook"
+        path: "/mutate/ingress"
+        namespace: "okteto"
+      caBundle: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUM5VENDQWQyZ0F3SUJBZ0lSQUtLNC91b3MyMXYzNHhnYml0SjB6dXd3RFFZSktvWklodmNOQVFFTEJRQXcKRkRFU01CQUdBMVVFQXhNSmIydDBaWFJ2TFdOaE1CNFhEVEU1TURreU5USXdNVFUwT1ZvWERUSTVNRGt5TWpJdwpNVFUwT1Zvd0ZERVNNQkFHQTFVRUF4TUpiMnQwWlhSdkxXTmhNSUlCSWpBTkJna3Foa2lHOXcwQkFRRUZBQU9DCkFROEFNSUlCQ2dLQ0FRRUF1UzVVN1lheDJFeEdPbHB0SWhHbmNhN2ZRNlZReU1GS0RwSkUyMTlLNER4Z3pibXcKK29XMjVORS8wblQwUnpxMWlUa0l5Qk8xU216cTVBMHFWK1BoNjJ1NzlWTVhNME83RGdRYWFEK096eHZabTA2dQp1b2hnNVN6QWNSRnBDclJHS2RteGl5TDQxUGxjS0I0dUE0WHVIckZ1N05PS2NWMXhjZThXamYzVTFHYXBXZmIwCkpRNU1hOVRMMFkyM0d0WmlLSC9Zc2R2cVRmMGptMjRoZm1JbmZuakNjSGhHY29jajBjZXN5cXplNGMvUWRtZGoKejlhdEpnYVZ0ZFFPeFN0SWlVQlRUT2xFUGlQSU50TnZtNGdoQ3FheDNDb3VFYURCU2x1d2xRM3E0QTVvWk1UUwpHdzBXM2dNUmdPeG1kbmxsRjV2M2ptcTIvdHhLMkhSV3JKMm83UUlEQVFBQm8wSXdRREFPQmdOVkhROEJBZjhFCkJBTUNBcVF3SFFZRFZSMGxCQll3RkFZSUt3WUJCUVVIQXdFR0NDc0dBUVVGQndNQ01BOEdBMVVkRXdFQi93UUYKTUFNQkFmOHdEUVlKS29aSWh2Y05BUUVMQlFBRGdnRUJBRGZUS0JMdjhBSTdnUFZacEUwZ0g3U2FTWDZDM0ZXUApJdnBwRDdlYXNneWVFeU9wV1dQWkpPRk91Rk85VmRXeXhXMmdPa2wwbjZ4d3ZzaGpYdVBXcHBpSkN3UjNBdGVCCkdPNVZOZVlzYVFsM2xncHRnbHUxMDN1U3h6UlZqS2lqWC9jZ1FUcGMrZGQ2eFlob2pYcFlpcFRhWjFSSGxUZVUKZjFQeUM2d0xqaW41TUZhUVEwMmxVN0QremNPMm5pNnYrcERycm9hVjBuODJSMDVpZ1NzQmRRWFM3NXE4alNqcgpyak55MmtvUnc4WmQ1ZGRkQTlxeHR4eVpSQTFDaDlwOVhZY3FudUxrSDVCR28yVHEwd0pkNkk1UGpEMUdzYjZVCjdHdnRlQVlUZjQ0WVNqVXdkcUhmUGJWdmlwUGQwaWFoSllaNjk4QVk5WWtDMWNoTDRaeGYrNnc9Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K
+    rules:
+      - operations: [ "CREATE", "UPDATE" ]
+        apiGroups: ["extensions"]
+        apiVersions: ["v1beta1"]
+        resources: ["ingresses"]
+    namespaceSelector:
+      matchLabels:
+        dev.okteto.com: "true"
+  - name: service.webhook.okteto.com
+    clientConfig:
+      service:
+        name: "do-okteto-enterprise-mutation-webhook"
+        path: "/mutate/service"
+        namespace: "okteto"
+      caBundle: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUM5VENDQWQyZ0F3SUJBZ0lSQUtLNC91b3MyMXYzNHhnYml0SjB6dXd3RFFZSktvWklodmNOQVFFTEJRQXcKRkRFU01CQUdBMVVFQXhNSmIydDBaWFJ2TFdOaE1CNFhEVEU1TURreU5USXdNVFUwT1ZvWERUSTVNRGt5TWpJdwpNVFUwT1Zvd0ZERVNNQkFHQTFVRUF4TUpiMnQwWlhSdkxXTmhNSUlCSWpBTkJna3Foa2lHOXcwQkFRRUZBQU9DCkFROEFNSUlCQ2dLQ0FRRUF1UzVVN1lheDJFeEdPbHB0SWhHbmNhN2ZRNlZReU1GS0RwSkUyMTlLNER4Z3pibXcKK29XMjVORS8wblQwUnpxMWlUa0l5Qk8xU216cTVBMHFWK1BoNjJ1NzlWTVhNME83RGdRYWFEK096eHZabTA2dQp1b2hnNVN6QWNSRnBDclJHS2RteGl5TDQxUGxjS0I0dUE0WHVIckZ1N05PS2NWMXhjZThXamYzVTFHYXBXZmIwCkpRNU1hOVRMMFkyM0d0WmlLSC9Zc2R2cVRmMGptMjRoZm1JbmZuakNjSGhHY29jajBjZXN5cXplNGMvUWRtZGoKejlhdEpnYVZ0ZFFPeFN0SWlVQlRUT2xFUGlQSU50TnZtNGdoQ3FheDNDb3VFYURCU2x1d2xRM3E0QTVvWk1UUwpHdzBXM2dNUmdPeG1kbmxsRjV2M2ptcTIvdHhLMkhSV3JKMm83UUlEQVFBQm8wSXdRREFPQmdOVkhROEJBZjhFCkJBTUNBcVF3SFFZRFZSMGxCQll3RkFZSUt3WUJCUVVIQXdFR0NDc0dBUVVGQndNQ01BOEdBMVVkRXdFQi93UUYKTUFNQkFmOHdEUVlKS29aSWh2Y05BUUVMQlFBRGdnRUJBRGZUS0JMdjhBSTdnUFZacEUwZ0g3U2FTWDZDM0ZXUApJdnBwRDdlYXNneWVFeU9wV1dQWkpPRk91Rk85VmRXeXhXMmdPa2wwbjZ4d3ZzaGpYdVBXcHBpSkN3UjNBdGVCCkdPNVZOZVlzYVFsM2xncHRnbHUxMDN1U3h6UlZqS2lqWC9jZ1FUcGMrZGQ2eFlob2pYcFlpcFRhWjFSSGxUZVUKZjFQeUM2d0xqaW41TUZhUVEwMmxVN0QremNPMm5pNnYrcERycm9hVjBuODJSMDVpZ1NzQmRRWFM3NXE4alNqcgpyak55MmtvUnc4WmQ1ZGRkQTlxeHR4eVpSQTFDaDlwOVhZY3FudUxrSDVCR28yVHEwd0pkNkk1UGpEMUdzYjZVCjdHdnRlQVlUZjQ0WVNqVXdkcUhmUGJWdmlwUGQwaWFoSllaNjk4QVk5WWtDMWNoTDRaeGYrNnc9Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K
+    rules:
+      - operations: [ "CREATE", "UPDATE", "DELETE"]
+        apiGroups: [""]
+        apiVersions: ["v1"]
+        resources: ["services"]
+    namespaceSelector:
+      matchLabels:
+        dev.okteto.com: "true"
+  - name: pod.webhook.okteto.com
+    clientConfig:
+      service:
+        name: "do-okteto-enterprise-mutation-webhook"
+        path: "/mutate/pod"
+        namespace: "okteto"
+      caBundle: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUM5VENDQWQyZ0F3SUJBZ0lSQUtLNC91b3MyMXYzNHhnYml0SjB6dXd3RFFZSktvWklodmNOQVFFTEJRQXcKRkRFU01CQUdBMVVFQXhNSmIydDBaWFJ2TFdOaE1CNFhEVEU1TURreU5USXdNVFUwT1ZvWERUSTVNRGt5TWpJdwpNVFUwT1Zvd0ZERVNNQkFHQTFVRUF4TUpiMnQwWlhSdkxXTmhNSUlCSWpBTkJna3Foa2lHOXcwQkFRRUZBQU9DCkFROEFNSUlCQ2dLQ0FRRUF1UzVVN1lheDJFeEdPbHB0SWhHbmNhN2ZRNlZReU1GS0RwSkUyMTlLNER4Z3pibXcKK29XMjVORS8wblQwUnpxMWlUa0l5Qk8xU216cTVBMHFWK1BoNjJ1NzlWTVhNME83RGdRYWFEK096eHZabTA2dQp1b2hnNVN6QWNSRnBDclJHS2RteGl5TDQxUGxjS0I0dUE0WHVIckZ1N05PS2NWMXhjZThXamYzVTFHYXBXZmIwCkpRNU1hOVRMMFkyM0d0WmlLSC9Zc2R2cVRmMGptMjRoZm1JbmZuakNjSGhHY29jajBjZXN5cXplNGMvUWRtZGoKejlhdEpnYVZ0ZFFPeFN0SWlVQlRUT2xFUGlQSU50TnZtNGdoQ3FheDNDb3VFYURCU2x1d2xRM3E0QTVvWk1UUwpHdzBXM2dNUmdPeG1kbmxsRjV2M2ptcTIvdHhLMkhSV3JKMm83UUlEQVFBQm8wSXdRREFPQmdOVkhROEJBZjhFCkJBTUNBcVF3SFFZRFZSMGxCQll3RkFZSUt3WUJCUVVIQXdFR0NDc0dBUVVGQndNQ01BOEdBMVVkRXdFQi93UUYKTUFNQkFmOHdEUVlKS29aSWh2Y05BUUVMQlFBRGdnRUJBRGZUS0JMdjhBSTdnUFZacEUwZ0g3U2FTWDZDM0ZXUApJdnBwRDdlYXNneWVFeU9wV1dQWkpPRk91Rk85VmRXeXhXMmdPa2wwbjZ4d3ZzaGpYdVBXcHBpSkN3UjNBdGVCCkdPNVZOZVlzYVFsM2xncHRnbHUxMDN1U3h6UlZqS2lqWC9jZ1FUcGMrZGQ2eFlob2pYcFlpcFRhWjFSSGxUZVUKZjFQeUM2d0xqaW41TUZhUVEwMmxVN0QremNPMm5pNnYrcERycm9hVjBuODJSMDVpZ1NzQmRRWFM3NXE4alNqcgpyak55MmtvUnc4WmQ1ZGRkQTlxeHR4eVpSQTFDaDlwOVhZY3FudUxrSDVCR28yVHEwd0pkNkk1UGpEMUdzYjZVCjdHdnRlQVlUZjQ0WVNqVXdkcUhmUGJWdmlwUGQwaWFoSllaNjk4QVk5WWtDMWNoTDRaeGYrNnc9Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K
+    rules:
+      - operations: [ "CREATE"]
+        apiGroups: [""]
+        apiVersions: ["v1"]
+        resources: ["pods"]
+    namespaceSelector:
+      matchLabels:
+        dev.okteto.com: "true"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: "do-okteto-enterprise-mutation-webhook"
+  labels:
+    app.kubernetes.io/name: "do-okteto-enterprise-mutation-webhook"
+    helm.sh/chart: okteto-enterprise-0.2.12
+    app.kubernetes.io/instance: do
+    app.kubernetes.io/managed-by: Tiller
+type: Opaque
+data:
+  tls.crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURlekNDQW1PZ0F3SUJBZ0lSQUlmWktIN1N4QUQvelE0MzFrVERWdVl3RFFZSktvWklodmNOQVFFTEJRQXcKRkRFU01CQUdBMVVFQXhNSmIydDBaWFJ2TFdOaE1CNFhEVEU1TURreU5USXdNVFUwT1ZvWERUSTVNRGt5TWpJdwpNVFUwT1Zvd01ERXVNQ3dHQTFVRUF4TWxaRzh0YjJ0MFpYUnZMV1Z1ZEdWeWNISnBjMlV0YlhWMFlYUnBiMjR0CmQyVmlhRzl2YXpDQ0FTSXdEUVlKS29aSWh2Y05BUUVCQlFBRGdnRVBBRENDQVFvQ2dnRUJBTjZvTktyYXdvQVEKRFErSk5lOEV6MEVXUjNwK083ZXQzTjBleFRkejdSRmFiUHVBYjR5NVNDejZ0UktEVU8vWUZJNUJOdkt1RmFSWgpqQmdZOU1mZ3hDcnVLcG1NMjF4b1RlYUEwRm9PN056WE1SSEc0STBFaEo3RVAvVHMwcmlWNzYwZ2F6ZFBUZlRGCjdCQTVFcUp4dVF1MUZmSFk0Wml3T0NNNmttZFNBOTZVcG10NHorYTk1NEQ2Z2RlenpEbVZNU2xYdnVseUhGMzcKUzk2N1g0ajVjdmdmZ1piSFcrSm1KeVVGMUJnRkMrTWNabFpZUllNSWFmM0NrU0pFdE15cEg3VmxsZFRjUUZyYQpiK0laU0hTSEE3Y0ZKa3FTc1dzNVFiRDdhcTRyMjNIK1BySXhqdGc5SXZzU00vUzVYOTJHV3l5cXU4Z3lRV0FNCklZYWtYaW8wakxjQ0F3RUFBYU9CcXpDQnFEQU9CZ05WSFE4QkFmOEVCQU1DQmFBd0hRWURWUjBsQkJZd0ZBWUkKS3dZQkJRVUhBd0VHQ0NzR0FRVUZCd01DTUF3R0ExVWRFd0VCL3dRQ01BQXdhUVlEVlIwUkJHSXdZSUlzWkc4dApiMnQwWlhSdkxXVnVkR1Z5Y0hKcGMyVXRiWFYwWVhScGIyNHRkMlZpYUc5dmF5NXZhM1JsZEcrQ01HUnZMVzlyCmRHVjBieTFsYm5SbGNuQnlhWE5sTFcxMWRHRjBhVzl1TFhkbFltaHZiMnN1YjJ0MFpYUnZMbk4yWXpBTkJna3EKaGtpRzl3MEJBUXNGQUFPQ0FRRUFaRlppcnZWbTkvV3RUaU5CZlExQVhjY0p3enovMVZFTkt4Unl6N28wRlV5bQpqVDhXYThod3prYkJlOVNKS21DbDQ4MExYSFQ3a3FsT3lkSng2S0p6akp6MXFPQzFLR29HMmE0VjZ6anRjVVMyCmdlS3dPWWxoWjVaVDB5RjFvcE5kMkZnNTV5LzBIajMwNWVDcFJ6cWFrODRjLzZzUFRLdXhMeXl6UlZ2RjN6ZjcKd0F3dGl4ZDkrQUhxSGd5WVIzaUVYMzFuSTd4QXlDMGM4UnJKN25wWGdEd0laYTFQVU51VTAzQU85UjBoQnFWSAplTkU5a3RUbWhFSTlPcE9MZVVGL2o1MDgzS1RTOVRXY05iTlNRUUZNKzFYT2UrSWdyY0c5UWpXL29xYUZ0ZzF4CkRtRVVoc2pVWjVyTUs5VnpDQ1BVS3QzTUhNTlRxZ0RWYkhXMjNnMkt2QT09Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K
+  tls.key: LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlFb3dJQkFBS0NBUUVBM3FnMHF0ckNnQkFORDRrMTd3VFBRUlpIZW40N3Q2M2MzUjdGTjNQdEVWcHMrNEJ2CmpMbElMUHExRW9OUTc5Z1Vqa0UyOHE0VnBGbU1HQmoweCtERUt1NHFtWXpiWEdoTjVvRFFXZzdzM05jeEVjYmcKalFTRW5zUS85T3pTdUpYdnJTQnJOMDlOOU1Yc0VEa1Nvbkc1QzdVVjhkamhtTEE0SXpxU1oxSUQzcFNtYTNqUAo1cjNuZ1BxQjE3UE1PWlV4S1ZlKzZYSWNYZnRMM3J0ZmlQbHkrQitCbHNkYjRtWW5KUVhVR0FVTDR4eG1WbGhGCmd3aHAvY0tSSWtTMHpLa2Z0V1dWMU54QVd0cHY0aGxJZEljRHR3VW1TcEt4YXpsQnNQdHFyaXZiY2Y0K3NqR08KMkQwaSt4SXo5TGxmM1laYkxLcTd5REpCWUF3aGhxUmVLalNNdHdJREFRQUJBb0lCQUFpeHFyVE5LL0VTTDJCZQo3RE0wRGQrdHZnYkRiUk9ELzI3RzU4NTlnVkUvSmFoQVlKcXZGV2xrTkxQUFd0YXlxa0xQdXhTSXhhR1FPWThyClVrdUh0RUUwNFliellCRmdwVUlOMzVUVXBsME5MZ1pTckt2MDlEUzYxd0I2U3RRWVRxNkU2SXJWVnVicTM0ZlcKb3FxakpDV1g0WTU2K0h3Y3pXUmF3aUswcWlBRHZVSzBaSit0Z1FTL3BGVURiSUQwbnNnL3BSV1g0ZkdlcE1hbgp2U1B2cXByWmZOUTJBL0J1RUo4WFRJSTFzdXZPZHI1bzZSOStvMks1SHRkbU8rMFZFT1BGRFdxM0JXY08rTDZTCm1sMnNMOTVNUWxrZ1RUTUVDSlJhTnQ3QTg3MDdLOFNMUHNqenBDZmhGbTg5MHVER1hxMGpCd0VXaGg5eGVyRkEKQitlUkhWRUNnWUVBNzRuVUovamQ3c2NndFova2syT1dIMmFsRzVTdi9vOWpJcE5QZnlVcWZvQ0tWME5HK1lwVgpwcWdpVVA1anpxQTc4ZHI0M0pvWmVTaXgvNHdHcTBiZ0Z3TUxYQ0VISmpoTDJHRTM4S3hNS3ZjNFc0ZnFraU55CjhQcnNETEhjczdUZ3orMHJNRnowd0RnZjh3ZjR5NUZybEJ5SUtJaHkyTTQ3T2hCKzcyMmVsQ2tDZ1lFQTdmVmkKc29hNHlXSFpzSXFxamxUVllScktIU2VrMmU0bDRJbExTTU5kZE4yZEFDUE1aaG5XK1d0anpXRFdQellpSUNsZwpEb2k0T3ptblJXZTNjN3VCenhjeWwxekJMcnd0K1VtR0hRZ1plc09XdE5BeWNaU3Vja2tqV2ttT29YZk1BRUZGCnFURHBQT1VKQi9nN0hYMnkvZThOUUxTS1hkNWl2MTkzREluZE5kOENnWUJYeDFwSGk1dElkUkEzZm5CMDBubWcKNkN4NC92Ty9oU3YrNzV5aUt5eDNUd05qRnZSYlhhWWxmRmVXOXFIOGhodHhkWnpjdWx1N1duNWY5eUE2ZzY1Ngp3RkxaWUFFT3NIS2F5SVdIWEp4TTRtdDBuMG9HWTVjclY4aElucVVSOWFhc2kyellQRGcwZUZ5ODRwNzVla0RCCjlmS3ZaOUV1UWVUU1Vsa3h4Q25vZ1FLQmdRRG43SW1rbk1BUHJ5b2Y4aGJub0hGVU1tc1pYV0ZEOHVQQjQ2NlgKbmFwQjFCbElZSnZBUzZFRitoQU14VHdyNGRRQzZyQ3ZtYnVPSmRRTlJsZzhHVjRjZkd5WHNCU3RPMFhIdVV4WQprV05jRHJPZFNXcFEzMnZqQWJ2T0xQRXlHUE9nci8xNE9LNnE1a1FXRzI5cWYrL3JwWW1TTGlUSjlvemlIdWFHCk52eCttd0tCZ0FOakcwd1gyaVRWeWpqT2NxMUY1UHBUZkZGdTNnZVkxV3RKSjk5RlRTa0xLVjYzNFc2eSt1eHcKYjg3Z0V5cWdYVXpvT1pvb0tJdEFZUmRYdis4VE1RdUJOWE4xTk5GWHhmd3Z0RndpWFlreDFESjh3U0pwdnNBbwp1VmVkaXFFVnRQQnFRc0FQcnZhTFJZd1BibHNLWGxtUGgzUnhEblJTRTVTZTlwY3VpUTNNCi0tLS0tRU5EIFJTQSBQUklWQVRFIEtFWS0tLS0tCg==
+---
+# Source: okteto-enterprise/charts/nginx-ingress/templates/addheaders-configmap.yaml
+
+
+---
+# Source: okteto-enterprise/charts/nginx-ingress/templates/controller-daemonset.yaml
+
+
+---
+# Source: okteto-enterprise/charts/nginx-ingress/templates/controller-hpa.yaml
+
+
+---
+# Source: okteto-enterprise/charts/nginx-ingress/templates/controller-metrics-service.yaml
+
+
+---
+# Source: okteto-enterprise/charts/nginx-ingress/templates/controller-prometheusrules.yaml
+
+
+---
+# Source: okteto-enterprise/charts/nginx-ingress/templates/controller-servicemonitor.yaml
+
+
+---
+# Source: okteto-enterprise/charts/nginx-ingress/templates/podsecuritypolicy.yaml
+
+
+---
+# Source: okteto-enterprise/charts/nginx-ingress/templates/proxyheaders-configmap.yaml
+
+
+---
+# Source: okteto-enterprise/charts/nginx-ingress/templates/tcp-configmap.yaml
+
+
+---
+# Source: okteto-enterprise/charts/nginx-ingress/templates/udp-configmap.yaml
+
+
+---
+# Source: okteto-enterprise/charts/cert-manager/charts/webhook/templates/validating-webhook.yaml
+apiVersion: admissionregistration.k8s.io/v1beta1
+kind: ValidatingWebhookConfiguration
+metadata:
+  name: do-webhook
+  labels:
+    app: webhook
+    chart: webhook-v0.8.1
+    release: do
+    heritage: Tiller
+  annotations:
+    certmanager.k8s.io/inject-apiserver-ca: "true"
+webhooks:
+  - name: certificates.admission.certmanager.k8s.io
+    namespaceSelector:
+      matchExpressions:
+      - key: "certmanager.k8s.io/disable-validation"
+        operator: "NotIn"
+        values:
+        - "true"
+      - key: "name"
+        operator: "NotIn"
+        values:
+        - okteto
+    rules:
+      - apiGroups:
+          - "certmanager.k8s.io"
+        apiVersions:
+          - v1alpha1
+        operations:
+          - CREATE
+          - UPDATE
+        resources:
+          - certificates
+    failurePolicy: Fail
+    clientConfig:
+      service:
+        name: kubernetes
+        namespace: default
+        path: /apis/admission.certmanager.k8s.io/v1beta1/certificates
+  - name: issuers.admission.certmanager.k8s.io
+    namespaceSelector:
+      matchExpressions:
+      - key: "certmanager.k8s.io/disable-validation"
+        operator: "NotIn"
+        values:
+        - "true"
+      - key: "name"
+        operator: "NotIn"
+        values:
+        - okteto
+    rules:
+      - apiGroups:
+          - "certmanager.k8s.io"
+        apiVersions:
+          - v1alpha1
+        operations:
+          - CREATE
+          - UPDATE
+        resources:
+          - issuers
+    failurePolicy: Fail
+    clientConfig:
+      service:
+        name: kubernetes
+        namespace: default
+        path: /apis/admission.certmanager.k8s.io/v1beta1/issuers
+  - name: clusterissuers.admission.certmanager.k8s.io
+    namespaceSelector:
+      matchExpressions:
+      - key: "certmanager.k8s.io/disable-validation"
+        operator: "NotIn"
+        values:
+        - "true"
+      - key: "name"
+        operator: "NotIn"
+        values:
+        - okteto
+    rules:
+      - apiGroups:
+          - "certmanager.k8s.io"
+        apiVersions:
+          - v1alpha1
+        operations:
+          - CREATE
+          - UPDATE
+        resources:
+          - clusterissuers
+    failurePolicy: Fail
+    clientConfig:
+      service:
+        name: kubernetes
+        namespace: default
+        path: /apis/admission.certmanager.k8s.io/v1beta1/clusterissuers
+
