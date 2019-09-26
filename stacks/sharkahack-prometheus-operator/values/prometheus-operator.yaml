@@ -1,0 +1,15 @@
+grafana:
+  adminPassword: changeme
+  service:
+    type: LoadBalancer
+
+kubelet:
+  namespace: prometheus-operator
+
+prometheus:
+  prometheusSpec:
+    retention: 30d
+
+prometheusOperator:
+  kubeletService:
+    namespace: prometheus-operator
