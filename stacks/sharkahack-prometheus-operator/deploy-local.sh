@@ -16,7 +16,7 @@ EOF
 kubectl config set-context --current --namespace=prometheus-operator
 
 # deploy prometheus-operator
-kubectl apply -f "$ROOT_DIR"/stacks/prometheus-operator/yaml/prometheus-operator.yaml
+kubectl apply -f "$ROOT_DIR"/stacks/sharkahack-prometheus-operator/yaml/prometheus-operator.yaml
 
 # ensure services are running
 kubectl rollout status deployment/prometheus-operator-grafana
