@@ -318,7 +318,7 @@ metadata:
 type: Opaque
 data:
   admin-user: "YWRtaW4="
-  admin-password: "Y2hhbmdlbWU="
+  admin-password: "cHJvbS1vcGVyYXRvcg=="
   ldap-toml: ""
 
 ---
@@ -375,6 +375,9 @@ data:
   grafana.ini: |
     [analytics]
     check_for_updates = true
+    [auth.anonymous]
+    enabled = true
+    org_role = Viewer
     [grafana_net]
     url = https://grafana.net
     [log]
@@ -384,6 +387,8 @@ data:
     logs = /var/log/grafana
     plugins = /var/lib/grafana/plugins
     provisioning = /etc/grafana/provisioning
+    [users]
+    viewers_can_edit = true
 
 ---
 # Source: prometheus-operator/templates/grafana/configmaps-datasources.yaml
@@ -20656,7 +20661,7 @@ metadata:
     release: prometheus-operator
     heritage: Tiller
 spec:
-  type: LoadBalancer
+  type: ClusterIP
   ports:
     - name: service
       port: 80
@@ -21000,10 +21005,10 @@ spec:
         app: grafana
         release: prometheus-operator
       annotations:
-        checksum/config: c91520bf2b2be027a77c095ef42155b03997f3ce1bb5c0cf2fe73ffdaab0fbf1
+        checksum/config: ddcb2c7aab6c857f25721a8da7a666dc80c1f8600ea1abba8c334d8dc79a3861
         checksum/dashboards-json-config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
         checksum/sc-dashboard-provider-config: bf4c8db719e02c4805011f112a765c8be34fe3968d7d8d445b2676f43d924407
-        checksum/secret: f9d376b37f9dc18416e436ca3e1f0454ee6447621babfa375a05155712e8741f
+        checksum/secret: 7181e24a2daebc9bd1f0d708196a1f6c95430543e9e08920c9a5b2cb639c7799
     spec:
       serviceAccountName: prometheus-operator-grafana
       securityContext:

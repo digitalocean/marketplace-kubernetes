@@ -1,7 +1,10 @@
 grafana:
-  adminPassword: changeme
-  service:
-    type: LoadBalancer
+  grafana.ini:
+    auth.anonymous:
+      enabled: true
+      org_role: Viewer
+    users:
+      viewers_can_edit: true
 
 kubelet:
   namespace: prometheus-operator
