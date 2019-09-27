@@ -15,6 +15,6 @@ if [ -z "${DOMAIN}" ]; then
 fi
 
 sh -c "curl --location --silent --show-error https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/sharkahack/deploy-nginx-ingress.sh | sh"
-sh -c "curl --location --silent --show-error https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/metrics-server/deploy-local.sh | sh"
-sh -c "curl --location --silent --show-error https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/sharkahack-prometheus-operator/deploy-local.sh | sh"
+sh -c "curl --location --silent --show-error https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/metrics-server/deploy.sh | sh"
+sh -c "curl --location --silent --show-error https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/sharkahack-prometheus-operator/deploy.sh | sh"
 sh -c "curl --location --silent --show-error https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/sharkahack/shared.sh | sh"
