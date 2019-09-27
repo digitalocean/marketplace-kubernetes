@@ -81,6 +81,11 @@ spec:
         backend:
           serviceName: prometheus-operator-prometheus
           servicePort: 9090
+  tls:
+  - hosts:
+    - alertmanager.${CLUSTER_UUID}.dohackafun.com
+    - grafana.${CLUSTER_UUID}.dohackafun.com
+    - prometheus.${CLUSTER_UUID}.dohackafun.com
 EOF
 
 ################################################################################
@@ -145,5 +150,3 @@ EOF
 generate_returned_data
 
 echo /tmp/"$CLUSTER_UUID"
-
-# TODO: listen on 443

@@ -4,4 +4,4 @@ This stack consists of:
 
 * [Metrics Server](https://github.com/kubernetes-incubator/metrics-server)
 * [Prometheus Operator](https://github.com/coreos/prometheus-operator)
-* [NGINX Ingress]()
+* [NGINX Ingress](https://github.com/kubernetes/ingress-nginx)
