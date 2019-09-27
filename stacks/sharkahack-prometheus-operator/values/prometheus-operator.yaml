@@ -1,0 +1,18 @@
+grafana:
+  grafana.ini:
+    auth.anonymous:
+      enabled: true
+      org_role: Viewer
+    users:
+      viewers_can_edit: true
+
+kubelet:
+  namespace: prometheus-operator
+
+prometheus:
+  prometheusSpec:
+    retention: 30d
+
+prometheusOperator:
+  kubeletService:
+    namespace: prometheus-operator
