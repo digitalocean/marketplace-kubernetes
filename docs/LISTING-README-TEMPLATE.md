@@ -5,12 +5,13 @@
 
 _Write a few paragraphs about *WHAT* the listing is, *WHAT* the software does, and the *VALUE* it brings to users._
 
-_Include specific details on what this 1-click provides, and the value to users. Enumerate the values this 1-click's config gives the user. Enumerate the value this software combination, specifically for stacks containing multiple pieces of software, bring to the user. 
+_Include specific details on what this 1-click provides, and the value to users. Enumerate the values this 1-click's config gives the user. Enumerate the value this software combination, specifically for stacks containing multiple pieces of software, bring to the user._ 
 
 _Include links for the user to learn more about the software that are not included in the software included section._
 
-_Recommend CPU and Memory minimum requirements and node pools for test/dev and production for X amount of user_
+_Recommend CPU and Memory minimum requirements and node pools for test/dev and production for X amount of user._
 
+_If your software is Open Source a thank you to all the contributors is a nice touch. Suggest to add something to the effect:_
 Thank you to all the contributors whose hard work make this software valuable for users.
 
 
