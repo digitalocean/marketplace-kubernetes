@@ -9,11 +9,7 @@ kubectl config set-context --current --namespace=linkerd
 linkerd install --ignore-cluster | kubectl apply -f -
 
 # ensure services are running
-kubectl rollout status deployment/linkerd-controller
-kubectl rollout status deployment/linkerd-grafana
-kubectl rollout status deployment/linkerd-identity
-kubectl rollout status deployment/linkerd-prometheus
-kubectl rollout status deployment/linkerd-proxy-injector
-kubectl rollout status deployment/linkerd-sp-validator
-kubectl rollout status deployment/linkerd-tap
-kubectl rollout status deployment/linkerd-web
+kubectl get deployments -o custom-columns=NAME:.metadata.name | tail -n +2 | while read -r line
+do
+  kubectl rollout status deployment/"$line"
+done
