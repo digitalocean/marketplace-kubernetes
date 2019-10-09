@@ -5,13 +5,13 @@
 
 _Write a few paragraphs about *WHAT* the listing is, *WHAT* the software does, and the *VALUE* it brings to users._
 
-_Include specific details on what this 1-click provides, and the value to users. Enumerate the values this 1-click's config gives the user. Enumerate the value this software combination, specifically for stacks containing multiple pieces of software, bring to the user._ 
+_Include specific details on what this 1-click provides, and the value to users. Enumerate the values this 1-click's config gives the user. Enumerate the value this software combination, specifically for apps containing multiple pieces of software, bring to the user._ 
 
 _Include links for the user to learn more about the software that are not included in the software included section._
 
 _Recommend CPU and Memory minimum requirements and node pools for test/dev and production for X amount of user._
 
-_If your software is Open Source a thank you to all the contributors is a nice touch. Suggest to add something to the effect:_
+_If your software is Open Source, a thank you to all the contributors is a nice touch. Suggest to add something to the effect:_
 Thank you to all the contributors whose hard work make this software valuable for users.
 
 
@@ -26,7 +26,7 @@ Additional instructions are included in the DigitalOcean Kubernetes control pane
 https://cloud.digitalocean.com/kubernetes/clusters/ 
 
 #### Quick Start
-If you just want to give this stack a quick spin without `doctl` give the following a try.
+If you just want to give this app a quick spin without `doctl` give the following a try.
 
 Assuming you have done the following:
 1. Created a cluster in the DigitalOcean control panel (https://cloud.digitalocean.com/kubernetes/clusters/).
@@ -82,7 +82,7 @@ _Provide Quick Getting Started YouTube videos when possible._
 
 [![YouTube Video](http://img.youtube.com/vi/UMfJNg_SVj0/0.jpg)](http://www.youtube.com/watch?v=UMfJNg_SVj0 "Image Title")
 
-_Repeat this section for each service in the stack._
+_Repeat this section for each service in the application listing._
 
 ### Additional Resources
 _Provide links to blogs, tutorials, documentation, and YouTube videos the user can leverage to grow knowledge about the [service]._
