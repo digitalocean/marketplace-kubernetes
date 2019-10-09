@@ -16,7 +16,7 @@ Thank you to all the contributors whose hard work make this software valuable fo
 
 
 # Getting Started
-(Replace `[service]` with the specific service name.)
+(Replace `[app]` with the specific app name.)
 
 ### Getting Started with DigitalOcean Kubernetes
 As you get started with Kubernetes on DigitalOcean be sure to check out how to connect to your cluster using `kubectl` and `doctl`:
@@ -43,32 +43,32 @@ You should now be able to connect to your DigitalOcean Kubernetes Cluster and su
 kubectl get pods -A
 ```
 
-### Confirm [service] is running: 
-After you are able to successfully connect to your DigitalOcean Kubernetes cluster you’ll be able to see [service] running in the `[service]` namespace by issuing:
+### Confirm [app] is running: 
+After you are able to successfully connect to your DigitalOcean Kubernetes cluster you’ll be able to see [app] running in the `[app]` namespace by issuing:
  ```
  kubectl get pods -A
  ``` 
- Confirm all `[service]` pods are in a “`Running`” state under the “`STATUS`” column:
+ Confirm all `[app]` pods are in a “`Running`” state under the “`STATUS`” column:
 
 ```
 NAMESPACE    NAME                          READY    STATUS    RESTARTS    AGE
-[service]    [service]-677f58bd99-fx47c    4/4      Running   0           6m34s
-[service]    [service]-9dbd66dfb-52flb     2/2      Running   0           6m33s
-[service]    [service]-6587f85db7-6vfkf    2/2      Running   0           6m35s
-[service]    [service]-7cb697456b-jdq6t    2/2      Running   0           6m33s
-[service]    [service]-7c45798d44-rxhnq    2/2      Running   0           6m32s
-[service]    [service]-6d5b85476c-nf445    2/2      Running   0           6m34s
+[app]    [app]-677f58bd99-fx47c    4/4      Running   0           6m34s
+[app]    [app]-9dbd66dfb-52flb     2/2      Running   0           6m33s
+[app]    [app]-6587f85db7-6vfkf    2/2      Running   0           6m35s
+[app]    [app]-7cb697456b-jdq6t    2/2      Running   0           6m33s
+[app]    [app]-7c45798d44-rxhnq    2/2      Running   0           6m32s
+[app]    [app]-6d5b85476c-nf445    2/2      Running   0           6m34s
 ```
-_Be sure to call out all services the user needs to ensure are running for proper function of the `[service]`._
+_Be sure to call out all apps the user needs to ensure are running for proper function of the `[app]`._
 
-### Install [service] CLI (optional)
+### Install [app] CLI (optional)
 
-### Connect/Use [service]
-_Provide detailed step-by-step instructions on how the user should interact and use the [service]. Be verbose and specific don't assume the user knows steps to take._
+### Connect/Use [app]
+_Provide detailed step-by-step instructions on how the user should interact and use the [app]. Be verbose and specific don't assume the user knows steps to take._
 
-_Ensure the service provides some utility out of the box. Be comfortable to be opinionated on recommended config. Success is when the user can easily use the software, and utilize best practices with minimal effort. So be opinionated, and include recommended config, charts, etc._
+_Ensure the app provides some utility out of the box. Be comfortable to be opinionated on recommended config. Success is when the user can easily use the software, and utilize best practices with minimal effort. So be opinionated, and include recommended config, charts, etc._
 
-_If possible provide an example app, chart, or module which allows the user to see how the [service] works, and enables the user to quickly start modifying and building._
+_If possible provide an example app, chart, or module which allows the user to see how the [app] works, and enables the user to quickly start modifying and building._
 
 _Include in-line documentation when possible._
 
@@ -82,10 +82,10 @@ _Provide Quick Getting Started YouTube videos when possible._
 
 [![YouTube Video](http://img.youtube.com/vi/UMfJNg_SVj0/0.jpg)](http://www.youtube.com/watch?v=UMfJNg_SVj0 "Image Title")
 
-_Repeat this section for each service in the application listing._
+_Repeat this section for each app in the application listing._
 
 ### Additional Resources
-_Provide links to blogs, tutorials, documentation, and YouTube videos the user can leverage to grow knowledge about the [service]._
+_Provide links to blogs, tutorials, documentation, and YouTube videos the user can leverage to grow knowledge about the [app]._
 
 _Provide resources the user can use to go beyond deploying and initial setup._
 
