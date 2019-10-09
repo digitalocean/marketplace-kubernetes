@@ -4,12 +4,12 @@ set -e
 
 ROOT_DIR=$(git rev-parse --show-toplevel)
 
-# create prometheus-operator namespace
+# create namespace
 cat <<EOF | kubectl apply -f -
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: openebs 
+  name: openebs
 EOF
 
 # set kubectl namespace
