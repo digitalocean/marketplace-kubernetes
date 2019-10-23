@@ -1,0 +1,7 @@
+master:
+  database:
+    storageclass: "do-block-storage"
+    volumesize: 2Gi
+
+  alarms:
+    persistence: false

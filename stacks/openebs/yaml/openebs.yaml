@@ -1,5 +1,6 @@
 ---
 # Source: openebs/templates/cm-node-disk-manager.yaml
+
 # This is the node-disk-manager related config.
 # It can be used to customize the disks probes and filters
 apiVersion: v1
@@ -9,13 +10,14 @@ metadata:
   namespace: openebs
   labels:
     app: openebs
-    chart: openebs-1.1.2
+    chart: openebs-1.3.0
     release: openebs
     heritage: Tiller
     component: ndm-config
+    openebs.io/component-name: ndm-config
 data:
   # udev-probe is default or primary probe which should be enabled to run ndm
-  # filterconfigs contails configs of filters - in ther form fo include
+  # filterconfigs contains configs of filters - in the form of include
   # and exclude comma separated strings
   node-disk-manager.config: |
     probeconfigs:
@@ -24,7 +26,7 @@ data:
         state: true
       - key: seachest-probe
         name: seachest probe
-        state: true
+        state: false
       - key: smart-probe
         name: smart probe
         state: true
@@ -55,7 +57,7 @@ metadata:
   namespace: openebs
   labels:
     app: openebs
-    chart: openebs-1.1.2
+    chart: openebs-1.3.0
     release: openebs
     heritage: Tiller
 
@@ -68,7 +70,7 @@ metadata:
   name: openebs-maya-operator
   labels:
     app: openebs
-    chart: openebs-1.1.2
+    chart: openebs-1.3.0
     release: openebs
     heritage: Tiller
 rules:
@@ -76,8 +78,17 @@ rules:
   resources: ["nodes", "nodes/proxy"]
   verbs: ["*"]
 - apiGroups: ["*"]
-  resources: ["namespaces", "services", "pods", "deployments", "events", "endpoints", "configmaps", "jobs"]
+  resources: ["namespaces", "services", "pods", "pods/exec", "deployments", "replicationcontrollers", "replicasets", "events", "endpoints", "configmaps", "secrets",  "jobs", "cronjobs" ]
   verbs: ["*"]
+- apiGroups: ["*"]
+  resources: ["statefulsets", "daemonsets"]
+  verbs: ["*"]
+- apiGroups: ["*"]
+  resources: ["resourcequotas", "limitranges"]
+  verbs: ["list", "watch"]
+- apiGroups: ["*"]
+  resources: ["ingresses", "horizontalpodautoscalers", "verticalpodautoscalers", "poddisruptionbudgets", "certificatesigningrequests"]
+  verbs: ["list", "watch"]
 - apiGroups: ["*"]
   resources: ["storageclasses", "persistentvolumeclaims", "persistentvolumes"]
   verbs: ["*"]
@@ -91,7 +102,7 @@ rules:
   resources: [ "disks", "blockdevices", "blockdeviceclaims"]
   verbs: ["*" ]
 - apiGroups: ["*"]
-  resources: [ "storagepoolclaims", "storagepoolclaims/finalizers","storagepools"]
+  resources: [ "cstorpoolclusters", "storagepoolclaims", "storagepoolclaims/finalizers", "cstorpoolclusters/finalizers", "storagepools"]
   verbs: ["*" ]
 - apiGroups: ["*"]
   resources: [ "castemplates", "runtasks"]
@@ -100,11 +111,17 @@ rules:
   resources: [ "cstorpools", "cstorpools/finalizers", "cstorvolumereplicas", "cstorvolumes", "cstorvolumeclaims"]
   verbs: ["*" ]
 - apiGroups: ["*"]
+  resources: [ "cstorpoolinstances", "cstorpoolinstances/finalizers"]
+  verbs: ["*" ]
+- apiGroups: ["*"]
   resources: [ "cstorbackups", "cstorrestores", "cstorcompletedbackups"]
   verbs: ["*" ]
 - apiGroups: ["*"]
   resources: [ "upgradetasks"]
   verbs: ["*" ]
+- apiGroups: ["coordination.k8s.io"]
+  resources: ["leases"]
+  verbs: ["get", "watch", "list", "delete", "update", "create"]
 - nonResourceURLs: ["/metrics"]
   verbs: ["get"]
 
@@ -117,7 +134,7 @@ metadata:
   name: openebs-maya-operator
   labels:
     app: openebs
-    chart: openebs-1.1.2
+    chart: openebs-1.3.0
     release: openebs
     heritage: Tiller
 roleRef:
@@ -131,6 +148,7 @@ subjects:
 
 ---
 # Source: openebs/templates/service-admission-server.yaml
+
 apiVersion: v1
 kind: Service
 metadata:
@@ -138,9 +156,10 @@ metadata:
   namespace: openebs
   labels:
     app: admission-webhook
-    chart: openebs-1.1.2
+    chart: openebs-1.3.0
     release: openebs
     heritage: Tiller
+    openebs.io/component-name: admission-webhook-svc
 spec:
   ports:
   - port: 443
@@ -150,6 +169,7 @@ spec:
 
 ---
 # Source: openebs/templates/service-maya-apiserver.yaml
+
 apiVersion: v1
 kind: Service
 metadata:
@@ -157,9 +177,10 @@ metadata:
   namespace: openebs
   labels:
     app: openebs
-    chart: openebs-1.1.2
+    chart: openebs-1.3.0
     release: openebs
     heritage: Tiller
+    openebs.io/component-name: maya-apiserver-svc
 spec:
   ports:
   - name: api
@@ -174,17 +195,20 @@ spec:
 
 ---
 # Source: openebs/templates/daemonset-ndm.yaml
-apiVersion: extensions/v1beta1
+
+apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: openebs-ndm
   namespace: openebs
   labels:
     app: openebs
-    chart: openebs-1.1.2
+    chart: openebs-1.3.0
     release: openebs
     heritage: Tiller
     component: ndm
+    openebs.io/component-name: ndm
+    openebs.io/version: 1.3.0
 spec:
   updateStrategy:
     type: "RollingUpdate"
@@ -201,17 +225,19 @@ spec:
         component: ndm
         openebs.io/component-name: ndm
         name: openebs-ndm
-        openebs.io/version: 1.1.0
+        openebs.io/version: 1.3.0
     spec:
       serviceAccountName: openebs-maya-operator
       hostNetwork: true
       containers:
       - name: openebs-ndm
-        image: "quay.io/openebs/node-disk-manager-amd64:v0.4.1"
+        image: "quay.io/openebs/node-disk-manager-amd64:v0.4.3"
         imagePullPolicy: IfNotPresent
         securityContext:
           privileged: true
         env:
+        # namespace in which NDM is installed will be passed to NDM Daemonset
+        # as environment variable
         - name: NAMESPACE
           valueFrom:
             fieldRef:
@@ -279,6 +305,7 @@ spec:
 
 ---
 # Source: openebs/templates/deployment-admission-server.yaml
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -286,12 +313,17 @@ metadata:
   namespace: openebs
   labels:
     app: admission-webhook
-    chart: openebs-1.1.2
+    chart: openebs-1.3.0
     release: openebs
     heritage: Tiller
     component: admission-webhook
+    openebs.io/component-name: admission-webhook
+    openebs.io/version: 1.3.0
 spec:
   replicas: 1
+  strategy:
+    type: "Recreate"
+    rollingUpdate: null
   selector:
     matchLabels:
       app: admission-webhook
@@ -300,13 +332,14 @@ spec:
       labels:
         app: admission-webhook
         name: admission-webhook
-        openebs.io/version: 1.1.0
+        release: openebs
+        openebs.io/version: 1.3.0
         openebs.io/component-name: admission-webhook
     spec:
       serviceAccountName: openebs-maya-operator
       containers:
         - name: admission-webhook
-          image: "quay.io/openebs/admission-server:1.1.0"
+          image: "quay.io/openebs/admission-server:1.3.0"
           imagePullPolicy: IfNotPresent
           args:
             - -tlsCertFile=/etc/webhook/certs/cert.pem
@@ -325,6 +358,7 @@ spec:
 
 ---
 # Source: openebs/templates/deployment-local-provisioner.yaml
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -332,13 +366,17 @@ metadata:
   namespace: openebs
   labels:
     app: openebs
-    chart: openebs-1.1.2
+    chart: openebs-1.3.0
     release: openebs
     heritage: Tiller
     component: localpv-provisioner
     openebs.io/component-name: openebs-localpv-provisioner
+    openebs.io/version: 1.3.0
 spec:
   replicas: 1
+  strategy:
+    type: "Recreate"
+    rollingUpdate: null
   selector:
     matchLabels:
       app: openebs
@@ -351,12 +389,12 @@ spec:
         component: localpv-provisioner
         name: openebs-localpv-provisioner
         openebs.io/component-name: openebs-localpv-provisioner
-        openebs.io/version: 1.1.0
+        openebs.io/version: 1.3.0
     spec:
       serviceAccountName: openebs-maya-operator
       containers:
       - name: openebs-localpv-provisioner
-        image: "quay.io/openebs/provisioner-localpv:1.1.0"
+        image: "quay.io/openebs/provisioner-localpv:1.3.0"
         imagePullPolicy: IfNotPresent
         env:
         # OPENEBS_IO_K8S_MASTER enables openebs provisioner to connect to K8s
@@ -397,6 +435,7 @@ spec:
 
 ---
 # Source: openebs/templates/deployment-maya-apiserver.yaml
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -404,15 +443,18 @@ metadata:
   namespace: openebs
   labels:
     app: openebs
-    chart: openebs-1.1.2
+    chart: openebs-1.3.0
     release: openebs
     heritage: Tiller
     component: apiserver
     name: maya-apiserver
     openebs.io/component-name: maya-apiserver
-    openebs.io/version: 1.1.0
+    openebs.io/version: 1.3.0
 spec:
   replicas: 1
+  strategy:
+    type: "Recreate"
+    rollingUpdate: null
   selector:
     matchLabels:
       app: openebs
@@ -425,12 +467,12 @@ spec:
         component: apiserver
         name: maya-apiserver
         openebs.io/component-name: maya-apiserver
-        openebs.io/version: 1.1.0
+        openebs.io/version: 1.3.0
     spec:
       serviceAccountName: openebs-maya-operator
       containers:
       - name: openebs-apiserver
-        image: "quay.io/openebs/m-apiserver:1.1.0"
+        image: "quay.io/openebs/m-apiserver:1.3.0"
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5656
@@ -445,17 +487,6 @@ spec:
         # This is supported for maya api server version 0.5.2 onwards
         #- name: OPENEBS_IO_K8S_MASTER
         #  value: "http://172.28.128.3:8080"
-        # OPENEBS_IO_INSTALL_DEFAULT_CSTOR_SPARSE_POOL decides whether default cstor sparse pool should be
-        # configured as a part of openebs installation.
-        # If "true" a default cstor sparse pool will be configured, if "false" it will not be configured.
-        - name: OPENEBS_IO_INSTALL_DEFAULT_CSTOR_SPARSE_POOL
-          value: "false"
-        - name: OPENEBS_IO_CSTOR_POOL_SPARSE_DIR
-          value: "/var/openebs/sparse"
-        - name: OPENEBS_IO_CREATE_DEFAULT_STORAGE_CONFIG
-          value: "true"
-        - name: OPENEBS_IO_CSTOR_TARGET_DIR
-          value: "/var/openebs/sparse"
         # OPENEBS_NAMESPACE provides the namespace of this deployment as an
         # environment variable
         - name: OPENEBS_NAMESPACE
@@ -474,24 +505,62 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.name
+        # If OPENEBS_IO_CREATE_DEFAULT_STORAGE_CONFIG is false then OpenEBS default
+        # storageclass and storagepool will not be created.
+        - name: OPENEBS_IO_CREATE_DEFAULT_STORAGE_CONFIG
+          value: "true"
+        # OPENEBS_IO_INSTALL_DEFAULT_CSTOR_SPARSE_POOL decides whether default cstor sparse pool should be
+        # configured as a part of openebs installation.
+        # If "true" a default cstor sparse pool will be configured, if "false" it will not be configured.
+        # This value takes effect only if OPENEBS_IO_CREATE_DEFAULT_STORAGE_CONFIG
+        # is set to true
+        - name: OPENEBS_IO_INSTALL_DEFAULT_CSTOR_SPARSE_POOL
+          value: "false"
+        # OPENEBS_IO_CSTOR_TARGET_DIR can be used to specify the hostpath
+        # to be used for saving the shared content between the side cars
+        # of cstor volume pod.
+        # The default path used is /var/openebs/sparse
+        - name: OPENEBS_IO_CSTOR_TARGET_DIR
+          value: "/var/openebs/sparse"
+        # OPENEBS_IO_CSTOR_POOL_SPARSE_DIR can be used to specify the hostpath
+        # to be used for saving the shared content between the side cars
+        # of cstor pool pod. This ENV is also used to indicate the location
+        # of the sparse devices.
+        # The default path used is /var/openebs/sparse
+        - name: OPENEBS_IO_CSTOR_POOL_SPARSE_DIR
+          value: "/var/openebs/sparse"
+        # OPENEBS_IO_JIVA_POOL_DIR can be used to specify the hostpath
+        # to be used for default Jiva StoragePool loaded by OpenEBS
+        # The default path used is /var/openebs
+        # This value takes effect only if OPENEBS_IO_CREATE_DEFAULT_STORAGE_CONFIG
+        # is set to true
+        - name: OPENEBS_IO_JIVA_POOL_DIR
+          value: "/var/openebs"
+        # OPENEBS_IO_LOCALPV_HOSTPATH_DIR can be used to specify the hostpath
+        # to be used for default openebs-hostpath storageclass loaded by OpenEBS
+        # The default path used is /var/openebs/local
+        # This value takes effect only if OPENEBS_IO_CREATE_DEFAULT_STORAGE_CONFIG
+        # is set to true
+        - name: OPENEBS_IO_LOCALPV_HOSTPATH_DIR
+          value: "/var/openebs/local"
         - name: OPENEBS_IO_JIVA_CONTROLLER_IMAGE
-          value: "quay.io/openebs/jiva:1.1.0"
+          value: "quay.io/openebs/jiva:1.3.0"
         - name: OPENEBS_IO_JIVA_REPLICA_IMAGE
-          value: "quay.io/openebs/jiva:1.1.0"
+          value: "quay.io/openebs/jiva:1.3.0"
         - name: OPENEBS_IO_JIVA_REPLICA_COUNT
           value: "3"
         - name: OPENEBS_IO_CSTOR_TARGET_IMAGE
-          value: "quay.io/openebs/cstor-istgt:1.1.0"
+          value: "quay.io/openebs/cstor-istgt:1.3.0"
         - name: OPENEBS_IO_CSTOR_POOL_IMAGE
-          value: "quay.io/openebs/cstor-pool:1.1.0"
+          value: "quay.io/openebs/cstor-pool:1.3.0"
         - name: OPENEBS_IO_CSTOR_POOL_MGMT_IMAGE
-          value: "quay.io/openebs/cstor-pool-mgmt:1.1.0"
+          value: "quay.io/openebs/cstor-pool-mgmt:1.3.0"
         - name: OPENEBS_IO_CSTOR_VOLUME_MGMT_IMAGE
-          value: "quay.io/openebs/cstor-volume-mgmt:1.1.0"
+          value: "quay.io/openebs/cstor-volume-mgmt:1.3.0"
         - name: OPENEBS_IO_VOLUME_MONITOR_IMAGE
-          value: "quay.io/openebs/m-exporter:1.1.0"
+          value: "quay.io/openebs/m-exporter:1.3.0"
         - name: OPENEBS_IO_CSTOR_POOL_EXPORTER_IMAGE
-          value: "quay.io/openebs/m-exporter:1.1.0"
+          value: "quay.io/openebs/m-exporter:1.3.0"
         # OPENEBS_IO_ENABLE_ANALYTICS if set to true sends anonymous usage
         # events to Google Analytics
         - name: OPENEBS_IO_ENABLE_ANALYTICS
@@ -512,6 +581,7 @@ spec:
 
 ---
 # Source: openebs/templates/deployment-maya-provisioner.yaml
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -519,12 +589,18 @@ metadata:
   namespace: openebs
   labels:
     app: openebs
-    chart: openebs-1.1.2
+    chart: openebs-1.3.0
     release: openebs
     heritage: Tiller
     component: provisioner
+    name: openebs-provisioner
+    openebs.io/component-name: openebs-provisioner
+    openebs.io/version: 1.3.0
 spec:
   replicas: 1
+  strategy:
+    type: "Recreate"
+    rollingUpdate: null
   selector:
     matchLabels:
       app: openebs
@@ -537,12 +613,12 @@ spec:
         component: provisioner
         name: openebs-provisioner
         openebs.io/component-name: openebs-provisioner
-        openebs.io/version: 1.1.0
+        openebs.io/version: 1.3.0
     spec:
       serviceAccountName: openebs-maya-operator
       containers:
       - name: openebs-provisioner
-        image: "quay.io/openebs/openebs-k8s-provisioner:1.1.0"
+        image: "quay.io/openebs/openebs-k8s-provisioner:1.3.0"
         imagePullPolicy: IfNotPresent
         env:
         # OPENEBS_IO_K8S_MASTER enables openebs provisioner to connect to K8s
@@ -587,6 +663,7 @@ spec:
 
 ---
 # Source: openebs/templates/deployment-maya-snapshot-operator.yaml
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -594,10 +671,12 @@ metadata:
   namespace: openebs
   labels:
     app: openebs
-    chart: openebs-1.1.2
+    chart: openebs-1.3.0
     release: openebs
     heritage: Tiller
     component: snapshot-operator
+    openebs.io/component-name: openebs-snapshot-operator
+    openebs.io/version: 1.3.0
 spec:
   replicas: 1
   selector:
@@ -605,7 +684,8 @@ spec:
       app: openebs
       release: openebs
   strategy:
-    type: Recreate
+    type: "Recreate"
+    rollingUpdate: null
   template:
     metadata:
       labels:
@@ -613,13 +693,13 @@ spec:
         release: openebs
         component: snapshot-operator
         name: openebs-snapshot-operator
-        openebs.io/version: 1.1.0
+        openebs.io/version: 1.3.0
         openebs.io/component-name: openebs-snapshot-operator
     spec:
       serviceAccountName: openebs-maya-operator
       containers:
       - name: openebs-snapshot-controller
-        image: "quay.io/openebs/snapshot-controller:1.1.0"
+        image: "quay.io/openebs/snapshot-controller:1.3.0"
         imagePullPolicy: IfNotPresent
         env:
         # OPENEBS_IO_K8S_MASTER enables openebs snapshot controller to connect to K8s
@@ -654,7 +734,7 @@ spec:
           initialDelaySeconds: 30
           periodSeconds: 60
       - name: openebs-snapshot-provisioner
-        image: "quay.io/openebs/snapshot-provisioner:1.1.0"
+        image: "quay.io/openebs/snapshot-provisioner:1.3.0"
         imagePullPolicy: IfNotPresent
         env:
         # OPENEBS_IO_K8S_MASTER enables openebs snapshot provisioner to connect to K8s
@@ -691,6 +771,7 @@ spec:
 
 ---
 # Source: openebs/templates/deployment-ndm-operator.yaml
+
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -699,16 +780,18 @@ metadata:
   namespace: openebs
   labels:
     app: openebs
-    chart: openebs-1.1.2
+    chart: openebs-1.3.0
     release: openebs
     heritage: Tiller
     component: ndm-operator
     openebs.io/component-name: ndm-operator
+    openebs.io/version: 1.3.0
     name: ndm-operator
 spec:
   replicas: 1
   strategy:
-    type: Recreate
+    type: "Recreate"
+    rollingUpdate: null
   selector:
     matchLabels:
       app: openebs
@@ -721,12 +804,12 @@ spec:
         component: ndm-operator
         name: ndm-operator
         openebs.io/component-name: ndm-operator
-        openebs.io/version: 1.1.0
+        openebs.io/version: 1.3.0
     spec:
       serviceAccountName: openebs-maya-operator
       containers:
       - name: openebs-ndm-operator
-        image: "quay.io/openebs/node-disk-operator-amd64:v0.4.1"
+        image: "quay.io/openebs/node-disk-operator-amd64:v0.4.3"
         imagePullPolicy: IfNotPresent
         readinessProbe:
           exec:
@@ -760,7 +843,7 @@ metadata:
   name: openebs-validation-webhook-cfg
   labels:
     app: openebs
-    chart: openebs-1.1.2
+    chart: openebs-1.3.0
     release: openebs
     heritage: Tiller
     component: admission-webhook
@@ -768,18 +851,22 @@ metadata:
 webhooks:
 # failurePolicy Fail means that an error calling the webhook causes the admission to fail.
   - name: admission-webhook.openebs.io
-    failurePolicy: Fail
+    failurePolicy: Ignore
     clientConfig:
       service:
         name: admission-server-svc
         namespace: openebs
         path: "/validate"
-      caBundle: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURDVENDQWZHZ0F3SUJBZ0lSQUwzN1ZJME0xV0wvUVRERjg5OGgzK0l3RFFZSktvWklodmNOQVFFTEJRQXcKSGpFY01Cb0dBMVVFQXhNVFlXUnRhWE56YVc5dUxYTmxjblpsY2kxallUQWVGdzB4T1RBNE1UUXhNVE14TkRCYQpGdzB5T1RBNE1URXhNVE14TkRCYU1CNHhIREFhQmdOVkJBTVRFMkZrYldsemMybHZiaTF6WlhKMlpYSXRZMkV3CmdnRWlNQTBHQ1NxR1NJYjNEUUVCQVFVQUE0SUJEd0F3Z2dFS0FvSUJBUURCSmkzbWhvTDdYZGhFeFVwZ0JEY3gKQUNkbmVpV2F5TFF5ZVVQdVhXQi9HREs1enppMjlIQVFhbURxVGgwN0JzT2RaSFNyTWp3eE5JV1dRNmUwNlQ0awpEeTBXOUFrc01jZzBpaVhZajJTVkk0K3dwdERyUHh5YktCcUg0YUswTVpGWmJ2RzAxNTFxVUd0OWlpYVZUdVdXCkdKYVp6Z2NkTjkrS25aaGpaUUwyMWw5TlpEa01VelBmNTBhN0FhWmNTRTRjSkVCNTRybTZpY2dEUDY5Q3JDTSsKMldMeS8zelRTdjlzdjdSSHppQ2xpYmUvVzRNekVRVlRBeHlKZ1p4NTJUdjFQZGdhNjZ6a3ZNMTdQY1lXMUwzOQpLaVJHSVZpWnkySHFtYkhuMi9FRDByckNmVkZiSm1IU0xvVXpUQW1DM2tSdWhnTWl3bm5QcmxEMzU0ZEtuN0t2CkFnTUJBQUdqUWpCQU1BNEdBMVVkRHdFQi93UUVBd0lDcERBZEJnTlZIU1VFRmpBVUJnZ3JCZ0VGQlFjREFRWUkKS3dZQkJRVUhBd0l3RHdZRFZSMFRBUUgvQkFVd0F3RUIvekFOQmdrcWhraUc5dzBCQVFzRkFBT0NBUUVBYXBHVQpPeHdnRWxibWV5dm9aME9ZRjZXTXlkNk5rNXNOdFVWTTA5OVJOTlV6MjlqQ2NpRDBDY1dWQXZnOVhPMlZaYlR1CkxOa0FvL1lLRmpYTE1VTkt4YnUweGRqRjdHYmxkZnMrTE9wMmU1N2VtYUVFY2hqdVFXQkpoZE9STnRnRDk1TzIKVTk0a01mWmhxYlJDd2I5cmdVaExQWlZWenBBUkY1L1J6TStMYXVlNE13V3FvcmVNN3R2Sk02NXNZbWJJUGh5eAo0WXdIb2FQOEtHMy8ydy8rU3hMU3hnM29pT0lpdG1IZ1J2ZTd2L09ET0VDekxFYmtoQ2pqMGFXa253c2FmbHJ4Cm5OaXBTb1liU3VlUlk4QmUySVpKOTVkdjZ4QkZUVzJDeVZVcDRMb0dlamh3R2ZkVldhTUNQSG5KbzdWOWFvcWEKNXcydXNDeUljL3RiNU43amh3PT0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=
+      caBundle: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURDVENDQWZHZ0F3SUJBZ0lSQUt2azJaYzlpdWladnY2czJ0Nzk2QkV3RFFZSktvWklodmNOQVFFTEJRQXcKSGpFY01Cb0dBMVVFQXhNVFlXUnRhWE56YVc5dUxYTmxjblpsY2kxallUQWVGdzB4T1RFd01UVXdPREF4TURGYQpGdzB5T1RFd01USXdPREF4TURGYU1CNHhIREFhQmdOVkJBTVRFMkZrYldsemMybHZiaTF6WlhKMlpYSXRZMkV3CmdnRWlNQTBHQ1NxR1NJYjNEUUVCQVFVQUE0SUJEd0F3Z2dFS0FvSUJBUUROQ2g0U2lreC94OTZaYXNCam1Qb2oKQjQ3NFE1cjQ4U29mWmQ4UmNPT3llRjI0OFdja2ZMOGcrMXZvK3NFMTlDWGJMUHJ5YzBkMnUyM0xISzJwVk9JbApVL2JIS2c4b1dxSUZ5eGNxMWk3aEZrNkZvK3RSTklBZDlxOVJ4RGpNcGl0c0piL2ZHSlhUdWYrYU1nNVRWckYyCjlwK1UrNjhTQUZtb01tc2FiOStGL0tYTXFhUmFPMUhYYndyaUh4N0dGNFl5Q1Q2azNBRGlwWGJYa2NaTUYzN3QKU0FMbVpmZmpnTnlKWGUzQnllcmJHdGc0OVhqLzZzdUdFellFZjhlLzR0S3dLQTJDSG9RVTBkN0VtK05Iek5vQQpKNFNjUVpjMHNwZENLQUdJMFRKSS9qUGZ2MVhQL05DNXpma2Eza0VJdVZRMzRVRGtyaHdRd09aTkJNL0F2dVZ4CkFnTUJBQUdqUWpCQU1BNEdBMVVkRHdFQi93UUVBd0lDcERBZEJnTlZIU1VFRmpBVUJnZ3JCZ0VGQlFjREFRWUkKS3dZQkJRVUhBd0l3RHdZRFZSMFRBUUgvQkFVd0F3RUIvekFOQmdrcWhraUc5dzBCQVFzRkFBT0NBUUVBVkFBawo4U0hKckgweHBmdGpHazM4Yi9nTXM4RmxIMisrSjdxM1ROVUZCbHZENEQvQXdkcHluaFFhV1VXMkRLNlVINTgzCld6aEh6cDNVNUZSNXhZaUIvVkVkL2NEQ2ZVZXlMcUhlb0dwRUZ6eW1INjlkbXlVblJSMnRReXdqbFRiaGd4bnAKQjl0enk4eCtYOWVsaGkreEtrSE54aUpEQ0Ryd3ZjcEFhbVdrOUZ2SGZENkFpZHhwMGdRMnBXTXhrWXliQ1RETgpxUzhhbTRzWEpTOGJ3dEw4QUR3d2tITkIzZDJtZXdzRzNIb3JkeUpMWGwveGdCMk9jNDBEaEJjK0pwV0huQmZqCml4bmxCRGF4cElFTFN1TmhyaHFSL05hdndHeE9QVkxXVVI1YUxoSUgyQ3BxYVRpZVFmdW5ITTMvMmxxY1B6bWQKQzQ4bGFacTN3UnhXNFNURFFRPT0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=
     rules:
       - operations: [ "CREATE", "DELETE" ]
         apiGroups: ["*"]
         apiVersions: ["*"]
         resources: ["persistentvolumeclaims"]
+      - operations: [ "CREATE", "UPDATE" ]
+        apiGroups: ["*"]
+        apiVersions: ["*"]
+        resources: ["cstorpoolclusters"]
 ---
 apiVersion: v1
 kind: Secret
@@ -788,12 +875,12 @@ metadata:
   namespace: openebs
   labels:
     app: openebs
-    chart: openebs-1.1.2
+    chart: openebs-1.3.0
     release: openebs
     heritage: Tiller
     openebs.io/component-name: admission-webhook
 type: Opaque
 data:
-  cert.pem: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURVekNDQWp1Z0F3SUJBZ0lRZS9qSk9JZGdTS0F0MEZpZkp6N3RiVEFOQmdrcWhraUc5dzBCQVFzRkFEQWUKTVJ3d0dnWURWUVFERXhOaFpHMXBjM05wYjI0dGMyVnlkbVZ5TFdOaE1CNFhEVEU1TURneE5ERXhNekUwTUZvWApEVEk1TURneE1URXhNekUwTUZvd0h6RWRNQnNHQTFVRUF4TVVZV1J0YVhOemFXOXVMWE5sY25abGNpMXpkbU13CmdnRWlNQTBHQ1NxR1NJYjNEUUVCQVFVQUE0SUJEd0F3Z2dFS0FvSUJBUURCMjFWVFRaY29zaGxxbWhuY1dXNlIKMU1ZR2dKcWZJbGVxV0pDT3QyMExiaFdHT01GUFVqTXhJcFRvMzJJbUdvSzE2ZXBKdUN2UGlUZXZ2cCs2MUxjNAp2Mnlzc0pOV01ITDgydW9ybVg1QmEyUGttTXNEQnBwdm4xbUZwSkpocU5qVzg2QklGU1R3cWVaMnFGVFBvTGQ0CnFVZUtGSkJwV2VpS1FlQW40eVIwaU1Nbkk1SkZNbjVhQVJtK0dIY1BNQnZJTnJQM1lJeDgwdUJyVGJJVWUxU20Kbm4xeHBRbEE5VGZJMXUvSXhPY0FOYlhwSEVRNDBJVGdBRXFiMVJYL3ZUbG45WEFWYzVPQnFIRTc5WWNPMVRLSQpQL1ZsQ2VRMGNWenZ6ektJbzNBZ3pqekJHWWFiUWw2cmlZeng1RHlsN3Y1UWhVV2I4RGVjZzF3SmVaZjhXclpmCkFnTUJBQUdqZ1lzd2dZZ3dEZ1lEVlIwUEFRSC9CQVFEQWdXZ01CMEdBMVVkSlFRV01CUUdDQ3NHQVFVRkJ3TUIKQmdnckJnRUZCUWNEQWpBTUJnTlZIUk1CQWY4RUFqQUFNRWtHQTFVZEVRUkNNRUNDSEdGa2JXbHpjMmx2YmkxegpaWEoyWlhJdGMzWmpMbTl3Wlc1bFluT0NJR0ZrYldsemMybHZiaTF6WlhKMlpYSXRjM1pqTG05d1pXNWxZbk11CmMzWmpNQTBHQ1NxR1NJYjNEUUVCQ3dVQUE0SUJBUUFyQ09wdHlCMG8wRW8wZncrVW50RWUycTdweFYzSkdIMEUKVjk4Nmtkc2QzNElPd3FUWW1GeDlpcEZKRkZGUXVCQnFQZE5RVDBlNmVGWHFneUU2dm5lb0JGZEU0bEtBRWVneQpOOThxNlRjdTlpOUozSHJUcmJIQk9GcFNHQkYxT05NRW5aQUdOWlg0ditVQXNTbzdsYklnaTZNb3NUUjJ5ODVpCnlHMXRoTTMzc2VtT0VJUXJTaXBCbFhaUjVEM1daZ2hnNkJxNG1TWlhxcWVvS29wclNxVlpweE10eUZyUE9KNFUKODlWTWtFZDJOaXdyOXBIeG4xVHYrcmgrcWtvVUM3Q2NKbWpNYThrVU9SNThERjhXNHpRanRPWklKTkVYTDNzcwoybURHcTV5WTNVS3JIVmh5bElVRWhOWFBIckJ3T21vZndNeGhSZUpvelJEYUpnYVE0ZW8zCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K
-  key.pem: LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlFcFFJQkFBS0NBUUVBd2R0VlUwMlhLTElaYXBvWjNGbHVrZFRHQm9DYW55SlhxbGlRanJkdEMyNFZoampCClQxSXpNU0tVNk45aUpocUN0ZW5xU2Jncno0azNyNzZmdXRTM09MOXNyTENUVmpCeS9OcnFLNWwrUVd0ajVKakwKQXdhYWI1OVpoYVNTWWFqWTF2T2dTQlVrOEtubWRxaFV6NkMzZUtsSGloU1FhVm5vaWtIZ0orTWtkSWpESnlPUwpSVEorV2dFWnZoaDNEekFieURhejkyQ01mTkxnYTAyeUZIdFVwcDU5Y2FVSlFQVTN5TmJ2eU1UbkFEVzE2UnhFCk9OQ0U0QUJLbTlVVi83MDVaL1Z3RlhPVGdhaHhPL1dIRHRVeWlELzFaUW5rTkhGYzc4OHlpS053SU00OHdSbUcKbTBKZXE0bU04ZVE4cGU3K1VJVkZtL0EzbklOY0NYbVgvRnEyWHdJREFRQUJBb0lCQVFDYTRTbWlqSE1nU0dxVwpDTmh3ZStNakQrUEdmaWtLeXQxUGM4TEt3ekdUMkRmS0xMNEZLWjlNdWx4T1VXcVJGczBubWVOZFVvOXVHQ3N0CmRoY1hwYXRjNDFOb0JRc3g2VE4xWVZHRjAvUlRRQUZuT2N1NGR5WWIyQ3dsNGY0eG1Eem1QMjduS0QyREticS8KUW0zQUZKK0EvMzN3aTgxMDNpZ3pqYjRSSUNDWUdPZ2FUK2hQUUNuZS9XUmcycmlHQkRGYkFUdGpoS3hoeVF4NgpzY3ArWXpYenh5U3drcmVRdEdjUXZ5YnFYWTVJT2JDdG45RGt1b3NVdGNZZEhUMlNVam9sbkhVS282SWhiYVRqCmc2a0ZFRGFmMXJLYTFweUwzc1NLTEdWOFM2c0tPOTBwT1lrWGIwV3kwTWttalZENkcrcFJVaTlaVk1NL1YwRGoKaVpnK1JLdEJBb0dCQU43UmF5MEFnOFNZOTRKZ2NxbW5pOUpXMXJrUStMRUljdHo4NlFtODhwcFlmWjc0R3dQdgpjMS9lUXJ5N0JOV00wRE9VblMxbFZ3NHhmVTRnMUxMYWZxcnBRMGF2dnBxRG1KeHhFb0hVR2U4c0VQdzdyU1VqCjZSSGtMSUdMSFcrbDIyTzhaVmxnS3U2eGExcHdKU2tXRXlpeUJVQkNYU3Q4MkJwOWpSc2d4MUYxQW9HQkFONjUKMEFIc1hIYTNrMVZ0c0ZFM0FBME9GMlNGODJCeStzR1ZsLzBaeU5wc0xwaUFZeEFPMW55amVvcmJXWXd6YUF3TgpucWxJL3FXcE9pUjYxQ0xzTjZhVy9oR1UxZlljeEcyUXdzNjloYWkrTFQyR2FIdkcwMlBDd3dwSXA4eXFLaFJVClJJalVwcEdrMFcvREp2Y00vOEluYW1NK3VPTWN3eWRKblJ0M0Izb0RBb0dBZWFDYS9sK3ZqZHRxRUJNUnhDWWYKSHR3a0xiVmo2MDhQVkM0Q0R6ekN1Um5neUt2cUkwWE1GdUsrVDBOUEtqckpVNzZsNWFmUjAzK1VSTmVMQTI1ZApnbkgrTlZHdG02NkYyYStuU0pNODdOK0REZ3lOUVI3UEZPTVdvRWdOODJuM3pnT0MxenkxY3NJS05iM05xeFhQCnM0RXBlS0JCTjRIWWZPMVgzeDBQY0JrQ2dZRUEwZXVkNG9JczcvTzhHTE9Ha0RWZmhlNTNHOWFvZVlwRlQzbTQKUStRdWk3ZVUvMFZhbVFMekk0eE5ibHlwZk52aXdDR0NIaG5mY0xJY1M4Kzg2NkZxSGtpSDlIZ3NaWWZkbDBydQpZVDc5bi9xRzEwczhaUlVUbmg0dUNCNU1rVGo4NmlZMlppVFBUY3hqWFl3NHlIYm5BODUwbGsvQ29NUTJKMnhaCmVFNXFySk1DZ1lFQXJnaHE1ODhGOG54SW0rUHRJN3FNQkordkozdmsrWU1pbWFSWm90a0k0MHFzOU1VUUJjOWEKTXRzYVZnZmpmVGcrWHBLb0FuQlEzZkZ0R2lOaUhhT2pqMlZVU0twdEVDNUpibjIyNzA3MGhSTDh4Q0ZBelpweQpCdXhmTlRDUDVHSXJ1WlFmOWYzbU1iMTRtbisvcFVZYkVQbEFIaVhJUitOamZucHpjT1JoYmxZPQotLS0tLUVORCBSU0EgUFJJVkFURSBLRVktLS0tLQo=
+  cert.pem: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURVekNDQWp1Z0F3SUJBZ0lRVmYwWTdkWS96VGcvYUVzUW80MWNtekFOQmdrcWhraUc5dzBCQVFzRkFEQWUKTVJ3d0dnWURWUVFERXhOaFpHMXBjM05wYjI0dGMyVnlkbVZ5TFdOaE1CNFhEVEU1TVRBeE5UQTRNREV3TWxvWApEVEk1TVRBeE1qQTRNREV3TWxvd0h6RWRNQnNHQTFVRUF4TVVZV1J0YVhOemFXOXVMWE5sY25abGNpMXpkbU13CmdnRWlNQTBHQ1NxR1NJYjNEUUVCQVFVQUE0SUJEd0F3Z2dFS0FvSUJBUUNzNTZvVjBvTENmNUluRldweWRQbmIKWmxjaU5nOXpjTmpJODJnaWtQdXNIZkhhZVdQeGpCMWtIbFJucFRwdmZzckROQmkzcHpqaWkxU0RkRUxSYkd0egpwNHp6dVQrdElINnZDR2hWekxDeWhLbzh1eDlXVi9YTVpkUkpmYzhYNy9JTXVPZXdReGNqRi8wNURQeVVWd05XClA2Zm92Z3ZjMDhxQkp0MTBod2dPVmFKNlg5OVhab2dQNVpXQ1hpSlhnSENWTDZBZXNkZUJ1eHczVTBPZllycnUKRTZsSENwN3dQd2lRWC9BYVVMYTFlNUtqenpLbWFDMGNQM1R0elNnL0dHemNIQVA5ak9jVnF1eXFtTHVqR01FQgp0alBJQ2sxSVZCTnVYeG1NWkFoUWpER0Z0V21MMUxBNURMRzJ2WXRjb09QTXlPWFUzQTdGWEthQTF3N3NsRG5MCkFnTUJBQUdqZ1lzd2dZZ3dEZ1lEVlIwUEFRSC9CQVFEQWdXZ01CMEdBMVVkSlFRV01CUUdDQ3NHQVFVRkJ3TUIKQmdnckJnRUZCUWNEQWpBTUJnTlZIUk1CQWY4RUFqQUFNRWtHQTFVZEVRUkNNRUNDSEdGa2JXbHpjMmx2YmkxegpaWEoyWlhJdGMzWmpMbTl3Wlc1bFluT0NJR0ZrYldsemMybHZiaTF6WlhKMlpYSXRjM1pqTG05d1pXNWxZbk11CmMzWmpNQTBHQ1NxR1NJYjNEUUVCQ3dVQUE0SUJBUUN3K0dHMmMwek1RWG5OWlJHSk50by9SOXBHQm5iVGdMWnkKUkZjQ0paM2d6WVQ3RFAveFFhZUVSNkhqdnVnY0Q5bHdnL3hYZ2VBNUhLZE83QXZEY0JGdG5VdXNRMy9IazRXcApvYUJTaVBTU3VsRUFJQVJSNVNLR3VESE52ZUVucGNLbkdrWTVoN2VjbDR0M3U2MDZVZm1SK1dnd3J2SGZDZHBDCjBlUFczdDlNc1UvR0tQNUhrRXV5b0NRWjVBMVoxd1Jac2FYN1hPSmx4Sk03NmxHYW1XOFNCam1ObHVSWEJURVQKOFY0UWtON0xXNXpGNFZGSy9iVGtvci9ZdHRGT3RKTm1QSFc0S0J5ejdsajEwaVUzRmNNVHhraERqdmdGU1A1MApYTXBoREQvVXQ0TFEyQXNHang1ZGVON2NiRUl6RUJxa3VHblZFaGpIdU1QTS9zaXJGZTBvCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K
+  key.pem: LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlFcFFJQkFBS0NBUUVBck9lcUZkS0N3bitTSnhWcWNuVDUyMlpYSWpZUGMzRFl5UE5vSXBEN3JCM3gybmxqCjhZd2RaQjVVWjZVNmIzN0t3elFZdDZjNDRvdFVnM1JDMFd4cmM2ZU04N2svclNCK3J3aG9WY3l3c29TcVBMc2YKVmxmMXpHWFVTWDNQRisveURMam5zRU1YSXhmOU9RejhsRmNEVmorbjZMNEwzTlBLZ1NiZGRJY0lEbFdpZWwvZgpWMmFJRCtXVmdsNGlWNEJ3bFMrZ0hySFhnYnNjTjFORG4ySzY3aE9wUndxZThEOElrRi93R2xDMnRYdVNvODh5CnBtZ3RIRDkwN2Mwb1B4aHMzQndEL1l6bkZhcnNxcGk3b3hqQkFiWXp5QXBOU0ZRVGJsOFpqR1FJVUl3eGhiVnAKaTlTd09ReXh0cjJMWEtEanpNamwxTndPeFZ5bWdOY083SlE1eXdJREFRQUJBb0lCQVFDamRRN3lPbVNyZ3ZhawpSRGF4cGF4Zm9jeFY1MDJNRU82Z2FwdlRzY1I2M29RNXlmQ1Y5YVFEZGpqTkV3Sy9UTnBhMS9GV0RaeFZidXFpCnExSlBzWE9UanA1TitwOGNDRkE3SUhPaVNUUHlVRUN2MFNhNjljVEZTcTc2R3htZ3c1SE1QVEdyRElIZkIxcTQKaUhKdnVpTEpjcnhGNXdSSDYyRFIzL0FUcldRTVI1SHpZMzBwZVZSRy9WZUE5OGIrL0hjbmpzV3hWbmsrK1I4eApxNnh6RW9hWUw2TVFFcGhXTlQwTkJHbXdxcUdKeDBVMnJ3T0FWbEF6cjJueS9SMWlxQVJIRkFaZzBpVTBObkFXClhpQ0tuQXJBdDlXR2QxMXF5c1VuNi94WTdFWENQTUJIbGt2MnVTQ2hEQmIwNmdySVlJQ29mR2ZGVmNCdFh4TGUKU2QrK2ROM0JBb0dCQU9FV0wyWkxNUFJpbmdhcG5YRDZ6T3p3U3Q3RVBraHhLMzdNZzhBc2QzdkhMWlZFR0g2cgpCZmxSV0tsMzQxV1NHclJvZU1FODVhRCtFTEFHd1FxZENadXVkSitDU2MrRzVmWXdmcFovQmZIbWptSXNaM1pZCitnMTZUSDBuNVdtMTU4Sk94NDM2TUZ1b2RSc3U2eEpicDBmTjA1dlk3SVNIU016TjNOWWg5V1lqQW9HQkFNU20KMHQrUTVyTGRGb0p3OWZJYldqQlg5d2Vwa2MrSXJQbllrNmhITlB5eTRXZGxVQkdYSU9IaWFySkNhbVV6emNIKwpmMmdUbTIraDFDUGcwZmdkb1lHWnRqWkVIM3VPMm45VEJXZzVkVWEvZzdBWXN0OUJqM2w5RVVFbnI2Rk41S0ovCnhmWVhoNU1VcWMwN3puRHRuN1hHZW1NRVFtdUJHWjRjVG5COUwxUTVBb0dBZEczeFhzeU9LaHZJK2xGS2EyS1EKRmcvRjZxMUFPbUN2eXdzbks0VFUyV1lTSWgvek83SmppSytYV1RIMm1oRFZWM1NpNGZJS0pkakY4UWZOV3h3WQpHRHVKZitqNUhTditUL2FOeEhNNE5BUzZxZldtSHdXdmNzRk1SNEVYbmpMR0N6Q004TmYxbzdQanY0ZnBlTG1JCk1oQTU0V2U0RUdXYU5yWldBVDNYbmxrQ2dZRUF3dFlXYi9MODM1STFUeC9rVGUvVHQ3b3Z3cU83RjhmdXVjeGUKMzRkTmRHRTIrbDVpcWtyMkJWZHpKeEt1bjM1b0NpREEwcms2YzZ2K3AxMkVLelFRWkh1TEVORUY4RUZsTW1scgpIZ3h2cVp6dU9IY0FJanF1a0V2ZDRKUVZhdGZtQXlwZFZLbVRaYUkvYWx3cStiQTFZTUE1V2dsS1ZZRWZoSXUvCkc2eXNTK0VDZ1lFQXBDRHhuRmtyZ2RKaHdIaWNWZTk3ZThUNGJLN2ZmY21IYUZLOEVxVlFSQVpoNndCVHZIY0kKcjQzTXR0MmdYZEF4UzJHQWlFVVVJYUR3aDIwakRjekF2cS9HYVZFM1hjbkpvdDByM3BpY05PRFdoMFNNMmJ0eApXL1l2QzdUVStGR0NXZzcyd1psVk15MktxSDRZK0V1Q0UyYzBCTEJKWkxYZ1BDalBpTjhqNWRRPQotLS0tLUVORCBSU0EgUFJJVkFURSBLRVktLS0tLQo=
 
