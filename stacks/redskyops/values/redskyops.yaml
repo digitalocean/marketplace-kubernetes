@@ -1,4 +1,1 @@
-# Add credentials from account portal
-#address: ""
-#oauth2ClientID: ""
-#oauth2TokenURL: ""
+# Red Sky Ops remote server credentials must be added after deployment

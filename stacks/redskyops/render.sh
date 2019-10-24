@@ -19,9 +19,9 @@ find "$SRC_VERSION" -type d -name tests -print0 | xargs -0 rm -rf
 rm -rf "$ROOT_DIR"/stacks/redskyops/yaml
 mkdir -p "$ROOT_DIR"/stacks/redskyops/yaml
 
-# render mginx-ingress
+# render Red Sky Ops
 helm template \
-  --name redskyops \
-  --namespace redskyops \
+  --name redsky \
+  --namespace redsky-system \
   --values redskyops/values/redskyops.yaml \
   "$SRC_VERSION" > "$ROOT_DIR"/stacks/redskyops/yaml/redskyops.yaml

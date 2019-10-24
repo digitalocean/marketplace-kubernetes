@@ -3,11 +3,11 @@
 apiVersion: v1
 kind: Secret
 metadata:
-  name: redskyops-manager
+  name: redsky-manager
   labels:
     app.kubernetes.io/name: redskyops
     app.kubernetes.io/version: "v1.2.2"
-    app.kubernetes.io/instance: "redskyops"
+    app.kubernetes.io/instance: "redsky"
     app.kubernetes.io/managed-by: "Tiller"
     helm.sh/chart: "redskyops-0.1.2"
 type: Opaque
@@ -25,7 +25,7 @@ metadata:
   labels:
     app.kubernetes.io/name: redskyops
     app.kubernetes.io/version: "v1.2.2"
-    app.kubernetes.io/instance: "redskyops"
+    app.kubernetes.io/instance: "redsky"
     app.kubernetes.io/managed-by: "Tiller"
     helm.sh/chart: "redskyops-0.1.2"
   name: experiments.redskyops.dev
@@ -7228,7 +7228,7 @@ metadata:
   labels:
     app.kubernetes.io/name: redskyops
     app.kubernetes.io/version: "v1.2.2"
-    app.kubernetes.io/instance: "redskyops"
+    app.kubernetes.io/instance: "redsky"
     app.kubernetes.io/managed-by: "Tiller"
     helm.sh/chart: "redskyops-0.1.2"
   name: trials.redskyops.dev
@@ -13492,7 +13492,7 @@ status:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: redskyops-aggregate-to-patching
+  name: redsky-aggregate-to-patching
   labels:
     "redskyops.dev/aggregate-to-patching": "true"
 rules:
@@ -13520,10 +13520,10 @@ metadata:
   labels:
     app.kubernetes.io/name: redskyops
     app.kubernetes.io/version: "v1.2.2"
-    app.kubernetes.io/instance: "redskyops"
+    app.kubernetes.io/instance: "redsky"
     app.kubernetes.io/managed-by: "Tiller"
     helm.sh/chart: "redskyops-0.1.2"
-  name: "redskyops-manager-role"
+  name: "redsky-manager-role"
 rules:
 - apiGroups:
   - ""
@@ -13616,10 +13616,10 @@ metadata:
   labels:
     app.kubernetes.io/name: redskyops
     app.kubernetes.io/version: "v1.2.2"
-    app.kubernetes.io/instance: "redskyops"
+    app.kubernetes.io/instance: "redsky"
     app.kubernetes.io/managed-by: "Tiller"
     helm.sh/chart: "redskyops-0.1.2"
-  name: "redskyops-patching-role"
+  name: "redsky-patching-role"
 rules: []
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -13628,10 +13628,10 @@ metadata:
   labels:
     app.kubernetes.io/name: redskyops
     app.kubernetes.io/version: "v1.2.2"
-    app.kubernetes.io/instance: "redskyops"
+    app.kubernetes.io/instance: "redsky"
     app.kubernetes.io/managed-by: "Tiller"
     helm.sh/chart: "redskyops-0.1.2"
-  name: "redskyops-proxy-role"
+  name: "redsky-proxy-role"
 rules:
 - apiGroups:
   - authentication.k8s.io
@@ -13652,18 +13652,18 @@ metadata:
   labels:
     app.kubernetes.io/name: redskyops
     app.kubernetes.io/version: "v1.2.2"
-    app.kubernetes.io/instance: "redskyops"
+    app.kubernetes.io/instance: "redsky"
     app.kubernetes.io/managed-by: "Tiller"
     helm.sh/chart: "redskyops-0.1.2"
-  name: "redskyops-manager-rolebinding"
+  name: "redsky-manager-rolebinding"
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: "redskyops-manager-role"
+  name: "redsky-manager-role"
 subjects:
 - kind: ServiceAccount
   name: default
-  namespace: "redskyops"
+  namespace: "redsky-system"
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -13671,18 +13671,18 @@ metadata:
   labels:
     app.kubernetes.io/name: redskyops
     app.kubernetes.io/version: "v1.2.2"
-    app.kubernetes.io/instance: "redskyops"
+    app.kubernetes.io/instance: "redsky"
     app.kubernetes.io/managed-by: "Tiller"
     helm.sh/chart: "redskyops-0.1.2"
-  name: "redskyops-patching-rolebinding"
+  name: "redsky-patching-rolebinding"
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: "redskyops-patching-role"
+  name: "redsky-patching-role"
 subjects:
 - kind: ServiceAccount
   name: default
-  namespace: "redskyops"
+  namespace: "redsky-system"
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -13690,18 +13690,18 @@ metadata:
   labels:
     app.kubernetes.io/name: redskyops
     app.kubernetes.io/version: "v1.2.2"
-    app.kubernetes.io/instance: "redskyops"
+    app.kubernetes.io/instance: "redsky"
     app.kubernetes.io/managed-by: "Tiller"
     helm.sh/chart: "redskyops-0.1.2"
-  name: "redskyops-proxy-rolebinding"
+  name: "redsky-proxy-rolebinding"
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: "redskyops-proxy-role"
+  name: "redsky-proxy-role"
 subjects:
 - kind: ServiceAccount
   name: default
-  namespace: "redskyops"
+  namespace: "redsky-system"
 ---
 # Source: redskyops/templates/deployment.yaml
 apiVersion: v1
@@ -13714,18 +13714,18 @@ metadata:
   labels:
     app.kubernetes.io/name: redskyops
     app.kubernetes.io/version: "v1.2.2"
-    app.kubernetes.io/instance: "redskyops"
+    app.kubernetes.io/instance: "redsky"
     app.kubernetes.io/managed-by: "Tiller"
     helm.sh/chart: "redskyops-0.1.2"
     control-plane: controller-manager
-  name: "redskyops-controller-manager-metrics-service"
+  name: "redsky-controller-manager-metrics-service"
 spec:
   ports:
   - name: https
     port: 8443
     targetPort: https
   selector:
-    app.kubernetes.io/instance: "redskyops"
+    app.kubernetes.io/instance: "redsky"
     app.kubernetes.io/name: redskyops
     control-plane: controller-manager
 ---
@@ -13733,26 +13733,26 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   annotations:
-    checksum/config: 78d540ef682592e3bcba8e6a5934cf8d3d5317c757960b1b44c531fb22249488
+    checksum/config: 58c1dec6c59f546e11cc7d91a90ed5cf807e1aeb1b7e3c9f69895bc67e20bd29
   labels:
     app.kubernetes.io/name: redskyops
     app.kubernetes.io/version: "v1.2.2"
-    app.kubernetes.io/instance: "redskyops"
+    app.kubernetes.io/instance: "redsky"
     app.kubernetes.io/managed-by: "Tiller"
     helm.sh/chart: "redskyops-0.1.2"
     control-plane: controller-manager
-  name: "redskyops-controller-manager"
+  name: "redsky-controller-manager"
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app.kubernetes.io/instance: "redskyops"
+      app.kubernetes.io/instance: "redsky"
       app.kubernetes.io/name: redskyops
       control-plane: controller-manager
   template:
     metadata:
       labels:
-        app.kubernetes.io/instance: "redskyops"
+        app.kubernetes.io/instance: "redsky"
         app.kubernetes.io/name: redskyops
         app.kubernetes.io/version: "v1.2.2"
         control-plane: controller-manager
@@ -13774,7 +13774,7 @@ spec:
         - /manager
         envFrom:
         - secretRef:
-            name: "redskyops-manager"
+            name: "redsky-manager"
         image: gcr.io/redskyops/k8s-experiment:1.2.2
         imagePullPolicy: Always
         name: manager
