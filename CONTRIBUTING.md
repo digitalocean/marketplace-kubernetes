@@ -47,7 +47,12 @@ mkdir $VERSION
 3. Render the YAML used to deploy your application by running: `./stacks/$APP_NAME/render.sh`. Whenever you add a new version to `src`, you should
 re-render the YAML so that your stack always points to the latest version of your application.
 4. To ensure that the rendered YAML works as expected, deploy it to a test Kubernetes cluster by running: `./stacks/$APP_NAME/deploy-local.sh`
-5. Once everything looks good, commit your changes and open a PR.
+
+### Step 3: add your app's logo in svg format to the src/$APP_NAME directory
+
+For the best results export your logo as a transparent svg with a 1:1 aspect ratio. This is the logo that will be used on your Marketplace "tile" as well as at the top of your Marketplace app listing page.
+
+### Step 4: Once everything looks good, commit your changes and open a PR.
 
 ## How to deploy your application in production
 
