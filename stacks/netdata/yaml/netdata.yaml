@@ -7,7 +7,7 @@ metadata:
   name: netdata-conf-slave
   labels:
     app: netdata
-    chart: netdata-1.1.6
+    chart: netdata-1.1.8
     release: netdata
     heritage: Tiller
 data:
@@ -53,7 +53,7 @@ metadata:
   name: netdata-conf-master
   labels:
     app: netdata
-    chart: netdata-1.1.6
+    chart: netdata-1.1.8
     release: netdata
     heritage: Tiller
 data:
@@ -103,7 +103,7 @@ apiVersion: v1
 metadata:
   labels:
     app: netdata
-    chart: netdata-1.1.6
+    chart: netdata-1.1.8
     release: netdata
     heritage: Tiller
   name: netdata
@@ -115,7 +115,7 @@ metadata:
   name: netdata
   labels:
     app: netdata
-    chart: netdata-1.1.6
+    chart: netdata-1.1.8
     release: netdata
     heritage: Tiller
 rules:
@@ -141,7 +141,7 @@ metadata:
   name: netdata
   labels:
     app: netdata
-    chart: netdata-1.1.6
+    chart: netdata-1.1.8
     release: netdata
     heritage: Tiller
 roleRef:
@@ -160,7 +160,7 @@ metadata:
   name: netdata
   labels:
     app: netdata
-    chart: netdata-1.1.6
+    chart: netdata-1.1.8
     release: netdata
     heritage: Tiller
     role: master
@@ -184,7 +184,7 @@ metadata:
   name: netdata-slave
   labels:
     app: netdata
-    chart: netdata-1.1.6
+    chart: netdata-1.1.8
     release: netdata
     heritage: Tiller
     role: slave
@@ -198,7 +198,7 @@ spec:
     metadata:
       annotations:
         container.apparmor.security.beta.kubernetes.io/netdata: unconfined
-        checksum/config: 8580356dd5a5ae047dfdf60696dc85d1033ca0ed8aae31207f7b4fab950f8aa2
+        checksum/config: 43bcb12a5ad349454df7b585cdc91c4099daef883b619d0d03d2dfb1709fdad4
       labels:
         app: netdata
         release: netdata
@@ -212,7 +212,7 @@ spec:
       initContainers:
       containers:
         - name: netdata
-          image: "netdata/netdata:v1.17.1"
+          image: "netdata/netdata:v1.18.1"
           imagePullPolicy: Always
           env:
             - name: MY_POD_NAME
@@ -308,7 +308,7 @@ metadata:
   name: netdata-master
   labels:
     app: netdata
-    chart: netdata-1.1.6
+    chart: netdata-1.1.8
     release: netdata
     heritage: Tiller
     role: master
@@ -336,7 +336,7 @@ spec:
         release: netdata
         role: master
       annotations:
-        checksum/config: 8580356dd5a5ae047dfdf60696dc85d1033ca0ed8aae31207f7b4fab950f8aa2
+        checksum/config: 43bcb12a5ad349454df7b585cdc91c4099daef883b619d0d03d2dfb1709fdad4
     spec:
       securityContext:
         fsGroup: 201
@@ -344,7 +344,7 @@ spec:
       initContainers:
       containers:
         - name: netdata
-          image: "netdata/netdata:v1.17.1"
+          image: "netdata/netdata:v1.18.1"
           imagePullPolicy: Always
           env:
             - name: MY_POD_NAME
@@ -410,7 +410,7 @@ metadata:
   name: netdata
   labels:
     app: netdata
-    chart: netdata-1.1.6
+    chart: netdata-1.1.8
     release: netdata
     heritage: Tiller
   annotations:
