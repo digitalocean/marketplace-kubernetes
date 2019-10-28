@@ -63,7 +63,7 @@ metadata:
   namespace: loki
   labels:
     app: loki
-    chart: loki-0.14.2
+    chart: loki-0.17.0
     heritage: Tiller
     release: loki
 spec:
@@ -106,7 +106,7 @@ metadata:
   namespace: loki
   labels:
     app: promtail
-    chart: promtail-0.12.1
+    chart: promtail-0.13.0
     heritage: Tiller
     release: loki
 spec:
@@ -147,7 +147,7 @@ metadata:
 type: Opaque
 data:
   admin-user: "YWRtaW4="
-  admin-password: "d2pxbVZwWWNPTkhucFB0dElhdkVNdmUwRjI0YXpYc09GazBMdkhsVw=="
+  admin-password: "ZU8wNDVEakxXMXJMaldyNk16aEs1YVd1RUVUVlNKeExXS0ZUZWZjSA=="
   ldap-toml: ""
 
 ---
@@ -159,7 +159,7 @@ metadata:
   namespace: loki
   labels:
     app: loki
-    chart: loki-0.14.2
+    chart: loki-0.17.0
     release: loki
     heritage: Tiller
 data:
@@ -200,7 +200,7 @@ metadata:
   namespace: loki
   labels:
     app: promtail
-    chart: promtail-0.12.1
+    chart: promtail-0.13.0
     release: loki
     heritage: Tiller
 data:
@@ -208,7 +208,7 @@ data:
     client:
       backoff_config:
         maxbackoff: 5s
-        maxretries: 5
+        maxretries: 20
         minbackoff: 100ms
       batchsize: 102400
       batchwait: 1s
@@ -484,7 +484,7 @@ metadata:
   namespace: loki
   labels:
     app: loki-stack
-    chart: loki-stack-0.16.2
+    chart: loki-stack-0.18.0
     release: loki
     heritage: Tiller
     grafana_datasource: "1"
@@ -520,7 +520,7 @@ kind: ServiceAccount
 metadata:
   labels:
     app: loki
-    chart: loki-0.14.2
+    chart: loki-0.17.0
     heritage: Tiller
     release: loki
   name: loki
@@ -535,7 +535,7 @@ kind: ServiceAccount
 metadata:
   labels:
     app: promtail
-    chart: promtail-0.12.1
+    chart: promtail-0.13.0
     heritage: Tiller
     release: loki
   name: loki-promtail
@@ -567,7 +567,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   labels:
     app: promtail
-    chart: promtail-0.12.1
+    chart: promtail-0.13.0
     release: loki
     heritage: Tiller
   name: loki-promtail-clusterrole
@@ -611,7 +611,7 @@ metadata:
   name: loki-promtail-clusterrolebinding
   labels:
     app: promtail
-    chart: promtail-0.12.1
+    chart: promtail-0.13.0
     release: loki
     heritage: Tiller
 subjects:
@@ -651,7 +651,7 @@ metadata:
   namespace: loki
   labels:
     app: loki
-    chart: loki-0.14.2
+    chart: loki-0.17.0
     heritage: Tiller
     release: loki
 rules:
@@ -671,7 +671,7 @@ metadata:
   namespace: loki
   labels:
     app: promtail
-    chart: promtail-0.12.1
+    chart: promtail-0.13.0
     heritage: Tiller
     release: loki
 rules:
@@ -710,7 +710,7 @@ metadata:
   namespace: loki
   labels:
     app: loki
-    chart: loki-0.14.2
+    chart: loki-0.17.0
     heritage: Tiller
     release: loki
 roleRef:
@@ -732,7 +732,7 @@ metadata:
   namespace: loki
   labels:
     app: promtail
-    chart: promtail-0.12.1
+    chart: promtail-0.13.0
     heritage: Tiller
     release: loki
 roleRef:
@@ -777,7 +777,7 @@ metadata:
   namespace: loki
   labels:
     app: loki
-    chart: loki-0.14.2
+    chart: loki-0.17.0
     release: loki
     heritage: Tiller
 spec:
@@ -800,7 +800,7 @@ metadata:
   namespace: loki
   labels:
     app: loki
-    chart: loki-0.14.2
+    chart: loki-0.17.0
     release: loki
     heritage: Tiller
   annotations:
@@ -826,7 +826,7 @@ metadata:
   namespace: loki
   labels:
     app: promtail
-    chart: promtail-0.12.1
+    chart: promtail-0.13.0
     release: loki
     heritage: Tiller
   annotations:
@@ -845,7 +845,7 @@ spec:
         app: promtail
         release: loki          
       annotations:
-        checksum/config: 14293ff021df093337bf7a9d1b721d3f5a1e75a550c3c32111d42b3f5359e0d3
+        checksum/config: f3367730ede803a525fb8af507f355325ea815db016b380dcaf674c7629cf80a
         prometheus.io/port: http-metrics
         prometheus.io/scrape: "true"
         
@@ -853,7 +853,7 @@ spec:
       serviceAccountName: loki-promtail
       containers:
         - name: promtail
-          image: "grafana/promtail:v0.3.0"
+          image: "grafana/promtail:v0.4.0"
           imagePullPolicy: IfNotPresent
           args:
             - "-config.file=/etc/promtail/promtail.yaml"
@@ -905,6 +905,7 @@ spec:
       tolerations:
         - effect: NoSchedule
           key: node-role.kubernetes.io/master
+          operator: Exists
         
       volumes:
         - name: config
@@ -951,7 +952,7 @@ spec:
         checksum/config: db6d9b9f2f5acfbc5566f124cad964cf11c0d1cf191eecb3e8f019f5210636d3
         checksum/dashboards-json-config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
         checksum/sc-dashboard-provider-config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
-        checksum/secret: 9066e3db23509eef5d787d7627ccbaae7716d68fdb7e0d73f85051c456158c31
+        checksum/secret: 1fdc8f1bf26e5eb182ea516f4fd574e819c6fd089672e701e71d85229039450e
     spec:
       serviceAccountName: loki-grafana
       securityContext:
@@ -977,7 +978,7 @@ spec:
               mountPath: "/etc/grafana/provisioning/datasources"
       containers:
         - name: grafana
-          image: "grafana/grafana:6.4.0-beta1"
+          image: "grafana/grafana:6.4.3"
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: config
@@ -1048,7 +1049,7 @@ metadata:
   namespace: loki
   labels:
     app: loki
-    chart: loki-0.14.2
+    chart: loki-0.17.0
     release: loki
     heritage: Tiller
   annotations:
@@ -1072,7 +1073,7 @@ spec:
         name: loki
         release: loki
       annotations:
-        checksum/config: b3dc2d996f1990aa15f456424f56c4156fa77859bbf340591ac93b48a0d2a28d
+        checksum/config: 4090039a27796ffd73f430a06fa757a7ca46d9ac5600c6aaf4df0d6a2d45001d
         prometheus.io/port: http-metrics
         prometheus.io/scrape: "true"
         
@@ -1086,7 +1087,7 @@ spec:
         
       containers:
         - name: loki
-          image: "grafana/loki:v0.3.0"
+          image: "grafana/loki:v0.4.0"
           imagePullPolicy: IfNotPresent
           args:
             - "-config.file=/etc/loki/loki.yaml"

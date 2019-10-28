@@ -5,7 +5,7 @@ set -e
 BUILD_DIR=$(mktemp -d)
 ROOT_DIR=$(git rev-parse --show-toplevel)
 
-SRC_VERSION="0.16.2"
+SRC_VERSION="0.18.0"
 
 cp -r "$ROOT_DIR"/src/loki/"$SRC_VERSION" $BUILD_DIR
 cp -r "$ROOT_DIR"/stacks/loki $BUILD_DIR
