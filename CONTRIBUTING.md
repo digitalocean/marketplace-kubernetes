@@ -29,7 +29,7 @@ mv $APP_NAME $HELM_CHART_VERSION
 # commit your changes
 ```
 
-If you’re application is deployed via raw YAML:
+If your application is deployed via raw YAML:
 
 ```bash
 # create a new directory for your application in src
