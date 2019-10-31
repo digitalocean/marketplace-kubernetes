@@ -19,6 +19,8 @@ kubectl apply -f https://raw.githubusercontent.com/digitalocean/marketplace-kube
 # add the DigitalOcean LBaaS LoadBalancer
 kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
 
-
 # ensure services are running
-kubectl rollout status deployment/argocd
+kubectl get deployments -o custom-columns=NAME:.metadata.name | tail -n +2 | while read -r line
+do
+  kubectl rollout status deployment/"$line"
+done

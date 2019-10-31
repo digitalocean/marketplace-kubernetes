@@ -16,7 +16,13 @@ EOF
 kubectl config set-context --current --namespace=argocd
 
 # deploy argocd
-kubectl apply -f "$ROOT_DIR"/stacks/argocd/yaml/argocd.yaml
+kubectl apply -f "$ROOT_DIR"/src/argocd/1.2.5/argocd.yaml
+
+# add the DigitalOcean LBaaS LoadBalancer
+kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
 
 # ensure services are running
-kubectl rollout status deployment/argocd
+kubectl get deployments -o custom-columns=NAME:.metadata.name | tail -n +2 | while read -r line
+do
+  kubectl rollout status deployment/"$line"
+done
