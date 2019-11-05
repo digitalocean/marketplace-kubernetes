@@ -42,7 +42,7 @@ mkdir $VERSION
 
 ### Step 2: create your application stack
 
-1. Run `STACK_NAME=$APP_NAME ./generate-stack.sh` to generate the files necessary to render and deploy your application. They will be located in `stacks/$APP_NAME`.
+1. Run `STACK_NAME=$APP_NAME ./utils/generate-stack.sh` to generate the files necessary to render and deploy your application. They will be located in `stacks/$APP_NAME`.
 2. Modify the generated files so that they work best for your application.
 3. Render the YAML used to deploy your application by running: `./stacks/$APP_NAME/render.sh`. Whenever you add a new version to `src`, you should
 re-render the YAML so that your stack always points to the latest version of your application.

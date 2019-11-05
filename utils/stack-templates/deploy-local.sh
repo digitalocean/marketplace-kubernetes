@@ -19,4 +19,7 @@ kubectl config set-context --current --namespace={{STACK_NAME}}
 kubectl apply -f "$ROOT_DIR"/stacks/{{STACK_NAME}}/yaml/{{STACK_NAME}}.yaml
 
 # ensure services are running
-kubectl rollout status deployment/{{STACK_NAME}}
+kubectl get deployments -o custom-columns=NAME:.metadata.name | tail -n +2 | while read -r line
+do
+  kubectl rollout status deployment/"$line"
+done
