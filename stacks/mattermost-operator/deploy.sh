@@ -15,7 +15,7 @@ kubectl apply -n minio-operator -f https://raw.githubusercontent.com/mattermost/
 # create mattermost-operator namespace
 kubectl create ns mattermost-operator
 # deploy mattermost-operator
-$ kubectl apply -n mattermost-operator -f https://raw.githubusercontent.com/mattermost/mattermost-operator/v0.7.0/docs/mattermost-operator/mattermost-operator.yaml
+kubectl apply -n mattermost-operator -f https://raw.githubusercontent.com/mattermost/mattermost-operator/v0.7.0/docs/mattermost-operator/mattermost-operator.yaml
 
 
 # ensure services are running
