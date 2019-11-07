@@ -1,7 +1,7 @@
 ---
 # Source: prometheus-operator/charts/grafana/templates/podsecuritypolicy.yaml
 
-apiVersion: extensions/v1beta1
+apiVersion: policy/v1beta1
 kind: PodSecurityPolicy
 metadata:
   name: prometheus-operator-grafana
@@ -92,7 +92,7 @@ spec:
 ---
 # Source: prometheus-operator/charts/prometheus-node-exporter/templates/psp.yaml
 
-apiVersion: extensions/v1beta1
+apiVersion: policy/v1beta1
 kind: PodSecurityPolicy
 metadata:
   labels:     
@@ -20893,7 +20893,7 @@ spec:
 
 ---
 # Source: prometheus-operator/charts/prometheus-node-exporter/templates/daemonset.yaml
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: prometheus-operator-prometheus-node-exporter
@@ -20977,7 +20977,7 @@ spec:
 
 ---
 # Source: prometheus-operator/charts/grafana/templates/deployment.yaml
-apiVersion: apps/v1beta2
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: prometheus-operator-grafana
