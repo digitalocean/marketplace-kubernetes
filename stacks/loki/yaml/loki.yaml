@@ -1,7 +1,7 @@
 ---
 # Source: loki-stack/charts/grafana/templates/podsecuritypolicy.yaml
 
-apiVersion: extensions/v1beta1
+apiVersion: policy/v1beta1
 kind: PodSecurityPolicy
 metadata:
   name: loki-grafana
@@ -925,7 +925,7 @@ spec:
 
 ---
 # Source: loki-stack/charts/grafana/templates/deployment.yaml
-apiVersion: apps/v1beta2
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: loki-grafana
