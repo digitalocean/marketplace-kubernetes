@@ -1,3 +1,3 @@
 # Linkerd
 
-https://github.com/linkerd/linkerd2
+<https://github.com/linkerd/linkerd2>
