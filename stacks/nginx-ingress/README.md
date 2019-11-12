@@ -13,13 +13,12 @@ The NGINX Ingress Controller is a daemon, deployed as a Kubernetes Pod, that wat
 # Getting Started
 
 ### How to Connect to Your Cluster
-[Follow these instructions](https://www.digitalocean.com/docs/kubernetes/how-to/connect-to-cluster/) to connect to your cluster with `kubectl` and `doctl`. Additional instructions for connecting to your cluster are included in the [DigitalOcean Control Panel]
-(https://cloud.digitalocean.com/kubernetes/clusters/). 
+[Follow these instructions](https://www.digitalocean.com/docs/kubernetes/how-to/connect-to-cluster/) to connect to your cluster with `kubectl` and `doctl`. Additional instructions for connecting to your cluster are included in the [DigitalOcean Control Panel](https://cloud.digitalocean.com/kubernetes/clusters/). 
 
 You may also connect to your cluster without using `doctl` if you have taken the following prerequisite steps:
 1. Created a cluster in the [DigitalOcean Control Panel](https://cloud.digitalocean.com/kubernetes/clusters/).
 1. Downloaded the Kubernetes config file to ~/Downloads directory on your local machine. The config file will have a name like `nginx-k8s-1-15-3-do-1-sfo-kubeconfig.yaml`.
-1. Installed the Kubernetes command line tool, `kubectl`, on your local machine. [(Here are instructions for doing that.)](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
+1. Installed the Kubernetes command line tool, `kubectl`, on your local machine. [(Here are instructions for doing that)](https://kubernetes.io/docs/tasks/tools/install-kubectl/) if you have not already done so.
 
 After you complete those prerequisites, copy the Kubernetes config file to the default directory `kubectl` looks in.
 ```
