@@ -3,20 +3,37 @@
 set -e
 
 # create mysql-operator namespace
-kubectl create ns mysql-operator
+cat <<EOF | kubectl apply -f -
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: mysql-operator
+EOF
+
 # deploy mysql-operator
-kubectl apply -n mysql-operator -f https://raw.githubusercontent.com/mattermost/mattermost-operator/v0.7.0/docs/mysql-operator/mysql-operator.yaml
+kubectl apply -n mysql-operator -f https://raw.githubusercontent.com/mattermost/mattermost-operator/v0.8.0/docs/mysql-operator/mysql-operator.yaml
 
 # create minio-operator namespace
-kubectl create ns minio-operator
+cat <<EOF | kubectl apply -f -
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: minio-operator
+EOF
+
 # deploy minio-operator
-kubectl apply -n minio-operator -f https://raw.githubusercontent.com/mattermost/mattermost-operator/v0.7.0/docs/minio-operator/minio-operator.yaml
+kubectl apply -n minio-operator -f https://raw.githubusercontent.com/mattermost/mattermost-operator/v0.8.0/docs/minio-operator/minio-operator.yaml
 
 # create mattermost-operator namespace
-kubectl create ns mattermost-operator
-# deploy mattermost-operator
-kubectl apply -n mattermost-operator -f https://raw.githubusercontent.com/mattermost/mattermost-operator/v0.7.0/docs/mattermost-operator/mattermost-operator.yaml
+cat <<EOF | kubectl apply -f -
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: mattermost-operator
+EOF
 
+# deploy mattermost-operator
+kubectl apply -n mattermost-operator -f https://raw.githubusercontent.com/mattermost/mattermost-operator/v0.8.0/docs/mattermost-operator/mattermost-operator.yaml
 
 # ensure services are running
 kubectl rollout status deployment/mattermost-operator -n mattermost-operator
