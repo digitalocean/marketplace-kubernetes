@@ -2,6 +2,9 @@
 
 set -e
 
+# deploy nginx ingress
+sh -c "curl --location --silent --show-error https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/nginx-ingress/deploy.sh | sh"
+
 # create mysql-operator namespace
 cat <<EOF | kubectl apply -f -
 apiVersion: v1
