@@ -33,14 +33,14 @@ kubectl get pods -A
 ### How to confirm that NGINX Ingress Controller is running
 
 Verify Nginx Ingress was installed correctly by running this command:
-`kubectl get pods --all-namespaces -l app.kubernetes.io/name=ingress-nginx`                                                                                                       ⏎
+`kubectl get pods --all-namespaces -l app.kubernetes.io/name=ingress-nginx`                                                                                                       
 You should get output similar to the following:
 
 `NAMESPACE       NAME                                        READY   STATUS    RESTARTS   AGE`
 `ingress-nginx   nginx-ingress-controller-7fb85bc8bb-4s2sl   1/1     Running   0          152m`
 
 Then, get the IP address of your NGINX Ingress Controller Load Balancer by running this command:
-`kubectl get svc ingress-nginx  -n ingress-nginx -o jsonpath='{.status.loadBalancer.ingress[*].ip}'`                                                                              ⏎
+`kubectl get svc ingress-nginx  -n ingress-nginx -o jsonpath='{.status.loadBalancer.ingress[*].ip}'`                                                                              
 
 
 
