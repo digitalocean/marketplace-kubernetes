@@ -1,3 +1,3 @@
 # NGINX Ingress Controller
 
-https://github.com/kubernetes/ingress-nginx
+<https://github.com/kubernetes/ingress-nginx>
