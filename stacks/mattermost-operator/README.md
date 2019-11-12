@@ -27,7 +27,7 @@ stringData:
   license: %LICENSE_FILE_CONTENTS%
 ```
 
-replacing `%LICENSE_FILE_CONTENTS% with the content of your Mattermost license.
+replacing `%LICENSE_FILE_CONTENTS%` with the content of your Mattermost license.
 
 Apply it to your Mattermost cluster with:
 
