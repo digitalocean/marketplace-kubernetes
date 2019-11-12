@@ -1,108 +1,49 @@
 # Description
-**Focus on what this software is and the VALUE it brings to users.**
 ------
-(replace all text in italics.)
 
 Configuring a webserver or loadbalancer is harder than it should be. Most webserver configuration files are very similar. There are some applications that have weird little quirks that tend to throw a wrench in things, but for the most part you can apply the same logic to them and achieve a desired result.
 
-The Ingress resource embodies this idea, and an Ingress controller is meant to handle all the quirks associated with a specific "class" of Ingress.
+The [Kubernetes Ingress resource](http://kubernetes.io/docs/user-guide/ingress/) embodies this idea, and an Ingress controller is meant to handle all the quirks associated with a specific "class" of Ingress.
 
-An Ingress Controller is a daemon, deployed as a Kubernetes Pod, that watches the apiserver's /ingresses endpoint for updates to the Ingress resource. Its job is to satisfy requests for Ingresses.
+The NGINX Ingress Controller is built around the [Kubernetes Ingress resource](http://kubernetes.io/docs/user-guide/ingress/), using a [ConfigMap](https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/#understanding-configmaps-and-pods) to store the NGINX configuration.
 
-The NGINX Ingress Controller is built around the Kubernetes Ingress resource, using a ConfigMap to store the NGINX configuration.
+The NGINX Ingress Controller is a daemon, deployed as a Kubernetes Pod, that watches the apiserver's /ingresses endpoint for updates to the Ingress resource. Its job is to satisfy requests for Ingresses.
 
-**Note:** The NGINX Ingress Controller also includes 1 $10/month DigitalOcean Load Balancer.**
-
-_Write a few paragraphs about *WHAT* the listing is, *WHAT* the software does, and the *VALUE* it brings to users._
-
-_Include specific details on what this 1-click provides, and the value to users. Enumerate the values this 1-click's config gives the user. Enumerate the value this software combination, specifically for apps containing multiple pieces of software, bring to the user._ 
-
-_Include links for the user to learn more about the software that are not included in the software included section._
-
-_Recommend CPU and Memory minimum requirements and node pools for test/dev and production for X amount of user._
-
-_If your software is Open Source, a thank you to all the contributors is a nice touch. Suggest to add something to the effect:_
-Thank you to all the contributors whose hard work make this software valuable for users.
-
+**Note:** The NGINX Ingress Controller 1-Click App also includes a $10/month DigitalOcean Load Balancer to ensure that ingress traffic is distributed across all of the nodes in your Kubernetes cluster.
 
 # Getting Started
-(Replace `[app]` with the specific app name.)
 
-### Getting Started with DigitalOcean Kubernetes
-As you get started with Kubernetes on DigitalOcean be sure to check out how to connect to your cluster using `kubectl` and `doctl`:
-https://www.digitalocean.com/docs/kubernetes/how-to/connect-to-cluster/
- 
-Additional instructions are included in the DigitalOcean Kubernetes control panel:
-https://cloud.digitalocean.com/kubernetes/clusters/ 
+### How to Connect to Your Cluster
+[Follow these instructions](https://www.digitalocean.com/docs/kubernetes/how-to/connect-to-cluster/) to connect to your cluster with `kubectl` and `doctl`. Additional instructions for connecting to your cluster are included in the [DigitalOcean Control Panel]
+(https://cloud.digitalocean.com/kubernetes/clusters/). 
 
-#### Quick Start
-If you just want to give this app a quick spin without `doctl` give the following a try.
+You may also connect to your cluster without using `doctl` if you have taken the following prerequisite steps:
+1. Created a cluster in the [DigitalOcean Control Panel](https://cloud.digitalocean.com/kubernetes/clusters/).
+1. Downloaded the Kubernetes config file to ~/Downloads directory on your local machine. The config file will have a name like `nginx-k8s-1-15-3-do-1-sfo-kubeconfig.yaml`.
+1. Installed the Kubernetes command line tool, `kubectl`, on your local machine. [(Here are instructions for doing that.)](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
 
-Assuming you have done the following:
-1. Created a cluster in the DigitalOcean control panel (https://cloud.digitalocean.com/kubernetes/clusters/).
-1. Downloaded the Kubernetes config file to ~/Downloads directory on your local machine. The config file will have a name like `monitoring-k8s-1-15-3-do-1-sfo-kubeconfig.yaml`.
-1. Installed Kubernetes command line tool, `kubectl`, (https://kubernetes.io/docs/tasks/tools/install-kubectl/) on your local machine.
-
-Copy the Kubernetes config file to the default directory `kubectl` looks in.
+After you complete those prerequisites, copy the Kubernetes config file to the default directory `kubectl` looks in.
 ```
 cp ~/.kube/config  ~/.kube/config.bkup
 cp  ~/Downloads/monitoring-k8s-1-15-3-do-1-sfo-kubeconfig.yaml  ~/.kube/config
 ```
-You should now be able to connect to your DigitalOcean Kubernetes Cluster and successfully run commands like:
+You should now be able to connect to your DigitalOcean Kubernetes cluster and successfully run commands like:
 ```
 kubectl get pods -A
 ```
 
-### Confirm [app] is running: 
-After you are able to successfully connect to your DigitalOcean Kubernetes cluster you’ll be able to see [app] running in the `[app]` namespace by issuing:
- ```
- kubectl get pods -A
- ``` 
- Confirm all `[app]` pods are in a “`Running`” state under the “`STATUS`” column:
+### How to confirm that NGINX Ingress Controller is running
 
-```
-NAMESPACE    NAME                          READY    STATUS    RESTARTS    AGE
-[app]    [app]-677f58bd99-fx47c    4/4      Running   0           6m34s
-[app]    [app]-9dbd66dfb-52flb     2/2      Running   0           6m33s
-[app]    [app]-6587f85db7-6vfkf    2/2      Running   0           6m35s
-[app]    [app]-7cb697456b-jdq6t    2/2      Running   0           6m33s
-[app]    [app]-7c45798d44-rxhnq    2/2      Running   0           6m32s
-[app]    [app]-6d5b85476c-nf445    2/2      Running   0           6m34s
-```
-_Be sure to call out all apps the user needs to ensure are running for proper function of the `[app]`._
+Verify Nginx Ingress was installed correctly by running this command:
+`kubectl get pods --all-namespaces -l app.kubernetes.io/name=ingress-nginx`                                                                                                       ⏎
+You should get output similar to the following:
 
-### Install [app] CLI (optional)
+`NAMESPACE       NAME                                        READY   STATUS    RESTARTS   AGE`
+`ingress-nginx   nginx-ingress-controller-7fb85bc8bb-4s2sl   1/1     Running   0          152m`
 
-### Connect/Use [app]
-_Provide detailed step-by-step instructions on how the user should interact and use the [app]. Be verbose and specific don't assume the user knows steps to take._
+Then, get the IP address of your NGINX Ingress Controller Load Balancer by running this command:
+`kubectl get svc ingress-nginx  -n ingress-nginx -o jsonpath='{.status.loadBalancer.ingress[*].ip}'`                                                                              ⏎
 
-_Ensure the app provides some utility out of the box. Be comfortable to be opinionated on recommended config. Success is when the user can easily use the software, and utilize best practices with minimal effort. So be opinionated, and include recommended config, charts, etc._
 
-_If possible provide an example app, chart, or module which allows the user to see how the [app] works, and enables the user to quickly start modifying and building._
 
-_Include in-line documentation when possible._
 
-_Include screen shots and images when possible_ 
-
-![alt text][image]
-
-[image]: https://assets.digitalocean.com/blog/static/sammy-the-shark-gets-a-birthday-makeover-from-simon-oxley/sammy-jetpack.png "Image Text"
-
-_Provide Quick Getting Started YouTube videos when possible._
-
-[![YouTube Video](http://img.youtube.com/vi/UMfJNg_SVj0/0.jpg)](http://www.youtube.com/watch?v=UMfJNg_SVj0 "Image Title")
-
-_Repeat this section for each app in the application listing._
-
-### Additional Resources
-_Provide links to blogs, tutorials, documentation, and YouTube videos the user can leverage to grow knowledge about the [app]._
-
-_Provide resources the user can use to go beyond deploying and initial setup._
-
-### Examples
-- https://marketplace-staging.digitalocean.com/apps/linkerd
-- https://marketplace-staging.digitalocean.com/apps/kubernetes-monitoring-stack
-- https://marketplace-staging.digitalocean.com/apps/openfaas-kubernetes
-
-Markdown reference:
-https://guides.github.com/features/mastering-markdown/
