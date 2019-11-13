@@ -9,4 +9,4 @@ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/$VER
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/$VERSION/deploy/static/provider/cloud-generic.yaml
 
 # ensure services are running
-kubectl rollout status deployment/nginx-ingress-controller -n ingress-nginx
+kubectl rollout status -w deployment/nginx-ingress-controller -n ingress-nginx

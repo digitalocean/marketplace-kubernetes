@@ -19,4 +19,4 @@ kubectl config set-context --current --namespace=moon
 kubectl apply -f "$ROOT_DIR"/stacks/moon/yaml/moon.yaml
 
 # ensure services are running
-kubectl rollout status deployment/moon
+kubectl rollout status -w deployment/moon

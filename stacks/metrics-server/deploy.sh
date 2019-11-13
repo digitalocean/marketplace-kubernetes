@@ -9,4 +9,4 @@ kubectl config set-context --current --namespace=kube-system
 kubectl apply -f https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/metrics-server/yaml/metrics-server.yaml
 
 # ensure services are running
-kubectl rollout status deployment/metrics-server
+kubectl rollout status -w deployment/metrics-server

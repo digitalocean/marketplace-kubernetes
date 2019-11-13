@@ -18,4 +18,4 @@ kubectl config set-context --current --namespace=openfaas
 kubectl apply -f https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/openfaas/yaml/openfaas.yaml
 
 # ensure services are running
-kubectl rollout status -n openfaas deployment/gateway
+kubectl rollout status -w -n openfaas deployment/gateway

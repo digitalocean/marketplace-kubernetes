@@ -20,4 +20,4 @@ kubectl config set-context --current --namespace=openfaas
 kubectl apply -f "$ROOT_DIR"/stacks/openfaas/yaml/openfaas.yaml
 
 # ensure services are running
-kubectl rollout status -n openfaas deployment/gateway
+kubectl rollout status -w -n openfaas deployment/gateway

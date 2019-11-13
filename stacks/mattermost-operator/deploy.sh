@@ -39,6 +39,6 @@ EOF
 kubectl apply -n mattermost-operator -f https://raw.githubusercontent.com/mattermost/mattermost-operator/v0.8.0/docs/mattermost-operator/mattermost-operator.yaml
 
 # ensure services are running
-kubectl rollout status deployment/mattermost-operator -n mattermost-operator
-kubectl rollout status deployment/minio-operator -n minio-operator
-kubectl rollout status statefulset/mysql-operator -n mysql-operator
+kubectl rollout status -w deployment/mattermost-operator -n mattermost-operator
+kubectl rollout status -w deployment/minio-operator -n minio-operator
+kubectl rollout status -w statefulset/mysql-operator -n mysql-operator

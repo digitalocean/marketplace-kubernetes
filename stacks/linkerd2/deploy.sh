@@ -28,7 +28,7 @@ $BINARY install --ignore-cluster | kubectl apply -f -
 # ensure services are running
 kubectl get deployments -o custom-columns=NAME:.metadata.name | tail -n +2 | while read -r line
 do
-  kubectl rollout status deployment/"$line"
+  kubectl rollout status -w deployment/"$line"
 done
 
 # cleanup

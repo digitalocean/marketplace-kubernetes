@@ -17,4 +17,4 @@ kubectl config set-context --current --namespace=loki
 kubectl apply -f https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/loki/yaml/loki.yaml
 
 # ensure services are running
-kubectl rollout status statefulset/loki
+kubectl rollout status -w statefulset/loki
