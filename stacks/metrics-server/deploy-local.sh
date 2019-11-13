@@ -11,4 +11,4 @@ kubectl config set-context --current --namespace=kube-system
 kubectl apply -f "$ROOT_DIR"/stacks/metrics-server/yaml/metrics-server.yaml
 
 # ensure services are running
-kubectl rollout status deployment/metrics-server
+kubectl rollout status -w deployment/metrics-server

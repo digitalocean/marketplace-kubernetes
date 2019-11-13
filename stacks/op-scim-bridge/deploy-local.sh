@@ -19,4 +19,4 @@ kubectl config set-context --current --namespace=op-scim-bridge
 kubectl apply -f "$ROOT_DIR"/stacks/op-scim-bridge/yaml/op-scim-bridge.yaml
 
 # ensure services are running
-kubectl rollout status deployment/op-scim-bridge
+kubectl rollout status -w deployment/op-scim-bridge

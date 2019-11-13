@@ -6,4 +6,4 @@ set -e
 kubectl apply -f https://get.kubemq.io/deploy?source=digital-ocean
 
 # ensure services are running
-kubectl rollout status statefulset/kubemq-cluster -n kubemq
+kubectl rollout status -w statefulset/kubemq-cluster -n kubemq

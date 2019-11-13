@@ -19,4 +19,4 @@ kubectl config set-context --current --namespace=redsky-system
 kubectl apply -f "$ROOT_DIR"/stacks/redskyops/yaml/redskyops.yaml
 
 # ensure services are running
-kubectl rollout status deployment/redsky-controller-manager
+kubectl rollout status -w deployment/redsky-controller-manager

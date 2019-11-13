@@ -17,4 +17,4 @@ kubectl config set-context --current --namespace=redsky-system
 kubectl apply -f https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/redskyops/yaml/redskyops.yaml
 
 # ensure services are running
-kubectl rollout status deployment/redsky-controller-manager
+kubectl rollout status -w deployment/redsky-controller-manager

@@ -17,4 +17,4 @@ kubectl config set-context --current --namespace=op-scim-bridge
 kubectl apply -f https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/op-scim-bridge/yaml/op-scim-bridge.yaml
 
 # ensure services are running
-kubectl rollout status deployment/op-scim-bridge
+kubectl rollout status -w deployment/op-scim-bridge
