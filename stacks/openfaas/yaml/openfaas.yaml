@@ -7,7 +7,7 @@ apiVersion: v1
 metadata:
   labels:
     app: openfaas
-    chart: openfaas-4.4.0
+    chart: openfaas-5.2.2
     component: alertmanager-config
     heritage: Tiller
     release: openfaas
@@ -52,7 +52,7 @@ apiVersion: v1
 metadata:
   labels:
     app: openfaas
-    chart: openfaas-4.4.0
+    chart: openfaas-5.2.2
     component: prometheus-config
     heritage: Tiller
     release: openfaas
@@ -131,7 +131,7 @@ kind: ServiceAccount
 metadata:
   labels:
     app: openfaas
-    chart: openfaas-4.4.0
+    chart: openfaas-5.2.2
     component: faas-controller
     heritage: Tiller
     release: openfaas
@@ -143,7 +143,7 @@ kind: Role
 metadata:
   labels:
     app: openfaas
-    chart: openfaas-4.4.0
+    chart: openfaas-5.2.2
     component: faas-controller
     heritage: Tiller
     release: openfaas
@@ -190,6 +190,8 @@ rules:
     resources:
       - pods
       - pods/log
+      - namespaces
+      - endpoints
     verbs:
       - get
       - list
@@ -200,7 +202,7 @@ kind: RoleBinding
 metadata:
   labels:
     app: openfaas
-    chart: openfaas-4.4.0
+    chart: openfaas-5.2.2
     component: faas-controller
     heritage: Tiller
     release: openfaas
@@ -226,7 +228,7 @@ metadata:
   namespace: "openfaas"
   labels:
     app: openfaas
-    chart: openfaas-4.4.0
+    chart: openfaas-5.2.2
     component: prometheus
     heritage: Tiller
     release: openfaas
@@ -238,7 +240,7 @@ metadata:
   namespace: "openfaas"
   labels:
     app: openfaas
-    chart: openfaas-4.4.0
+    chart: openfaas-5.2.2
     component: prometheus
     heritage: Tiller
     release: openfaas
@@ -257,7 +259,7 @@ metadata:
   namespace: "openfaas"
   labels:
     app: openfaas
-    chart: openfaas-4.4.0
+    chart: openfaas-5.2.2
     component: prometheus
     heritage: Tiller
     release: openfaas
@@ -278,7 +280,7 @@ kind: Service
 metadata:
   labels:
     app: openfaas
-    chart: openfaas-4.4.0
+    chart: openfaas-5.2.2
     component: alertmanager
     heritage: Tiller
     release: openfaas
@@ -300,7 +302,7 @@ kind: Service
 metadata:
   labels:
     app: openfaas
-    chart: openfaas-4.4.0
+    chart: openfaas-5.2.2
     component: basic-auth-plugin
     heritage: Tiller
     release: openfaas
@@ -324,7 +326,7 @@ kind: Service
 metadata:
   labels:
     app: openfaas
-    chart: openfaas-4.4.0
+    chart: openfaas-5.2.2
     component: gateway
     heritage: Tiller
     release: openfaas
@@ -333,11 +335,13 @@ metadata:
 spec:
   type: LoadBalancer
   ports:
-    - port: 8080
+    - name: http
+      port: 8080
       protocol: TCP
       targetPort: 8080
   selector:
     app: gateway
+
 ---
 # Source: openfaas/templates/gateway-svc.yaml
 apiVersion: v1
@@ -345,7 +349,7 @@ kind: Service
 metadata:
   labels:
     app: openfaas
-    chart: openfaas-4.4.0
+    chart: openfaas-5.2.2
     component: gateway
     heritage: Tiller
     release: openfaas
@@ -354,10 +358,10 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-    - port: 8080
+    - name: http
+      port: 8080
       targetPort: http
       protocol: TCP
-      name: http
   selector:
     app: gateway
 
@@ -370,7 +374,7 @@ kind: Service
 metadata:
   labels:
     app: openfaas
-    chart: openfaas-4.4.0
+    chart: openfaas-5.2.2
     component: nats
     heritage: Tiller
     release: openfaas
@@ -394,7 +398,7 @@ kind: Service
 metadata:
   labels:
     app: openfaas
-    chart: openfaas-4.4.0
+    chart: openfaas-5.2.2
     component: prometheus
     heritage: Tiller
     release: openfaas
@@ -411,12 +415,12 @@ spec:
 # Source: openfaas/templates/alertmanager-dep.yaml
 
 ---
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
     app: openfaas
-    chart: openfaas-4.4.0
+    chart: openfaas-5.2.2
     component: alertmanager
     heritage: Tiller
     release: openfaas
@@ -424,22 +428,26 @@ metadata:
   namespace: "openfaas"
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: alertmanager
   template:
     metadata:
       labels:
         app: alertmanager
       annotations:
-        sidecar.istio.io/inject: "false"
-        checksum/alertmanager-config: "92b3816feabd13d9b22c8c69e56b57dd4e45d4955ffb141db56beb2ab89105c0"
+        sidecar.istio.io/inject: "true"
+        checksum/alertmanager-config: "db0c4dbf67bb3ad8e8c8d3c2ad3bec898786724b98757e7fa6134fddfe1f4294"
     spec:
       containers:
       - name: alertmanager
-        image: prom/alertmanager:v0.16.1
+        image: prom/alertmanager:v0.18.0
         imagePullPolicy: Always
         command:
           - "alertmanager"
           - "--config.file=/alertmanager.yml"
           - "--storage.path=/alertmanager"
+          - "--cluster.listen-address="
         livenessProbe:
           httpGet:
             path: /-/ready
@@ -482,12 +490,12 @@ spec:
 # Source: openfaas/templates/basic-auth-plugin-dep.yaml
 
 ---
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
     app: openfaas
-    chart: openfaas-4.4.0
+    chart: openfaas-5.2.2
     component: basic-auth-plugin
     heritage: Tiller
     release: openfaas
@@ -495,6 +503,9 @@ metadata:
   namespace: "openfaas"
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: basic-auth-plugin
   template:
     metadata:
       annotations:
@@ -513,7 +524,7 @@ spec:
               cpu: 20m
               memory: 50Mi
             
-        image: openfaas/basic-auth-plugin:0.1.1
+        image: openfaas/basic-auth-plugin:0.17.0
         imagePullPolicy: Always
         securityContext:
           readOnlyRootFilesystem: true
@@ -546,19 +557,22 @@ spec:
 # Source: openfaas/templates/faas-idler-dep.yaml
 
 ---
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: faas-idler
   namespace: "openfaas"
   labels:
     app: openfaas
-    chart: openfaas-4.4.0
+    chart: openfaas-5.2.2
     component: faas-idler
     heritage: Tiller
     release: openfaas
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: faas-idler
   template:
     metadata:
       annotations:
@@ -572,7 +586,7 @@ spec:
             requests:
               memory: 64Mi
             
-          image: openfaas/faas-idler:0.1.9
+          image: openfaas/faas-idler:0.2.1
           imagePullPolicy: Always
           env:
             - name: gateway_url
@@ -599,12 +613,12 @@ spec:
 ---
 # Source: openfaas/templates/gateway-dep.yaml
 
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
     app: openfaas
-    chart: openfaas-4.4.0
+    chart: openfaas-5.2.2
     component: gateway
     heritage: Tiller
     release: openfaas
@@ -612,6 +626,9 @@ metadata:
   namespace: "openfaas"
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: gateway
   template:
     metadata:
       annotations:
@@ -622,6 +639,8 @@ spec:
     spec:
       serviceAccountName: openfaas-controller
       volumes:
+      - name: faas-netes-temp-volume
+        emptyDir: {}
       - name: auth
         secret:
           secretName: basic-auth
@@ -632,7 +651,7 @@ spec:
               cpu: 50m
               memory: 120Mi
             
-        image: openfaas/gateway:0.15.0
+        image: openfaas/gateway:0.18.2
         imagePullPolicy: Always
         securityContext:
           readOnlyRootFilesystem: true
@@ -660,6 +679,8 @@ spec:
           value: "true"
         - name: direct_functions_suffix
           value: "openfaas-fn.svc.cluster.local"
+        - name: function_namespace
+          value: "openfaas-fn"
         - name: faas_nats_address
           value: "nats.openfaas.svc.cluster.local"
         - name: faas_nats_port
@@ -692,7 +713,7 @@ spec:
               cpu: 50m
               memory: 120Mi
             
-        image: openfaas/faas-netes:0.8.1
+        image: openfaas/faas-netes:0.9.9
         imagePullPolicy: 
         securityContext:
           readOnlyRootFilesystem: true
@@ -724,6 +745,9 @@ spec:
           value: "1"
         - name: liveness_probe_period_seconds
           value: "2"
+        volumeMounts:
+        - mountPath: /tmp
+          name: faas-netes-temp-volume
         ports:
         - containerPort: 8081
           protocol: TCP
@@ -731,12 +755,12 @@ spec:
 ---
 # Source: openfaas/templates/nats-dep.yaml
 
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
     app: openfaas
-    chart: openfaas-4.4.0
+    chart: openfaas-5.2.2
     component: nats
     heritage: Tiller
     release: openfaas
@@ -744,6 +768,9 @@ metadata:
   namespace: "openfaas"
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: nats
   template:
     metadata:
       annotations:
@@ -774,12 +801,12 @@ spec:
 # Source: openfaas/templates/prometheus-dep.yaml
 
 ---
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
     app: openfaas
-    chart: openfaas-4.4.0
+    chart: openfaas-5.2.2
     component: prometheus
     heritage: Tiller
     release: openfaas
@@ -787,13 +814,16 @@ metadata:
   namespace: "openfaas"
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: prometheus
   template:
     metadata:
       labels:
         app: prometheus
       annotations:
-        sidecar.istio.io/inject: "false"
-        checksum/prometheus-config: "e262edbd9780a70fc1ac2210857c48581c716bc53d1809b05893510d4a7d3c6c"
+        sidecar.istio.io/inject: "true"
+        checksum/prometheus-config: "c2a12a2272b174f9c36fcbfcd9098d5f560471aacd83c0fa444e242321c558c7"
     spec:
       serviceAccountName: openfaas-prometheus
       containers:
@@ -802,7 +832,7 @@ spec:
             requests:
               memory: 512Mi
             
-        image: prom/prometheus:v2.7.1
+        image: prom/prometheus:v2.11.0
         command:
           - "prometheus"
           - "--config.file=/etc/prometheus/prometheus.yml"
@@ -846,12 +876,12 @@ spec:
 ---
 # Source: openfaas/templates/queueworker-dep.yaml
 
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
     app: openfaas
-    chart: openfaas-4.4.0
+    chart: openfaas-5.2.2
     component: queue-worker
     heritage: Tiller
     release: openfaas
@@ -859,6 +889,9 @@ metadata:
   namespace: "openfaas"
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: queue-worker
   template:
     metadata:
       annotations:
@@ -877,7 +910,7 @@ spec:
               cpu: 50m
               memory: 120Mi
             
-        image: openfaas/queue-worker:0.7.2
+        image: openfaas/queue-worker:0.8.0
         imagePullPolicy: Always
         env:
         - name: faas_nats_address
@@ -904,8 +937,24 @@ spec:
 
 
 ---
+# Source: openfaas/templates/ingress-operator-crd.yaml
+
+---
+# Source: openfaas/templates/ingress-operator-dep.yaml
+
+---
+# Source: openfaas/templates/ingress-operator-rbac.yaml
+
+---
 # Source: openfaas/templates/ingress.yaml
 
 ---
+# Source: openfaas/templates/istio-mtls.yaml
+
+---
 # Source: openfaas/templates/operator-rbac.yaml
+
+---
+# Source: openfaas/templates/psp.yaml
+
 
