@@ -5,7 +5,7 @@ set -e
 BUILD_DIR=$(mktemp -d)
 ROOT_DIR=$(git rev-parse --show-toplevel)
 
-METRICS_SERVER_VERSION="0.3.5"
+METRICS_SERVER_VERSION="0.3.6"
 
 # Create YAML directory
 rm -rf "$ROOT_DIR"/stacks/metrics-server/yaml

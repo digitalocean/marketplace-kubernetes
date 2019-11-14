@@ -5,7 +5,7 @@ set -e
 BUILD_DIR=$(mktemp -d)
 ROOT_DIR=$(git rev-parse --show-toplevel)
 
-PROMETHEUS_OPERATOR_CHART_VERSION="5.12.3"
+PROMETHEUS_OPERATOR_CHART_VERSION="8.2.0"
 
 cp -r "$ROOT_DIR"/src/prometheus-operator/"$PROMETHEUS_OPERATOR_CHART_VERSION" $BUILD_DIR
 cp -r "$ROOT_DIR"/stacks/prometheus-operator $BUILD_DIR
