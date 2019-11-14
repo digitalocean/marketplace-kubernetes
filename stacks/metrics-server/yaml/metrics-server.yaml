@@ -117,7 +117,7 @@ spec:
       - command:
         - /metrics-server
         - --kubelet-preferred-address-types=InternalIP
-        image: k8s.gcr.io/metrics-server-amd64:v0.3.5
+        image: k8s.gcr.io/metrics-server-amd64:v0.3.6
         imagePullPolicy: Always
         name: metrics-server
         volumeMounts:
