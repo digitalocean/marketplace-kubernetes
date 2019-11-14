@@ -1,42 +1,66 @@
 apiVersion: apps/v1
-kind: DaemonSet
+kind: StatefulSet
 metadata:
-  name: {{ template "netdata.name" . }}-slave
+  name: {{ template "netdata.name" . }}-master
   labels:
     app: {{ template "netdata.name" . }}
     chart: {{ template "netdata.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
-    role: slave
+    role: master
 spec:
+  serviceName: {{ template "netdata.name" . }}
+  replicas: {{ .Values.replicaCount }}
+  {{- if or .Values.master.database.persistence .Values.master.alarms.persistence }}
+  volumeClaimTemplates:
+  {{- if .Values.master.database.persistence }}
+    - metadata:
+        name: database
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+      {{- if (ne "-" .Values.master.database.storageclass) }}
+        storageClassName: "{{ .Values.master.database.storageclass }}"
+      {{- end }}
+        resources:
+          requests:
+            storage: {{ .Values.master.database.volumesize }}
+  {{- end }}
+  {{- if .Values.master.alarms.persistence }}
+    - metadata:
+        name: alarms
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+      {{- if (ne "-" .Values.master.alarms.storageclass) }}
+        storageClassName: "{{ .Values.master.alarms.storageclass }}"
+      {{- end }}
+        resources:
+          requests:
+            storage: {{ .Values.master.alarms.volumesize }}
+  {{- end }}
+  {{- end }}
   selector:
     matchLabels:
       app: {{ template "netdata.name" . }}
       release: {{ .Release.Name }}
-      role: slave
+      role: master
   template:
     metadata:
-      annotations:
-      {{- if .Values.slave.podAnnotationAppArmor.enabled }}
-        container.apparmor.security.beta.kubernetes.io/{{ .Chart.Name }}: unconfined
-      {{- end }}
-        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
-{{- with .Values.slave.podAnnotations }}
-{{ toYaml . | trim | indent 8 }}
-{{- end }}
       labels:
         app: {{ template "netdata.name" . }}
         release: {{ .Release.Name }}
-        role: slave
-{{- with .Values.slave.podLabels }}
+        role: master
+{{- with .Values.master.podLabels }}
+{{ toYaml . | trim | indent 8 }}
+{{- end }}
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+{{- with .Values.master.podAnnotations }}
 {{ toYaml . | trim | indent 8 }}
 {{- end }}
     spec:
+      securityContext:
+        fsGroup: 201
       serviceAccountName: {{ .Values.serviceAccount.name }}
-      restartPolicy: Always
-      hostPID: true
-      hostIPC: true
-      hostNetwork: true
       initContainers:
       {{- if .Values.sysctlImage.enabled }}
         - name: init-sysctl
@@ -63,14 +87,11 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
-            {{- range $key, $value := .Values.slave.env }}
+            {{- range $key, $value := .Values.master.env }}
             - name: {{ $key }}
               value: {{ $value | quote }}
             {{- end }}
           lifecycle:
-            postStart:
-              exec:
-                command: ["/bin/sh","-c","python -c 'import uuid; import socket; print(uuid.uuid3(uuid.NAMESPACE_DNS, socket.gethostname()))' > /var/lib/netdata/registry/netdata.public.unique.id"]
             preStop:
               exec:
                 command: ["/bin/sh","-c","killall netdata; while killall -0 netdata; do sleep 1; done"]
@@ -95,50 +116,36 @@ spec:
             successThreshold: 1
             failureThreshold: 3
           volumeMounts:
-            - name: proc
-              readOnly: true
-              mountPath: /host/proc
-            - name: run
-              mountPath: /var/run/docker.sock
-            - name: sys
-              mountPath: /host/sys
-            {{- range $name, $config := .Values.slave.configs }}
+            {{- range $name, $config := .Values.master.configs }}
             {{- if $config.enabled }}
             - name: config
               mountPath: {{ $config.path }}
               subPath: {{ $name }}
             {{- end }}
             {{- end }}
-          securityContext:
-            capabilities:
-              add:
-                - SYS_PTRACE
-                - SYS_ADMIN
+            {{- if .Values.master.database.persistence }}
+            - name: database
+              mountPath: /var/cache/netdata
+            {{- end }}
+            {{- if .Values.master.alarms.persistence }}
+            - name: alarms
+              mountPath: /var/lib/netdata
+            {{- end }}
           resources:
-{{ toYaml .Values.slave.resources | indent 12 }}
-    {{- with .Values.slave.nodeSelector }}
+{{ toYaml .Values.master.resources | indent 12 }}
+    {{- with .Values.master.nodeSelector }}
       nodeSelector:
 {{ toYaml . | indent 8 }}
     {{- end }}
-    {{- with .Values.slave.affinity }}
+    {{- with .Values.master.affinity }}
       affinity:
 {{ toYaml . | indent 8 }}
     {{- end }}
-    {{- with .Values.slave.tolerations }}
+    {{- with .Values.master.tolerations }}
       tolerations:
 {{ toYaml . | indent 8 }}
     {{- end }}
       volumes:
-        - name: proc
-          hostPath:
-            path: /proc
-        - name: run
-          hostPath:
-            path: /var/run/docker.sock
-        - name: sys
-          hostPath:
-            path: /sys
         - name: config
           configMap:
-            name: netdata-conf-slave
-      dnsPolicy: ClusterFirstWithHostNet
+            name: netdata-conf-master
