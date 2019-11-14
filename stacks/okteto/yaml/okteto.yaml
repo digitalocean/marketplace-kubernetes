@@ -1,6 +1,6 @@
 ---
 # Source: okteto-enterprise/templates/permissive-psp.yaml
-apiVersion: extensions/v1beta1
+apiVersion: policy/v1beta1
 kind: PodSecurityPolicy
 metadata:
   name: "do-okteto-enterprise-permissive"
@@ -35,7 +35,7 @@ spec:
   - '*'
 ---
 # Source: okteto-enterprise/templates/restrictive-psp.yaml
-apiVersion: extensions/v1beta1
+apiVersion: policy/v1beta1
 kind: PodSecurityPolicy
 metadata:
   name: "do-okteto-enterprise-restrictive"
@@ -903,7 +903,7 @@ spec:
 
 ---
 # Source: okteto-enterprise/templates/inotify-daemon.yaml
-apiVersion: apps/v1beta2
+apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: "do-okteto-enterprise-inotify"
@@ -954,7 +954,7 @@ spec:
           path: /var/okteto/bin        
 ---
 # Source: okteto-enterprise/charts/cert-manager/charts/cainjector/templates/deployment.yaml
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: do-cainjector
@@ -996,7 +996,7 @@ spec:
 
 ---
 # Source: okteto-enterprise/charts/cert-manager/charts/webhook/templates/deployment.yaml
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: do-webhook
@@ -1047,7 +1047,7 @@ spec:
 
 ---
 # Source: okteto-enterprise/charts/cert-manager/templates/deployment.yaml
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: do-cert-manager
@@ -1096,7 +1096,7 @@ spec:
 ---
 # Source: okteto-enterprise/charts/nginx-ingress/templates/controller-deployment.yaml
 
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
@@ -1108,6 +1108,11 @@ metadata:
   name: do-nginx-ingress-controller
 spec:
   replicas: 2
+  selector:
+    matchLabels:
+      app: nginx-ingress
+      component: "controller"
+      release: do
   revisionHistoryLimit: 10
   strategy:
     {}
@@ -1186,7 +1191,7 @@ spec:
 ---
 # Source: okteto-enterprise/charts/nginx-ingress/templates/default-backend-deployment.yaml
 
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
@@ -1198,6 +1203,11 @@ metadata:
   name: do-nginx-ingress-default-backend
 spec:
   replicas: 2
+  selector:
+    matchLabels:
+      app: nginx-ingress
+      component: "default-backend"
+      release: do
   revisionHistoryLimit: 10
   template:
     metadata:
