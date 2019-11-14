@@ -23,8 +23,10 @@ You may also connect to your cluster without using `doctl` if you have taken the
 After you complete those prerequisites, copy the Kubernetes config file to the default directory `kubectl` looks in.
 ```
 cp ~/.kube/config  ~/.kube/config.bkup
-cp  ~/Downloads/monitoring-k8s-1-15-3-do-1-sfo-kubeconfig.yaml  ~/.kube/config
 ```
+```
+cp  ~/Downloads/monitoring-k8s-1-15-3-do-1-sfo-kubeconfig.yaml  ~/.kube/config
+````
 You should now be able to connect to your DigitalOcean Kubernetes cluster and successfully run commands like:
 ```
 kubectl get pods -A
