@@ -1,6 +1,6 @@
 ---
 # Source: op-scim/templates/op-scim.yaml
-apiVersion: apps/v1beta2
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: op-scim-bridge
@@ -80,7 +80,7 @@ spec:
   storageClassName: do-block-storage
 ---
 # Source: op-scim/templates/redis.yaml
-apiVersion: apps/v1beta2
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: redis
