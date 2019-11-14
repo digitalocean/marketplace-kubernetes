@@ -30,6 +30,7 @@ jaeger-agent-s9hjd                  1/1     Running     0          3h
 jaeger-agent-xm96d                  1/1     Running     0          3h
 jaeger-cassandra-0                  1/1     Running     0          3h
 jaeger-cassandra-1                  1/1     Running     0          3h
+jaeger-cassandra-2                  1/1     Running     0          3h
 jaeger-cassandra-schema-6mhgc       0/1     Completed   1          3h
 jaeger-collector-54cbcf8c44-zftjh   1/1     Running     5          3h
 jaeger-query-5dc755dc4f-8xskn       2/2     Running     5          3h
