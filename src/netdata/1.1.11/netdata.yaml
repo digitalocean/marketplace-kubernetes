@@ -7,7 +7,7 @@ metadata:
   labels:
     heritage: Tiller
     release: netdata
-    chart: netdata-1.1.11
+    chart: netdata-1.1.13
 spec:
   allowPrivilegeEscalation: true
   allowedCapabilities:
@@ -38,7 +38,7 @@ metadata:
   name: netdata-conf-slave
   labels:
     app: netdata
-    chart: netdata-1.1.11
+    chart: netdata-1.1.13
     release: netdata
     heritage: Tiller
 data:
@@ -84,7 +84,7 @@ metadata:
   name: netdata-conf-master
   labels:
     app: netdata
-    chart: netdata-1.1.11
+    chart: netdata-1.1.13
     release: netdata
     heritage: Tiller
 data:
@@ -134,7 +134,7 @@ apiVersion: v1
 metadata:
   labels:
     app: netdata
-    chart: netdata-1.1.11
+    chart: netdata-1.1.13
     release: netdata
     heritage: Tiller
   name: netdata
@@ -146,7 +146,7 @@ metadata:
   name: netdata
   labels:
     app: netdata
-    chart: netdata-1.1.11
+    chart: netdata-1.1.13
     release: netdata
     heritage: Tiller
 rules:
@@ -172,7 +172,7 @@ metadata:
   name: netdata-psp
   labels:
     app: netdata
-    chart: netdata-1.1.11
+    chart: netdata-1.1.13
     release: netdata
     heritage: Tiller
 rules:
@@ -189,7 +189,7 @@ metadata:
   name: netdata
   labels:
     app: netdata
-    chart: netdata-1.1.11
+    chart: netdata-1.1.13
     release: netdata
     heritage: Tiller
 roleRef:
@@ -199,7 +199,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: netdata
-  namespace: netdata
+  namespace: default
 ---
 # Source: netdata/templates/psp-clusterrolebinding.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -208,7 +208,7 @@ metadata:
   name: netdata-psp
   labels:
     app: netdata
-    chart: netdata-1.1.11
+    chart: netdata-1.1.13
     release: netdata
     heritage: Tiller
 roleRef:
@@ -218,7 +218,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: netdata
-  namespace: netdata
+  namespace: default
 ---
 # Source: netdata/templates/service.yaml
 apiVersion: v1
@@ -227,7 +227,7 @@ metadata:
   name: netdata
   labels:
     app: netdata
-    chart: netdata-1.1.11
+    chart: netdata-1.1.13
     release: netdata
     heritage: Tiller
     role: master
@@ -251,7 +251,7 @@ metadata:
   name: netdata-slave
   labels:
     app: netdata
-    chart: netdata-1.1.11
+    chart: netdata-1.1.13
     release: netdata
     heritage: Tiller
     role: slave
@@ -261,11 +261,19 @@ spec:
       app: netdata
       release: netdata
       role: slave
+  volumeClaimTemplates:
+    - metadata:
+        name: alarms
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 100Mi
   template:
     metadata:
       annotations:
         container.apparmor.security.beta.kubernetes.io/netdata: unconfined
-        checksum/config: 001401a7581634f9002815e771de94cd30f2869c01a69aae9aea5063d34fa2c9
+        checksum/config: 3824ab80b6f8961bfb871146930cd9977a4a9a365983afd81e082b583b0b66a5
       labels:
         app: netdata
         release: netdata
@@ -337,6 +345,8 @@ spec:
             - name: config
               mountPath: /etc/netdata/stream.conf
               subPath: stream
+            - name: alarms
+              mountPath: /var/lib/netdata
           securityContext:
             capabilities:
               add:
@@ -372,7 +382,7 @@ metadata:
   name: netdata-master
   labels:
     app: netdata
-    chart: netdata-1.1.11
+    chart: netdata-1.1.13
     release: netdata
     heritage: Tiller
     role: master
@@ -384,10 +394,16 @@ spec:
         name: database
       spec:
         accessModes: [ "ReadWriteOnce" ]
-        storageClassName: "do-block-storage"
         resources:
           requests:
             storage: 2Gi
+    - metadata:
+        name: alarms
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 100Mi
   selector:
     matchLabels:
       app: netdata
@@ -400,7 +416,7 @@ spec:
         release: netdata
         role: master
       annotations:
-        checksum/config: 001401a7581634f9002815e771de94cd30f2869c01a69aae9aea5063d34fa2c9
+        checksum/config: 3824ab80b6f8961bfb871146930cd9977a4a9a365983afd81e082b583b0b66a5
     spec:
       securityContext:
         fsGroup: 201
@@ -455,6 +471,8 @@ spec:
               subPath: stream
             - name: database
               mountPath: /var/cache/netdata
+            - name: alarms
+              mountPath: /var/lib/netdata
           resources:
             {}
             
@@ -471,7 +489,7 @@ metadata:
   name: netdata
   labels:
     app: netdata
-    chart: netdata-1.1.11
+    chart: netdata-1.1.13
     release: netdata
     heritage: Tiller
   annotations:
