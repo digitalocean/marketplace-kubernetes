@@ -45,9 +45,9 @@ After you are able to successfully connect to your DigitalOcean Kubernetes clust
  Confirm all `wordpress` pods are in a “`Running`” state under the “`STATUS`” column:
 
 ```
-NAMESPACE    NAME                          READY    STATUS    RESTARTS    AGE
-wordpress             wordpress-85589d5658-pxv8q                               1/1     Running     0          25h
-wordpress             wordpress-mariadb-0                                      1/1     Running     0          25h
+NAMESPACE             NAME                           READY   STATUS      RESTARTS   AGE
+wordpress             wordpress-85589d5658-pxv8q     1/1     Running     0          10m
+wordpress             wordpress-mariadb-0            1/1     Running     0          10m
 ```
 
 ### Connect to Wordpress
