@@ -8,6 +8,8 @@ Please make sure that each node in the Kubernetes node pool has the following sp
 4 GB RAM, 2 vCPUs, 40GB Disk
 ```
 
+Please use a minimum of 4 nodes in the deployment.
+
 ### Deploying and accessing the Jaeger UI
 
 After deploying the 1-click Jaeger App from the DigitalOcean marketplace, you will see a number of components deployed in the `jaeger` namespace - 
