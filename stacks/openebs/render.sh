@@ -5,7 +5,7 @@ set -e
 BUILD_DIR=$(mktemp -d)
 ROOT_DIR=$(git rev-parse --show-toplevel)
 
-SRC_VERSION="1.3.0"
+SRC_VERSION="1.4.0"
 
 cp -r "$ROOT_DIR"/src/openebs/"$SRC_VERSION" $BUILD_DIR
 cp -r "$ROOT_DIR"/stacks/openebs $BUILD_DIR
@@ -23,5 +23,5 @@ mkdir -p "$ROOT_DIR"/stacks/openebs/yaml
 helm template \
   --name openebs \
   --namespace openebs \
-  --values "$ROOT_DIR"/src/openebs/1.3.0/values.yaml \
+  --values "$ROOT_DIR"/src/openebs/1.4.0/values.yaml \
   "$SRC_VERSION" > "$ROOT_DIR"/stacks/openebs/yaml/openebs.yaml
