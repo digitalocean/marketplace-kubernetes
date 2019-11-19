@@ -4,7 +4,7 @@
 # Description
 [kube-state-metrics](https://github.com/kubernetes/kube-state-metrics) is focused on the  health of the various objects inside, such as deployments, nodes and pods.
 
-kube-state-metrics exposes raw data unmodified from the Kubernetes API, this way users have all the data they require and perform heuristics as they see fit. The metrics are exported on the HTTP endpoint /metrics on the listening port (default 80). They are served as plaintext. They are designed to be consumed either by Prometheus itself or by a scraper that is compatible with scraping a Prometheus client endpoint. You can also open /metrics in a browser to see the raw metrics.
+kube-state-metrics exposes raw data unmodified from the Kubernetes API, this way users have all the data they require and perform heuristics as they see fit. The metrics are exported on the HTTP endpoint /metrics on the listening port (default 80). They are served as plaintext. They are designed to be consumed either by Prometheus itself or by a scraper that is compatible with scraping a Prometheus client endpoint. 
 
 This DigitalOcean Marketplace 1-Click install kube-state-metrics onto your DigitalOcean Kubernetes cluster providing cluster metrics viewable in a browswer or consumable by Prometheus.
 
@@ -14,25 +14,24 @@ Thank you to all the contributors whose hard work make kube-state-metrics softwa
 # Getting Started
 
 ### Getting Started with DigitalOcean Kubernetes
-As you get started with Kubernetes on DigitalOcean be sure to check out how to connect to your cluster using `kubectl` and `doctl`:
-https://www.digitalocean.com/docs/kubernetes/how-to/connect-to-cluster/
- 
-Additional instructions are included in the DigitalOcean Kubernetes control panel:
-https://cloud.digitalocean.com/kubernetes/clusters/ 
+As you get started with Kubernetes on DigitalOcean be sure to check out how to [connect to your cluster](https://www.digitalocean.com/docs/kubernetes/how-to/connect-to-cluster/) using `kubectl` and `doctl`:
+
+Additional instructions are included in the [DigitalOcean Kubernetes control panel](https://cloud.digitalocean.com/kubernetes/clusters/)
 
 #### Quick Start
 If you just want to give this app a quick spin without `doctl` give the following a try.
 
 Assuming you have done the following:
-1. Created a cluster in the DigitalOcean control panel (https://cloud.digitalocean.com/kubernetes/clusters/).
-1. Downloaded the Kubernetes config file to ~/Downloads directory on your local machine. The config file will have a name like `monitoring-k8s-1-15-3-do-1-sfo-kubeconfig.yaml`.
-1. Installed Kubernetes command line tool, `kubectl`, (https://kubernetes.io/docs/tasks/tools/install-kubectl/) on your local machine.
+1. Created a cluster in the [DigitalOcean control panel](https://cloud.digitalocean.com/kubernetes/clusters/).
+1. Downloaded the Kubernetes config file to ~/Downloads directory on your local machine. The config file will have a name like `monitoring-k8s-1-16-do-sfo-kubeconfig.yaml`.
+1. Installed [Kubernetes command line tool](https://kubernetes.io/docs/tasks/tools/install-kubectl/), `kubectl`, on your local machine.
 
 Copy the Kubernetes config file to the default directory `kubectl` looks in.
 ```
 cp ~/.kube/config  ~/.kube/config.bkup
 ```
-cp  ~/Downloads/monitoring-k8s-1-15-3-do-1-sfo-kubeconfig.yaml  ~/.kube/config
+```
+cp  ~/Downloads/monitoring-k8s-1-16-do-sfo-kubeconfig.yaml  ~/.kube/config
 ```
 You should now be able to connect to your DigitalOcean Kubernetes Cluster and successfully run commands like:
 ```
@@ -62,7 +61,7 @@ With kube-state-metrics now running you can view DigitalOcean Kubernetes Advance
 
 ### Kubectl Proxy
 
-Set `kubectl` to act as a [reverse proxy](https://kubernetes.io/docs/tasks/administer-cluster/access-cluster-api/#using-kubectl-proxy). In this mode is handles locating the API server and authenticating.
+Set `kubectl` to act as a [reverse proxy](https://kubernetes.io/docs/tasks/administer-cluster/access-cluster-api/#using-kubectl-proxy). This mode handles locating the API server and authenticating.
 ```
 kubectl proxy --port=8080
 ```
@@ -89,4 +88,3 @@ In another terminal window curl the metrics endpoint:
 ```
 curl localhost:8080/metrics
 ```
-
