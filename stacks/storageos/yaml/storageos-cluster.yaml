@@ -1,0 +1,57 @@
+---
+# Source: storageos-operator/templates/secrets.yaml
+
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: storageos-api
+  namespace: storageos
+  labels:
+    app: storageos-operator
+    chart: storageos-operator-0.2.16
+    heritage: Tiller
+    release: storageos
+type: "kubernetes.io/storageos"
+data:
+  apiUsername: "c3RvcmFnZW9z"
+  
+  apiPassword: "c3RvcmFnZW9z"
+  
+  # Add base64 encoded TLS cert and key below if ingress.tls is set to true.
+  # tls.crt:
+  # tls.key:
+  # Add base64 encoded creds below for CSI credentials.
+  # csiProvisionUsername:
+  # csiProvisionPassword:
+  # csiControllerPublishUsername:
+  # csiControllerPublishPassword:
+  # csiNodePublishUsername:
+  # csiNodePublishPassword:
+
+---
+# Source: storageos-operator/templates/storageoscluster_cr.yaml
+
+
+apiVersion: storageos.com/v1
+kind: StorageOSCluster
+metadata:
+  name: storageos
+  namespace: storageos
+spec:
+  namespace: kube-system
+  secretRefName: storageos-api
+  secretRefNamespace: storageos
+  disableTelemetry: false
+  k8sDistro: digitalocean
+  images:
+    nodeContainer: "storageos/node:1.5.1"
+
+  csi:
+    enable: true
+    deploymentStrategy: deployment
+
+---
+# Source: storageos-operator/templates/psp.yaml
+
+
