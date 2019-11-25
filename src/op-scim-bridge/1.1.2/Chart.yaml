@@ -1,0 +1,15 @@
+apiVersion: v1
+name: op-scim
+version: 1.1.2
+description: The 1Password SCIM bridge
+keywords:
+  - "azure active directory"
+  - "okta"
+  - "provisioning"
+  - "SCIM"
+home: https://support.1password.com/scim
+maintainers: # (optional)
+  - name: 1Password Platform Integrations Team
+    email: support+business@1password.com
+icon: https://1password.com/img/logo-v1.svg
+appVersion: v1.1.2
