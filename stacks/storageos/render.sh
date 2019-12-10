@@ -1,4 +1,4 @@
-#!/bin/sh -x
+#!/bin/sh
 
 set -e
 
@@ -40,6 +40,5 @@ helm template \
   --values "$ROOT_DIR"/stacks/storageos/override.yaml \
   "$SRC_VERSION" \
   -x templates/storageoscluster_cr.yaml \
-  -x templates/secrets.yaml \
   -x templates/psp.yaml > "$ROOT_DIR"/stacks/storageos/yaml/storageos-cluster.yaml
 
