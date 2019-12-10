@@ -1,0 +1,614 @@
+---
+# Source: jaeger/templates/cassandra-secret.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: jaeger-cassandra
+  labels:
+    app.kubernetes.io/name: jaeger
+    helm.sh/chart: jaeger-0.13.3
+    app.kubernetes.io/managed-by: Tiller
+    app.kubernetes.io/instance: jaeger
+type: Opaque
+data:
+  password: "cGFzc3dvcmQ="
+
+---
+# Source: jaeger/templates/agent-sa.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: jaeger-agent
+  labels:
+    app.kubernetes.io/name: jaeger
+    helm.sh/chart: jaeger-0.13.3
+    app.kubernetes.io/instance: jaeger
+    app.kubernetes.io/managed-by: Tiller
+    app.kubernetes.io/component: agent
+---
+# Source: jaeger/templates/cassandra-schema-sa.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: jaeger-cassandra-schema
+  labels:
+    app.kubernetes.io/name: jaeger
+    helm.sh/chart: jaeger-0.13.3
+    app.kubernetes.io/instance: jaeger
+    app.kubernetes.io/managed-by: Tiller
+    app.kubernetes.io/component: cassandra-schema
+---
+# Source: jaeger/templates/collector-sa.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: jaeger-collector
+  labels:
+    app.kubernetes.io/name: jaeger
+    helm.sh/chart: jaeger-0.13.3
+    app.kubernetes.io/instance: jaeger
+    app.kubernetes.io/managed-by: Tiller
+    app.kubernetes.io/component: collector
+---
+# Source: jaeger/templates/query-sa.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: jaeger-query
+  labels:
+    app.kubernetes.io/name: jaeger
+    helm.sh/chart: jaeger-0.13.3
+    app.kubernetes.io/instance: jaeger
+    app.kubernetes.io/managed-by: Tiller
+    app.kubernetes.io/component: query
+---
+# Source: jaeger/charts/cassandra/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: jaeger-cassandra
+  labels:
+    app: cassandra
+    chart: cassandra-0.13.3
+    release: jaeger
+    heritage: Tiller
+spec:
+  clusterIP: None
+  type: ClusterIP
+  ports:
+  - name: intra
+    port: 7000
+    targetPort: 7000
+  - name: tls
+    port: 7001
+    targetPort: 7001
+  - name: jmx
+    port: 7199
+    targetPort: 7199
+  - name: cql
+    port: 9042
+    targetPort: 9042
+  - name: thrift
+    port: 9160
+    targetPort: 9160
+  selector:
+    app: cassandra
+    release: jaeger
+
+---
+# Source: jaeger/templates/agent-svc.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: jaeger-agent
+  labels:
+    app.kubernetes.io/name: jaeger
+    helm.sh/chart: jaeger-0.13.3
+    app.kubernetes.io/instance: jaeger
+    app.kubernetes.io/managed-by: Tiller
+    app.kubernetes.io/component: agent
+spec:
+  ports:
+  - name: zipkin-compact
+    port: 5775
+    protocol: UDP
+    targetPort: zipkin-compact
+  - name: jaeger-compact
+    port: 6831
+    protocol: UDP
+    targetPort: jaeger-compact
+  - name: jaeger-binary
+    port: 6832
+    protocol: UDP
+    targetPort: jaeger-binary
+  - name: http
+    port: 5778
+    protocol: TCP
+    targetPort: http
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: jaeger
+    app.kubernetes.io/component: agent
+    app.kubernetes.io/instance: jaeger
+---
+# Source: jaeger/templates/collector-svc.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: jaeger-collector
+  labels:
+    app.kubernetes.io/name: jaeger
+    helm.sh/chart: jaeger-0.13.3
+    app.kubernetes.io/component: collector
+    app.kubernetes.io/managed-by: Tiller
+    app.kubernetes.io/instance: jaeger
+spec:
+  ports:
+  - name: grpc
+    port: 14250
+    protocol: TCP
+    targetPort: grpc
+  - name: tchannel
+    port: 14267
+    protocol: TCP
+    targetPort: tchannel
+  - name: http
+    port: 14268
+    protocol: TCP
+    targetPort: http
+  - name: zipkin
+    port: 9411
+    protocol: TCP
+    targetPort: zipkin
+  selector:
+    app.kubernetes.io/name: jaeger
+    app.kubernetes.io/component: collector
+    app.kubernetes.io/instance: jaeger
+  type: ClusterIP
+---
+# Source: jaeger/templates/query-svc.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: jaeger-query
+  labels:
+    app.kubernetes.io/name: jaeger
+    helm.sh/chart: jaeger-0.13.3
+    app.kubernetes.io/component: query
+    app.kubernetes.io/managed-by: Tiller
+    app.kubernetes.io/instance: jaeger
+spec:
+  ports:
+  - name: query
+    port: 80
+    protocol: TCP
+    targetPort: query
+  selector:
+    app.kubernetes.io/name: jaeger
+    app.kubernetes.io/component: query
+    app.kubernetes.io/instance: jaeger
+  type: ClusterIP
+---
+# Source: jaeger/templates/agent-ds.yaml
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: jaeger-agent
+  labels:
+    app.kubernetes.io/name: jaeger
+    helm.sh/chart: jaeger-0.13.3
+    app.kubernetes.io/instance: jaeger
+    app.kubernetes.io/managed-by: Tiller
+    app.kubernetes.io/component: agent
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: jaeger
+      app.kubernetes.io/instance: jaeger
+      app.kubernetes.io/component: agent
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: jaeger
+        app.kubernetes.io/instance: jaeger
+        app.kubernetes.io/component: agent
+    spec:
+      dnsPolicy: ClusterFirst
+      nodeSelector:
+        {}
+        
+      serviceAccountName: jaeger-agent
+      containers:
+      - name: jaeger-agent
+        image: jaegertracing/jaeger-agent:1.14.0
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: REPORTER_GRPC_HOST_PORT
+          value: jaeger-collector:14250
+        ports:
+        - name: zipkin-compact
+          containerPort: 5775
+          protocol: UDP
+        - name: jaeger-compact
+          containerPort: 6831
+          protocol: UDP
+        - name: jaeger-binary
+          containerPort: 6832
+          protocol: UDP
+        - name: http
+          containerPort: 5778
+          protocol: TCP
+        - name: admin
+          containerPort: 14271
+          protocol: TCP
+        livenessProbe:
+          httpGet:
+            path: /
+            port: admin
+        readinessProbe:
+          httpGet:
+            path: /
+            port: admin
+        resources:
+          {}
+          
+---
+# Source: jaeger/templates/collector-deploy.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jaeger-collector
+  labels:
+    app.kubernetes.io/name: jaeger
+    helm.sh/chart: jaeger-0.13.3
+    app.kubernetes.io/component: collector
+    app.kubernetes.io/managed-by: Tiller
+    app.kubernetes.io/instance: jaeger
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: jaeger
+      app.kubernetes.io/component: collector
+      app.kubernetes.io/instance: jaeger
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: jaeger
+        app.kubernetes.io/component: collector
+        app.kubernetes.io/instance: jaeger
+    spec:
+      nodeSelector:
+        {}
+        
+      serviceAccountName: jaeger-collector
+      containers:
+      - name: jaeger-collector
+        image: jaegertracing/jaeger-collector:1.14.0
+        imagePullPolicy: IfNotPresent
+        env:
+          - name: SPAN_STORAGE_TYPE
+            value: cassandra
+          - name: CASSANDRA_SERVERS
+            value: jaeger-cassandra
+          - name: CASSANDRA_PORT
+            value: "9042"
+          - name: CASSANDRA_KEYSPACE
+            value: "jaeger_v1_dc1"
+          - name: CASSANDRA_USERNAME
+            value: user
+          - name: CASSANDRA_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: jaeger-cassandra
+                key: password
+        ports:
+        - containerPort: 14250
+          name: grpc
+          protocol: TCP
+        - containerPort: 14267
+          name: tchannel
+          protocol: TCP
+        - containerPort: 14268
+          name: http
+          protocol: TCP
+        - containerPort: 14269
+          name: admin
+          protocol: TCP
+        - containerPort: 9411
+          name: zipkin
+          protocol: TCP
+        readinessProbe:
+          httpGet:
+            path: /
+            port: admin
+        livenessProbe:
+          httpGet:
+            path: /
+            port: admin
+        resources:
+          {}
+          
+        volumeMounts:
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      volumes:
+---
+# Source: jaeger/templates/query-deploy.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jaeger-query
+  labels:
+    app.kubernetes.io/name: jaeger
+    helm.sh/chart: jaeger-0.13.3
+    app.kubernetes.io/component: query
+    app.kubernetes.io/managed-by: Tiller
+    app.kubernetes.io/instance: jaeger
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: jaeger
+      app.kubernetes.io/component: query
+      app.kubernetes.io/instance: jaeger
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: jaeger
+        app.kubernetes.io/component: query
+        app.kubernetes.io/instance: jaeger
+    spec:
+      nodeSelector:
+        {}
+        
+      serviceAccountName: jaeger-query
+      containers:
+      - name: jaeger-query
+        image: jaegertracing/jaeger-query:1.14.0
+        imagePullPolicy: IfNotPresent
+        env:
+          - name: SPAN_STORAGE_TYPE
+            value: cassandra
+          - name: CASSANDRA_SERVERS
+            value: jaeger-cassandra
+          - name: CASSANDRA_PORT
+            value: "9042"
+          - name: CASSANDRA_KEYSPACE
+            value: "jaeger_v1_dc1"
+          - name: CASSANDRA_USERNAME
+            value: user
+          - name: CASSANDRA_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: jaeger-cassandra
+                key: password
+          - name: QUERY_BASE_PATH
+            value: 
+        ports:
+        - name: query
+          containerPort: 16686
+          protocol: TCP
+        - name: admin
+          containerPort: 16687
+          protocol: TCP
+        resources:
+          {}
+          
+        volumeMounts:
+        livenessProbe:
+          httpGet:
+            path: /
+            port: admin
+        readinessProbe:
+          httpGet:
+            path: /
+            port: admin
+      - name: jaeger-agent-sidecar
+        image: jaegertracing/jaeger-agent:1.14.0
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: REPORTER_GRPC_HOST_PORT
+          value: jaeger-collector:14250
+        ports:
+        - name: admin
+          containerPort: 14271
+          protocol: TCP
+        livenessProbe:
+          httpGet:
+            path: /
+            port: admin
+        readinessProbe:
+          httpGet:
+            path: /
+            port: admin
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      volumes:
+---
+# Source: jaeger/charts/cassandra/templates/statefulset.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: jaeger-cassandra
+  labels:
+    app: cassandra
+    chart: cassandra-0.13.3
+    release: jaeger
+    heritage: Tiller
+spec:
+  selector:
+    matchLabels:
+      app: cassandra
+      release: jaeger
+  serviceName: jaeger-cassandra
+  replicas: 3
+  podManagementPolicy: OrderedReady
+  updateStrategy:
+    type: OnDelete
+  template:
+    metadata:
+      labels:
+        app: cassandra
+        release: jaeger
+    spec:
+      hostNetwork: false
+      containers:
+      - name: jaeger-cassandra
+        image: "cassandra:3.11.3"
+        imagePullPolicy: "IfNotPresent"
+        resources:
+          {}
+          
+        env:
+        - name: CASSANDRA_SEEDS
+          value: "jaeger-cassandra-0.jaeger-cassandra.jaeger.svc.cluster.local"
+        - name: MAX_HEAP_SIZE
+          value: "2048M"
+        - name: HEAP_NEWSIZE
+          value: "512M"
+        - name: CASSANDRA_ENDPOINT_SNITCH
+          value: "GossipingPropertyFileSnitch"
+        - name: CASSANDRA_CLUSTER_NAME
+          value: "jaeger"
+        - name: CASSANDRA_DC
+          value: "dc1"
+        - name: CASSANDRA_RACK
+          value: "rack1"
+        - name: CASSANDRA_START_RPC
+          value: "false"
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        livenessProbe:
+          exec:
+            command: [ "/bin/sh", "-c", "nodetool status" ]
+          initialDelaySeconds: 90
+          periodSeconds: 30
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
+        readinessProbe:
+          exec:
+            command: [ "/bin/sh", "-c", "nodetool status | grep -E \"^UN\\s+${POD_IP}\"" ]
+          initialDelaySeconds: 90
+          periodSeconds: 30
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
+        ports:
+        - name: intra
+          containerPort: 7000
+        - name: tls
+          containerPort: 7001
+        - name: jmx
+          containerPort: 7199
+        - name: cql
+          containerPort: 9042
+        - name: thrift
+          containerPort: 9160
+        volumeMounts:
+        - name: data
+          mountPath: /var/lib/cassandra
+        lifecycle:
+          preStop:
+            exec:
+              command: ["/bin/sh", "-c", "exec nodetool decommission"]
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: data
+        emptyDir: {}
+
+---
+# Source: jaeger/templates/cassandra-schema-job.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: jaeger-cassandra-schema
+  labels:
+    app.kubernetes.io/name: jaeger
+    helm.sh/chart: jaeger-0.13.3
+    app.kubernetes.io/component: cassandra-schema
+    app.kubernetes.io/managed-by: Tiller
+    app.kubernetes.io/instance: jaeger
+spec:
+  activeDeadlineSeconds: 120
+  template:
+    metadata:
+      name: jaeger-cassandra-schema
+    spec:
+      serviceAccountName: jaeger-cassandra-schema
+      containers:
+      - name: jaeger-cassandra-schema
+        image: jaegertracing/jaeger-cassandra-schema:1.14.0
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: CQLSH_HOST
+          value: jaeger-cassandra
+        - name: MODE
+          value: "prod"
+        - name: DATACENTER
+          value: "dc1"
+        - name: CASSANDRA_PORT
+          value: "9042"
+        - name: CASSANDRA_USERNAME
+          value: user
+        - name: CASSANDRA_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: jaeger-cassandra
+              key: password
+        resources:
+          {}
+          
+      restartPolicy: OnFailure
+---
+# Source: jaeger/charts/cassandra/templates/backup/cronjob.yaml
+
+
+---
+# Source: jaeger/charts/cassandra/templates/backup/rbac.yaml
+
+
+---
+# Source: jaeger/charts/cassandra/templates/configmap.yaml
+
+
+---
+# Source: jaeger/charts/cassandra/templates/pdb.yaml
+
+---
+# Source: jaeger/charts/cassandra/templates/servicemonitor.yaml
+
+
+---
+# Source: jaeger/templates/elasticsearch-secret.yaml
+
+
+---
+# Source: jaeger/templates/hotrod-deploy.yaml
+
+
+---
+# Source: jaeger/templates/hotrod-ing.yaml
+
+---
+# Source: jaeger/templates/hotrod-sa.yaml
+
+---
+# Source: jaeger/templates/hotrod-svc.yaml
+
+---
+# Source: jaeger/templates/query-ing.yaml
+
+---
+# Source: jaeger/templates/spark-cronjob.yaml
+
+---
+# Source: jaeger/templates/spark-sa.yaml
+
