@@ -5,7 +5,7 @@ set -e
 BUILD_DIR=$(mktemp -d)
 ROOT_DIR=$(git rev-parse --show-toplevel)
 
-SRC_VERSION="1.1.11"
+SRC_VERSION="1.1.12"
 
 cp -r "$ROOT_DIR"/src/netdata/"$SRC_VERSION" $BUILD_DIR
 cp -r "$ROOT_DIR"/stacks/netdata $BUILD_DIR
