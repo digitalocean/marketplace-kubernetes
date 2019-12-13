@@ -4,4 +4,4 @@
 
 This repository contains the source code and deployment scripts for Kubernetes-based applications listed in the [DigitalOcean Marketplace](https://marketplace.digitalocean.com).
 
-You can also go to our [DigitalOcean Forum] (https://forum.digitalocean.com/) with any questions you may have. 
+You can also go to our [DigitalOcean Forum](https://forum.digitalocean.com/) with any questions you may have. 
