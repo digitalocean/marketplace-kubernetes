@@ -4,7 +4,7 @@ set -e
 
 ROOT_DIR=$(git rev-parse --show-toplevel)
 
-SRC_VERSION="1.3.8"
+SRC_VERSION="1.3.9"
 
 # Create YAML directory
 rm -rf "$ROOT_DIR"/stacks/moon/yaml
