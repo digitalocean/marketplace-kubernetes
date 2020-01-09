@@ -49,7 +49,7 @@ EOF
 echo "Created administrator credentials, username: $username, password: $password"
 
 # deploy storageos cluster
-kubectl apply -f https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/storageos/yaml/stacks/storageos/yaml/storageos-cluster.yaml
+kubectl apply -f https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/storageos/yaml/storageos-cluster.yaml
 
 # ensure cluster is running
 until kubectl -n storageos get storageoscluster storageos --no-headers -o go-template='{{.status.phase}}' | grep -q "Running"; do sleep 5; done
