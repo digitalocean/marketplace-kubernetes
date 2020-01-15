@@ -18,7 +18,7 @@ jobs:
         args: kubernetes cluster kubeconfig show actions-example > $GITHUB_WORKSPACE/.kubeconfig
 
     - name: Deploy to DigitalOcean Kubernetes
-      run: kubectl --kubeconfig=$GITHUB_WORKSPACE/.kubeconfig apply -f kubectl apply -f https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/metrics-server/yaml/metrics-server.yaml
+      run: kubectl --kubeconfig=$GITHUB_WORKSPACE/.kubeconfig apply -f https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/metrics-server/yaml/metrics-server.yaml
 
     - name: Verify deployment
       run: kubectl --kubeconfig=$GITHUB_WORKSPACE/.kubeconfig rollout status deployment/metrics-server
