@@ -21,4 +21,4 @@ jobs:
       run: kubectl --kubeconfig=$GITHUB_WORKSPACE/.kubeconfig apply -f https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/metrics-server/yaml/metrics-server.yaml
 
     - name: Verify deployment
-      run: kubectl --kubeconfig=$GITHUB_WORKSPACE/.kubeconfig rollout status deployment/metrics-server
+      run: kubectl --kubeconfig=$GITHUB_WORKSPACE/.kubeconfig rollout status -n kube-system deployment/metrics-server
