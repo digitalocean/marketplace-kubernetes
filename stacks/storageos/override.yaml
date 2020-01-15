@@ -1,0 +1,10 @@
+k8sDistro: digitalocean
+cluster:
+  # Default admin account.
+  admin:
+
+    # Username to authenticate to the StorageOS API with.
+    username: storageos
+    # Password should be set here, rather than auto-generated but still the same
+    # on all clusters.  It can be changed later.
+    password: storageos
