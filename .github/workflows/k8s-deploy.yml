@@ -14,6 +14,8 @@ jobs:
       run: ls -R $GITHUB_WORKSPACE
 
     - name: list only commit changes
+      run: git version
+      run: echo $GITHUB_SHA
       run: git diff-tree --no-commit-id --name-only -r $GITHUB_SHA
 
     - name: Save DigitalOcean kubeconfig
