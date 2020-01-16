@@ -13,6 +13,9 @@ jobs:
     - name: list file directories
       run: ls -R $GITHUB_WORKSPACE
 
+    - name: list only commit changes
+      run: git diff-tree --no-commit-id --name-only -r $GITHUB_SHA
+
     - name: Save DigitalOcean kubeconfig
       uses: digitalocean/action-doctl@master
       env:
