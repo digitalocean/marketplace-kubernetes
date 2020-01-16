@@ -11,7 +11,7 @@ jobs:
       uses: actions/checkout@master
 
     - name: list file directories
-      run: ls -R: $GITHUB_WORKSPACE
+      run: ls -R $GITHUB_WORKSPACE
 
     - name: Save DigitalOcean kubeconfig
       uses: digitalocean/action-doctl@master
