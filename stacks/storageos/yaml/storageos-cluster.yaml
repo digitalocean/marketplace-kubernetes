@@ -1,0 +1,26 @@
+---
+# Source: storageos-operator/templates/storageoscluster_cr.yaml
+
+
+apiVersion: storageos.com/v1
+kind: StorageOSCluster
+metadata:
+  name: storageos
+  namespace: storageos
+spec:
+  namespace: kube-system
+  secretRefName: storageos-api
+  secretRefNamespace: storageos
+  disableTelemetry: false
+  k8sDistro: digitalocean
+  images:
+    nodeContainer: "storageos/node:1.5.1"
+
+  csi:
+    enable: true
+    deploymentStrategy: deployment
+
+---
+# Source: storageos-operator/templates/psp.yaml
+
+
