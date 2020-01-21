@@ -4,7 +4,7 @@ set -e
 
 ROOT_DIR=$(git rev-parse --show-toplevel)
 
-SRC_VERSION="0.2.13"
+SRC_VERSION="0.3.0"
 
 # Create YAML directory
 rm -rf "$ROOT_DIR"/stacks/okteto/yaml
