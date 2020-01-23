@@ -1,0 +1,4 @@
+applicationName: op-scim-bridge
+scimsessionPath: /secret/scimsession
+opscimImage: 1password/scim:v1.3.0-2
+redisImage: redis:latest
