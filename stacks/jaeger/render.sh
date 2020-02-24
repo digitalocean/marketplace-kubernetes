@@ -5,7 +5,7 @@ set -e
 BUILD_DIR=$(mktemp -d)
 ROOT_DIR=$(git rev-parse --show-toplevel)
 
-SRC_VERSION="0.13.3"
+SRC_VERSION="0.19.8"
 
 cp -r "$ROOT_DIR"/src/jaeger/"$SRC_VERSION" $BUILD_DIR
 cp -r "$ROOT_DIR"/stacks/jaeger $BUILD_DIR
