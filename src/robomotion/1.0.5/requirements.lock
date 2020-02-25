@@ -1,0 +1,18 @@
+dependencies:
+- name: cert-manager
+  repository: https://charts.jetstack.io
+  version: 0.9.1
+- name: postgresql
+  repository: https://kubernetes-charts.storage.googleapis.com/
+  version: 7.7.1
+- name: redis
+  repository: https://kubernetes-charts.storage.googleapis.com/
+  version: 10.1.0
+- name: minio
+  repository: https://kubernetes-charts.storage.googleapis.com/
+  version: 3.0.1
+- name: nginx-ingress
+  repository: https://kubernetes-charts.storage.googleapis.com/
+  version: 1.30.3
+digest: sha256:28520ced5768abb52e0baf3fcb92fdc3f6c01b7cf53ade594d4bd33b2c596ce5
+generated: "2020-02-18T09:38:40.986788939+03:00"

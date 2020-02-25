@@ -1,0 +1,23 @@
+---
+dependencies:
+- name: cert-manager
+  alias: certmanager
+  version: 0.9.1
+  repository: https://charts.jetstack.io
+  condition: certmanager.enabled
+- name: postgresql
+  version: 7.7.1
+  repository: https://kubernetes-charts.storage.googleapis.com/
+  condition: postgresql.enabled
+- name: redis
+  version: 10.1.0
+  repository: https://kubernetes-charts.storage.googleapis.com/
+  condition: redis.enabled
+- name: minio
+  version: 3.0.1
+  repository: https://kubernetes-charts.storage.googleapis.com/
+  condition: minio.enabled
+- name: nginx-ingress
+  version: 1.30.3
+  repository: https://kubernetes-charts.storage.googleapis.com/
+  condition: nginx-ingress.enabled
