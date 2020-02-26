@@ -1,0 +1,214 @@
+{{- if .Values.query.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "jaeger.query.name" . }}
+  labels:
+    {{- include "jaeger.labels" . | nindent 4 }}
+    app.kubernetes.io/component: query
+{{- if .Values.query.annotations }}
+  annotations:
+{{ toYaml .Values.query.annotations | indent 4 }}
+{{- end }}
+spec:
+  replicas: {{ .Values.query.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "jaeger.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: query
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+{{- if .Values.query.podAnnotations }}
+      annotations:
+{{ toYaml .Values.query.podAnnotations | indent 8 }}
+{{- end }}
+      labels:
+        {{- include "jaeger.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: query
+{{- if .Values.query.podLabels }}
+{{ toYaml .Values.query.podLabels | indent 8 }}
+{{- end }}
+    spec:
+      securityContext:
+{{ toYaml .Values.query.podSecurityContext | indent 8 }}
+      serviceAccountName: {{ template "jaeger.query.serviceAccountName" . }}
+      containers:
+      - name: {{ template "jaeger.query.name" . }}
+        securityContext:
+{{ toYaml .Values.query.securityContext | indent 10 }}
+        image: {{ .Values.query.image }}:{{ .Values.tag }}
+        imagePullPolicy: {{ .Values.query.pullPolicy }}
+        env:
+          {{- range $key, $value := .Values.query.cmdlineParams }}
+          - name: {{ $key | replace "." "_" | replace "-" "_" | upper | quote }}
+            value: {{ $value | quote }}
+          {{- end }}
+          - name: SPAN_STORAGE_TYPE
+            value: {{ .Values.storage.type }}
+          {{- if eq .Values.storage.type "cassandra" }}
+          - name: CASSANDRA_SERVERS
+            value: {{ template "cassandra.host" . }}
+          - name: CASSANDRA_PORT
+            value: {{ .Values.storage.cassandra.port | quote }}
+          {{ if .Values.storage.cassandra.tls.enabled }}
+          - name: CASSANDRA_TLS
+            value: "true"
+          - name: CASSANDRA_TLS_SERVER_NAME
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.storage.cassandra.tls.secretName }}
+                key: commonName
+          - name: CASSANDRA_TLS_KEY
+            value: "/cassandra-tls/client-key.pem"
+          - name: CASSANDRA_TLS_CERT
+            value: "/cassandra-tls/client-cert.pem"
+          - name: CASSANDRA_TLS_CA
+            value: "/cassandra-tls/ca-cert.pem"
+          {{- end }}
+          {{- if .Values.storage.cassandra.keyspace }}
+          - name: CASSANDRA_KEYSPACE
+            value: {{ .Values.storage.cassandra.keyspace | quote }}
+          {{- end }}
+          - name: CASSANDRA_USERNAME
+            value: {{ .Values.storage.cassandra.user }}
+          - name: CASSANDRA_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ if .Values.storage.cassandra.existingSecret }}{{ .Values.storage.cassandra.existingSecret }}{{- else }}{{ include "jaeger.fullname" . }}-cassandra{{- end }}
+                key: password
+          {{- end }}
+          {{- if eq .Values.storage.type "elasticsearch" }}
+          {{- if .Values.storage.elasticsearch.usePassword }}
+          - name: ES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ if .Values.storage.elasticsearch.existingSecret }}{{ .Values.storage.elasticsearch.existingSecret }}{{- else }}{{ include "jaeger.fullname" . }}-elasticsearch{{- end }}
+                key: password
+          {{- end }}
+          - name: ES_SERVER_URLS
+            value: {{ template "elasticsearch.client.url" . }}
+          - name: ES_USERNAME
+            value: {{ .Values.storage.elasticsearch.user }}
+          {{- if .Values.storage.elasticsearch.indexPrefix }}
+          - name: ES_INDEX_PREFIX
+            value: {{ .Values.storage.elasticsearch.indexPrefix }}
+          {{- end }}
+          {{- end }}
+          {{- if .Values.query.basePath }}
+          - name: QUERY_BASE_PATH
+            value: {{ .Values.query.basePath | quote }}
+          {{- end }}
+          - name: JAEGER_AGENT_PORT
+            value: "6831"
+        ports:
+        - name: query
+          containerPort: 16686
+          protocol: TCP
+        - name: admin
+          containerPort: 16687
+          protocol: TCP
+        resources:
+{{ toYaml .Values.query.resources | indent 10 }}
+        volumeMounts:
+        {{- range .Values.query.extraConfigmapMounts }}
+          - name: {{ .name }}
+            mountPath: {{ .mountPath }}
+            subPath: {{ .subPath }}
+            readOnly: {{ .readOnly }}
+        {{- end }}
+        {{- if .Values.storage.cassandra.tls.enabled }}
+          - name: {{ .Values.storage.cassandra.tls.secretName }}
+            mountPath: "/cassandra-tls/ca-cert.pem"
+            subPath: "ca-cert.pem"
+            readOnly: true
+          - name: {{ .Values.storage.cassandra.tls.secretName }}
+            mountPath: "/cassandra-tls/client-cert.pem"
+            subPath: "client-cert.pem"
+            readOnly: true
+          - name: {{ .Values.storage.cassandra.tls.secretName }}
+            mountPath: "/cassandra-tls/client-key.pem"
+            subPath: "client-key.pem"
+            readOnly: true
+        {{- end }}
+        livenessProbe:
+          httpGet:
+            path: /
+            port: admin
+        readinessProbe:
+          httpGet:
+            path: /
+            port: admin
+{{- if .Values.query.agentSidecar.enabled }}
+      - name: {{ template "jaeger.agent.name" . }}-sidecar
+        securityContext:
+{{ toYaml .Values.query.securityContext | indent 10 }}
+        image: {{ .Values.agent.image }}:{{ .Values.tag }}
+        imagePullPolicy: {{ .Values.agent.pullPolicy }}
+        env:
+        {{- if not (hasKey .Values.agent.cmdlineParams "reporter.grpc.host-port") }}
+        - name: REPORTER_GRPC_HOST_PORT
+          value: {{ include "jaeger.collector.name" . }}:{{ .Values.collector.service.grpcPort }}
+        {{- end }}
+        {{- range $key, $value := .Values.agent.cmdlineParams }}
+        - name: {{ $key | replace "." "_" | replace "-" "_" | upper | quote }}
+          value: {{ $value | quote }}
+        {{- end }}
+        ports:
+        - name: admin
+          containerPort: 14271
+          protocol: TCP
+        volumeMounts:
+        {{- range .Values.agent.extraConfigmapMounts }}
+          - name: {{ .name }}
+            mountPath: {{ .mountPath }}
+            subPath: {{ .subPath }}
+            readOnly: {{ .readOnly }}
+        {{- end }}
+        {{- range .Values.agent.extraSecretMounts }}
+          - name: {{ .name }}
+            mountPath: {{ .mountPath }}
+            subPath: {{ .subPath }}
+            readOnly: {{ .readOnly }}
+        {{- end }}
+        livenessProbe:
+          httpGet:
+            path: /
+            port: admin
+        readinessProbe:
+          httpGet:
+            path: /
+            port: admin
+{{- end }}
+      dnsPolicy: {{ .Values.query.dnsPolicy }}
+      restartPolicy: Always
+      volumes:
+      {{- range .Values.query.extraConfigmapMounts }}
+        - name: {{ .name }}
+          configMap:
+            name: {{ .configMap }}
+      {{- end }}
+      {{- range .Values.agent.extraSecretMounts }}
+        - name: {{ .name }}
+          secret:
+            secretName: {{ .secretName }}
+      {{- end }}
+      {{- range .Values.agent.extraConfigmapMounts }}
+        - name: {{ .name }}
+          configMap:
+            name: {{ .configMap }}
+      {{- end }}
+    {{- with .Values.query.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.query.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.query.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+{{- end -}}
