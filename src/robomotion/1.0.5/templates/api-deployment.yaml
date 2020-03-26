@@ -1,0 +1,154 @@
+{{- $host := ( index .Values.ingress.hosts 0 ) -}}
+{{- $scheme := ( $host.tls | ternary "https" "http" ) -}}
+{{- $minioURL := printf "%s://%s%s" $scheme ( .Values.minio.ingress.hostname | default $host.name ) .Values.minio.ingress.path -}}
+{{- $replyMail := .Values.api.replyMail | default (printf "noreply@%s" $host.name ) -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "robomotion-api.fullname" . }}
+  labels:
+    app: {{ template "robomotion-api.fullname" . }}
+    chart: {{ template "robomotion.chart" . }}
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
+    component: {{ .Values.api.name }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ template "robomotion-api.fullname" . }}
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: {{ template "robomotion-api.fullname" . }}
+    spec:
+      serviceAccountName: {{ .Values.serviceAccount.name }}
+      containers:
+      - name: {{ template "robomotion-api.fullname" . }}
+        image: "{{ .Values.api.image }}:{{ .Values.api.imageTag }}"
+        ports:
+        - containerPort: 80
+          name: http
+        - containerPort: 9000
+          name: grpc
+        env:
+          - name: PROXY_SRV
+            value: {{ template "robomotion-proxy.fullname" . }}-grpc
+          - name: SCHED_SRV
+            value: {{ template "robomotion-scheduler.fullname" . }}-grpc
+{{- if .Values.minio.enabled }}
+          - name: MINIO_EXPOSED_URL
+            value: {{ $minioURL }}
+{{- end }}
+{{- if .Values.smtp.enabled }}
+          - name: SMTP_HOST
+            value: {{ .Values.smtp.address | quote}}
+          - name: SMTP_PORT
+            value: {{ .Values.smtp.port | quote}}
+          - name: SMTP_USER
+            value: {{ .Values.smtp.user | quote}}
+          - name: SMTP_PASSWORD
+            value: {{ .Values.smtp.password | quote}}
+{{- end }}
+          - name: API_PATH
+            value: {{ .Values.api.ingress.path }}
+          - name: REPLY_MAIL
+            value: {{ $replyMail }}
+          - name: COOKIE_DOMAIN
+            value: {{ $host.name }}
+          - name: ALLOW_ORIGIN
+            value: {{ $host.name }}
+          - name: REDIS_SCHEME
+            value: {{ default "redis" .Values.redis.scheme }}
+          - name: REDIS_HOST
+          {{- if .Values.redis.enabled }}
+            value: {{ template "robomotion.redis.host" . }}
+          {{- else }}
+            value: {{ .Values.externalRedis.host | quote }}
+          {{- end }}
+          - name: REDIS_PORT
+          {{- if .Values.redis.enabled }}
+            value: {{ .Values.redis.redisPort | quote }}
+          {{- else }}
+            value: {{ .Values.externalRedis.port | quote }}
+          {{- end }}
+          - name: REDIS_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                {{- if .Values.redis.enabled }}
+                name: {{ template "robomotion.redis.fullname" . }}
+                key: redis-password
+                {{- else }}
+                name: {{ printf "%s-%s" .Release.Name "external-redis"  }}
+                key: password
+                {{- end }}
+          - name: STORE_ENDPOINT
+          {{- if .Values.minio.enabled }}
+            value: {{ template "robomotion.minio.host" . }}
+          {{- else }}
+            value: {{ .Values.externalObjectStore.location | quote }}
+          {{- end }}
+          - name: STORE_BUCKET
+          {{- if .Values.minio.enabled }}
+            value: {{ .Values.minio.defaultBucket.name | quote }}
+          {{- else }}
+            value: {{ .Values.externalObjectStore.bucket | quote }}
+          {{- end }}          
+          - name: STORE_ACCESSKEY
+            valueFrom:
+              secretKeyRef:
+                {{- if .Values.minio.enabled }}
+                name: {{ template "robomotion.minio.fullname" . }}
+                key: accesskey
+                {{- else }}
+                name: {{ printf "%s-%s" .Release.Name "external-object-store"  }}
+                key: accesskey
+                {{- end }}
+          - name: STORE_SECRET
+            valueFrom:
+              secretKeyRef:
+                {{- if .Values.minio.enabled }}
+                name: {{ template "robomotion.minio.fullname" . }}
+                key: secretkey
+                {{- else }}
+                name: {{ printf "%s-%s" .Release.Name "external-object-store"  }}
+                key: secretkey
+                {{- end }}
+          - name: POSTGRES_HOST
+          {{- if .Values.postgresql.enabled }}
+            value: {{ template "robomotion.postgresql.fullname" . }}
+          {{- else }}
+            value: {{ .Values.externalDatabase.host | quote }}
+          {{- end }}
+          - name: POSTGRES_PORT
+          {{- if .Values.postgresql.enabled }}
+            value: {{ .Values.postgresql.service.port | quote }}
+          {{- else }}
+            value: {{ .Values.externalDatabase.port | quote }}
+          {{- end }}
+          - name: POSTGRES_DB
+          {{- if .Values.postgresql.enabled }}
+            value: {{ .Values.postgresql.postgresqlDatabase | quote }}
+          {{- else }}
+            value: {{ .Values.externalDatabase.database | quote }}
+          {{- end }}
+          - name: POSTGRES_USER
+          {{- if .Values.postgresql.enabled }}
+            value: {{ .Values.postgresql.postgresqlUsername | quote }}
+          {{- else }}
+            value: {{ .Values.externalDatabase.user | quote }}
+          {{- end }}
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                {{- if .Values.postgresql.enabled }}
+                name: {{ template "robomotion.postgresql.fullname" . }}
+                key: postgresql-password
+                {{- else }}
+                name: {{ printf "%s-%s" .Release.Name "external-db"  }}
+                key: password
+                {{- end }}
+      {{- if .Values.registry.secret }}
+      imagePullSecrets:
+      - name: {{ .Values.registry.secret }}
+      {{- end }}

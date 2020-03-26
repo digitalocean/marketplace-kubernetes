@@ -1,0 +1,38 @@
+{{- if .Values.collector.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "jaeger.collector.name" . }}
+  labels:
+    {{- include "jaeger.labels" . | nindent 4 }}
+    app.kubernetes.io/component: collector
+{{- if .Values.collector.service.annotations }}
+  annotations:
+{{ toYaml .Values.collector.service.annotations | indent 4 }}
+{{- end }}
+spec:
+  ports:
+  - name: grpc
+    port: {{ .Values.collector.service.grpcPort }}
+    protocol: TCP
+    targetPort: grpc
+  - name: tchannel
+    port: {{ .Values.collector.service.tchannelPort }}
+    protocol: TCP
+    targetPort: tchannel
+  - name: http
+    port: {{ .Values.collector.service.httpPort }}
+    protocol: TCP
+    targetPort: http
+{{- if .Values.collector.service.zipkinPort }}
+  - name: zipkin
+    port: {{ .Values.collector.service.zipkinPort }}
+    protocol: TCP
+    targetPort: zipkin
+{{- end }}
+  selector:
+    {{- include "jaeger.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: collector
+  type: {{ .Values.collector.service.type }}
+{{- template "loadBalancerSourceRanges" .Values.collector }}
+{{- end -}}

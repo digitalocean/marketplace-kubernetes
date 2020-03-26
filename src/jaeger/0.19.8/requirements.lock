@@ -1,0 +1,12 @@
+dependencies:
+- name: cassandra
+  repository: https://kubernetes-charts-incubator.storage.googleapis.com/
+  version: 0.14.2
+- name: elasticsearch
+  repository: https://helm.elastic.co
+  version: ^7.5.1
+- name: kafka
+  repository: https://kubernetes-charts-incubator.storage.googleapis.com/
+  version: 0.20.8
+digest: sha256:842f614fb488c25cd90d6a288f4af0ab7227bd1be456d2fc01a7e57b42a2d654
+generated: "2020-02-24T17:25:09.501545+05:30"
