@@ -48,7 +48,7 @@ jobs:
 
     - name: Deploy to test K8s cluster
       run: |
-        sudo chmod 444 $GITHUB_WORKSPACE/.kubeconfig
-        sudo chmod 555 ${{ env.DEPLOY_PATH }}
+        sudo chmod 777 $GITHUB_WORKSPACE/.kubeconfig
+        sudo chmod 777 ${{ env.DEPLOY_PATH }}
         export KUBECONFIG=$GITHUB_WORKSPACE/.kubeconfig
         sh ${{ env.DEPLOY_PATH }}
