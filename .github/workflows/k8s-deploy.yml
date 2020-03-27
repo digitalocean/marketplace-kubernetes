@@ -2,10 +2,11 @@ on:
   pull_request:
     paths:
     - 'stacks/**/deploy.sh'
-   
-jobs:
-  env:
+
+env:
      DEPLOY_PATH: ${{ curl -sS https://api.github.com/repos/arosales/marketplace-kubernetes/pulls/${{ github.event.pull_request.number }}/files |  jq  -r '.[] | .filename' }}
+
+jobs:
 
   build:
     name: DOk8s deploy
