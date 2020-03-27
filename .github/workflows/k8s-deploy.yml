@@ -13,31 +13,40 @@ jobs:
     - name: Set deploy path environmental variable
       id: vars
       run: echo ::set-env name=DEPLOY_PATH::"`curl -sS https://api.github.com/repos/arosales/marketplace-kubernetes/pulls/${{ github.event.pull_request.number }}/files |  jq  -r '.[] | .filename'`"
-    
+
     - name: Checkout master
       uses: actions/checkout@master
 
     - name: list file directories in current working dir
       run: ls -l
-  
+
     - name: pwd
       run: pwd
 
     - name: git version
       run: git branch
-      
+
     - name: GitSHA
       run: echo $GITHUB_SHA
-      
+
     - name: confirm the new/updated stack deploy path
       run: echo ${{ env.DEPLOY_PATH }}
 
-    - name: Save DigitalOcean kubeconfig
+    - name: Create DigitalOcean Kubernetes cluster
       uses: digitalocean/action-doctl@master
       env:
         DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
       with:
-        args: kubernetes cluster kubeconfig show actions-example > $GITHUB_WORKSPACE/.kubeconfig
+        args: doctl kubernetes cluster create  --region sfo2 --tag gh-test-pr --size s-2vcpu-2gb --count 3 test-gh-mp-k8s-${{ github.event.pull_request.number }}
 
-    - name: Deploy to DigitalOcean Kubernetes
-      run: sh ${{ env.DEPLOY_PATH }}
+    - name: Save kubeconfig
+      uses: digitalocean/action-doctl@master
+      env:
+        DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      with:  
+        args: kubernetes cluster kubeconfig show actions-example > $GITHUB_WORKSPACE/.kube/config
+
+    - name: Deploy to test K8s cluster
+      run: |
+        export KUBECONFIG=$GITHUB_WORKSPACE/.kube/config
+        sh ${{ env.DEPLOY_PATH }}
