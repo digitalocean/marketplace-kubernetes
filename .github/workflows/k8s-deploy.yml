@@ -20,7 +20,7 @@ jobs:
       run: echo $GITHUB_SHA
       
     - name: list only commit changes
-      run: git diff-tree --no-commit-id --name-only -r $GITHUB_SHA
+      run: git --no-pager diff --name-only FETCH_HEAD $(git merge-base FETCH_HEAD master)
 
     - name: Save DigitalOcean kubeconfig
       uses: digitalocean/action-doctl@master
