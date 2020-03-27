@@ -24,7 +24,7 @@ jobs:
       run: echo $GITHUB_SHA
       
     - name: list only commit changes
-      run: git --no-pager diff --name-only HEAD~1 HEAD
+      run: git --no-pager diff --name-only stacks
 
     - name: Save DigitalOcean kubeconfig
       uses: digitalocean/action-doctl@master
