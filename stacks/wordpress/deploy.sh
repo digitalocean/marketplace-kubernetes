@@ -21,4 +21,3 @@ kubectl get deployments -o custom-columns=NAME:.metadata.name | tail -n +2 | whi
 do
   kubectl rollout status -w deployment/"$line"
 done
-
