@@ -3,15 +3,17 @@ on:
     paths:
     - 'stacks/**/deploy.sh'
 
-env:
-     DEPLOY_PATH: ${ curl -sS https://api.github.com/repos/arosales/marketplace-kubernetes/pulls/${{ github.event.pull_request.number }}/files |  jq  -r '.[] | .filename' }
-
 jobs:
 
   build:
     name: DOk8s deploy
     runs-on: ubuntu-latest
     steps:
+
+    - name: Set deploy path environmental variable
+    id: vars
+    run: |
+      echo ::set-env name=DEPLOY_PATH::"curl -sS https://api.github.com/repos/arosales/marketplace-kubernetes/pulls/${{ github.event.pull_request.number }}/files |  jq  -r '.[] | .filename'"
 
     - name: Checkout master
       uses: actions/checkout@master
@@ -29,7 +31,7 @@ jobs:
       run: echo $GITHUB_SHA
       
     - name: confirm the new/updated stack deploy path
-      run: echo $DEPLOY_PATH
+      run: echo ${{ env.DEPLOY_PATH }}
 
     - name: Save DigitalOcean kubeconfig
       uses: digitalocean/action-doctl@master
@@ -39,7 +41,4 @@ jobs:
         args: kubernetes cluster kubeconfig show actions-example > $GITHUB_WORKSPACE/.kubeconfig
 
     - name: Deploy to DigitalOcean Kubernetes
-      run: sh $DEPLOY_PATH
-
-    - name: Verify deployment
-      run: kubectl --kubeconfig=$GITHUB_WORKSPACE/.kubeconfig rollout status -n kube-system deployment/metrics-server
+      run: sh ${{ env.DEPLOY_PATH }}
