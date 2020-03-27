@@ -3,7 +3,6 @@ on:
     paths:
     - 'stacks/**/deploy.sh'
    
-
 jobs:
 
   build:
@@ -23,8 +22,8 @@ jobs:
     - name: GitSHA
       run: echo $GITHUB_SHA
       
-    - name: list only commit changes
-      run: git --no-pager diff --name-only stacks
+    - name: find the new/updated stack deploy path
+      run: curl -sS https://api.github.com/repos/arosales/marketplace-kubernetes/pulls/18/files |  jq  -r '.[].filename'
 
     - name: Save DigitalOcean kubeconfig
       uses: digitalocean/action-doctl@master
