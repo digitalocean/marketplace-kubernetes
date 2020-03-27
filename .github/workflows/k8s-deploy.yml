@@ -11,9 +11,9 @@ jobs:
     steps:
 
     - name: Set deploy path environmental variable
-    id: vars
-    run: echo ::set-env name=DEPLOY_PATH::"curl -sS https://api.github.com/repos/arosales/marketplace-kubernetes/pulls/${{ github.event.pull_request.number }}/files |  jq  -r '.[] | .filename'"
-
+      id: vars
+      run: echo ::set-env name=DEPLOY_PATH::"curl -sS https://api.github.com/repos/arosales/marketplace-kubernetes/pulls/${{ github.event.pull_request.number }}/files |  jq  -r '.[] | .filename'"
+    
     - name: Checkout master
       uses: actions/checkout@master
 
