@@ -37,7 +37,7 @@ jobs:
       env:
         DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
       with:
-        args: doctl kubernetes cluster create  --region sfo2 --tag gh-test-pr --size s-2vcpu-2gb --count 3 test-gh-mp-k8s-${{ github.event.pull_request.number }}
+        args: kubernetes cluster create  --region sfo2 --tag gh-test-pr --size s-2vcpu-2gb --count 3 test-gh-mp-k8s-${{ github.event.pull_request.number }}
 
     - name: Save kubeconfig
       uses: digitalocean/action-doctl@master
