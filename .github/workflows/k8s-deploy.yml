@@ -19,7 +19,7 @@
 # This action also makes use of the DOCTL Action:
 #   https://github.com/digitalocean/action-doctl
 
-name: DigitalOcean K8s Rollout Test
+name: DigitalOcean Kubernetes Test
 on:
   pull_request:
     # Do not test if the only update was a doc update,
@@ -33,7 +33,7 @@ on:
 jobs:
 
   build:
-    name: Kubernetes Rollout Test
+    name: Identify Addon Slug and K8s Rollout Test
     runs-on: ubuntu-latest
     steps:
 
