@@ -10,15 +10,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-    - name: Identify and set the deploy.sh path as environmental variable
+    - name: Identify and set the Addon Slug as an environmental variable
       id: vars
-      run: echo ::set-env name=DEPLOY_PATH::"`curl -sS https://api.github.com/repos/arosales/marketplace-kubernetes/pulls/${{ github.event.pull_request.number }}/files |  jq  -r '.[] | .filename'`"
+      run: echo ::set-env name=ADDON_SLUG::"`curl -sS https://api.github.com/repos/arosales/marketplace-kubernetes/pulls/${{ github.event.pull_request.number }}/files |  jq  -r '.[] | .filename' | cut -d/ -f2`"
 
     - name: Checkout marketplace-kubernetes repo
       uses: actions/checkout@master
 
-    - name: Log the new/updated stack deploy.sh path to test
-      run: echo ${{ env.DEPLOY_PATH }}
+    - name: Log the Addon Slug to test
+      run: echo ${{ env.ADDON_SLUG }}
 
     - name: Create DigitalOcean Kubernetes test cluster (3 node 2vCPU 2GB)
       uses: digitalocean/action-doctl@master
@@ -37,9 +37,9 @@ jobs:
     - name: Deploy proposed new or updated deploy.sh to test K8s cluster
       run: |
         sudo chmod 777 $GITHUB_WORKSPACE/.kubeconfig
-        sudo chmod 777 ${{ env.DEPLOY_PATH }}
+        sudo chmod 777 stacks/${{ env.ADDON_SLUG }}/deploy.sh
         export KUBECONFIG=$GITHUB_WORKSPACE/.kubeconfig
-        sh ${{ env.DEPLOY_PATH }}
+        sh stacks/${{ env.ADDON_SLUG }}/deploy.sh
 
     - name: Delete DigitalOcean Kubernetes test cluster
       uses: digitalocean/action-doctl@master
