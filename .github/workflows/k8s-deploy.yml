@@ -15,6 +15,9 @@
 # A 2vCPU 2GB Memory 3 Node cluster in SFO2 is spun up to test. The cluster
 # name includes the Pull Request number. 
 # Once the rollout finishes the cluster is deleted.
+# 
+# This action also makes use of the DOCTL Action:
+#   https://github.com/digitalocean/action-doctl
 
 name: DigitalOcean K8s Rollout Test
 on:
@@ -34,10 +37,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-    - name: Identify and set the Addon Slug as an environmental variable
-      id: vars
       # Leverage the GitHub API was easier than diffing aginast how actions checkouts out the PR branch.
       # jq and cut used to save just the Addon Slug string.
+    - name: Identify and set the Addon Slug as an environmental variable
+      id: vars
       run: echo ::set-env name=ADDON_SLUG::"`curl -sS https://api.github.com/repos/arosales/marketplace-kubernetes/pulls/${{ github.event.pull_request.number }}/files |  jq  -r '.[] | .filename' | cut -d/ -f2`"
 
     - name: Checkout marketplace-kubernetes repo
@@ -54,16 +57,15 @@ jobs:
         args: kubernetes cluster create --region sfo2 --tag gh-test-pr --size s-2vcpu-2gb --count 3 test-gh-mp-k8s-${{ github.event.pull_request.number }}
 
     - name: Save kubeconfig to GitHub Workspace
-      # https://github.com/digitalocean/action-doctl
       uses: digitalocean/action-doctl@master
       env:
         DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
       with:  
         args: kubernetes cluster kubeconfig show test-gh-mp-k8s-${{ github.event.pull_request.number }} > $GITHUB_WORKSPACE/.kubeconfig
 
+        # GitHub actions was unhappy with read and execute (555) permissions.
     - name: Deploy proposed new or updated deploy.sh to test K8s cluster
       run: |
-        # GitHub actions was unhappy with read and execute (555) permissions.
         sudo chmod 777 $GITHUB_WORKSPACE/.kubeconfig
         sudo chmod 777 stacks/${{ env.ADDON_SLUG }}/deploy.sh
         export KUBECONFIG=$GITHUB_WORKSPACE/.kubeconfig
