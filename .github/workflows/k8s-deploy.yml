@@ -10,45 +10,40 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-    - name: Set deploy path environmental variable
+    - name: Identify and set the deploy.sh path as environmental variable
       id: vars
       run: echo ::set-env name=DEPLOY_PATH::"`curl -sS https://api.github.com/repos/arosales/marketplace-kubernetes/pulls/${{ github.event.pull_request.number }}/files |  jq  -r '.[] | .filename'`"
 
-    - name: Checkout master
+    - name: Checkout marketplace-kubernetes repo
       uses: actions/checkout@master
 
-    - name: list file directories in current working dir
-      run: ls -l
-
-    - name: pwd
-      run: pwd
-
-    - name: git version
-      run: git branch
-
-    - name: GitSHA
-      run: echo $GITHUB_SHA
-
-    - name: confirm the new/updated stack deploy path
+    - name: Log the new/updated stack deploy.sh path to test
       run: echo ${{ env.DEPLOY_PATH }}
 
-    - name: Create DigitalOcean Kubernetes cluster
+    - name: Create DigitalOcean Kubernetes test cluster (3 node 2vCPU 2GB)
       uses: digitalocean/action-doctl@master
       env:
         DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
       with:
         args: kubernetes cluster create --region sfo2 --tag gh-test-pr --size s-2vcpu-2gb --count 3 test-gh-mp-k8s-${{ github.event.pull_request.number }}
 
-    - name: Save kubeconfig
+    - name: Save kubeconfig to GitHub Workspace
       uses: digitalocean/action-doctl@master
       env:
         DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
       with:  
         args: kubernetes cluster kubeconfig show test-gh-mp-k8s-${{ github.event.pull_request.number }} > $GITHUB_WORKSPACE/.kubeconfig
 
-    - name: Deploy to test K8s cluster
+    - name: Deploy proposed new or updated deploy.sh to test K8s cluster
       run: |
         sudo chmod 777 $GITHUB_WORKSPACE/.kubeconfig
         sudo chmod 777 ${{ env.DEPLOY_PATH }}
         export KUBECONFIG=$GITHUB_WORKSPACE/.kubeconfig
         sh ${{ env.DEPLOY_PATH }}
+
+    - name: Delete DigitalOcean Kubernetes test cluster
+      uses: digitalocean/action-doctl@master
+      env:
+        DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      with:
+        args: kubernetes cluster delete --force test-gh-mp-k8s-${{ github.event.pull_request.number }}
