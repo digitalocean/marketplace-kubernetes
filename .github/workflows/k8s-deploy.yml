@@ -1,17 +1,43 @@
+# About:
+# This action runs when a non-doc Pull Request has been made to the
+# stack directory or any of it subdirectories. This action will test
+# in the same manner the Addon Service applies K8s 1-clicks,
+# using the deploy.sh script and relaying on rollout status to
+# confirm a successfull deploy. This action does NOT test
+# functionality in the k8 1-click app.
+
+# Note:
+# A DigitalOcean token needs to be saved in the repo 
+# Settings --> Secrets with the name, "DIGITALOCEAN_ACCESS_TOKEN"
+# DigitalOcean Tokens doc: 
+#   https://www.digitalocean.com/docs/apis-clis/api/create-personal-access-token/
+# 
+# A 2vCPU 2GB Memory 3 Node cluster in SFO2 is spun up to test. The cluster
+# name includes the Pull Request number. 
+# Once the rollout finishes the cluster is deleted.
+
+name: DigitalOcean K8s Rollout Test
 on:
   pull_request:
+    # Do not test if the only update was a doc update,
+    # ie new or edit of an existing markdown file.
+    # Only test if a change was made to the stacks subdirectories.
+    # This assumes any change to source would have to be rendered.
     paths:
-    - 'stacks/**'
+    - '!stacks/**/docs/**'
+    - 'stacks/**/*.md'
 
 jobs:
 
   build:
-    name: DOk8s deploy
+    name: Kubernetes Rollout Test
     runs-on: ubuntu-latest
     steps:
 
     - name: Identify and set the Addon Slug as an environmental variable
       id: vars
+      # Leverage the GitHub API was easier than diffing aginast how actions checkouts out the PR branch.
+      # jq and cut used to save just the Addon Slug string.
       run: echo ::set-env name=ADDON_SLUG::"`curl -sS https://api.github.com/repos/arosales/marketplace-kubernetes/pulls/${{ github.event.pull_request.number }}/files |  jq  -r '.[] | .filename' | cut -d/ -f2`"
 
     - name: Checkout marketplace-kubernetes repo
@@ -28,6 +54,7 @@ jobs:
         args: kubernetes cluster create --region sfo2 --tag gh-test-pr --size s-2vcpu-2gb --count 3 test-gh-mp-k8s-${{ github.event.pull_request.number }}
 
     - name: Save kubeconfig to GitHub Workspace
+      # https://github.com/digitalocean/action-doctl
       uses: digitalocean/action-doctl@master
       env:
         DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
@@ -36,6 +63,7 @@ jobs:
 
     - name: Deploy proposed new or updated deploy.sh to test K8s cluster
       run: |
+        # GitHub actions was unhappy with read and execute (555) permissions.
         sudo chmod 777 $GITHUB_WORKSPACE/.kubeconfig
         sudo chmod 777 stacks/${{ env.ADDON_SLUG }}/deploy.sh
         export KUBECONFIG=$GITHUB_WORKSPACE/.kubeconfig
