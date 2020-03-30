@@ -67,3 +67,7 @@ curl --location --silent --show-error \
 ```
 
 Note, for this example to work, you would need to have `kubectl` installed and configured to talk to a Kubernetes cluster.
+
+## Updating your application
+* Test by running deploy-local.sh
+* Integration tests added with instructions on how to run (if applicable)

@@ -9,9 +9,7 @@
 -----------------------------------------------------------------------
 
 ## Checklist
-- [ ] review the [contributing doc](https://github.com/digitalocean/marketplace-kubernetes/blob/master/CONTRIBUTING.md) (if applicable)
-- [ ] test by running deploy-local.sh
-
+- [ ] review the [contributing doc](https://github.com/digitalocean/marketplace-kubernetes/blob/master/CONTRIBUTING.md) with steps for both adding or updating your application (if applicable)
 ------------------------------------------------------------------------
 
 Reviewer: @marketplace-eng
