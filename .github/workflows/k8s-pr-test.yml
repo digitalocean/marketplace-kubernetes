@@ -41,7 +41,7 @@ jobs:
       # jq and cut used to save just the Addon Slug string.
     - name: Identify and set the Addon Slug as an environmental variable
       id: vars
-      run: echo ::set-env name=ADDON_SLUG::"`curl -sS https://api.github.com/repos/arosales/marketplace-kubernetes/pulls/${{ github.event.pull_request.number }}/files |  jq  -r '.[] | .filename' | cut -d/ -f2`"
+      run: echo ::set-env name=ADDON_SLUG::"`curl -sS https://api.github.com/repos/digitalocean/marketplace-kubernetes/pulls/${{ github.event.pull_request.number }}/files |  jq  -r '.[] | .filename' | cut -d/ -f2`"
 
     - name: Checkout marketplace-kubernetes repo
       uses: actions/checkout@master
@@ -64,7 +64,6 @@ jobs:
         args: kubernetes cluster kubeconfig show test-gh-mp-k8s-${{ github.event.pull_request.number }} > $GITHUB_WORKSPACE/.kubeconfig
 
       # GitHub actions was unhappy with read and execute (555) permissions.
-      #         sudo chmod 777 stacks/${{ env.ADDON_SLUG }}/deploy.sh
     - name: Deploy proposed new or updated deploy.sh to test K8s cluster
       run: |
         sudo chmod 777 $GITHUB_WORKSPACE/.kubeconfig
