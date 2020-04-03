@@ -1,0 +1,53 @@
+###########-----STATUS PAGE------#################
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: {{ printf "%s-%s" .Release.Name "status-page"  }}
+    namespace: {{ .Release.Namespace }}
+    labels:
+        app: {{ printf "%s-%s" .Release.Name "status-page"  }}
+spec:
+    selector:
+        matchLabels:
+            app: {{ printf "%s-%s" .Release.Name "status-page"  }}
+    replicas: {{ .Values.replicaCount }}
+    template:
+        metadata:
+            labels:
+                app: {{ printf "%s-%s" .Release.Name "status-page"  }}
+        spec:
+            containers:
+                - image: {{ printf "%s/%s/%s:%s" .Values.image.registry .Values.image.repository "status-page" .Values.image.tag }}
+                  name: {{ printf "%s-%s" .Release.Name "status-page"  }}
+                  imagePullPolicy: {{ .Values.image.pullPolicy }}
+                  env:
+                    - name: FYIPE_HOST
+                      value: {{ .Values.fyipe.hosts.host1.host }}
+                    {{- if .Values.saas.isSaasService }}
+                    - name: IS_SAAS_SERVICE
+                      value: 'true'
+                    {{- end }}
+                    - name: NODE_ENV
+                      value: 'production'
+                  ports:
+                      - containerPort: {{ .Values.host.statusPagePort }}
+                        hostPort: {{ .Values.host.statusPagePort }}
+                        name: {{ printf "%s-%s" .Release.Name "status-page"  }}
+            restartPolicy: {{ .Values.image.restartPolicy }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+    labels:
+        app: {{ printf "%s-%s" .Release.Name "status-page"  }}
+    name: {{ printf "%s-%s" .Release.Name "status-page"  }}
+    namespace: {{ .Release.Namespace }}
+spec:
+    ports:
+        - port: {{ .Values.host.statusPageServicePort }}
+          targetPort: {{ .Values.host.statusPagePort }}
+    selector:
+        app: {{ printf "%s-%s" .Release.Name "status-page"  }}
+    type: {{ .Values.service.type }}
+---
+########################################
