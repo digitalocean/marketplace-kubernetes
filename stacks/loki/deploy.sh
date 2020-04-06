@@ -18,3 +18,5 @@ kubectl apply -f https://raw.githubusercontent.com/digitalocean/marketplace-kube
 
 # ensure services are running
 kubectl rollout status -w statefulset/loki
+
+# test 
