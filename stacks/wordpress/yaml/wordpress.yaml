@@ -1,3 +1,5 @@
+# test
+
 ---
 # Source: wordpress/charts/mariadb/templates/secrets.yaml
 apiVersion: v1
