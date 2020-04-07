@@ -64,11 +64,11 @@ jobs:
         args: kubernetes cluster kubeconfig show test-gh-mp-k8s-${{ github.event.pull_request.number }} > $GITHUB_WORKSPACE/.kubeconfig
 
       # GitHub actions was unhappy with read and execute (555) permissions.
-    - name: Deploy proposed new or updated deploy.sh to test K8s cluster
+    - name: Deploy proposed new or updated deploy-local.sh to test K8s cluster
       run: |
         sudo chmod 777 $GITHUB_WORKSPACE/.kubeconfig
         export KUBECONFIG=$GITHUB_WORKSPACE/.kubeconfig
-        sh stacks/${{ env.ADDON_SLUG }}/deploy.sh
+        sh stacks/${{ env.ADDON_SLUG }}/deploy-local.sh
     - name: Delete DigitalOcean Kubernetes test cluster
       uses: digitalocean/action-doctl@master
       env:
