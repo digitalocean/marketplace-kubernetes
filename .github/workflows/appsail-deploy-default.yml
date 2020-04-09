@@ -1,0 +1,57 @@
+###############################################################################
+#
+#   App Sail Pipelines
+#
+#   CLI Version:        0.0.25
+#   Pipeline Service:   GitHub Actions
+#   App Name:           appsail-test-py
+#   Deployment:         default
+#   Team:
+#
+#   Documentation:      https://cloud.digitalocean.com/appsail/docs/pipelines
+#
+###############################################################################
+
+name: Deploy_appsail-test-py_default
+
+
+# Triggers
+
+# triggers when a new push to the master branch occurs
+on:
+  push:
+    branches:
+    - master
+
+# triggers when a new tag of any value is pushed
+# on:
+#   push:
+#     tags:
+#     - '*'
+
+# triggers when a new GitHub release is created
+# on:
+#   release:
+#     types: [published]
+
+
+# Jobs
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Check out project code
+      uses: actions/checkout@v1
+
+    - name: Deploy App to AppSail
+      uses: digitalocean-appsail/action@master
+      with:
+        auth_token: ${{ secrets.APPSAIL_TOKEN }}
+        app_name: appsail-test-py
+        app_deployment: default
+        app_team:
+
+# EOF
