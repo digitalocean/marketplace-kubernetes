@@ -57,7 +57,7 @@ stringData:
     {
       "admin": [{
         "UserData": "admin",
-        "Password": "scalewithvitess",
+        "Password": "scalewithvitess"
       }]
     }
   init_db.sql: |
