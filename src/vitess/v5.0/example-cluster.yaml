@@ -6,6 +6,11 @@ spec:
   cells:
   - name: digitalocean1
     gateway:
+      replicas: 1
+      resources:
+        requests:
+          cpu: 100m
+          memory: 128m
       authentication:
         static:
           secret:
@@ -25,7 +30,7 @@ spec:
           tabletPools:
           - cell: digitalocean1
             type: replica
-            replicas: 3
+            replicas: 1
             vttablet:
               resources:
                 requests:
@@ -52,7 +57,7 @@ stringData:
     {
       "admin": [{
         "UserData": "admin",
-        "Password": "mysql password CHANGE ME"
+        "Password": "scalewithvitess",
       }]
     }
   init_db.sql: |

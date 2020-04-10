@@ -24,7 +24,14 @@ done
 kubectl apply -f https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/vitess/yaml/example-cluster.yaml
 
 # ensure services are running
-kubectl get vitesscluster -o custom-columns=NAME:.metadata.name | tail -n +2 | while read -r line
+kubectl get vitesskeyspace -o custom-columns=NAME:.metadata.name | tail -n +2 | while read -r line
 do
-  kubectl wait --for=condition=Ready --timeout=5m vitesscluster/"${line}"
+  # Since a vitesskeyspaces doesn't support conditions we have to poll the master status
+  retry=0
+  while [ "${retry}" -lt 30 ] && [ "$(kubectl get vitesskeyspace/"${line}" -o=jsonpath='{.status.shards..hasMaster}' | xargs -n1 echo | sort -u )" != "True" ]; do
+    echo "Waiting for vitess keyspace ${line}"
+    retry=$(( retry+1 ))
+    sleep 10
+  done
+  echo "keyspce ${line} is ready."
 done
