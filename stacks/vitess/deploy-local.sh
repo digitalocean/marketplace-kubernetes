@@ -33,5 +33,5 @@ do
     retry=$(( retry+1 ))
     sleep 10
   done
-  echo "keyspce ${line} is ready."
+  echo "keyspace ${line} is ready."
 done
