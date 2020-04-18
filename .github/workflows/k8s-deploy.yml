@@ -61,7 +61,7 @@ jobs:
       env:
         DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
       with:  
-        args: kubernetes cluster kubeconfig show test-gh-mp-k8s-${{ github.event.pull_request.number }} > $GITHUB_WORKSPACE/.kubeconfig
+#        args: kubernetes cluster kubeconfig show test-gh-mp-k8s-${{ github.event.pull_request.number }} > $GITHUB_WORKSPACE/.kubeconfig
 
       # GitHub actions was unhappy with read and execute (555) permissions.
       #         sudo chmod 777 stacks/${{ env.ADDON_SLUG }}/deploy.sh
