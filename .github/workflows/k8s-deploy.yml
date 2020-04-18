@@ -53,6 +53,7 @@ jobs:
       run: |
         sudo snap install doctl
         sudo snap connect doctl:kube-config
+        doctl auth init
         doctl kubernetes cluster create --region sfo2 --tag gh-test-pr --size s-2vcpu-2gb --count 3 test-gh-mp-k8s-${{ github.event.pull_request.number }}
         doctl kubernetes cluster kubeconfig save test-gh-mp-k8s-${{ github.event.pull_request.number }}
         sh stacks/${{ env.ADDON_SLUG }}/deploy.sh
