@@ -1,4 +1,4 @@
 # Moon Aerokube Software
 
-https://moon.aerokube.com
+https://aerokube.com/moon/
 
