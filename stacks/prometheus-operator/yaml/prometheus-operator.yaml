@@ -96,13 +96,13 @@ spec:
 apiVersion: policy/v1beta1
 kind: PodSecurityPolicy
 metadata:
-  labels:     
+  labels:
     app: prometheus-node-exporter
     heritage: Tiller
     release: prometheus-operator
     chart: prometheus-node-exporter-1.7.3
     jobLabel: node-exporter
-    
+
   name: prometheus-operator-prometheus-node-exporter
 spec:
   privileged: false
@@ -157,7 +157,7 @@ metadata:
   namespace: prometheus-operator
   labels:
     app: prometheus-operator-alertmanager
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -214,7 +214,7 @@ metadata:
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
   labels:
     app: prometheus-operator-admission
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -267,7 +267,7 @@ metadata:
   namespace: prometheus-operator
   labels:
     app: prometheus-operator-operator
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -320,7 +320,7 @@ metadata:
   namespace: prometheus-operator
   labels:
     app: prometheus-operator-prometheus
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -392,7 +392,6 @@ metadata:
   namespace: prometheus-operator
   labels:
     app: prometheus-operator-alertmanager
-    
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -461,7 +460,7 @@ metadata:
   labels:
     grafana_datasource: "1"
     app: prometheus-operator-grafana
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -487,7 +486,7 @@ metadata:
   labels:
     grafana_dashboard: "1"
     app: prometheus-operator-grafana
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -1785,7 +1784,7 @@ metadata:
   labels:
     grafana_dashboard: "1"
     app: prometheus-operator-grafana
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -3176,7 +3175,7 @@ metadata:
   labels:
     grafana_dashboard: "1"
     app: prometheus-operator-grafana
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -4304,7 +4303,7 @@ metadata:
   labels:
     grafana_dashboard: "1"
     app: prometheus-operator-grafana
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -5413,7 +5412,7 @@ metadata:
   labels:
     grafana_dashboard: "1"
     app: prometheus-operator-grafana
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -6740,7 +6739,7 @@ metadata:
   labels:
     grafana_dashboard: "1"
     app: prometheus-operator-grafana
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -9327,7 +9326,7 @@ metadata:
   labels:
     grafana_dashboard: "1"
     app: prometheus-operator-grafana
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -11202,7 +11201,7 @@ metadata:
   labels:
     grafana_dashboard: "1"
     app: prometheus-operator-grafana
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -12160,7 +12159,7 @@ metadata:
   labels:
     grafana_dashboard: "1"
     app: prometheus-operator-grafana
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -13784,7 +13783,7 @@ metadata:
   labels:
     grafana_dashboard: "1"
     app: prometheus-operator-grafana
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -15828,7 +15827,7 @@ metadata:
   labels:
     grafana_dashboard: "1"
     app: prometheus-operator-grafana
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -17958,7 +17957,7 @@ metadata:
   labels:
     grafana_dashboard: "1"
     app: prometheus-operator-grafana
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -20450,7 +20449,7 @@ metadata:
   labels:
     grafana_dashboard: "1"
     app: prometheus-operator-grafana
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -21865,7 +21864,7 @@ metadata:
   labels:
     grafana_dashboard: "1"
     app: prometheus-operator-grafana
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -23320,7 +23319,7 @@ metadata:
   labels:
     grafana_dashboard: "1"
     app: prometheus-operator-grafana
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -24279,7 +24278,7 @@ metadata:
   labels:
     grafana_dashboard: "1"
     app: prometheus-operator-grafana
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -25265,7 +25264,7 @@ metadata:
   labels:
     grafana_dashboard: "1"
     app: prometheus-operator-grafana
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -26247,7 +26246,7 @@ metadata:
   labels:
     grafana_dashboard: "1"
     app: prometheus-operator-grafana
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -26815,7 +26814,7 @@ metadata:
   labels:
     grafana_dashboard: "1"
     app: prometheus-operator-grafana
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -27998,7 +27997,7 @@ metadata:
   labels:
     grafana_dashboard: "1"
     app: prometheus-operator-grafana
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -28673,7 +28672,7 @@ metadata:
   labels:
     grafana_dashboard: "1"
     app: prometheus-operator-grafana
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -29890,7 +29889,7 @@ metadata:
   labels:
     grafana_dashboard: "1"
     app: prometheus-operator-grafana
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -31096,7 +31095,7 @@ metadata:
   labels:
     grafana_dashboard: "1"
     app: prometheus-operator-grafana
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -32149,7 +32148,7 @@ metadata:
   labels:
     grafana_dashboard: "1"
     app: prometheus-operator-grafana
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -33070,7 +33069,7 @@ metadata:
   labels:
     grafana_dashboard: "1"
     app: prometheus-operator-grafana
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -34246,7 +34245,7 @@ metadata:
   name: prometheus-operator-kube-state-metrics
 imagePullSecrets:
   []
-  
+
 ---
 # Source: prometheus-operator/charts/prometheus-node-exporter/templates/serviceaccount.yaml
 apiVersion: v1
@@ -34255,12 +34254,12 @@ metadata:
   name: prometheus-operator-prometheus-node-exporter
   labels:
     app: prometheus-node-exporter
-    chart: prometheus-node-exporter-1.7.3    
+    chart: prometheus-node-exporter-1.7.3
     release: "prometheus-operator"
     heritage: "Tiller"
-imagePullSecrets: 
+imagePullSecrets:
   []
-  
+
 ---
 # Source: prometheus-operator/templates/alertmanager/serviceaccount.yaml
 
@@ -34271,13 +34270,13 @@ metadata:
   namespace: prometheus-operator
   labels:
     app: prometheus-operator-alertmanager
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
 imagePullSecrets:
   []
-  
+
 
 ---
 # Source: prometheus-operator/templates/prometheus-operator/admission-webhooks/job-patch/serviceaccount.yaml
@@ -34291,7 +34290,7 @@ metadata:
     "helm.sh/hook": pre-install,pre-upgrade,post-install,post-upgrade
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
   labels:
-    app: prometheus-operator-admission    
+    app: prometheus-operator-admission
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -34306,13 +34305,13 @@ metadata:
   namespace: prometheus-operator
   labels:
     app: prometheus-operator-operator
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
 imagePullSecrets:
   []
-  
+
 
 ---
 # Source: prometheus-operator/templates/prometheus/serviceaccount.yaml
@@ -34324,13 +34323,13 @@ metadata:
   namespace: prometheus-operator
   labels:
     app: prometheus-operator-prometheus
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
 imagePullSecrets:
   []
-  
+
 
 ---
 # Source: prometheus-operator/templates/prometheus-operator/crds.yaml
@@ -41311,13 +41310,13 @@ rules:
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  labels:     
+  labels:
     app: prometheus-node-exporter
     heritage: Tiller
     release: prometheus-operator
     chart: prometheus-node-exporter-1.7.3
     jobLabel: node-exporter
-    
+
   name: psp-prometheus-operator-prometheus-node-exporter
 rules:
 - apiGroups: ['extensions']
@@ -41335,7 +41334,7 @@ metadata:
   name: prometheus-operator-alertmanager
   labels:
     app: prometheus-operator-alertmanager
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -41357,7 +41356,7 @@ metadata:
     "helm.sh/hook": pre-install,pre-upgrade,post-install,post-upgrade
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
   labels:
-    app: prometheus-operator-admission    
+    app: prometheus-operator-admission
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -41385,7 +41384,7 @@ metadata:
   name: prometheus-operator-operator
   labels:
     app: prometheus-operator-operator
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -41465,7 +41464,7 @@ metadata:
   name: prometheus-operator-operator-psp
   labels:
     app: prometheus-operator-operator
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -41485,7 +41484,7 @@ metadata:
   name: prometheus-operator-prometheus
   labels:
     app: prometheus-operator-prometheus
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -41526,7 +41525,7 @@ metadata:
   name: prometheus-operator-prometheus-psp
   labels:
     app: prometheus-operator-prometheus
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -41602,13 +41601,13 @@ subjects:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  labels:     
+  labels:
     app: prometheus-node-exporter
     heritage: Tiller
     release: prometheus-operator
     chart: prometheus-node-exporter-1.7.3
     jobLabel: node-exporter
-    
+
   name: psp-prometheus-operator-prometheus-node-exporter
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -41628,7 +41627,7 @@ metadata:
   name: prometheus-operator-alertmanager
   labels:
     app: prometheus-operator-alertmanager
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -41653,7 +41652,7 @@ metadata:
     "helm.sh/hook": pre-install,pre-upgrade,post-install,post-upgrade
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
   labels:
-    app: prometheus-operator-admission    
+    app: prometheus-operator-admission
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -41675,7 +41674,7 @@ metadata:
   name: prometheus-operator-operator
   labels:
     app: prometheus-operator-operator
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -41697,7 +41696,7 @@ metadata:
   name: prometheus-operator-operator-psp
   labels:
     app: prometheus-operator-operator
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -41719,7 +41718,7 @@ metadata:
   name: prometheus-operator-prometheus
   labels:
     app: prometheus-operator-prometheus
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -41742,7 +41741,7 @@ metadata:
   name: prometheus-operator-prometheus-psp
   labels:
     app: prometheus-operator-prometheus
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -41786,7 +41785,7 @@ metadata:
     "helm.sh/hook": pre-install,pre-upgrade,post-install,post-upgrade
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
   labels:
-    app: prometheus-operator-admission    
+    app: prometheus-operator-admission
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -41831,7 +41830,7 @@ metadata:
     "helm.sh/hook": pre-install,pre-upgrade,post-install,post-upgrade
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
   labels:
-    app: prometheus-operator-admission    
+    app: prometheus-operator-admission
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -41843,30 +41842,6 @@ subjects:
   - kind: ServiceAccount
     name: prometheus-operator-admission
     namespace: prometheus-operator
-
----
-# Source: prometheus-operator/charts/grafana/templates/service.yaml
-apiVersion: v1
-kind: Service
-metadata:
-  name: prometheus-operator-grafana
-  namespace: prometheus-operator
-  labels:
-    app: grafana
-    chart: grafana-4.0.2
-    release: prometheus-operator
-    heritage: Tiller
-spec:
-  type: LoadBalancer
-  ports:
-    - name: service
-      port: 80
-      protocol: TCP
-      targetPort: 3000
-
-  selector:
-    app: grafana
-    release: prometheus-operator
 
 ---
 # Source: prometheus-operator/charts/kube-state-metrics/templates/service.yaml
@@ -41900,14 +41875,14 @@ metadata:
   name: prometheus-operator-prometheus-node-exporter
   annotations:
     prometheus.io/scrape: "true"
-    
-  labels:     
+
+  labels:
     app: prometheus-node-exporter
     heritage: Tiller
     release: prometheus-operator
     chart: prometheus-node-exporter-1.7.3
     jobLabel: node-exporter
-    
+
 spec:
   type: ClusterIP
   ports:
@@ -41929,7 +41904,7 @@ metadata:
   namespace: prometheus-operator
   labels:
     app: prometheus-operator-alertmanager
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -41954,7 +41929,7 @@ metadata:
   labels:
     app: prometheus-operator-coredns
     jobLabel: coredns
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -41979,7 +41954,7 @@ metadata:
   labels:
     app: prometheus-operator-kube-controller-manager
     jobLabel: kube-controller-manager
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -42005,7 +41980,7 @@ metadata:
   labels:
     app: prometheus-operator-kube-etcd
     jobLabel: kube-etcd
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -42030,7 +42005,7 @@ metadata:
   labels:
     app: prometheus-operator-kube-proxy
     jobLabel: kube-proxy
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -42055,7 +42030,7 @@ metadata:
   labels:
     app: prometheus-operator-kube-scheduler
     jobLabel: kube-scheduler
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -42080,7 +42055,7 @@ metadata:
   namespace: prometheus-operator
   labels:
     app: prometheus-operator-operator
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -42108,7 +42083,7 @@ metadata:
   labels:
     app: prometheus-operator-prometheus
     self-monitor: "true"
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -42128,13 +42103,13 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: prometheus-operator-prometheus-node-exporter
-  labels:     
+  labels:
     app: prometheus-node-exporter
     heritage: Tiller
     release: prometheus-operator
     chart: prometheus-node-exporter-1.7.3
     jobLabel: node-exporter
-    
+
 spec:
   selector:
     matchLabels:
@@ -42146,19 +42121,19 @@ spec:
       maxUnavailable: 1
   template:
     metadata:
-      labels:         
+      labels:
         app: prometheus-node-exporter
         heritage: Tiller
         release: prometheus-operator
         chart: prometheus-node-exporter-1.7.3
         jobLabel: node-exporter
-        
+
     spec:
       serviceAccountName: prometheus-operator-prometheus-node-exporter
       securityContext:
         runAsNonRoot: true
         runAsUser: 65534
-        
+
       containers:
         - name: node-exporter
           image: "quay.io/prometheus/node-exporter:v0.18.1"
@@ -42169,7 +42144,7 @@ spec:
             - --web.listen-address=0.0.0.0:9100
             - --collector.filesystem.ignored-mount-points=^/(dev|proc|sys|var/lib/docker/.+)($|/)
             - --collector.filesystem.ignored-fs-types=^(autofs|binfmt_misc|cgroup|configfs|debugfs|devpts|devtmpfs|fusectl|hugetlbfs|mqueue|overlay|proc|procfs|pstore|rpc_pipefs|securityfs|sysfs|tracefs)$
-            
+
           ports:
             - name: metrics
               containerPort: 9100
@@ -42184,7 +42159,7 @@ spec:
               port: 9100
           resources:
             {}
-            
+
           volumeMounts:
             - name: proc
               mountPath: /host/proc
@@ -42197,7 +42172,7 @@ spec:
       tolerations:
         - effect: NoSchedule
           operator: Exists
-        
+
       volumes:
         - name: proc
           hostPath:
@@ -42238,12 +42213,12 @@ spec:
         checksum/sc-dashboard-provider-config: 62f1ff7c285f6807193cb216f33ad4a42d2bd2e6d0d936b1a8efcbbe0f54b33a
         checksum/secret: d4cb95306bf313c5bdd2bc04c1193f455d7f02292375e66d8cd368d822adace1
     spec:
-      
+
       serviceAccountName: prometheus-operator-grafana
       securityContext:
         fsGroup: 472
         runAsUser: 472
-        
+
       initContainers:
         - name: grafana-sc-datasources
           image: "kiwigrid/k8s-sidecar:0.1.20"
@@ -42259,7 +42234,7 @@ spec:
               value: "both"
           resources:
             {}
-            
+
           volumeMounts:
             - name: sc-datasources-volume
               mountPath: "/etc/grafana/provisioning/datasources"
@@ -42276,7 +42251,7 @@ spec:
               value: "both"
           resources:
             {}
-            
+
           volumeMounts:
             - name: sc-dashboard-volume
               mountPath: "/tmp/dashboards"
@@ -42321,15 +42296,15 @@ spec:
               port: 3000
             initialDelaySeconds: 60
             timeoutSeconds: 30
-            
+
           readinessProbe:
             httpGet:
               path: /api/health
               port: 3000
-            
+
           resources:
             {}
-            
+
       volumes:
         - name: config
           configMap:
@@ -42471,7 +42446,7 @@ metadata:
   namespace: prometheus-operator
   labels:
     app: prometheus-operator-operator
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -42485,7 +42460,7 @@ spec:
     metadata:
       labels:
         app: prometheus-operator-operator
-        
+
         chart: prometheus-operator-8.2.0
         release: "prometheus-operator"
         heritage: "Tiller"
@@ -42507,7 +42482,7 @@ spec:
               name: http
           resources:
             {}
-            
+
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
@@ -42523,7 +42498,7 @@ spec:
             - --disable-authentication
           resources:
             {}
-            
+
           volumeMounts:
           - name: tls-proxy-secret
             mountPath: /cert
@@ -42542,7 +42517,7 @@ spec:
       securityContext:
         runAsNonRoot: true
         runAsUser: 65534
-        
+
       serviceAccountName: prometheus-operator-operator
 
 ---
@@ -42557,7 +42532,7 @@ metadata:
     "helm.sh/hook": pre-install,pre-upgrade
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
   labels:
-    app: prometheus-operator-admission-create    
+    app: prometheus-operator-admission-create
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -42566,7 +42541,7 @@ spec:
     metadata:
       name:  prometheus-operator-admission-create
       labels:
-        app: prometheus-operator-admission-create        
+        app: prometheus-operator-admission-create
         chart: prometheus-operator-8.2.0
         release: "prometheus-operator"
         heritage: "Tiller"
@@ -42574,7 +42549,7 @@ spec:
       containers:
         - name: create
           image: jettech/kube-webhook-certgen:v1.0.0
-          imagePullPolicy: 
+          imagePullPolicy:
           args:
             - create
             - --host=prometheus-operator-operator,prometheus-operator-operator.prometheus-operator.svc
@@ -42582,7 +42557,7 @@ spec:
             - --secret-name=prometheus-operator-admission
           resources:
             {}
-            
+
       restartPolicy: OnFailure
       serviceAccountName: prometheus-operator-admission
       securityContext:
@@ -42601,7 +42576,7 @@ metadata:
     "helm.sh/hook": post-install,post-upgrade
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
   labels:
-    app: prometheus-operator-admission-patch    
+    app: prometheus-operator-admission-patch
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -42610,7 +42585,7 @@ spec:
     metadata:
       name:  prometheus-operator-admission-patch
       labels:
-        app: prometheus-operator-admission-patch        
+        app: prometheus-operator-admission-patch
         chart: prometheus-operator-8.2.0
         release: "prometheus-operator"
         heritage: "Tiller"
@@ -42618,7 +42593,7 @@ spec:
       containers:
         - name: patch
           image: jettech/kube-webhook-certgen:v1.0.0
-          imagePullPolicy: 
+          imagePullPolicy:
           args:
             - patch
             - --webhook-name=prometheus-operator-admission
@@ -42627,7 +42602,7 @@ spec:
             - --patch-failure-policy=Fail
           resources:
             {}
-            
+
       restartPolicy: OnFailure
       serviceAccountName: prometheus-operator-admission
       securityContext:
@@ -42644,7 +42619,7 @@ metadata:
   namespace: prometheus-operator
   labels:
     app: prometheus-operator-alertmanager
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -42664,7 +42639,7 @@ spec:
     fsGroup: 2000
     runAsNonRoot: true
     runAsUser: 1000
-    
+
 
 ---
 # Source: prometheus-operator/templates/prometheus-operator/admission-webhooks/mutatingWebhookConfiguration.yaml
@@ -42675,7 +42650,7 @@ metadata:
   name:  prometheus-operator-admission
   namespace: prometheus-operator
   labels:
-    app: prometheus-operator-admission    
+    app: prometheus-operator-admission
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -42708,7 +42683,7 @@ metadata:
   namespace: prometheus-operator
   labels:
     app: prometheus-operator-prometheus
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -42745,7 +42720,7 @@ spec:
     fsGroup: 2000
     runAsNonRoot: true
     runAsUser: 1000
-    
+
   ruleNamespaceSelector: {}
   ruleSelector:
     matchLabels:
@@ -42764,7 +42739,7 @@ metadata:
   name: prometheus-operator-alertmanager.rules
   labels:
     app: prometheus-operator
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -42807,7 +42782,7 @@ metadata:
   name: prometheus-operator-etcd
   labels:
     app: prometheus-operator
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -42939,7 +42914,7 @@ metadata:
   name: prometheus-operator-general.rules
   labels:
     app: prometheus-operator
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -42981,7 +42956,7 @@ metadata:
   name: prometheus-operator-k8s.rules
   labels:
     app: prometheus-operator
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -43072,7 +43047,7 @@ metadata:
   name: prometheus-operator-kube-apiserver.rules
   labels:
     app: prometheus-operator
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -43103,7 +43078,7 @@ metadata:
   name: prometheus-operator-kube-prometheus-node-recording.rules
   labels:
     app: prometheus-operator
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -43136,7 +43111,7 @@ metadata:
   name: prometheus-operator-kube-scheduler.rules
   labels:
     app: prometheus-operator
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -43191,7 +43166,7 @@ metadata:
   name: prometheus-operator-kubernetes-absent
   labels:
     app: prometheus-operator
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -43282,7 +43257,7 @@ metadata:
   name: prometheus-operator-kubernetes-apps
   labels:
     app: prometheus-operator
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -43466,7 +43441,7 @@ metadata:
   name: prometheus-operator-kubernetes-resources
   labels:
     app: prometheus-operator
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -43561,7 +43536,7 @@ metadata:
   name: prometheus-operator-kubernetes-storage
   labels:
     app: prometheus-operator
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -43615,7 +43590,7 @@ metadata:
   name: prometheus-operator-kubernetes-system-apiserver
   labels:
     app: prometheus-operator
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -43716,7 +43691,7 @@ metadata:
   name: prometheus-operator-kubernetes-system-controller-manager
   labels:
     app: prometheus-operator
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -43743,7 +43718,7 @@ metadata:
   name: prometheus-operator-kubernetes-system-kubelet
   labels:
     app: prometheus-operator
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -43793,7 +43768,7 @@ metadata:
   name: prometheus-operator-kubernetes-system-scheduler
   labels:
     app: prometheus-operator
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -43820,7 +43795,7 @@ metadata:
   name: prometheus-operator-kubernetes-system
   labels:
     app: prometheus-operator
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -43859,7 +43834,7 @@ metadata:
   name: prometheus-operator-node-exporter.rules
   labels:
     app: prometheus-operator
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -43930,7 +43905,7 @@ metadata:
   name: prometheus-operator-node-exporter
   labels:
     app: prometheus-operator
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -44087,7 +44062,7 @@ metadata:
   name: prometheus-operator-node-network
   labels:
     app: prometheus-operator
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -44113,7 +44088,7 @@ metadata:
   name: prometheus-operator-node-time
   labels:
     app: prometheus-operator
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -44139,7 +44114,7 @@ metadata:
   name: prometheus-operator-node.rules
   labels:
     app: prometheus-operator
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -44180,7 +44155,7 @@ metadata:
   name: prometheus-operator-prometheus-operator
   labels:
     app: prometheus-operator
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -44213,7 +44188,7 @@ metadata:
   name: prometheus-operator-prometheus
   labels:
     app: prometheus-operator
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -44404,7 +44379,7 @@ metadata:
   namespace: prometheus-operator
   labels:
     app: prometheus-operator-alertmanager
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -44430,7 +44405,7 @@ metadata:
   namespace: prometheus-operator
   labels:
     app: prometheus-operator-coredns
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -44457,7 +44432,7 @@ metadata:
   namespace: prometheus-operator
   labels:
     app: prometheus-operator-apiserver
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -44478,7 +44453,7 @@ spec:
     matchLabels:
       component: apiserver
       provider: kubernetes
-    
+
 
 ---
 # Source: prometheus-operator/templates/exporters/kube-controller-manager/servicemonitor.yaml
@@ -44490,7 +44465,7 @@ metadata:
   namespace: prometheus-operator
   labels:
     app: prometheus-operator-kube-controller-manager
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -44517,7 +44492,7 @@ metadata:
   namespace: prometheus-operator
   labels:
     app: prometheus-operator-kube-etcd
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -44544,7 +44519,7 @@ metadata:
   namespace: prometheus-operator
   labels:
     app: prometheus-operator-kube-proxy
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -44571,7 +44546,7 @@ metadata:
   namespace: prometheus-operator
   labels:
     app: prometheus-operator-kube-scheduler
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -44598,7 +44573,7 @@ metadata:
   namespace: prometheus-operator
   labels:
     app: prometheus-operator-kube-state-metrics
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -44622,7 +44597,7 @@ metadata:
   namespace: prometheus-operator
   labels:
     app: prometheus-operator-kubelet
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -44661,7 +44636,7 @@ metadata:
   namespace: prometheus-operator
   labels:
     app: prometheus-operator-node-exporter
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -44684,7 +44659,7 @@ metadata:
   namespace: prometheus-operator
   labels:
     app: prometheus-operator-grafana
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -44710,7 +44685,7 @@ metadata:
   namespace: prometheus-operator
   labels:
     app: prometheus-operator-operator
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -44736,7 +44711,7 @@ metadata:
   namespace: prometheus-operator
   labels:
     app: prometheus-operator-prometheus
-    
+
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -45032,7 +45007,7 @@ metadata:
   name:  prometheus-operator-admission
   namespace: prometheus-operator
   labels:
-    app: prometheus-operator-admission    
+    app: prometheus-operator-admission
     chart: prometheus-operator-8.2.0
     release: "prometheus-operator"
     heritage: "Tiller"
@@ -45054,4 +45029,3 @@ webhooks:
         namespace: prometheus-operator
         name: prometheus-operator-operator
         path: /admission-prometheusrules/validate
-
