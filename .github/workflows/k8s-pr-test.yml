@@ -49,29 +49,19 @@ jobs:
     - name: Log the Addon Slug to test
       run: echo ${{ env.ADDON_SLUG }}
 
-    - name: Create DigitalOcean Kubernetes test cluster (3 node 2vCPU 2GB)
-      uses: digitalocean/action-doctl@master
-      env:
-        DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+    - name: Install doctl
+      uses: digitalocean/action-doctl@v2
       with:
-        args: kubernetes cluster create --region sfo2 --tag gh-test-pr --size s-2vcpu-2gb --count 3 test-gh-mp-k8s-${{ github.event.pull_request.number }}
+        token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+    - name: Create DigitalOcean Kubernetes test cluster (3 node 2vCPU 2GB)
+      run: doctl kubernetes cluster create --region sfo2 --tag gh-test-pr --size s-2vcpu-2gb --count 3 test-gh-mp-k8s-${{ github.event.pull_request.number }}
 
     - name: Save kubeconfig to GitHub Workspace
-      uses: digitalocean/action-doctl@master
-      env:
-        DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-      with:  
-        args: kubernetes cluster kubeconfig show test-gh-mp-k8s-${{ github.event.pull_request.number }} > $GITHUB_WORKSPACE/.kubeconfig
+      run: doctl kubernetes cluster kubeconfig save test-gh-mp-k8s-${{ github.event.pull_request.number }}
 
-      # GitHub actions was unhappy with read and execute (555) permissions.
     - name: Deploy proposed new or updated deploy-local.sh to test K8s cluster
-      run: |
-        sudo chmod 777 $GITHUB_WORKSPACE/.kubeconfig
-        export KUBECONFIG=$GITHUB_WORKSPACE/.kubeconfig
-        sh stacks/${{ env.ADDON_SLUG }}/deploy-local.sh
+      run: sh stacks/${{ env.ADDON_SLUG }}/deploy-local.sh
+
     - name: Delete DigitalOcean Kubernetes test cluster
-      uses: digitalocean/action-doctl@master
-      env:
-        DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-      with:
-        args: kubernetes cluster delete --force test-gh-mp-k8s-${{ github.event.pull_request.number }}
+      run: doctl kubernetes cluster delete --force test-gh-mp-k8s-${{ github.event.pull_request.number }}
