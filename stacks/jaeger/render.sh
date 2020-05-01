@@ -19,9 +19,8 @@ find "$SRC_VERSION" -type d -name tests -print0 | xargs -0 rm -rf
 rm -rf "$ROOT_DIR"/stacks/jaeger/yaml
 mkdir -p "$ROOT_DIR"/stacks/jaeger/yaml
 
-# render mginx-ingress
-helm template \
-  --name jaeger \
+# render YAML
+helm template jaeger \
   --namespace jaeger \
   --values "$SRC_VERSION"/values.yaml \
   "$SRC_VERSION" > "$ROOT_DIR"/stacks/jaeger/yaml/jaeger.yaml

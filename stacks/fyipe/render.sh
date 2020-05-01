@@ -19,7 +19,7 @@ find "$SRC_VERSION" -type d -name tests -print0 | xargs -0 rm -rf
 rm -rf "$ROOT_DIR"/stacks/fyipe/yaml
 mkdir -p "$ROOT_DIR"/stacks/fyipe/yaml
 
-# render mginx-ingress
+# render YAML
 helm template \
   fyipe \
   --namespace fyipe \

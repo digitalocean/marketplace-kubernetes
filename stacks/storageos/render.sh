@@ -24,8 +24,7 @@ rm -rf "$ROOT_DIR"/stacks/storageos/yaml
 mkdir -p "$ROOT_DIR"/stacks/storageos/yaml
 
 # render storageos-operator, leaving out the cluster.
-helm template \
-  --name storageos \
+helm template storageos \
   --namespace storageos \
   --values "$ROOT_DIR"/src/storageos/"$SRC_VERSION"/values.yaml \
   --values "$ROOT_DIR"/stacks/storageos/override.yaml \
@@ -33,8 +32,7 @@ helm template \
   "$SRC_VERSION" > "$ROOT_DIR"/stacks/storageos/yaml/storageos-operator.yaml
 
 # render the cluster separately.
-helm template \
-  --name storageos \
+helm template storageos \
   --namespace storageos \
   --values "$ROOT_DIR"/src/storageos/"$SRC_VERSION"/values.yaml \
   --values "$ROOT_DIR"/stacks/storageos/override.yaml \

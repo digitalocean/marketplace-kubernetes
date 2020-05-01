@@ -19,7 +19,7 @@ find "$SRC_VERSION" -type d -name tests -print0 | xargs -0 rm -rf
 rm -rf "$ROOT_DIR"/stacks/op-scim-bridge/yaml
 mkdir -p "$ROOT_DIR"/stacks/op-scim-bridge/yaml
 
-# render mginx-ingress
+# render YAML
 helm template op-scim-bridge \
   --namespace op-scim-bridge \
   --values "$ROOT_DIR"/src/op-scim-bridge/"$SRC_VERSION"/values.yaml \

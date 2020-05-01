@@ -19,9 +19,8 @@ find "$SRC_VERSION" -type d -name tests -print0 | xargs -0 rm -rf
 rm -rf "$ROOT_DIR"/stacks/vitess/yaml
 mkdir -p "$ROOT_DIR"/stacks/vitess/yaml
 
-# render mginx-ingress
-helm template \
-  --name vitess \
+# render YAML
+helm template vitess \
   --namespace vitess \
   --values vitess/values/vitess.yaml \
   "$SRC_VERSION" > "$ROOT_DIR"/stacks/vitess/yaml/vitess.yaml
