@@ -20,8 +20,7 @@ rm -rf "$ROOT_DIR"/stacks/loki/yaml
 mkdir -p "$ROOT_DIR"/stacks/loki/yaml
 
 # render loki 
-helm template \
-  --name loki \
+helm template loki \
   --namespace loki \
   --values "$SRC_VERSION"/values.yaml \
   "$SRC_VERSION" > "$ROOT_DIR"/stacks/loki/yaml/loki.yaml

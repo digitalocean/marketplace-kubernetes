@@ -20,8 +20,7 @@ rm -rf "$ROOT_DIR"/stacks/prometheus-operator/yaml
 mkdir -p "$ROOT_DIR"/stacks/prometheus-operator/yaml
 
 # render prometheus-operator
-helm template \
-  --name prometheus-operator \
+helm template prometheus-operator \
   --namespace prometheus-operator \
   --values prometheus-operator/values/prometheus-operator.yaml \
   "$PROMETHEUS_OPERATOR_CHART_VERSION" > "$ROOT_DIR"/stacks/prometheus-operator/yaml/prometheus-operator.yaml

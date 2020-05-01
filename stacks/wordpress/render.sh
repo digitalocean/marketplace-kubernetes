@@ -20,8 +20,7 @@ rm -rf "$ROOT_DIR"/stacks/wordpress/yaml
 mkdir -p "$ROOT_DIR"/stacks/wordpress/yaml
 
 # render mginx-ingress
-helm template \
-  --name wordpress \
+helm template wordpress \
   --namespace wordpress \
   --values "$ROOT_DIR"/src/wordpress/8.0.0/values.yaml \
   "$SRC_VERSION" > "$ROOT_DIR"/stacks/wordpress/yaml/wordpress.yaml

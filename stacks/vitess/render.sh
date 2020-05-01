@@ -20,8 +20,7 @@ rm -rf "$ROOT_DIR"/stacks/vitess/yaml
 mkdir -p "$ROOT_DIR"/stacks/vitess/yaml
 
 # render mginx-ingress
-helm template \
-  --name vitess \
+helm template vitess \
   --namespace vitess \
   --values vitess/values/vitess.yaml \
   "$SRC_VERSION" > "$ROOT_DIR"/stacks/vitess/yaml/vitess.yaml

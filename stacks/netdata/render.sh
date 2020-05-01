@@ -20,8 +20,7 @@ rm -rf "$ROOT_DIR"/stacks/netdata/yaml
 mkdir -p "$ROOT_DIR"/stacks/netdata/yaml
 
 # render mginx-ingress
-helm template \
-  --name netdata \
+helm template netdata \
   --namespace netdata \
   --values $SRC_VERSION/values.yaml \
   --values "$ROOT_DIR"/stacks/netdata/values.yaml \
