@@ -1,0 +1,75 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ template "robomotion-migrations.fullname" . }}
+spec:
+  activeDeadlineSeconds: 360
+  backoffLimit: 1
+  template:
+    spec:
+      restartPolicy: Never
+      initContainers:
+      - name: check-db-ready
+        image: postgres:9.6.5
+        env:
+        - name: POSTGRES_HOST
+        {{- if .Values.postgresql.enabled }}
+          value: {{ template "robomotion.postgresql.fullname" . }}
+        {{- else }}
+          value: {{ .Values.externalDatabase.host | quote }}
+        {{- end }}
+        - name: POSTGRES_PORT
+        {{- if .Values.postgresql.enabled }}
+          value: {{ .Values.postgresql.service.port | quote }}
+        {{- else }}
+          value: {{ .Values.externalDatabase.port | quote }}
+        {{- end }}        
+        command: ['sh', '-c',
+          'until pg_isready -h $POSTGRES_HOST -p $POSTGRES_PORT;
+          do echo waiting for database; sleep 2; done;']
+      containers:
+        - name: {{ template "robomotion-migrations.fullname" . }}
+          image: "{{ .Values.migrations.image }}:{{ .Values.migrations.imageTag }}"
+          env:
+            - name: POSTGRES_HOST
+            {{- if .Values.postgresql.enabled }}
+              value: {{ template "robomotion.postgresql.fullname" . }}
+            {{- else }}
+              value: {{ .Values.externalDatabase.host | quote }}
+            {{- end }}
+            - name: POSTGRES_PORT
+            {{- if .Values.postgresql.enabled }}
+              value: {{ .Values.postgresql.service.port | quote }}
+            {{- else }}
+              value: {{ .Values.externalDatabase.port | quote }}
+            {{- end }}
+            - name: POSTGRES_DB
+            {{- if .Values.postgresql.enabled }}
+              value: {{ .Values.postgresql.postgresqlDatabase | quote }}
+            {{- else }}
+              value: {{ .Values.externalDatabase.database | quote }}
+            {{- end }}
+            - name: POSTGRES_USER
+            {{- if .Values.postgresql.enabled }}
+              value: {{ .Values.postgresql.postgresqlUsername | quote }}
+            {{- else }}
+              value: {{ .Values.externalDatabase.user | quote }}
+            {{- end }}
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  {{- if .Values.postgresql.enabled }}
+                  name: {{ template "robomotion.postgresql.fullname" . }}
+                  key: postgresql-password
+                  {{- else }}
+                  name: {{ printf "%s-%s" .Release.Name "external-db"  }}
+                  key: password
+                  {{- end }}
+          command: ["/migrate"]
+          args: ["-path", "/migrations", "-database",
+                  "postgres://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@$(POSTGRES_HOST):$(POSTGRES_PORT)/$(POSTGRES_DB)?sslmode=disable", "up"]
+      {{- if .Values.registry.secret }}
+      imagePullSecrets:
+      - name: {{ .Values.registry.secret }}
+      {{- end }}
