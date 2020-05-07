@@ -5,7 +5,7 @@ set -e
 BUILD_DIR=$(mktemp -d)
 ROOT_DIR=$(git rev-parse --show-toplevel)
 
-SRC_VERSION="1.1.12"
+SRC_VERSION="1.1.14"
 
 cp -r "$ROOT_DIR"/src/netdata/"$SRC_VERSION" $BUILD_DIR
 cp -r "$ROOT_DIR"/stacks/netdata $BUILD_DIR
@@ -19,9 +19,8 @@ find "$SRC_VERSION" -type d -name tests -print0 | xargs -0 rm -rf
 rm -rf "$ROOT_DIR"/stacks/netdata/yaml
 mkdir -p "$ROOT_DIR"/stacks/netdata/yaml
 
-# render mginx-ingress
-helm template \
-  --name netdata \
+# render YAML
+helm template netdata \
   --namespace netdata \
   --values $SRC_VERSION/values.yaml \
   --values "$ROOT_DIR"/stacks/netdata/values.yaml \

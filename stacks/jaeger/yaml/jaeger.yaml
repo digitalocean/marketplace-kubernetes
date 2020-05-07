@@ -5,10 +5,11 @@ kind: Secret
 metadata:
   name: jaeger-cassandra
   labels:
+    helm.sh/chart: jaeger-0.19.8
     app.kubernetes.io/name: jaeger
-    helm.sh/chart: jaeger-0.13.3
-    app.kubernetes.io/managed-by: Tiller
     app.kubernetes.io/instance: jaeger
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Tiller
 type: Opaque
 data:
   password: "cGFzc3dvcmQ="
@@ -20,9 +21,10 @@ kind: ServiceAccount
 metadata:
   name: jaeger-agent
   labels:
+    helm.sh/chart: jaeger-0.19.8
     app.kubernetes.io/name: jaeger
-    helm.sh/chart: jaeger-0.13.3
     app.kubernetes.io/instance: jaeger
+    app.kubernetes.io/version: "1.16.0"
     app.kubernetes.io/managed-by: Tiller
     app.kubernetes.io/component: agent
 ---
@@ -32,9 +34,10 @@ kind: ServiceAccount
 metadata:
   name: jaeger-cassandra-schema
   labels:
+    helm.sh/chart: jaeger-0.19.8
     app.kubernetes.io/name: jaeger
-    helm.sh/chart: jaeger-0.13.3
     app.kubernetes.io/instance: jaeger
+    app.kubernetes.io/version: "1.16.0"
     app.kubernetes.io/managed-by: Tiller
     app.kubernetes.io/component: cassandra-schema
 ---
@@ -44,9 +47,10 @@ kind: ServiceAccount
 metadata:
   name: jaeger-collector
   labels:
+    helm.sh/chart: jaeger-0.19.8
     app.kubernetes.io/name: jaeger
-    helm.sh/chart: jaeger-0.13.3
     app.kubernetes.io/instance: jaeger
+    app.kubernetes.io/version: "1.16.0"
     app.kubernetes.io/managed-by: Tiller
     app.kubernetes.io/component: collector
 ---
@@ -56,9 +60,10 @@ kind: ServiceAccount
 metadata:
   name: jaeger-query
   labels:
+    helm.sh/chart: jaeger-0.19.8
     app.kubernetes.io/name: jaeger
-    helm.sh/chart: jaeger-0.13.3
     app.kubernetes.io/instance: jaeger
+    app.kubernetes.io/version: "1.16.0"
     app.kubernetes.io/managed-by: Tiller
     app.kubernetes.io/component: query
 ---
@@ -69,7 +74,7 @@ metadata:
   name: jaeger-cassandra
   labels:
     app: cassandra
-    chart: cassandra-0.13.3
+    chart: cassandra-0.14.2
     release: jaeger
     heritage: Tiller
 spec:
@@ -102,9 +107,10 @@ kind: Service
 metadata:
   name: jaeger-agent
   labels:
+    helm.sh/chart: jaeger-0.19.8
     app.kubernetes.io/name: jaeger
-    helm.sh/chart: jaeger-0.13.3
     app.kubernetes.io/instance: jaeger
+    app.kubernetes.io/version: "1.16.0"
     app.kubernetes.io/managed-by: Tiller
     app.kubernetes.io/component: agent
 spec:
@@ -128,8 +134,8 @@ spec:
   type: ClusterIP
   selector:
     app.kubernetes.io/name: jaeger
-    app.kubernetes.io/component: agent
     app.kubernetes.io/instance: jaeger
+    app.kubernetes.io/component: agent
 ---
 # Source: jaeger/templates/collector-svc.yaml
 apiVersion: v1
@@ -137,11 +143,12 @@ kind: Service
 metadata:
   name: jaeger-collector
   labels:
+    helm.sh/chart: jaeger-0.19.8
     app.kubernetes.io/name: jaeger
-    helm.sh/chart: jaeger-0.13.3
-    app.kubernetes.io/component: collector
-    app.kubernetes.io/managed-by: Tiller
     app.kubernetes.io/instance: jaeger
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Tiller
+    app.kubernetes.io/component: collector
 spec:
   ports:
   - name: grpc
@@ -156,14 +163,10 @@ spec:
     port: 14268
     protocol: TCP
     targetPort: http
-  - name: zipkin
-    port: 9411
-    protocol: TCP
-    targetPort: zipkin
   selector:
     app.kubernetes.io/name: jaeger
-    app.kubernetes.io/component: collector
     app.kubernetes.io/instance: jaeger
+    app.kubernetes.io/component: collector
   type: ClusterIP
 ---
 # Source: jaeger/templates/query-svc.yaml
@@ -172,11 +175,12 @@ kind: Service
 metadata:
   name: jaeger-query
   labels:
+    helm.sh/chart: jaeger-0.19.8
     app.kubernetes.io/name: jaeger
-    helm.sh/chart: jaeger-0.13.3
-    app.kubernetes.io/component: query
-    app.kubernetes.io/managed-by: Tiller
     app.kubernetes.io/instance: jaeger
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Tiller
+    app.kubernetes.io/component: query
 spec:
   ports:
   - name: query
@@ -185,8 +189,8 @@ spec:
     targetPort: query
   selector:
     app.kubernetes.io/name: jaeger
-    app.kubernetes.io/component: query
     app.kubernetes.io/instance: jaeger
+    app.kubernetes.io/component: query
   type: ClusterIP
 ---
 # Source: jaeger/templates/agent-ds.yaml
@@ -195,9 +199,10 @@ kind: DaemonSet
 metadata:
   name: jaeger-agent
   labels:
+    helm.sh/chart: jaeger-0.19.8
     app.kubernetes.io/name: jaeger
-    helm.sh/chart: jaeger-0.13.3
     app.kubernetes.io/instance: jaeger
+    app.kubernetes.io/version: "1.16.0"
     app.kubernetes.io/managed-by: Tiller
     app.kubernetes.io/component: agent
 spec:
@@ -213,14 +218,17 @@ spec:
         app.kubernetes.io/instance: jaeger
         app.kubernetes.io/component: agent
     spec:
-      dnsPolicy: ClusterFirst
-      nodeSelector:
+      securityContext:
         {}
         
+      dnsPolicy: ClusterFirst
       serviceAccountName: jaeger-agent
       containers:
       - name: jaeger-agent
-        image: jaegertracing/jaeger-agent:1.14.0
+        securityContext:
+          {}
+          
+        image: jaegertracing/jaeger-agent:1.16.0
         imagePullPolicy: IfNotPresent
         env:
         - name: REPORTER_GRPC_HOST_PORT
@@ -252,6 +260,8 @@ spec:
         resources:
           {}
           
+        volumeMounts:
+      volumes:
 ---
 # Source: jaeger/templates/collector-deploy.yaml
 apiVersion: apps/v1
@@ -259,34 +269,40 @@ kind: Deployment
 metadata:
   name: jaeger-collector
   labels:
+    helm.sh/chart: jaeger-0.19.8
     app.kubernetes.io/name: jaeger
-    helm.sh/chart: jaeger-0.13.3
-    app.kubernetes.io/component: collector
-    app.kubernetes.io/managed-by: Tiller
     app.kubernetes.io/instance: jaeger
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Tiller
+    app.kubernetes.io/component: collector
 spec:
   replicas: 1
   selector:
     matchLabels:
       app.kubernetes.io/name: jaeger
-      app.kubernetes.io/component: collector
       app.kubernetes.io/instance: jaeger
+      app.kubernetes.io/component: collector
   strategy:
     type: Recreate
   template:
     metadata:
+      annotations:
+        checksum/config-env: 75a11da44c802486bc6f65640aa48a730f0f684c5c07a42ba3cd1735eb3fb070
       labels:
         app.kubernetes.io/name: jaeger
-        app.kubernetes.io/component: collector
         app.kubernetes.io/instance: jaeger
+        app.kubernetes.io/component: collector
     spec:
-      nodeSelector:
+      securityContext:
         {}
         
       serviceAccountName: jaeger-collector
       containers:
       - name: jaeger-collector
-        image: jaegertracing/jaeger-collector:1.14.0
+        securityContext:
+          {}
+          
+        image: jaegertracing/jaeger-collector:1.16.0
         imagePullPolicy: IfNotPresent
         env:
           - name: SPAN_STORAGE_TYPE
@@ -295,8 +311,9 @@ spec:
             value: jaeger-cassandra
           - name: CASSANDRA_PORT
             value: "9042"
+          
           - name: CASSANDRA_KEYSPACE
-            value: "jaeger_v1_dc1"
+            value: jaeger_v1_test
           - name: CASSANDRA_USERNAME
             value: user
           - name: CASSANDRA_PASSWORD
@@ -316,9 +333,6 @@ spec:
           protocol: TCP
         - containerPort: 14269
           name: admin
-          protocol: TCP
-        - containerPort: 9411
-          name: zipkin
           protocol: TCP
         readinessProbe:
           httpGet:
@@ -342,34 +356,38 @@ kind: Deployment
 metadata:
   name: jaeger-query
   labels:
+    helm.sh/chart: jaeger-0.19.8
     app.kubernetes.io/name: jaeger
-    helm.sh/chart: jaeger-0.13.3
-    app.kubernetes.io/component: query
-    app.kubernetes.io/managed-by: Tiller
     app.kubernetes.io/instance: jaeger
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Tiller
+    app.kubernetes.io/component: query
 spec:
   replicas: 1
   selector:
     matchLabels:
       app.kubernetes.io/name: jaeger
-      app.kubernetes.io/component: query
       app.kubernetes.io/instance: jaeger
+      app.kubernetes.io/component: query
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
         app.kubernetes.io/name: jaeger
-        app.kubernetes.io/component: query
         app.kubernetes.io/instance: jaeger
+        app.kubernetes.io/component: query
     spec:
-      nodeSelector:
+      securityContext:
         {}
         
       serviceAccountName: jaeger-query
       containers:
       - name: jaeger-query
-        image: jaegertracing/jaeger-query:1.14.0
+        securityContext:
+          {}
+          
+        image: jaegertracing/jaeger-query:1.16.0
         imagePullPolicy: IfNotPresent
         env:
           - name: SPAN_STORAGE_TYPE
@@ -378,8 +396,9 @@ spec:
             value: jaeger-cassandra
           - name: CASSANDRA_PORT
             value: "9042"
+          
           - name: CASSANDRA_KEYSPACE
-            value: "jaeger_v1_dc1"
+            value: "jaeger_v1_test"
           - name: CASSANDRA_USERNAME
             value: user
           - name: CASSANDRA_PASSWORD
@@ -387,8 +406,8 @@ spec:
               secretKeyRef:
                 name: jaeger-cassandra
                 key: password
-          - name: QUERY_BASE_PATH
-            value: 
+          - name: JAEGER_AGENT_PORT
+            value: "6831"
         ports:
         - name: query
           containerPort: 16686
@@ -409,7 +428,10 @@ spec:
             path: /
             port: admin
       - name: jaeger-agent-sidecar
-        image: jaegertracing/jaeger-agent:1.14.0
+        securityContext:
+          {}
+          
+        image: jaegertracing/jaeger-agent:1.16.0
         imagePullPolicy: IfNotPresent
         env:
         - name: REPORTER_GRPC_HOST_PORT
@@ -418,6 +440,7 @@ spec:
         - name: admin
           containerPort: 14271
           protocol: TCP
+        volumeMounts:
         livenessProbe:
           httpGet:
             path: /
@@ -437,7 +460,7 @@ metadata:
   name: jaeger-cassandra
   labels:
     app: cassandra
-    chart: cassandra-0.13.3
+    chart: cassandra-0.14.2
     release: jaeger
     heritage: Tiller
 spec:
@@ -459,7 +482,7 @@ spec:
       hostNetwork: false
       containers:
       - name: jaeger-cassandra
-        image: "cassandra:3.11.3"
+        image: "cassandra:3.11.5"
         imagePullPolicy: "IfNotPresent"
         resources:
           {}
@@ -531,13 +554,14 @@ kind: Job
 metadata:
   name: jaeger-cassandra-schema
   labels:
+    helm.sh/chart: jaeger-0.19.8
     app.kubernetes.io/name: jaeger
-    helm.sh/chart: jaeger-0.13.3
-    app.kubernetes.io/component: cassandra-schema
-    app.kubernetes.io/managed-by: Tiller
     app.kubernetes.io/instance: jaeger
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Tiller
+    app.kubernetes.io/component: cassandra-schema
 spec:
-  activeDeadlineSeconds: 120
+  activeDeadlineSeconds: 300
   template:
     metadata:
       name: jaeger-cassandra-schema
@@ -545,11 +569,12 @@ spec:
       serviceAccountName: jaeger-cassandra-schema
       containers:
       - name: jaeger-cassandra-schema
-        image: jaegertracing/jaeger-cassandra-schema:1.14.0
+        image: jaegertracing/jaeger-cassandra-schema:1.16.0
         imagePullPolicy: IfNotPresent
         env:
         - name: CQLSH_HOST
           value: jaeger-cassandra
+        
         - name: MODE
           value: "prod"
         - name: DATACENTER
@@ -563,10 +588,14 @@ spec:
             secretKeyRef:
               name: jaeger-cassandra
               key: password
+        - name: KEYSPACE
+          value: "jaeger_v1_test"
         resources:
           {}
           
+        volumeMounts:
       restartPolicy: OnFailure
+      volumes:
 ---
 # Source: jaeger/charts/cassandra/templates/backup/cronjob.yaml
 
@@ -587,6 +616,15 @@ spec:
 
 
 ---
+# Source: jaeger/templates/collector-configmap.yaml
+
+
+
+---
+# Source: jaeger/templates/collector-hpa.yaml
+
+
+---
 # Source: jaeger/templates/elasticsearch-secret.yaml
 
 
@@ -602,6 +640,16 @@ spec:
 
 ---
 # Source: jaeger/templates/hotrod-svc.yaml
+
+---
+# Source: jaeger/templates/ingester-deploy.yaml
+
+---
+# Source: jaeger/templates/ingester-hpa.yaml
+
+
+---
+# Source: jaeger/templates/ingester-sa.yaml
 
 ---
 # Source: jaeger/templates/query-ing.yaml

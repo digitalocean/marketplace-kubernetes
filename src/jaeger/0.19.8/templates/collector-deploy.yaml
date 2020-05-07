@@ -1,0 +1,208 @@
+{{- if .Values.collector.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "jaeger.collector.name" . }}
+  labels:
+    {{- include "jaeger.labels" . | nindent 4 }}
+    app.kubernetes.io/component: collector
+{{- if .Values.collector.annotations }}
+  annotations:
+{{ toYaml .Values.collector.annotations | indent 4 }}
+{{- end }}
+spec:
+{{- if not .Values.collector.autoscaling.enabled }}
+  replicas: {{ .Values.collector.replicaCount }}
+{{- end }}
+  selector:
+    matchLabels:
+      {{- include "jaeger.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: collector
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        checksum/config-env: {{ include (print $.Template.BasePath "/collector-configmap.yaml") . | sha256sum }}
+{{- if .Values.collector.podAnnotations }}
+{{ toYaml .Values.collector.podAnnotations | indent 8 }}
+{{- end }}
+      labels:
+        {{- include "jaeger.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: collector
+{{- if .Values.collector.podLabels }}
+{{ toYaml .Values.collector.podLabels | indent 8 }}
+{{- end }}
+    spec:
+      securityContext:
+{{ toYaml .Values.collector.podSecurityContext | indent 8 }}
+      serviceAccountName: {{ template "jaeger.collector.serviceAccountName" . }}
+      containers:
+      - name: {{ template "jaeger.collector.name" . }}
+        securityContext:
+{{ toYaml .Values.collector.securityContext | indent 10 }}
+        image: {{ .Values.collector.image }}:{{ .Values.tag }}
+        imagePullPolicy: {{ .Values.collector.pullPolicy }}
+        env:
+          {{- range $key, $value := .Values.collector.cmdlineParams }}
+          - name: {{ $key | replace "." "_" | replace "-" "_" | upper | quote }}
+            value: {{ $value | quote }}
+          {{- end }}
+          {{- if .Values.collector.service.zipkinPort }}
+          - name: COLLECTOR_ZIPKIN_HTTP_PORT
+            value: {{ .Values.collector.service.zipkinPort | quote }}
+          {{- end }}
+          {{- if .Values.ingester.enabled }}
+          - name: SPAN_STORAGE_TYPE
+            value: kafka
+          - name: KAFKA_PRODUCER_BROKERS
+            value: {{ include "helm-toolkit.utils.joinListWithComma" .Values.storage.kafka.brokers }}
+          - name: KAFKA_PRODUCER_TOPIC
+            value: {{ .Values.storage.kafka.topic }}
+          {{ else }}
+          - name: SPAN_STORAGE_TYPE
+            value: {{ .Values.storage.type }}
+          {{- if eq .Values.storage.type "cassandra" }}
+          - name: CASSANDRA_SERVERS
+            value: {{ template "cassandra.host" . }}
+          - name: CASSANDRA_PORT
+            value: {{ .Values.storage.cassandra.port | quote }}
+          {{ if .Values.storage.cassandra.tls.enabled }}
+          - name: CASSANDRA_TLS
+            value: "true"
+          - name: CASSANDRA_TLS_SERVER_NAME
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.storage.cassandra.tls.secretName }}
+                key: commonName
+          - name: CASSANDRA_TLS_KEY
+            value: "/cassandra-tls/client-key.pem"
+          - name: CASSANDRA_TLS_CERT
+            value: "/cassandra-tls/client-cert.pem"
+          - name: CASSANDRA_TLS_CA
+            value: "/cassandra-tls/ca-cert.pem"
+          {{- end }}
+          {{- if .Values.storage.cassandra.keyspace }}
+          - name: CASSANDRA_KEYSPACE
+            value: {{ .Values.storage.cassandra.keyspace }}
+          {{- end }}
+          - name: CASSANDRA_USERNAME
+            value: {{ .Values.storage.cassandra.user }}
+          - name: CASSANDRA_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ if .Values.storage.cassandra.existingSecret }}{{ .Values.storage.cassandra.existingSecret }}{{- else }}{{ include "jaeger.fullname" . }}-cassandra{{- end }}
+                key: password
+          {{- end }}
+          {{- if eq .Values.storage.type "elasticsearch" }}
+          {{- if .Values.storage.elasticsearch.usePassword }}
+          - name: ES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ if .Values.storage.elasticsearch.existingSecret }}{{ .Values.storage.elasticsearch.existingSecret }}{{- else }}{{ include "jaeger.fullname" . }}-elasticsearch{{- end }}
+                key: password
+          {{- end }}
+          - name: ES_SERVER_URLS
+            value: {{ template "elasticsearch.client.url" . }}
+          - name: ES_USERNAME
+            value: {{ .Values.storage.elasticsearch.user }}
+          {{- if .Values.storage.elasticsearch.indexPrefix }}
+          - name: ES_INDEX_PREFIX
+            value: {{ .Values.storage.elasticsearch.indexPrefix }}
+          {{- end }}
+          {{- end }}
+          {{- end }}
+          {{- if .Values.collector.samplingConfig}}
+          - name: SAMPLING_STRATEGIES_FILE
+            value: /etc/conf/strategies.json
+          {{- end }}
+        ports:
+        - containerPort: {{ .Values.collector.service.grpcPort }}
+          name: grpc
+          protocol: TCP
+        - containerPort: {{ .Values.collector.service.tchannelPort }}
+          name: tchannel
+          protocol: TCP
+        - containerPort: {{ .Values.collector.service.httpPort }}
+          name: http
+          protocol: TCP
+        - containerPort: 14269
+          name: admin
+          protocol: TCP
+        {{- if .Values.collector.service.zipkinPort }}
+        - containerPort: {{ .Values.collector.service.zipkinPort }}
+          name: zipkin
+          protocol: TCP
+        {{- end }}
+        readinessProbe:
+          httpGet:
+            path: /
+            port: admin
+        livenessProbe:
+          httpGet:
+            path: /
+            port: admin
+        resources:
+{{ toYaml .Values.collector.resources | indent 10 }}
+        volumeMounts:
+        {{- range .Values.collector.extraConfigmapMounts }}
+          - name: {{ .name }}
+            mountPath: {{ .mountPath }}
+            subPath: {{ .subPath }}
+            readOnly: {{ .readOnly }}
+        {{- end }}
+        {{- range .Values.collector.extraSecretMounts }}
+          - name: {{ .name }}
+            mountPath: {{ .mountPath }}
+            subPath: {{ .subPath }}
+            readOnly: {{ .readOnly }}
+        {{- end }}
+        {{- if .Values.storage.cassandra.tls.enabled }}
+          - name: {{ .Values.storage.cassandra.tls.secretName }}
+            mountPath: "/cassandra-tls/ca-cert.pem"
+            subPath: "ca-cert.pem"
+            readOnly: true
+          - name: {{ .Values.storage.cassandra.tls.secretName }}
+            mountPath: "/cassandra-tls/client-cert.pem"
+            subPath: "client-cert.pem"
+            readOnly: true
+          - name: {{ .Values.storage.cassandra.tls.secretName }}
+            mountPath: "/cassandra-tls/client-key.pem"
+            subPath: "client-key.pem"
+            readOnly: true
+        {{- end }}
+        {{- if .Values.collector.samplingConfig}}
+          - name: strategies
+            mountPath: /etc/conf/
+        {{- end }}
+      dnsPolicy: {{ .Values.collector.dnsPolicy }}
+      restartPolicy: Always
+      volumes:
+      {{- range .Values.collector.extraConfigmapMounts }}
+        - name: {{ .name }}
+          configMap:
+            name: {{ .configMap }}
+      {{- end }}
+      {{- range .Values.collector.extraSecretMounts }}
+        - name: {{ .name }}
+          secret:
+            secretName: {{ .secretName }}
+      {{- end }}
+      {{- if .Values.collector.samplingConfig}}
+        - name: strategies
+          configMap:
+            name: {{ include "jaeger.fullname" . }}-sampling-strategies
+      {{- end }}
+    {{- with .Values.collector.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.collector.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.collector.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+{{- end -}}

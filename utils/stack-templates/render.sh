@@ -19,9 +19,8 @@ find "$SRC_VERSION" -type d -name tests -print0 | xargs -0 rm -rf
 rm -rf "$ROOT_DIR"/stacks/{{STACK_NAME}}/yaml
 mkdir -p "$ROOT_DIR"/stacks/{{STACK_NAME}}/yaml
 
-# render mginx-ingress
-helm template \
-  --name {{STACK_NAME}} \
+# render YAML
+helm template {{STACK_NAME}} \
   --namespace {{STACK_NAME}} \
   --values {{STACK_NAME}}/values/{{STACK_NAME}}.yaml \
   "$SRC_VERSION" > "$ROOT_DIR"/stacks/{{STACK_NAME}}/yaml/{{STACK_NAME}}.yaml

@@ -20,8 +20,7 @@ rm -rf "$ROOT_DIR"/stacks/openebs/yaml
 mkdir -p "$ROOT_DIR"/stacks/openebs/yaml
 
 # render openebs-ingress
-helm template \
-  --name openebs \
+helm template openebs \
   --namespace openebs \
   --values "$ROOT_DIR"/src/openebs/1.6.0/values.yaml \
   "$SRC_VERSION" > "$ROOT_DIR"/stacks/openebs/yaml/openebs.yaml

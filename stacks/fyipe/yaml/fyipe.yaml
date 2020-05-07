@@ -1,0 +1,1773 @@
+---
+# Source: Fyipe/charts/mongodb/templates/poddisruptionbudget-arbiter-rs.yaml
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  labels:
+    app: mongodb
+    chart: mongodb-7.8.10
+    heritage: Helm
+    release: fyipe
+  name: fyipe-mongodb-arbiter
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: mongodb
+      release: fyipe
+      component: arbiter
+---
+# Source: Fyipe/charts/mongodb/templates/poddisruptionbudget-secondary-rs.yaml
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  labels:
+    app: mongodb
+    chart: mongodb-7.8.10
+    heritage: Helm
+    release: fyipe
+  name: fyipe-mongodb-secondary
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: mongodb
+      release: fyipe
+      component: secondary
+---
+# Source: Fyipe/charts/nginx-ingress-controller/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: fyipe-nginx-ingress-controller
+  labels:
+    app: nginx-ingress-controller
+    chart: nginx-ingress-controller-5.3.9
+    release: fyipe
+    heritage: Helm
+---
+# Source: Fyipe/charts/mongodb/templates/secrets.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: fyipe-mongodb
+  labels:
+    app: mongodb
+    chart: mongodb-7.8.10
+    release: "fyipe"
+    heritage: "Helm"
+type: Opaque
+data:
+  mongodb-root-password:  "cm9vdA=="
+  mongodb-password:  "cGFzc3dvcmQ="
+  mongodb-replica-set-key:  "bW9uZ29kYmZ5aXBl"
+---
+# Source: Fyipe/charts/redis/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fyipe-redis
+  labels:
+    app: redis
+    chart: redis-10.5.11
+    heritage: Helm
+    release: fyipe
+data:
+  redis.conf: |-
+    # User-supplied configuration:
+    # Enable AOF https://redis.io/topics/persistence#append-only-file
+    appendonly yes
+    # Disable RDB persistence, AOF persistence already enabled.
+    save ""
+  master.conf: |-
+    dir /data
+    rename-command FLUSHDB ""
+    rename-command FLUSHALL ""
+  replica.conf: |-
+    dir /data
+    slave-read-only yes
+    rename-command FLUSHDB ""
+    rename-command FLUSHALL ""
+---
+# Source: Fyipe/charts/redis/templates/health-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fyipe-redis-health
+  labels:
+    app: redis
+    chart: redis-10.5.11
+    heritage: Helm
+    release: fyipe
+data:
+  ping_readiness_local.sh: |-
+    response=$(
+      timeout -s 9 $1 \
+      redis-cli \
+        -h localhost \
+        -p $REDIS_PORT \
+        ping
+    )
+    if [ "$response" != "PONG" ]; then
+      echo "$response"
+      exit 1
+    fi
+  ping_liveness_local.sh: |-
+    response=$(
+      timeout -s 9 $1 \
+      redis-cli \
+        -h localhost \
+        -p $REDIS_PORT \
+        ping
+    )
+    if [ "$response" != "PONG" ] && [ "$response" != "LOADING Redis is loading the dataset in memory" ]; then
+      echo "$response"
+      exit 1
+    fi
+  ping_readiness_master.sh: |-
+    response=$(
+      timeout -s 9 $1 \
+      redis-cli \
+        -h $REDIS_MASTER_HOST \
+        -p $REDIS_MASTER_PORT_NUMBER \
+        ping
+    )
+    if [ "$response" != "PONG" ]; then
+      echo "$response"
+      exit 1
+    fi
+  ping_liveness_master.sh: |-
+    response=$(
+      timeout -s 9 $1 \
+      redis-cli \
+        -h $REDIS_MASTER_HOST \
+        -p $REDIS_MASTER_PORT_NUMBER \
+        ping
+    )
+    if [ "$response" != "PONG" ] && [ "$response" != "LOADING Redis is loading the dataset in memory" ]; then
+      echo "$response"
+      exit 1
+    fi
+  ping_readiness_local_and_master.sh: |-
+    script_dir="$(dirname "$0")"
+    exit_status=0
+    "$script_dir/ping_readiness_local.sh" $1 || exit_status=$?
+    "$script_dir/ping_readiness_master.sh" $1 || exit_status=$?
+    exit $exit_status
+  ping_liveness_local_and_master.sh: |-
+    script_dir="$(dirname "$0")"
+    exit_status=0
+    "$script_dir/ping_liveness_local.sh" $1 || exit_status=$?
+    "$script_dir/ping_liveness_master.sh" $1 || exit_status=$?
+    exit $exit_status
+---
+# Source: Fyipe/templates/configMap.yaml
+kind: ConfigMap 
+apiVersion: v1 
+metadata:
+  name: fyipe-configmap
+  namespace: fyipe
+data:
+  clusterkey: "oOHbJ8XZ1Agmz1W"
+  encryptionkey: "hOIBnBdk6zmuIW7"
+---
+# Source: Fyipe/charts/nginx-ingress-controller/templates/clusterrole.yaml
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRole
+metadata:
+  name: fyipe-nginx-ingress-controller
+  labels:
+    app: nginx-ingress-controller
+    chart: nginx-ingress-controller-5.3.9
+    release: fyipe
+    heritage: Helm
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+      - endpoints
+      - nodes
+      - pods
+      - secrets
+    verbs:
+      - list
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - nodes
+    verbs:
+      - get
+  - apiGroups:
+      - ""
+    resources:
+      - services
+    verbs:
+      - get
+      - list
+      - update
+      - watch
+  - apiGroups:
+      - extensions
+      - "networking.k8s.io"
+    resources:
+      - ingresses
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - events
+    verbs:
+      - create
+      - patch
+  - apiGroups:
+      - extensions
+      - "networking.k8s.io"
+    resources:
+      - ingresses/status
+    verbs:
+      - update
+---
+# Source: Fyipe/charts/nginx-ingress-controller/templates/clusterrolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  name: fyipe-nginx-ingress-controller
+  labels:
+    app: nginx-ingress-controller
+    chart: nginx-ingress-controller-5.3.9
+    release: fyipe
+    heritage: Helm
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: fyipe-nginx-ingress-controller
+subjects:
+  - kind: ServiceAccount
+    name: fyipe-nginx-ingress-controller
+    namespace: fyipe
+---
+# Source: Fyipe/charts/nginx-ingress-controller/templates/role.yaml
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: Role
+metadata:
+  name: fyipe-nginx-ingress-controller
+  labels:
+    app: nginx-ingress-controller
+    chart: nginx-ingress-controller-5.3.9
+    release: fyipe
+    heritage: Helm
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - namespaces
+    verbs:
+      - get
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+      - pods
+      - secrets
+      - endpoints
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - services
+    verbs:
+      - get
+      - list
+      - update
+      - watch
+  - apiGroups:
+      - extensions
+      - "networking.k8s.io"
+    resources:
+      - ingresses
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - extensions
+      - "networking.k8s.io"
+    resources:
+      - ingresses/status
+    verbs:
+      - update
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+    resourceNames:
+      - ingress-controller-leader-nginx
+    verbs:
+      - get
+      - update
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+    verbs:
+      - create
+  - apiGroups:
+      - ""
+    resources:
+      - endpoints
+    verbs:
+      - create
+      - get
+      - update
+  - apiGroups:
+      - ""
+    resources:
+      - events
+    verbs:
+      - create
+      - patch
+---
+# Source: Fyipe/charts/nginx-ingress-controller/templates/rolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: RoleBinding
+metadata:
+  name: fyipe-nginx-ingress-controller
+  labels:
+    app: nginx-ingress-controller
+    chart: nginx-ingress-controller-5.3.9
+    release: fyipe
+    heritage: Helm
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: fyipe-nginx-ingress-controller
+subjects:
+  - kind: ServiceAccount
+    name: fyipe-nginx-ingress-controller
+    namespace: fyipe
+---
+# Source: Fyipe/charts/mongodb/templates/svc-headless-rs.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: fyipe-mongodb-headless
+  labels:
+    app: mongodb
+    chart: mongodb-7.8.10
+    release: "fyipe"
+    heritage: "Helm"
+spec:
+  type: ClusterIP
+  clusterIP: None
+  ports:
+  - name: mongodb
+    port: 27017
+  selector:
+    app: mongodb
+    release: fyipe
+---
+# Source: Fyipe/charts/mongodb/templates/svc-primary-rs.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: fyipe-mongodb
+  labels:
+    app: mongodb
+    chart: mongodb-7.8.10
+    release: "fyipe"
+    heritage: "Helm"
+spec:
+  type: ClusterIP
+  ports:
+  - name: mongodb
+    port: 27017
+    targetPort: mongodb
+  selector:
+    app: mongodb
+    release: "fyipe"
+    component: primary
+---
+# Source: Fyipe/charts/nginx-ingress-controller/templates/controller-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: fyipe-nginx-ingress-controller
+  labels:
+    app: nginx-ingress-controller
+    chart: nginx-ingress-controller-5.3.9
+    release: fyipe
+    heritage: Helm
+    component: controller
+spec:
+  type: LoadBalancer
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: http
+    - name: https
+      port: 443
+      protocol: TCP
+      targetPort: https
+  selector:
+    app: nginx-ingress-controller
+    release: fyipe
+    component: controller
+---
+# Source: Fyipe/charts/nginx-ingress-controller/templates/default-backend-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: fyipe-nginx-ingress-controller-default-backend
+  labels:
+    app: nginx-ingress-controller
+    chart: nginx-ingress-controller-5.3.9
+    release: fyipe
+    heritage: Helm
+    component: default-backend
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: http
+  selector:
+    app: nginx-ingress-controller
+    release: fyipe
+    component: default-backend
+---
+# Source: Fyipe/charts/redis/templates/headless-svc.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: fyipe-redis-headless
+  labels:
+    app: redis
+    chart: redis-10.5.11
+    release: fyipe
+    heritage: Helm
+spec:
+  type: ClusterIP
+  clusterIP: None
+  ports:
+  - name: redis
+    port: 6379
+    targetPort: redis
+  selector:
+    app: redis
+    release: fyipe
+---
+# Source: Fyipe/charts/redis/templates/redis-master-svc.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: fyipe-redis-master
+  labels:
+    app: redis
+    chart: redis-10.5.11
+    release: fyipe
+    heritage: Helm
+spec:
+  type: ClusterIP
+  ports:
+  - name: redis
+    port: 6379
+    targetPort: redis
+  selector:
+    app: redis
+    release: fyipe
+    role: master
+---
+# Source: Fyipe/charts/redis/templates/redis-slave-svc.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: fyipe-redis-slave
+  labels:
+    app: redis
+    chart: redis-10.5.11
+    release: fyipe
+    heritage: Helm
+spec:
+  type: ClusterIP
+  ports:
+  - name: redis
+    port: 6379
+    targetPort: redis
+  selector:
+    app: redis
+    release: fyipe
+    role: slave
+---
+# Source: Fyipe/templates/accounts.yaml
+# Fyipe Accounts Service
+apiVersion: v1
+kind: Service
+metadata:
+    labels:
+        app: fyipe-accounts
+    name: fyipe-accounts
+    namespace: fyipe
+spec:
+    ports:
+        - port: 80
+          targetPort: 3003
+    selector:
+        app: fyipe-accounts
+    type: ClusterIP
+---
+# Source: Fyipe/templates/admin-dashboard.yaml
+apiVersion: v1
+kind: Service
+metadata:
+    labels:
+        app: fyipe-admin
+    name: fyipe-admin
+    namespace: fyipe
+spec:
+    ports:
+        - port: 80
+          targetPort: 3100
+    selector:
+        app: fyipe-admin
+    type: ClusterIP
+---
+# Source: Fyipe/templates/backend.yaml
+# Fyipe Backend Deployment
+apiVersion: v1
+kind: Service
+metadata:
+    labels:
+        app: fyipe-backend
+    name: fyipe-backend
+    namespace: fyipe
+spec:
+    ports:
+        - port: 80
+          targetPort: 3002
+    selector:
+        app: fyipe-backend
+    type: ClusterIP
+---
+# Source: Fyipe/templates/dashboard.yaml
+# Fyipe Dashoard Service
+apiVersion: v1
+kind: Service
+metadata:
+    labels:
+        app: fyipe-dashboard
+    name: fyipe-dashboard
+    namespace: fyipe
+spec:
+    ports:
+        - port: 80
+          targetPort: 3000
+    selector:
+        app: fyipe-dashboard
+    type: ClusterIP
+---
+# Source: Fyipe/templates/probe.yaml
+apiVersion: v1
+kind: Service
+metadata:
+    labels:
+        app: fyipe-probe1
+    name: fyipe-probe1
+    namespace: fyipe
+spec:
+    ports:
+        - port: 80
+          targetPort: 3024
+    selector:
+        app: fyipe-probe1
+    type: ClusterIP
+---
+# Source: Fyipe/templates/probe.yaml
+apiVersion: v1
+kind: Service
+metadata:
+    labels:
+        app: fyipe-probe2
+    name: fyipe-probe2
+    namespace: fyipe
+spec:
+    ports:
+        - port: 80
+          targetPort: 3025
+    selector:
+        app: fyipe-probe2
+    type: ClusterIP
+---
+# Source: Fyipe/templates/status-page.yaml
+apiVersion: v1
+kind: Service
+metadata:
+    labels:
+        app: fyipe-status
+    name: fyipe-status
+    namespace: fyipe
+spec:
+    ports:
+        - port: 80
+          targetPort: 3006
+    selector:
+        app: fyipe-status
+    type: ClusterIP
+---
+# Source: Fyipe/charts/nginx-ingress-controller/templates/controller-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fyipe-nginx-ingress-controller
+  labels:
+    app: nginx-ingress-controller
+    chart: nginx-ingress-controller-5.3.9
+    release: fyipe
+    heritage: Helm
+    component: controller
+spec:
+  selector:
+    matchLabels:
+      app: nginx-ingress-controller
+      release: fyipe
+      component: controller
+  replicas: 1
+  revisionHistoryLimit: 10
+  strategy:
+    {}
+  minReadySeconds: 0
+  template:
+    metadata:
+      labels:
+        app: nginx-ingress-controller
+        chart: nginx-ingress-controller-5.3.9
+        release: fyipe
+        heritage: Helm
+        component: controller
+    spec:      
+      dnsPolicy: ClusterFirst
+      hostNetwork: false
+      serviceAccountName: fyipe-nginx-ingress-controller
+      terminationGracePeriodSeconds: 60
+      containers:
+        - name: nginx-ingress-controller-controller
+          image: docker.io/bitnami/nginx-ingress-controller:0.30.0-debian-10-r17
+          imagePullPolicy: "IfNotPresent"
+          args:
+            - /nginx-ingress-controller
+            - --default-backend-service=fyipe/fyipe-nginx-ingress-controller-default-backend
+            - --election-id=ingress-controller-leader
+            - --ingress-class=nginx
+            - --configmap=fyipe/fyipe-nginx-ingress-controller
+          securityContext:
+            capabilities:
+              drop: ["ALL"]
+              add: ["NET_BIND_SERVICE"]
+            runAsUser: 1001
+            allowPrivilegeEscalation: 
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 10254
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 10254
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 3
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+            - name: https
+              containerPort: 443
+              protocol: TCP
+          resources:
+            limits: {}
+            requests: {}
+---
+# Source: Fyipe/charts/nginx-ingress-controller/templates/default-backend-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fyipe-nginx-ingress-controller-default-backend
+  labels:
+    app: nginx-ingress-controller
+    chart: nginx-ingress-controller-5.3.9
+    release: fyipe
+    heritage: Helm
+    component: default-backend
+spec:
+  selector:
+    matchLabels:
+      app: nginx-ingress-controller
+      release: fyipe
+      component: default-backend
+  replicas: 1
+  revisionHistoryLimit: 10
+  template:
+    metadata:
+      labels:
+        app: nginx-ingress-controller
+        chart: nginx-ingress-controller-5.3.9
+        release: fyipe
+        heritage: Helm
+        component: default-backend
+    spec:      
+      serviceAccountName: fyipe-nginx-ingress-controller
+      terminationGracePeriodSeconds: 60
+      containers:
+        - name: nginx-ingress-controller-default-backend
+          image: docker.io/bitnami/nginx:1.16.1-debian-10-r46
+          imagePullPolicy: "IfNotPresent"
+          args:
+          securityContext:
+            runAsUser: 1001
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 0
+            periodSeconds: 5
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 6
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          resources:
+            limits: {}
+            requests: {}
+---
+# Source: Fyipe/templates/accounts.yaml
+############-----ACCOUNTS----#############################
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: fyipe-accounts
+    namespace: fyipe
+    labels:
+        app: fyipe-accounts
+spec:
+    selector:
+        matchLabels:
+            app: fyipe-accounts
+    replicas: 1
+    template:
+        metadata:
+            labels:
+                app: fyipe-accounts
+        spec:
+            containers:
+                - image: docker.io/fyipeproject/accounts:latest
+                  name: fyipe-accounts
+                  imagePullPolicy: Always
+                  env:
+                      - name: NODE_ENV
+                        value: 'production'
+                  ports:
+                      - containerPort: 3003
+                        hostPort: 3003
+                        name: fyipe-accounts
+            restartPolicy: Always
+---
+# Source: Fyipe/templates/admin-dashboard.yaml
+############-ADMIN-DASHBOARD-#########
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: fyipe-admin
+    namespace: fyipe
+    labels:
+        app: fyipe-admin
+spec:
+    selector:
+        matchLabels:
+            app: fyipe-admin
+    replicas: 1
+    template:
+        metadata:
+            labels:
+                app: fyipe-admin
+        spec:
+            containers:
+                - image: docker.io/fyipeproject/admin-dashboard:latest
+                  name: fyipe-admin
+                  imagePullPolicy: Always
+                  env:
+                    - name: LICENSE_URL
+                      value: https://fyipe.com/license
+                    - name: NODE_ENV
+                      value: 'production'
+                  ports:
+                      - containerPort: 3100
+                        hostPort: 3100
+                        name: fyipe-admin
+            restartPolicy: Always
+---
+# Source: Fyipe/templates/backend.yaml
+###########-----BACKEND------##############
+
+# Fyipe Backend Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: fyipe-backend
+    namespace: fyipe
+    labels:
+        app: fyipe-backend
+spec:
+    selector:
+        matchLabels:
+            app: fyipe-backend
+    replicas: 1
+    template:
+        metadata:
+            labels:
+                app: fyipe-backend
+        spec:
+            containers:
+                - image: docker.io/fyipeproject/backend:latest
+                  name: fyipe-backend
+                  imagePullPolicy: Always
+                  env:
+                      - name: JWT_SECRET
+                        valueFrom:
+                          configMapKeyRef:
+                            name: fyipe-configmap
+                            key: encryptionkey
+                      - name: MONGO_URL
+                        value: mongodb://fyipe:password@fyipe-mongodb.fyipe.svc.cluster.local:27017/fyipedb?replicaSet=rs0
+                      - name: REDIS_HOST
+                        value: fyipe-redis-master.fyipe.svc.cluster.local
+                      - name: REDIS_PORT
+                        value: "6379"
+                      - name: PORT
+                        value: "3002"
+                      - name: EMAIL_VERIFY_TIME
+                        value: '3600'
+                      - name: BACKEND_HOST
+                        value: 
+                      - name: NODE_ENV
+                        value: 'production'
+                      - name: RATE_LIMITTER_TIME_PERIOD_IN_MS
+                        value: "216000"
+                      - name: RATE_LIMITTER_REQUEST_LIMIT
+                        value: "5000"
+                      - name: RATE_LIMITTER_ENABLED
+                        value: "false"
+                      - name: CLUSTER_KEY
+                        valueFrom:
+                          configMapKeyRef:
+                            name: fyipe-configmap
+                            key: clusterkey
+                  ports:
+                      - containerPort: 3002
+                        hostPort: 3002
+                        name: fyipe-backend
+            restartPolicy: Always
+---
+# Source: Fyipe/templates/dashboard.yaml
+############-----DASHBOARD----#############################
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: fyipe-dashboard
+    namespace: fyipe
+    labels:
+        app: fyipe-dashboard
+spec:
+    selector:
+        matchLabels:
+            app: fyipe-dashboard
+    replicas: 1
+    template:
+        metadata:
+            labels:
+                app: fyipe-dashboard
+        spec:
+            containers:
+                - image: docker.io/fyipeproject/dashboard:latest
+                  name: fyipe-dashboard
+                  imagePullPolicy: Always
+                  env:
+                      - name: DOMAIN
+                        value: 
+                      - name: NODE_ENV
+                        value: 'production'
+                  ports:
+                      - containerPort: 3000
+                        hostPort: 3000
+                        name: fyipe-dashboard
+            restartPolicy: Always
+---
+# Source: Fyipe/templates/probe.yaml
+########-PROBE-#################
+#Probe service and deployement
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: fyipe-probe1
+    namespace: fyipe
+    labels:
+        app: fyipe-probe1
+spec:
+    selector:
+        matchLabels:
+            app: fyipe-probe1
+    replicas: 1 # THIS SHOULD STRICTLY BE 1
+    template:
+        metadata:
+            labels:
+                app: fyipe-probe1
+        spec:
+            containers:
+                - image: docker.io/fyipeproject/probe:latest
+                  name: fyipe-probe1
+                  imagePullPolicy: Always
+                  env:
+                      - name: SERVER_URL
+                        value: http://fyipe-backend.fyipe.svc.cluster.local
+                      - name: PORT
+                        value: "3024"
+                      - name: PROBE_NAME
+                        value: Probe 1
+                      - name: PROBE_KEY
+                        value: sample-key
+                      - name: CLUSTER_KEY
+                        valueFrom:
+                          configMapKeyRef:
+                            name: fyipe-configmap
+                            key: clusterkey
+                      - name: NODE_ENV
+                        value: 'production'
+                  ports:
+                      - containerPort: 3024
+                        hostPort: 3024
+                        name: fyipe-probe1
+            restartPolicy: Always
+---
+# Source: Fyipe/templates/probe.yaml
+###########################
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: fyipe-probe2
+    namespace: fyipe
+    labels:
+        app: fyipe-probe2
+spec:
+    selector:
+        matchLabels:
+            app: fyipe-probe2
+    replicas: 1 # THIS SHOULD STRICTLY BE 1
+    template:
+        metadata:
+            labels:
+                app: fyipe-probe2
+        spec:
+            containers:
+                - image: docker.io/fyipeproject/probe:latest
+                  name: fyipe-probe2
+                  imagePullPolicy: Always
+                  env:
+                      - name: SERVER_URL
+                        value: http://fyipe-backend.fyipe.svc.cluster.local
+                      - name: PORT
+                        value: "3025"
+                      - name: PROBE_NAME
+                        value: Probe 2
+                      - name: PROBE_KEY
+                        value: sample-key
+                      - name: CLUSTER_KEY
+                        valueFrom:
+                          configMapKeyRef:
+                            name: fyipe-configmap
+                            key: clusterkey
+                      - name: NODE_ENV
+                        value: 'production'
+                  ports:
+                      - containerPort: 3025
+                        hostPort: 3025
+                        name: fyipe-probe2
+            restartPolicy: Always
+---
+# Source: Fyipe/templates/status-page.yaml
+###########-----STATUS PAGE------#################
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: fyipe-status
+    namespace: fyipe
+    labels:
+        app: fyipe-status
+spec:
+    selector:
+        matchLabels:
+            app: fyipe-status
+    replicas: 1
+    template:
+        metadata:
+            labels:
+                app: fyipe-status
+        spec:
+            containers:
+                - image: docker.io/fyipeproject/status-page:latest
+                  name: fyipe-status
+                  imagePullPolicy: Always
+                  env:
+                    - name: FYIPE_HOST
+                      value: 
+                    - name: NODE_ENV
+                      value: 'production'
+                  ports:
+                      - containerPort: 3006
+                        hostPort: 3006
+                        name: fyipe-status
+            restartPolicy: Always
+---
+# Source: Fyipe/charts/mongodb/templates/statefulset-arbiter-rs.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: fyipe-mongodb-arbiter
+  labels:
+    app: mongodb
+    chart: mongodb-7.8.10
+    heritage: Helm
+    release: fyipe
+spec:
+  selector:
+    matchLabels:
+      app: mongodb
+      release: fyipe
+      component: arbiter
+  serviceName: fyipe-mongodb-headless
+  replicas: 1
+  updateStrategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: mongodb
+        chart: mongodb-7.8.10
+        release: fyipe
+        component: arbiter
+    spec:
+      securityContext:
+        fsGroup: 1001      
+      containers:
+        - name: mongodb-arbiter
+          image: docker.io/bitnami/mongodb:latest
+          imagePullPolicy: Always
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1001
+          ports:
+          - containerPort: 27017
+            name: mongodb
+          env:
+          - name: MONGODB_SYSTEM_LOG_VERBOSITY
+            value: "0"
+          - name: MONGODB_DISABLE_SYSTEM_LOG
+            value: "no"
+          - name: MONGODB_POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: MONGODB_REPLICA_SET_MODE
+            value: "arbiter"
+          - name: MONGODB_PRIMARY_HOST
+            value: fyipe-mongodb
+          - name: MONGODB_REPLICA_SET_NAME
+            value: "rs0"
+          - name: MONGODB_ADVERTISED_HOSTNAME
+            value: "$(MONGODB_POD_NAME).fyipe-mongodb-headless.fyipe.svc.cluster.local"
+          - name: MONGODB_PRIMARY_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: fyipe-mongodb
+                key: mongodb-root-password
+          - name: MONGODB_REPLICA_SET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: fyipe-mongodb
+                key: mongodb-replica-set-key
+          - name: MONGODB_ENABLE_IPV6
+            value: "no"
+          - name: MONGODB_ENABLE_DIRECTORY_PER_DB
+            value: "no"
+          livenessProbe:
+            tcpSocket:
+              port: mongodb
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 6
+          readinessProbe:
+            tcpSocket:
+              port: mongodb
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 6
+          volumeMounts:
+          resources:
+            {}
+      volumes:
+---
+# Source: Fyipe/charts/mongodb/templates/statefulset-primary-rs.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: fyipe-mongodb-primary
+  labels:
+    app: mongodb
+    chart: mongodb-7.8.10
+    heritage: Helm
+    release: fyipe
+spec:
+  serviceName: fyipe-mongodb-headless
+  replicas: 1
+  updateStrategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: mongodb
+      release: fyipe
+      component: primary
+  template:
+    metadata:
+      labels:
+        app: mongodb
+        chart: mongodb-7.8.10
+        release: fyipe
+        component: primary
+    spec:
+      securityContext:
+        fsGroup: 1001      
+      initContainers:
+      containers:
+        - name: mongodb-primary
+          image: docker.io/bitnami/mongodb:latest
+          imagePullPolicy: Always
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1001
+          ports:
+          - containerPort: 27017
+            name: mongodb
+          env:
+          - name: MONGODB_SYSTEM_LOG_VERBOSITY
+            value: "0"
+          - name: MONGODB_DISABLE_SYSTEM_LOG
+            value: "no"
+          - name: MONGODB_POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: MONGODB_REPLICA_SET_MODE
+            value: "primary"
+          - name: MONGODB_REPLICA_SET_NAME
+            value: "rs0"
+          - name: MONGODB_ADVERTISED_HOSTNAME
+            value: "$(MONGODB_POD_NAME).fyipe-mongodb-headless.fyipe.svc.cluster.local"
+          - name: MONGODB_USERNAME
+            value: "fyipe"
+          - name: MONGODB_DATABASE
+            value: "fyipedb"
+          - name: MONGODB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: fyipe-mongodb
+                key: mongodb-password
+          - name: MONGODB_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: fyipe-mongodb
+                key: mongodb-root-password
+          - name: MONGODB_REPLICA_SET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: fyipe-mongodb
+                key: mongodb-replica-set-key
+          - name: MONGODB_ENABLE_IPV6
+            value: "no"
+          - name: MONGODB_ENABLE_DIRECTORY_PER_DB
+            value: "no"
+          livenessProbe:
+            exec:
+              command:
+                - pgrep
+                - mongod
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 6
+          readinessProbe:
+            exec:
+              command:
+                - mongo
+                - --eval
+                - "db.adminCommand('ping')"
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 6
+          volumeMounts:
+            - name: datadir
+              mountPath: /bitnami/mongodb
+              subPath: 
+          resources:
+            {}
+      volumes:
+  volumeClaimTemplates:
+    - metadata:
+        name: datadir
+        annotations:
+      spec:
+        accessModes:
+          - "ReadWriteOnce"
+        resources:
+          requests:
+            storage: "20Gi"
+---
+# Source: Fyipe/charts/mongodb/templates/statefulset-secondary-rs.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: fyipe-mongodb-secondary
+  labels:
+    app: mongodb
+    chart: mongodb-7.8.10
+    heritage: Helm
+    release: fyipe
+spec:
+  selector:
+    matchLabels:
+      app: mongodb
+      release: fyipe
+      component: secondary
+  podManagementPolicy: "Parallel"
+  serviceName: fyipe-mongodb-headless
+  replicas: 1
+  updateStrategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: mongodb
+        chart: mongodb-7.8.10
+        release: fyipe
+        component: secondary
+    spec:
+      securityContext:
+        fsGroup: 1001      
+      initContainers:
+      containers:
+        - name: mongodb-secondary
+          image: docker.io/bitnami/mongodb:latest
+          imagePullPolicy: Always
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1001
+          ports:
+          - containerPort: 27017
+            name: mongodb
+          env:
+          - name: MONGODB_SYSTEM_LOG_VERBOSITY
+            value: "0"
+          - name: MONGODB_DISABLE_SYSTEM_LOG
+            value: "no"
+          - name: MONGODB_POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: MONGODB_REPLICA_SET_MODE
+            value: "secondary"
+          - name: MONGODB_PRIMARY_HOST
+            value: fyipe-mongodb
+          - name: MONGODB_REPLICA_SET_NAME
+            value: "rs0"
+          - name: MONGODB_ADVERTISED_HOSTNAME
+            value: "$(MONGODB_POD_NAME).fyipe-mongodb-headless.fyipe.svc.cluster.local"
+          - name: MONGODB_PRIMARY_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: fyipe-mongodb
+                key: mongodb-root-password
+          - name: MONGODB_REPLICA_SET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: fyipe-mongodb
+                key: mongodb-replica-set-key
+          - name: MONGODB_ENABLE_IPV6
+            value: "no"
+          - name: MONGODB_ENABLE_DIRECTORY_PER_DB
+            value: "no"
+          livenessProbe:
+            exec:
+              command:
+                - pgrep
+                - mongod
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 6
+          readinessProbe:
+            exec:
+              command:
+                - mongo
+                - --eval
+                - "db.adminCommand('ping')"
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 6
+          volumeMounts:
+            - name: datadir
+              mountPath: /bitnami/mongodb
+              subPath: 
+          resources:
+            {}
+      volumes:
+  volumeClaimTemplates:
+    - metadata:
+        name: datadir
+        annotations:
+      spec:
+        accessModes:
+          - "ReadWriteOnce"
+        resources:
+          requests:
+            storage: "20Gi"
+---
+# Source: Fyipe/charts/redis/templates/redis-master-statefulset.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: fyipe-redis-master
+  labels:
+    app: redis
+    chart: redis-10.5.11
+    release: fyipe
+    heritage: Helm
+spec:
+  selector:
+    matchLabels:
+      app: redis
+      release: fyipe
+      role: master
+  serviceName: fyipe-redis-headless
+  template:
+    metadata:
+      labels:
+        app: redis
+        chart: redis-10.5.11
+        release: fyipe
+        role: master
+      annotations:
+        checksum/health: ef9e80d0a5ef7a795229f4ab64e9f6409c87f0c4afe086f5001a6a948e1bf549
+        checksum/configmap: 752d09cbb35af37ffbbfe02e2bf0f68062b4ec9871ef3a5e0596f75f0c6360bb
+        checksum/secret: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+    spec:      
+      securityContext:
+        fsGroup: 1001
+      serviceAccountName: "default"
+      containers:
+      - name: fyipe-redis
+        image: "docker.io/bitnami/redis:latest"
+        imagePullPolicy: "Always"
+        securityContext:
+          runAsUser: 1001
+        command:
+        - /bin/bash
+        - -c
+        - |
+          if [[ -n $REDIS_PASSWORD_FILE ]]; then
+            password_aux=`cat ${REDIS_PASSWORD_FILE}`
+            export REDIS_PASSWORD=$password_aux
+          fi
+          if [[ ! -f /opt/bitnami/redis/etc/master.conf ]];then
+            cp /opt/bitnami/redis/mounted-etc/master.conf /opt/bitnami/redis/etc/master.conf
+          fi
+          if [[ ! -f /opt/bitnami/redis/etc/redis.conf ]];then
+            cp /opt/bitnami/redis/mounted-etc/redis.conf /opt/bitnami/redis/etc/redis.conf
+          fi
+          ARGS=("--port" "${REDIS_PORT}")
+          ARGS+=("--protected-mode" "no")
+          ARGS+=("--include" "/opt/bitnami/redis/etc/redis.conf")
+          ARGS+=("--include" "/opt/bitnami/redis/etc/master.conf")
+          /run.sh ${ARGS[@]}
+        env:
+        - name: REDIS_REPLICATION_MODE
+          value: master
+        - name: ALLOW_EMPTY_PASSWORD
+          value: "yes"
+        - name: REDIS_PORT
+          value: "6379"
+        ports:
+        - name: redis
+          containerPort: 6379
+        livenessProbe:
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 5
+          exec:
+            command:
+            - sh
+            - -c
+            - /health/ping_liveness_local.sh 5
+        readinessProbe:
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 1
+          successThreshold: 1
+          failureThreshold: 5
+          exec:
+            command:
+            - sh
+            - -c
+            - /health/ping_readiness_local.sh 5
+        resources:
+          null
+        volumeMounts:
+        - name: health
+          mountPath: /health
+        - name: redis-data
+          mountPath: /data
+          subPath: 
+        - name: config
+          mountPath: /opt/bitnami/redis/mounted-etc
+        - name: redis-tmp-conf
+          mountPath: /opt/bitnami/redis/etc/
+      volumes:
+      - name: health
+        configMap:
+          name: fyipe-redis-health
+          defaultMode: 0755
+      - name: config
+        configMap:
+          name: fyipe-redis
+      - name: redis-tmp-conf
+        emptyDir: {}
+  volumeClaimTemplates:
+    - metadata:
+        name: redis-data
+        labels:
+          app: redis
+          release: fyipe
+          heritage: Helm
+          component: master
+      spec:
+        accessModes:
+          - "ReadWriteOnce"
+        resources:
+          requests:
+            storage: "8Gi"
+        
+        selector:
+  updateStrategy:
+    type: RollingUpdate
+---
+# Source: Fyipe/charts/redis/templates/redis-slave-statefulset.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: fyipe-redis-slave
+  labels:
+    app: redis
+    chart: redis-10.5.11
+    release: fyipe
+    heritage: Helm
+spec:
+  replicas: 2
+  serviceName: fyipe-redis-headless
+  selector:
+    matchLabels:
+      app: redis
+      release: fyipe
+      role: slave
+  template:
+    metadata:
+      labels:
+        app: redis
+        release: fyipe
+        chart: redis-10.5.11
+        role: slave
+      annotations:
+        checksum/health: ef9e80d0a5ef7a795229f4ab64e9f6409c87f0c4afe086f5001a6a948e1bf549
+        checksum/configmap: 752d09cbb35af37ffbbfe02e2bf0f68062b4ec9871ef3a5e0596f75f0c6360bb
+        checksum/secret: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+    spec:      
+      securityContext:
+        fsGroup: 1001
+      serviceAccountName: "default"
+      containers:
+      - name: fyipe-redis
+        image: docker.io/bitnami/redis:latest
+        imagePullPolicy: "Always"
+        securityContext:
+          runAsUser: 1001
+        command:
+        - /bin/bash
+        - -c
+        - |
+          if [[ -n $REDIS_PASSWORD_FILE ]]; then
+            password_aux=`cat ${REDIS_PASSWORD_FILE}`
+            export REDIS_PASSWORD=$password_aux
+          fi
+          if [[ -n $REDIS_MASTER_PASSWORD_FILE ]]; then
+            password_aux=`cat ${REDIS_MASTER_PASSWORD_FILE}`
+            export REDIS_MASTER_PASSWORD=$password_aux
+          fi
+          if [[ ! -f /opt/bitnami/redis/etc/replica.conf ]];then
+            cp /opt/bitnami/redis/mounted-etc/replica.conf /opt/bitnami/redis/etc/replica.conf
+          fi
+          if [[ ! -f /opt/bitnami/redis/etc/redis.conf ]];then
+            cp /opt/bitnami/redis/mounted-etc/redis.conf /opt/bitnami/redis/etc/redis.conf
+          fi
+          ARGS=("--port" "${REDIS_PORT}")
+          ARGS+=("--slaveof" "${REDIS_MASTER_HOST}" "${REDIS_MASTER_PORT_NUMBER}")
+          ARGS+=("--protected-mode" "no")
+          ARGS+=("--include" "/opt/bitnami/redis/etc/redis.conf")
+          ARGS+=("--include" "/opt/bitnami/redis/etc/replica.conf")
+          /run.sh "${ARGS[@]}"
+        env:
+        - name: REDIS_REPLICATION_MODE
+          value: slave
+        - name: REDIS_MASTER_HOST
+          value: fyipe-redis-master-0.fyipe-redis-headless.fyipe.svc.cluster.local
+        - name: REDIS_PORT
+          value: "6379"
+        - name: REDIS_MASTER_PORT_NUMBER
+          value: "6379"
+        - name: ALLOW_EMPTY_PASSWORD
+          value: "yes"
+        ports:
+        - name: redis
+          containerPort: 6379
+        livenessProbe:
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 5
+          exec:
+            command:
+            - sh
+            - -c
+            - /health/ping_liveness_local_and_master.sh 5
+        readinessProbe:
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          timeoutSeconds: 10
+          successThreshold: 1
+          failureThreshold: 5
+          exec:
+            command:
+            - sh
+            - -c
+            - /health/ping_readiness_local_and_master.sh 5
+        resources:
+          null
+        volumeMounts:
+        - name: health
+          mountPath: /health
+        - name: redis-data
+          mountPath: /data
+        - name: config
+          mountPath: /opt/bitnami/redis/mounted-etc
+        - name: redis-tmp-conf
+          mountPath: /opt/bitnami/redis/etc
+      volumes:
+      - name: health
+        configMap:
+          name: fyipe-redis-health
+          defaultMode: 0755
+      - name: config
+        configMap:
+          name: fyipe-redis
+      - name: sentinel-tmp-conf
+        emptyDir: {}
+      - name: redis-tmp-conf
+        emptyDir: {}
+  volumeClaimTemplates:
+    - metadata:
+        name: redis-data
+        labels:
+          app: redis
+          release: fyipe
+          heritage: Helm
+          component: slave
+      spec:
+        accessModes:
+          - "ReadWriteOnce"
+        resources:
+          requests:
+            storage: "8Gi"
+        
+        selector:
+  updateStrategy:
+    type: RollingUpdate
+---
+# Source: Fyipe/templates/init-script.yaml
+########-INIT-SCRIPT-##########
+apiVersion: batch/v1
+kind: Job
+metadata:
+    name: fyipe-init-script
+    namespace: fyipe
+spec:
+    template:
+        spec:
+            containers:
+                - image: docker.io/fyipeproject/init-script:latest
+                  name: fyipe-init-script
+                  imagePullPolicy: Always
+                  env:
+                      - name: MONGO_URL
+                        value:  mongodb://fyipe:password@fyipe-mongodb.fyipe.svc.cluster.local:27017/fyipedb?replicaSet=rs0
+                      - name: NODE_ENV
+                        value: 'production'
+            restartPolicy: Never
+---
+# Source: Fyipe/templates/ingress.yaml
+############----INGRESS---#####################################
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    ingress.kubernetes.io/ssl-redirect: "true"
+  name: fyipe-host1-ingress
+  namespace: fyipe
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /accounts
+            backend:
+              serviceName: fyipe-accounts
+              servicePort: 80
+          - path: /dashboard
+            backend:
+              serviceName: fyipe-dashboard
+              servicePort: 80
+          - path: /admin
+            backend:
+              serviceName: fyipe-admin
+              servicePort: 80
+          - path: /api
+            backend:
+              serviceName: fyipe-backend
+              servicePort: 80
+          - path: /status-page
+            backend:
+              serviceName: fyipe-status
+              servicePort: 80
+          - path: /
+            backend:
+              serviceName: fyipe-accounts
+              servicePort: 80
+---
+# Source: Fyipe/templates/accounts.yaml
+###########################################
+---
+# Source: Fyipe/templates/admin-dashboard.yaml
+##################################
+---
+# Source: Fyipe/templates/api-docs.yaml
+####################################
+#IMPORTANT: Kube Reosurces below are ONLY for SaaS service
+####################################
+---
+# Source: Fyipe/templates/backend.yaml
+##################################################
+---
+# Source: Fyipe/templates/dashboard.yaml
+##########################################################
+---
+# Source: Fyipe/templates/helm-chart.yaml
+####################################
+#IMPORTANT: Kube Reosurces below are ONLY for SaaS service
+####################################
+---
+# Source: Fyipe/templates/home.yaml
+####################################
+#IMPORTANT: Kube Reosurces below are ONLY for SaaS service
+####################################
+---
+# Source: Fyipe/templates/ingress.yaml
+##########################################################################
+---
+# Source: Fyipe/templates/init-script.yaml
+####################################
+---
+# Source: Fyipe/templates/licensing.yaml
+####################################
+#IMPORTANT: Kube Reosurces below are ONLY for SaaS service
+####################################
+---
+# Source: Fyipe/templates/probe.yaml
+###########################
+---
+# Source: Fyipe/templates/slack.yaml
+####################################
+#IMPORTANT: Kube Reosurces below are ONLY for SaaS service
+####################################
+---
+# Source: Fyipe/templates/status-page.yaml
+########################################
+---
+# Source: Fyipe/templates/statusPageIngress.yaml
+############----STATUS-PAGE-INGRESS--#####################################
+##################################
