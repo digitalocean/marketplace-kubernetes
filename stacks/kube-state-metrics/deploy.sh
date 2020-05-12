@@ -2,11 +2,10 @@
 
 set -e
 
-# set kubectl namespace
-kubectl config set-context --current --namespace=kube-system
+# declare variables
+CHART_VERSION="2.8.4"
+NAMESPACE="kube-system"
 
 # deploy kube-state-metrics
-kubectl apply -f https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/kube-state-metrics/yaml/kube-state-metrics.yaml
+helm install stable/kube-state-metrics -g --version "$CHART_VERSION" -n "$NAMESPACE" --values=values.yaml --wait
 
-# ensure services are running
-kubectl rollout status -w deployment/kube-state-metrics
