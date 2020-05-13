@@ -11,7 +11,7 @@ if [ -z "$MP_KUBERNETES" ]
 then
     values="values.yaml"
 else
-    values="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/helm3-test/stacks/${STACK}/values.yaml"
+    values="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/${STACK}/values.yaml"
 fi
 
 helm install "$CHART" \
