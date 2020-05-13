@@ -1,2 +1,2 @@
 customLabels:
-    app.kubernetes.io/installed-by: digitalocean-marketplace
+  app.kubernetes.io/installed-by: digitalocean-marketplace
