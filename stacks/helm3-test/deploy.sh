@@ -9,7 +9,6 @@ NAMESPACE="kube-system"
 
 if [ -z "$MP_KUBERNETES" ]
 then 
-#!/bin/sh
 helm install "$CHART" \
   --create-namespace \
   --generate-name \
