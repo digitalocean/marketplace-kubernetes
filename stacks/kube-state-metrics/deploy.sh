@@ -20,4 +20,3 @@ helm install "$CHART" \
   --values "$VALUES" \
   --version "$CHART_VERSION" \
   --wait
-  
