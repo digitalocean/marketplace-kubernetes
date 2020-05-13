@@ -1,0 +1,51 @@
+{{- $host := ( index .Values.ingress.hosts 0 ) -}}
+{{- $httpScheme := ( $host.tls | ternary "https" "http" ) -}}
+{{- $wsScheme := ( $host.tls | ternary "wss" "ws" ) -}}
+{{- $origin := printf "%s%s"  $host.name .Values.designer.ingress.path -}}
+{{- $apiURL := printf "%s://%s%s" $httpScheme ( .Values.api.ingress.hostname | default $host.name ) .Values.api.ingress.path -}}
+{{- $authURL := printf "%s://%s%s" $httpScheme ( .Values.auth.ingress.hostname | default $host.name ) .Values.auth.ingress.path -}}
+{{- $wsURL := printf "%s://%s%s/studio" $wsScheme ( .Values.proxy.ingress.hostname | default $host.name ) .Values.proxy.ingress.path -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "robomotion-designer.fullname" . }}
+  labels:
+    app: {{ template "robomotion-designer.fullname" . }}
+    chart: {{ template "robomotion.chart" . }}
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
+    component: {{ .Values.designer.name }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ template "robomotion-designer.fullname" . }}
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: {{ template "robomotion-designer.fullname" . }}
+    spec:
+      containers:
+      - name: {{ template "robomotion-designer.fullname" . }}
+        image: "{{ .Values.designer.image }}:{{ .Values.designer.imageTag }}"
+        ports:
+        - containerPort: 80
+          name: http
+        env:
+          - name: ORIGIN
+            value: {{ $origin }}
+          - name: API_URL
+            value: {{ $apiURL }}
+          - name: AUTH_URL
+            value: {{ $authURL }}
+          - name: SESSION_STORE_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ printf "%s-%s" .Release.Name "session-store"  }}
+                key: secret
+          - name: WS_URL
+            value: {{ $wsURL }}
+      {{- if .Values.registry.secret }}
+      imagePullSecrets:
+      - name: {{ .Values.registry.secret }}
+      {{- end }}
