@@ -2,10 +2,14 @@
 
 set -e
 
-# declare variables
+CHART="stable/kube-state-metrics"
 CHART_VERSION="2.8.4"
 NAMESPACE="kube-system"
 
-# deploy kube-state-metrics
-helm install stable/kube-state-metrics -g --version "$CHART_VERSION" -n "$NAMESPACE" --values=values.yaml --wait
-
+helm install "$CHART" \
+  --create-namespace \
+  --generate-name \
+  --namespace "$NAMESPACE" \
+  --values values.yaml \
+  --version "$CHART_VERSION" \
+  --wait
