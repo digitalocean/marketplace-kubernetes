@@ -2,21 +2,21 @@
 
 set -e
 
-# create prometheus-operator namespace
-cat <<EOF | kubectl apply -f -
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: prometheus-operator
-EOF
+STACK="prometheus-operator"
+CHART="stable/prometheus-operator"
+CHART_VERSION="8.13.7"
+NAMESPACE="prometheus-operator"
 
-# set kubectl namespace
-kubectl config set-context --current --namespace=prometheus-operator
+if [ -z "${MP_KUBERNETES}" ]; then
+  VALUES="values.yaml"
+else
+  VALUES="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/${STACK}/values.yaml"
+fi
 
-# deploy prometheus-operator
-kubectl apply -f https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/prometheus-operator/yaml/prometheus-operator.yaml
-
-# ensure services are running
-kubectl rollout status -w deployment/prometheus-operator-grafana
-kubectl rollout status -w deployment/prometheus-operator-kube-state-metrics
-kubectl rollout status -w deployment/prometheus-operator-operator
+helm install "$CHART" \
+  --create-namespace \
+  --generate-name \
+  --namespace "$NAMESPACE" \
+  --values "$VALUES" \
+  --version "$CHART_VERSION" \
+  --wait
