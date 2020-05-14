@@ -1,12 +1,24 @@
 #!/bin/sh
 
+# https://github.com/kubernetes/ingress-nginx/tree/master/charts/ingress-nginx
+
 set -e
 
-VERSION=nginx-0.26.1
+STACK="nginx-ingress"
+CHART="ingress-nginx/ingress-nginx"
+CHART_VERSION="2.1.0"
+NAMESPACE="ingress-nginx"
 
-# deploy
-kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/$VERSION/deploy/static/mandatory.yaml
-kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/$VERSION/deploy/static/provider/cloud-generic.yaml
+if [ -z "${MP_KUBERNETES}" ]; then
+  VALUES="values.yaml"
+else
+  VALUES="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/${STACK}/values.yaml"
+fi
 
-# ensure services are running
-kubectl rollout status -w deployment/nginx-ingress-controller -n ingress-nginx
+helm install "$CHART" \
+  --create-namespace \
+  --generate-name \
+  --namespace "$NAMESPACE" \
+  --values "$VALUES" \
+  --version "$CHART_VERSION" \
+  --wait
