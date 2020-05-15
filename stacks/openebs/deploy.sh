@@ -4,7 +4,7 @@ set -e
 
 STACK="openebs"
 CHART="stable/openebs"
-CHART_VERSION="1.9.2"
+CHART_VERSION="1.10.0"
 NAMESPACE="openebs"
 
 if [ -z "${MP_KUBERNETES}" ]; then
@@ -20,5 +20,3 @@ helm install "$CHART" \
   --values "$VALUES" \
   --version "$CHART_VERSION" \
   --wait
-
-#helm install stable/openebs --version 1.9.2
