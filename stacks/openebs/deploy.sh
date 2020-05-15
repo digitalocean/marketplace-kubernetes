@@ -2,22 +2,21 @@
 
 set -e
 
-# create namespace
-cat <<EOF | kubectl apply -f -
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: openebs
-EOF
+STACK="openebs"
+CHART="stable/openebs"
+CHART_VERSION="1.10.0"
+NAMESPACE="openebs"
 
-# set kubectl namespace
-kubectl config set-context --current --namespace=openebs
+if [ -z "${MP_KUBERNETES}" ]; then
+  VALUES="values.yaml"
+else
+  VALUES="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/${STACK}/values.yaml"
+fi
 
-# deploy openebs
-kubectl apply -f https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/openebs/yaml/openebs.yaml
-
-# ensure services are running
-kubectl get deployments -o custom-columns=NAME:.metadata.name | tail -n +2 | while read -r line
-do
-  kubectl rollout status -w deployment/"$line"
-done
+helm install "$CHART" \
+  --create-namespace \
+  --generate-name \
+  --namespace "$NAMESPACE" \
+  --values "$VALUES" \
+  --version "$CHART_VERSION" \
+  --wait
