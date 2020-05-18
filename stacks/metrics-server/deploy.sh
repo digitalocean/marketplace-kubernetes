@@ -2,11 +2,20 @@
 
 set -e
 
-# set kubectl namespace
-kubectl config set-context --current --namespace=kube-system
+STACK="metrics-server"
+CHART="stable/metrics-server"
+CHART_VERSION="2.11.1"
+NAMESPACE="kube-system"
 
-# deploy metrics-server
-kubectl apply -f https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/metrics-server/yaml/metrics-server.yaml
+if [ -z "${MP_KUBERNETES}" ]; then
+  VALUES="values.yaml"
+else
+  VALUES="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/${STACK}/values.yaml"
+fi
 
-# ensure services are running
-kubectl rollout status -w deployment/metrics-server
+helm install "$STACK" "$CHART" \
+  --create-namespace \
+  --namespace "$NAMESPACE" \
+  --values "$VALUES" \
+  --version "$CHART_VERSION" \
+  --wait
