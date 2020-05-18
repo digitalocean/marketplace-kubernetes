@@ -27,8 +27,9 @@ on:
     # Only test if a change was made to the stacks subdirectories.
     # This assumes any change to source would have to be rendered.
     paths:
-    - 'stacks/**'    
-    - '!stacks/**/*.md'
+    - 'stacks/**'
+    - '!***'     # disable this workflow while we deterine how to run on external PRs
+#    - '!stacks/**/*.md'
 
 jobs:
 
