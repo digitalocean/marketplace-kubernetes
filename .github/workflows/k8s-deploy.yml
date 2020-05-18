@@ -28,7 +28,7 @@ on:
     # This assumes any change to source would have to be rendered.
     paths:
     - 'stacks/**'
-    - '***'
+    - '!***'
 #    - '!stacks/**/*.md'
 
 jobs:
