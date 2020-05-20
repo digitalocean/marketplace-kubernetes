@@ -19,4 +19,3 @@ helm upgrade --install "$STACK" "$CHART" \
   --values "$VALUES" \
   --version "$CHART_VERSION" \
   --wait
-  
