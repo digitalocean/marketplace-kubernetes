@@ -13,9 +13,8 @@ else
   VALUES="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/${STACK}/values.yaml"
 fi
 
-helm install "$CHART" \
+helm upgrade --install "$STACK" "$CHART" \
   --create-namespace \
-  --generate-name \
   --namespace "$NAMESPACE" \
   --values "$VALUES" \
   --version "$CHART_VERSION" \
