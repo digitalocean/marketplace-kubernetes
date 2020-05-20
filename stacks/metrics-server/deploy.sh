@@ -1,11 +1,15 @@
 #!/bin/sh
 
-set -e
-
 STACK="metrics-server"
 CHART="stable/metrics-server"
 CHART_VERSION="2.11.1"
 NAMESPACE="kube-system"
+
+helm status $STACK -n $NAMESPACE 
+if [ $? -eq 0 ]; then
+  echo "${CHART} is already installed."
+  exit 0
+fi
 
 if [ -z "${MP_KUBERNETES}" ]; then
   VALUES="values.yaml"
@@ -19,3 +23,9 @@ helm install "$STACK" "$CHART" \
   --values "$VALUES" \
   --version "$CHART_VERSION" \
   --wait
+
+if [ $? -eq 0 ]; then
+  exit 0
+else
+  exit 1
+fi
