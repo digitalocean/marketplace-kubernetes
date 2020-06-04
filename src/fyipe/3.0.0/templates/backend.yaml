@@ -1,0 +1,91 @@
+###########-----BACKEND------##############
+
+# Fyipe Backend Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: {{ printf "%s-%s" .Release.Name "backend"  }}
+    namespace: {{ .Release.Namespace }}
+    labels:
+        app: {{ printf "%s-%s" .Release.Name "backend"  }}
+spec:
+    selector:
+        matchLabels:
+            app: {{ printf "%s-%s" .Release.Name "backend"  }}
+    replicas: {{ .Values.replicaCount }}
+    template:
+        metadata:
+            labels:
+                app: {{ printf "%s-%s" .Release.Name "backend"  }}
+        spec:
+            containers:
+                - image: {{ printf "%s/%s/%s:%s" .Values.image.registry .Values.image.repository "backend" .Values.image.tag }}
+                  name: {{ printf "%s-%s" .Release.Name "backend"  }}
+                  imagePullPolicy: {{ .Values.image.pullPolicy }}
+                  env:
+                      - name: JWT_SECRET
+                        valueFrom:
+                          configMapKeyRef:
+                            name: {{ printf "%s-%s" .Release.Name "configmap"  }}
+                            key: encryptionkey
+                      - name: MONGO_URL
+                        value: {{ template "fyipe.mongodbConnectionString" . }}
+                      - name: REDIS_HOST
+                        value: {{ template "fyipe.redisHost" . }}
+                      - name: REDIS_PORT
+                        value: {{ .Values.redis.redisPort | quote }}
+                      - name: PORT
+                        value: {{ .Values.host.backendPort | quote }}
+                      - name: EMAIL_VERIFY_TIME
+                        value: '3600'
+                      - name: BACKEND_HOST
+                        value: {{ .Values.host.backend }}
+                      - name: NODE_ENV
+                        value: 'production'
+                      - name: RATE_LIMITTER_TIME_PERIOD_IN_MS
+                        value: {{ .Values.rateLimitter.requestLimitTimePeriodInMS | quote }}
+                      - name: RATE_LIMITTER_REQUEST_LIMIT
+                        value: {{ .Values.rateLimitter.requestLimit | quote }}
+                      - name: RATE_LIMITTER_ENABLED
+                        value: {{ .Values.rateLimitter.enabled | quote  }}
+                      - name: CLUSTER_KEY
+                        valueFrom:
+                          configMapKeyRef:
+                            name: {{ printf "%s-%s" .Release.Name "configmap"  }}
+                            key: clusterkey
+                      {{- if .Values.saas.isSaasService }}
+                      - name: STRIPE_PUBLIC_KEY
+                        value: {{ .Values.saas.stripe.publicKey }}
+                      - name: STRIPE_PRIVATE_KEY
+                        value: {{ .Values.saas.stripe.privateKey }}
+                      - name: IS_SAAS_SERVICE
+                        value: 'true'
+                      - name: AIRTABLE_API_KEY
+                        value: {{ .Values.saas.airtable.key }}
+                      - name: AIRTABLE_BASE_ID
+                        value: {{ .Values.saas.airtable.baseId }}
+                      {{- end }}
+                  ports:
+                      - containerPort: {{ .Values.host.backendPort }}
+                        hostPort: {{ .Values.host.backendPort }}
+                        name: {{ printf "%s-%s" .Release.Name "backend"  }}
+            restartPolicy: {{ .Values.image.restartPolicy }}
+
+---
+# Fyipe Backend Deployment
+apiVersion: v1
+kind: Service
+metadata:
+    labels:
+        app: {{ printf "%s-%s" .Release.Name "backend"  }}
+    name: {{ printf "%s-%s" .Release.Name "backend"  }}
+    namespace: {{ .Release.Namespace }}
+spec:
+    ports:
+        - port: {{ .Values.host.backendServicePort }}
+          targetPort: {{ .Values.host.backendPort }}
+    selector:
+        app: {{ printf "%s-%s" .Release.Name "backend"  }}
+    type: {{ .Values.service.type }}
+---
+##################################################

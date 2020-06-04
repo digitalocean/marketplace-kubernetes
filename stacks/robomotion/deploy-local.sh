@@ -15,7 +15,7 @@ EOF
 # set kubectl namespace
 kubectl config set-context --current --namespace=robomotion-system
 
-# deploy redskyops
+# deploy robomotion
 kubectl apply -f "$ROOT_DIR"/stacks/robomotion/yaml/robomotion.yaml
 
 # ensure services are running

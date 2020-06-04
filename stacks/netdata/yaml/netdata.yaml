@@ -5,9 +5,9 @@ kind: PodSecurityPolicy
 metadata:
   name: netdata-psp
   labels:
-    heritage: Tiller
+    heritage: Helm
     release: netdata
-    chart: netdata-1.1.13
+    chart: netdata-1.1.16
 spec:
   allowPrivilegeEscalation: true
   allowedCapabilities:
@@ -30,42 +30,48 @@ spec:
   volumes:
   - '*'
 ---
-# Source: netdata/templates/configmap.yaml
+# Source: netdata/templates/serviceaccount.yaml
+kind: ServiceAccount
+apiVersion: v1
+metadata:
+  labels:
+    app: netdata
+    chart: netdata-1.1.16
+    release: netdata
+    heritage: Helm
+  name: netdata
 ---
+# Source: netdata/templates/configmap.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: netdata-conf-slave
   labels:
     app: netdata
-    chart: netdata-1.1.13
+    chart: netdata-1.1.16
     release: netdata
-    heritage: Tiller
+    heritage: Helm
 data:
   coredns:     |
       update_every: 1
       autodetection_retry: 0
       jobs:
         - url: http://127.0.0.1:9153/metrics
-    
   kubelet:     |
       update_every: 1
       autodetection_retry: 0
       jobs:
         - url: http://127.0.0.1:10255/metrics
-    
   kubeproxy:     |
       update_every: 1
       autodetection_retry: 0
       jobs:
         - url: http://127.0.0.1:10249/metrics
-    
   netdata:     |
       [global]
         memory mode = none
       [health]
         enabled = no
-    
   stream:     |
       [stream]
         enabled = yes
@@ -75,18 +81,17 @@ data:
         buffer size bytes = 1048576
         reconnect delay seconds = 5
         initial clock resync iterations = 60
-    
-
 ---
+# Source: netdata/templates/configmap.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: netdata-conf-master
   labels:
     app: netdata
-    chart: netdata-1.1.13
+    chart: netdata-1.1.16
     release: netdata
-    heritage: Tiller
+    heritage: Helm
 data:
   health:     |
       SEND_EMAIL="NO"
@@ -99,7 +104,6 @@ data:
       role_recipients_slack[webmaster]="${DEFAULT_RECIPIENT_SLACK}"
       role_recipients_slack[proxyadmin]="${DEFAULT_RECIPIENT_SLACK}"
       role_recipients_slack[sitemgr]="${DEFAULT_RECIPIENT_SLACK}"
-    
   netdata:     |
       [global]
         memory mode = save
@@ -117,7 +121,6 @@ data:
         proc = no
         idlejitter = no
         diskspace = no
-    
   stream:     |
       [11111111-2222-3333-4444-555555555555]
         enabled = yes
@@ -125,19 +128,6 @@ data:
         default memory mode = save
         health enabled by default = auto
         allow from = *
-    
-
----
-# Source: netdata/templates/serviceaccount.yaml
-kind: ServiceAccount
-apiVersion: v1
-metadata:
-  labels:
-    app: netdata
-    chart: netdata-1.1.13
-    release: netdata
-    heritage: Tiller
-  name: netdata
 ---
 # Source: netdata/templates/clusterrole.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -146,9 +136,9 @@ metadata:
   name: netdata
   labels:
     app: netdata
-    chart: netdata-1.1.13
+    chart: netdata-1.1.16
     release: netdata
-    heritage: Tiller
+    heritage: Helm
 rules:
 - apiGroups: [""]
   resources: ["services", "events", "endpoints", "pods", "nodes", "componentstatuses", "nodes/proxy" ]
@@ -172,9 +162,9 @@ metadata:
   name: netdata-psp
   labels:
     app: netdata
-    chart: netdata-1.1.13
+    chart: netdata-1.1.16
     release: netdata
-    heritage: Tiller
+    heritage: Helm
 rules:
 - apiGroups: ['policy']
   resources: ['podsecuritypolicies']
@@ -189,9 +179,9 @@ metadata:
   name: netdata
   labels:
     app: netdata
-    chart: netdata-1.1.13
+    chart: netdata-1.1.16
     release: netdata
-    heritage: Tiller
+    heritage: Helm
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -208,9 +198,9 @@ metadata:
   name: netdata-psp
   labels:
     app: netdata
-    chart: netdata-1.1.13
+    chart: netdata-1.1.16
     release: netdata
-    heritage: Tiller
+    heritage: Helm
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -227,9 +217,9 @@ metadata:
   name: netdata
   labels:
     app: netdata
-    chart: netdata-1.1.13
+    chart: netdata-1.1.16
     release: netdata
-    heritage: Tiller
+    heritage: Helm
     role: master
 spec:
   type: ClusterIP
@@ -242,7 +232,6 @@ spec:
     app: netdata
     release: netdata
     role: master
-
 ---
 # Source: netdata/templates/daemonset.yaml
 apiVersion: apps/v1
@@ -251,9 +240,9 @@ metadata:
   name: netdata-slave
   labels:
     app: netdata
-    chart: netdata-1.1.13
+    chart: netdata-1.1.16
     release: netdata
-    heritage: Tiller
+    heritage: Helm
     role: slave
 spec:
   selector:
@@ -265,7 +254,7 @@ spec:
     metadata:
       annotations:
         container.apparmor.security.beta.kubernetes.io/netdata: unconfined
-        checksum/config: 6743fb1ea4aae0cfd782c6e486ba713b1833f6031145e8855c8dba6976bdbb15
+        checksum/config: d6083e7129b98d4454ae774f4402db09ac6affaeb4760db0882e71e63e91851c
       labels:
         app: netdata
         release: netdata
@@ -279,7 +268,7 @@ spec:
       initContainers:
       containers:
         - name: netdata
-          image: "netdata/netdata:v1.20.0"
+          image: "netdata/netdata:v1.22.1"
           imagePullPolicy: Always
           env:
             - name: MY_POD_NAME
@@ -344,11 +333,9 @@ spec:
                 - SYS_ADMIN
           resources:
             {}
-            
       tolerations:
         - effect: NoSchedule
           operator: Exists
-        
       volumes:
         - name: proc
           hostPath:
@@ -363,7 +350,6 @@ spec:
           configMap:
             name: netdata-conf-slave
       dnsPolicy: ClusterFirstWithHostNet
-
 ---
 # Source: netdata/templates/statefulset.yaml
 apiVersion: apps/v1
@@ -372,9 +358,9 @@ metadata:
   name: netdata-master
   labels:
     app: netdata
-    chart: netdata-1.1.13
+    chart: netdata-1.1.16
     release: netdata
-    heritage: Tiller
+    heritage: Helm
     role: master
 spec:
   serviceName: netdata
@@ -400,7 +386,7 @@ spec:
         release: netdata
         role: master
       annotations:
-        checksum/config: 6743fb1ea4aae0cfd782c6e486ba713b1833f6031145e8855c8dba6976bdbb15
+        checksum/config: d6083e7129b98d4454ae774f4402db09ac6affaeb4760db0882e71e63e91851c
     spec:
       securityContext:
         fsGroup: 201
@@ -408,7 +394,7 @@ spec:
       initContainers:
       containers:
         - name: netdata
-          image: "netdata/netdata:v1.20.0"
+          image: "netdata/netdata:v1.22.1"
           imagePullPolicy: Always
           env:
             - name: MY_POD_NAME
@@ -457,12 +443,10 @@ spec:
               mountPath: /var/cache/netdata
           resources:
             {}
-            
       volumes:
         - name: config
           configMap:
             name: netdata-conf-master
-
 ---
 # Source: netdata/templates/ingress.yaml
 apiVersion: extensions/v1beta1
@@ -471,13 +455,12 @@ metadata:
   name: netdata
   labels:
     app: netdata
-    chart: netdata-1.1.13
+    chart: netdata-1.1.16
     release: netdata
-    heritage: Tiller
+    heritage: Helm
   annotations:
     kubernetes.io/ingress.class: nginx
     kubernetes.io/tls-acme: "true"
-    
 spec:
   rules:
     - host: netdata.k8s.local
@@ -487,4 +470,3 @@ spec:
             backend:
               serviceName: netdata
               servicePort: http
-
