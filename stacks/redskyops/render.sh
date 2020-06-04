@@ -20,8 +20,7 @@ rm -rf "$ROOT_DIR"/stacks/redskyops/yaml
 mkdir -p "$ROOT_DIR"/stacks/redskyops/yaml
 
 # render Red Sky Ops
-helm template \
-  --name redsky \
+helm template redsky \
   --namespace redsky-system \
   --values redskyops/values/redskyops.yaml \
   "$SRC_VERSION" > "$ROOT_DIR"/stacks/redskyops/yaml/redskyops.yaml

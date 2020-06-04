@@ -2,22 +2,21 @@
 
 set -e
 
-# create namespace
-cat <<EOF | kubectl apply -f -
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: jaeger
-EOF
+STACK="jaeger"
+CHART="jaegertracing/jaeger"
+CHART_VERSION="0.28.0"
+NAMESPACE="jaeger"
 
-# set kubectl namespace
-kubectl config set-context --current --namespace=jaeger
+if [ -z "${MP_KUBERNETES}" ]; then
+  VALUES="values.yaml"
+else
+  VALUES="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/${STACK}/values.yaml"
+fi
 
-# deploy jaeger
-kubectl apply -f https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/jaeger/yaml/jaeger.yaml
-
-# ensure services are running
-kubectl get deployments -o custom-columns=NAME:.metadata.name | tail -n +2 | while read -r line
-do
-  kubectl rollout status deployment/"$line"
-done
+helm install "$CHART" \
+  --create-namespace \
+  --generate-name \
+  --namespace "$NAMESPACE" \
+  --values "$VALUES" \
+  --version "$CHART_VERSION" \
+  --wait

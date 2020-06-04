@@ -5,7 +5,7 @@ set -e
 BUILD_DIR=$(mktemp -d)
 ROOT_DIR=$(git rev-parse --show-toplevel)
 
-SRC_VERSION="1.0.5"
+SRC_VERSION="1.1.0"
 
 cp -r "$ROOT_DIR"/src/robomotion/"$SRC_VERSION" $BUILD_DIR
 cp -r "$ROOT_DIR"/stacks/robomotion $BUILD_DIR

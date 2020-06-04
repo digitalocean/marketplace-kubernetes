@@ -1,0 +1,11 @@
+controller:
+  metrics:
+    enabled: true
+    service:
+      labels:
+        app.kubernetes.io/installed-by: digitalocean-marketplace
+  podLabels:
+    app.kubernetes.io/installed-by: digitalocean-marketplace
+  service:
+    labels:
+      app.kubernetes.io/installed-by: digitalocean-marketplace

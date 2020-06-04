@@ -2,7 +2,7 @@
 
 set -e
 
-LINKERD2_VERSION="stable-2.6.0"
+LINKERD2_VERSION="stable-2.7.1"
 TMP_DIR=$(mktemp -d)
 
 # determine OS
