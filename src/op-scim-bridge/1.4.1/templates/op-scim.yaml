@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: op-scim-bridge
+  labels: &ScimDeploymentLabels
+    app.kubernetes.io/application: {{ .Values.applicationName }}
+    app.kubernetes.io/component: op-scim-bridge
+spec:
+  selector:
+    matchLabels: *ScimDeploymentLabels
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels: *ScimDeploymentLabels
+    spec:
+      containers:
+      - name: op-scim-bridge
+        image: {{ .Values.opscimImage }}
+        imagePullPolicy: Always
+        command: ["/op-scim/op-scim"]
+        args: ["--redis-host={{ .Values.applicationName }}-redis-svc", "--session={{ .Values.scimsessionPath }}", "--port=8080"]
+        env:
+        # - name: OP_DOMAIN
+        #   value: {{ .Values.OP_ACCOUNT_DOMAIN }}
+        ports:
+        - containerPort: 8080
+        - containerPort: 8443
+        volumeMounts:
+        - name: {{ .Values.applicationName }}-scimsession
+          mountPath: "/secret"
+          readOnly: false
+      volumes:
+      - name: {{ .Values.applicationName }}-scimsession
+        persistentVolumeClaim:
+          claimName: {{ .Values.applicationName }}-pvc
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.applicationName }}-bridge-svc
+  labels:
+    app.kubernetes.io/application: {{ .Values.applicationName }}
+    app.kubernetes.io/component: op-scim-bridge
+spec:
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 8080
+  - name: scim-bridge-https-port
+    port: 443
+    protocol: TCP
+    targetPort: 8443
+  selector:
+    app.kubernetes.io/application: {{ .Values.applicationName }}
+    app.kubernetes.io/component: op-scim-bridge
+  type: LoadBalancer
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.applicationName }}-pvc
+  labels:
+    app.kubernetes.io/application: {{ .Values.applicationName }}
+    app.kubernetes.io/component: op-scim-bridge
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: do-block-storage
