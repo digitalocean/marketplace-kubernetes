@@ -2,6 +2,17 @@
 
 set -e
 
+# check if metrics-server is already installed
+CHECK=$(kubectl get svc metrics-server -n kube-system --ignore-not-found)
+if [ "$CHECK" = "" ]
+then
+  echo "metrics-server not found"
+else
+  echo "metrics-server found, exiting"
+  exit 0
+fi
+
+# install metrics-server
 STACK="metrics-server"
 CHART="stable/metrics-server"
 CHART_VERSION="2.11.1"
