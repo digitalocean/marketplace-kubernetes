@@ -1,0 +1,12 @@
+email: "admin@example.com"
+adminToken: "PLACEHOLDER_VALUE"
+
+registry:
+  storage:
+    filesystem:
+      enabled: true
+
+cloud:
+  provider:
+    digitalocean:
+      enabled: true
