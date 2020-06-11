@@ -1,0 +1,208 @@
+subdomain: localhost
+email: ""
+license: ""
+applications:
+  repository: https://apps.okteto.com
+cluster:
+  endpoint: ""
+auth:
+  google:
+    enabled: false
+    clientId: ""
+    clientSecret: ""
+  github:
+    enabled: false
+    clientId: ""
+    clientSecret: ""
+    whitelist: []
+  token:
+    enabled: false
+wildcardCertificate:
+  create: true
+  name: default-ssl-certificate
+cloud:
+  enabled: true
+  secret:
+    name: okteto-cloud-secret
+    key: key
+  provider:
+    aws:
+      enabled: false
+      region: us-west-2
+      bucket: null
+      iam:
+        enabled: true
+        accessKeyID: ""
+    byo:
+      enabled: false
+      issuerName: null
+    digitalocean:
+      enabled: false
+      region: SFO1
+      bucket: null
+    gcp:
+      enabled: false
+      project: ""
+      bucket: null
+backend:
+  image:
+    registry: okteto/backend
+    tag: 1.6.79
+api:
+  port: 8080
+  replicaCount: 2
+  resources: {}
+webhook:
+  replicaCount: 2
+  port: 443
+  resources: {}
+frontend:
+  image:
+    registry: okteto/frontend
+    tag: 1.6.79
+  port: 8080
+  replicaCount: 2
+  resources: {}
+buildkit:
+  enabled: true
+  image:
+    registry: okteto/buildkit
+    tag: v0.6.4-1
+  port: 1234
+  ingress:
+    enabled: true
+  service:
+    type: ClusterIP
+    sessionAffinity: null
+    loadBalancerIP: null
+  replicaCount: 1
+  rootless:
+    enabled: false
+    image:
+      registry: okteto/buildkit
+      tag: v0.6.4-rootless1
+  resources: {}
+  storage:
+    size: 40Gi
+    accessModes:
+    - ReadWriteOnce
+registry:
+  enabled: true
+  replicaCount: 1
+  port: 5000
+  ingress:
+    enabled: true
+  service:
+    type: ClusterIP
+    sessionAffinity: null
+    loadBalancerIP: null
+  haSharedSecret: null
+  image:
+    registry: registry
+    tag: 2
+  log:
+    level: info
+    formatter: json
+  storage:
+    filesystem:
+      enabled: false
+      persistence:
+        enabled: true
+        claimName: ""
+        accessMode: ReadWriteOnce
+        storageClass: ""
+        size: 40Gi
+    cloud:
+      enabled: true
+  resources: {}
+migration:
+  enabled: true
+  resources: {}
+gc:
+  enabled: true
+  schedule: '@hourly'
+telemetry:
+  enabled: true
+  resources: {}
+pullPolicy: IfNotPresent
+imagePullSecrets: []
+clusterRole: ""
+ha: false
+scheduleByPodPressure: false
+userDefinedNamespaces: true
+production:
+  enabled: false
+maintenance: false
+multitenancy:
+  hard: false
+  cidr: ""
+  ingressReloadDelay: 0
+  network:
+    connections: 20
+    rps: 20
+    rpm: 200
+    ingress: 5M
+    egress: 5M
+  requests:
+    cpu: "0"
+    memory: "0"
+  limits:
+    cpu: "2"
+    memory: 4Gi
+  limitranges:
+    max:
+      cpu: "1"
+      memory: 2Gi
+    requests:
+      cpu: "0"
+      memory: "0"
+    limits:
+      cpu: 500m
+      memory: 1Gi
+ingress:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+nginx-ingress:
+  enabled: true
+  controller:
+    config:
+      custom-http-errors: 502,503
+      ignore-invalid-headers: "false"
+      enable-underscores-in-headers: "true"
+      proxy-body-size: 60M
+    extraArgs:
+      default-ssl-certificate: $(POD_NAMESPACE)/default-ssl-certificate
+      tcp-services-configmap: $(POD_NAMESPACE)/tcp-services-configmap
+    replicaCount: 1
+    service:
+      type: LoadBalancer
+  defaultBackend:
+    enabled: true
+    image:
+      repository: okteto/custom-error-pages
+      tag: 0.1.1
+      pullPolicy: IfNotPresent
+    replicaCount: 1
+  tcp:
+    1234: buildkit-service-placeholder
+cert-manager:
+  enabled: true
+unsupported:
+  defaultPlan: enterprise
+  proPlanPool: null
+  oktetoPool: null
+  buildPool: null
+  billing:
+    schedule: '@daily'
+    enabled: false
+    crm: {}
+  opentracing:
+    enabled: false
+    agent:
+      host: null
+      port: null
+    sampler:
+      type: const
+      param: 1
+  mailgun: {}
+  scope: {}

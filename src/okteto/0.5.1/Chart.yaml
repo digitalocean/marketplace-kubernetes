@@ -1,0 +1,17 @@
+apiVersion: v2
+appVersion: 1.6.79
+description: Development platform for Kubernetes applications
+engine: gotpl
+home: https://okteto.com
+icon: https://okteto.com/okteto-logo-transparent-light-v-1.1.png
+keywords:
+- okteto
+- development
+- team collaboration
+maintainers:
+- email: ramiro@okteto.com
+  name: ramiro
+- email: pablo@okteto.com
+  name: pablo
+name: okteto-enterprise
+version: 0.5.1

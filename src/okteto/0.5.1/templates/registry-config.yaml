@@ -1,0 +1,35 @@
+{{- if .Values.registry.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "okteto.fullname" . }}-registry-config
+  labels:
+    app.kubernetes.io/component: "registry"
+    app.kubernetes.io/part-of: "okteto"
+    app.kubernetes.io/name: "{{ include "okteto.fullname" . }}-registry-config"
+    helm.sh/chart: {{ include "okteto.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+data:
+  config.yml: |-
+    version: 0.1
+    log:
+      accesslog:
+        disabled: true
+      fields:
+        service: registry
+      formatter: {{ .Values.registry.log.formatter }}
+      level: {{ .Values.registry.log.level }}
+    storage:
+      cache:
+        blobdescriptor: inmemory
+    http:
+      addr: :{{ .Values.registry.port }}
+      headers:
+        X-Content-Type-Options: [nosniff]
+    health:
+      storagedriver:
+        enabled: true
+        interval: 10s
+        threshold: 3
+{{- end }}

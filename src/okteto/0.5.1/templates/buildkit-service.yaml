@@ -1,0 +1,27 @@
+{{- if .Values.buildkit.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: "{{ include "okteto.fullname" . }}-buildkit"
+  labels:
+    app.kubernetes.io/component: "buildkit"
+    app.kubernetes.io/part-of: "okteto"
+    app.kubernetes.io/name: "{{ include "okteto.fullname" . }}-buildkit"
+    helm.sh/chart: {{ include "okteto.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  type: {{ .Values.buildkit.service.type }}
+  {{- if .Values.buildkit.service.loadBalancerIP }}
+  loadBalancerIP: {{ .Values.buildkit.service.loadBalancerIP }}
+  {{- end }}
+  {{- if .Values.buildkit.service.sessionAffinity }}
+  sessionAffinity: {{ .Values.buildkit.service.sessionAffinity }}
+  {{- end }}
+  ports:
+    - port: {{ .Values.buildkit.port }}
+      name: buildkit
+  selector:
+    app.kubernetes.io/name: "{{ include "okteto.fullname" . }}-buildkit"
+    app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}

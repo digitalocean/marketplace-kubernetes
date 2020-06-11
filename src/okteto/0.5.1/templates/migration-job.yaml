@@ -1,0 +1,57 @@
+{{- if .Values.migration.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "{{ include "okteto.fullname" . }}-migration-{{ .Values.backend.image.tag }}"
+  labels:
+    app.kubernetes.io/component: "migration"
+    app.kubernetes.io/part-of: "okteto"
+    app.kubernetes.io/name: "{{ include "okteto.fullname" . }}-migration"
+    helm.sh/chart: {{ include "okteto.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: "{{ include "okteto.fullname" . }}-migration"
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/component: "migration"
+        app.kubernetes.io/part-of: "okteto"
+      annotations:
+        checksum/configmap: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        checksum/secrets: {{ include (print $.Template.BasePath "/secrets.yaml") . | sha256sum }}
+    spec:
+      restartPolicy: Never
+      serviceAccountName: {{ include "okteto.fullname" . }}
+      {{- if .Values.unsupported.oktetoPool }}
+      tolerations:
+      - key: "okteto-node-pool"
+        operator: "Equal"
+        value: "{{ .Values.unsupported.oktetoPool }}"
+        effect: "NoSchedule"
+      nodeSelector:
+        okteto-node-pool: "{{ .Values.unsupported.oktetoPool }}"
+      {{- end }}
+      volumes:
+        - name: tls-certs
+          secret:
+            defaultMode: 420
+            secretName: {{ .Values.wildcardCertificate.name }}
+      containers:
+        - name: api
+          image: {{ .Values.backend.image.registry }}:{{ .Values.backend.image.tag }}
+          imagePullPolicy: {{ .Values.pullPolicy }}
+          args: [ "migrate" ]
+          envFrom:
+          - configMapRef:
+              name: "{{ include "okteto.fullname" . }}"
+          - secretRef:
+              name: {{ include "okteto.fullname" . }}
+          volumeMounts:
+            - name: tls-certs
+              mountPath: /run/secrets/tls
+              readOnly: true
+          resources:
+{{ toYaml .Values.api.resources | indent 12 }}
+{{- end }}

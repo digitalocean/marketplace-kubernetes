@@ -1,0 +1,24 @@
+{{- $public := include "okteto.public" . -}}
+{{- $wildcard := include "okteto.wildcard" . -}}
+
+{{- if eq $public "okteto.localhost" }}
+1. Start a port-forward to the ingress service by running
+    kubectl port-forward service/{{ .Release.Name }}-nginx-ingress-controller 8443:443 --namespace {{ .Release.Namespace }}
+
+2. Access your Okteto Enterprise instance at  https://localhost:8443. 
+
+3. You can login with an authentication token. To get your authentication token, run:
+    kubectl get sa -n=okteto {{ include "okteto.fullname" . }} -ojsonpath='{.metadata.labels.dev\.okteto\.com/token}'
+
+{{- else }}
+
+1. Create the following DNS record, pointing them to the NGINX ingress External-IP:
+- "{{ $wildcard }}"
+
+You can retrieve the External IP by running:
+    kubectl get service -l=app=nginx-ingress,component=controller --namespace={{ .Release.Namespace }}
+
+2. Once you create the DNS entry you can access your Okteto Enterprise instance at this URL:
+https://{{ $public }}
+
+{{- end }}

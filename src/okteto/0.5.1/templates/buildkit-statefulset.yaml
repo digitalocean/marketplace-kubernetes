@@ -1,0 +1,112 @@
+{{- if .Values.buildkit.enabled }}
+{{- $publicUrl := include "okteto.defaultpublic" . -}}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: "{{ include "okteto.fullname" . }}-buildkit"
+  labels:
+    app.kubernetes.io/component: "buildkit"
+    app.kubernetes.io/part-of: "okteto"
+    app.kubernetes.io/name: "{{ include "okteto.fullname" . }}-buildkit"
+    helm.sh/chart: {{ include "okteto.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.buildkit.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: "{{ include "okteto.fullname" . }}-buildkit"
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  serviceName: {{ include "okteto.fullname" . }}-buildkit
+  podManagementPolicy: Parallel
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: "{{ include "okteto.fullname" . }}-buildkit"
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/component: "buildkit"
+        app.kubernetes.io/part-of: "okteto"
+    {{- if .Values.buildkit.rootless.enabled }}
+      annotations:
+        container.apparmor.security.beta.kubernetes.io/buildkitd: unconfined
+        container.seccomp.security.alpha.kubernetes.io/buildkitd: unconfined
+    {{- end }}
+    spec:
+      {{- if .Values.ha }}
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app.kubernetes.io/name
+                operator: In
+                values:
+                - "{{ include "okteto.fullname" . }}-buildkit"
+            topologyKey: kubernetes.io/hostname        
+      {{- end }}
+      serviceAccountName: default
+      {{- if .Values.unsupported.buildPool }}
+      tolerations:
+      - key: "okteto-node-pool"
+        operator: "Equal"
+        value: "{{ .Values.unsupported.buildPool }}"
+        effect: "NoSchedule"
+      nodeSelector:
+        okteto-node-pool: "{{ .Values.unsupported.buildPool }}"
+      {{- end }}
+      volumes:
+        - name: tls-certs
+          secret:
+            defaultMode: 420
+            secretName: {{ .Values.wildcardCertificate.name }}
+      containers:
+      - args:
+        - --addr
+        - tcp://0.0.0.0:{{ .Values.buildkit.port}}
+        - --oci-worker-gc
+        - --oci-worker-gc-keepstorage
+        - "120000"
+        - --tlscert
+        - /run/secrets/tls/tls.crt
+        - --tlskey
+        - /run/secrets/tls/tls.key
+        - --authorization-endpoint
+        - "https://{{ $publicUrl }}/auth/buildkit"
+      {{- if .Values.buildkit.rootless.enabled }}
+        image: {{ .Values.buildkit.rootless.image.registry}}:{{ .Values.buildkit.rootless.image.tag}}
+      {{- else }}
+        image: {{ .Values.buildkit.image.registry}}:{{ .Values.buildkit.image.tag}}
+      {{- end }}
+        name: buildkitd
+        ports:
+        - containerPort: {{ .Values.buildkit.port}}
+          protocol: TCP
+        securityContext:
+        {{- if .Values.buildkit.rootless.enabled }}
+          runAsUser: 1000
+          runAsGroup: 1000
+          procMount: Unmasked
+        {{- end }}
+          privileged: true
+        volumeMounts:
+          - name: "storage"
+            subPath: data
+            mountPath: /var/lib/buildkit
+          - name: tls-certs
+            mountPath: /run/secrets/tls
+            readOnly: true
+        resources:
+{{ toYaml .Values.buildkit.resources | indent 12 }}
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+  volumeClaimTemplates:
+    - metadata:
+        name: "storage"
+      spec:
+        accessModes: {{ .Values.buildkit.storage.accessModes}}
+        resources:
+          requests:
+            storage: {{ .Values.buildkit.storage.size}}
+{{- end }}

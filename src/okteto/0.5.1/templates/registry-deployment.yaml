@@ -1,0 +1,169 @@
+{{- if .Values.registry.enabled }}
+{{- $publicUrl := include "okteto.defaultpublic" . -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ include "okteto.fullname" . }}-registry"
+  labels:
+    app.kubernetes.io/component: "registry"
+    app.kubernetes.io/part-of: "okteto"
+    app.kubernetes.io/name: "{{ include "okteto.fullname" . }}-registry"
+    helm.sh/chart: {{ include "okteto.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 0
+  replicas: {{ .Values.registry.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: "{{ include "okteto.fullname" . }}-registry"
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: "{{ include "okteto.fullname" . }}-registry"
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/component: "registry"
+        app.kubernetes.io/part-of: "okteto"
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/registry-config.yaml") . | sha256sum }}
+        checksum/secret: {{ include (print $.Template.BasePath "/registry-secret.yaml") . | sha256sum }}
+        
+    spec:
+  {{- if .Values.ha }}
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app.kubernetes.io/name
+                operator: In
+                values:
+                - "{{ include "okteto.fullname" . }}-registry"
+            topologyKey: kubernetes.io/hostname        
+  {{- end }}
+      serviceAccountName: default
+  {{- if .Values.unsupported.buildPool }}
+      tolerations:
+      - key: "okteto-node-pool"
+        operator: "Equal"
+        value: "{{ .Values.unsupported.buildPool }}"
+        effect: "NoSchedule"
+      nodeSelector:
+        okteto-node-pool: "{{ .Values.unsupported.buildPool }}"
+  {{- end }}
+      volumes:
+  {{- if .Values.registry.storage.filesystem.enabled }}
+        - name: data
+    {{- if .Values.registry.storage.filesystem.persistence.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ include "okteto.fullname" . }}-registry
+    {{- else }}
+          emptyDir: {}
+    {{- end }}
+  {{- end }}
+        - name: config
+          configMap:
+            name: {{ template "okteto.fullname" . }}-registry-config
+        - name: tls-certs
+          secret:
+            defaultMode: 420
+            secretName: {{ .Values.wildcardCertificate.name }}
+  {{- if .Values.cloud.provider.gcp.enabled }}
+        - name: gcs-account
+          secret:
+            defaultMode: 420
+            secretName: {{ .Values.cloud.secret.name }}
+  {{- end }}
+      containers:
+        - name: registry
+          image: {{ .Values.registry.image.registry }}:{{ .Values.registry.image.tag }}
+          imagePullPolicy: {{ .Values.pullPolicy}}
+          command:
+          - /bin/registry
+          - serve
+          - /etc/docker/registry/config.yml
+          ports:
+            - name: registry
+              containerPort: {{ .Values.registry.port }}
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: {{ .Values.registry.port }}
+          readinessProbe:
+            httpGet:
+              path: /
+              port: {{ .Values.registry.port }}
+          env:
+            - name: REGISTRY_HTTP_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "okteto.fullname" . }}-registry-secret
+                  key: haSharedSecret
+            - name: REGISTRY_STORAGE_DELETE_ENABLED
+              value: "true"
+            - name: REGISTRY_AUTH_TOKEN_REALM
+              value: "https://{{ $publicUrl }}/auth/registry"
+            - name: REGISTRY_AUTH_TOKEN_SERVICE
+              value: "okteto-registry"
+            - name: REGISTRY_AUTH_TOKEN_ISSUER
+              value: "okteto-registry"
+            - name: REGISTRY_AUTH_TOKEN_ROOTCERTBUNDLE
+              value: "/run/secrets/tls/tls.crt"
+            
+  {{- if .Values.registry.storage.filesystem.enabled }}
+            - name: REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY
+              value: "/var/lib/registry"
+  {{- else }}
+    {{- if .Values.cloud.provider.gcp.enabled }}
+            - name: REGISTRY_STORAGE_GCS_BUCKET
+              value: {{ required "A valid .Values.cloud.provider.gcp.bucket is required" .Values.cloud.provider.gcp.bucket }}
+            - name: REGISTRY_STORAGE_GCS_KEYFILE
+              value: /run/secrets/gcs/key
+    {{- else if .Values.cloud.provider.aws.enabled }}
+            - name: REGISTRY_STORAGE_S3_BUCKET
+              value: {{ required "A valid .Values.cloud.provider.aws.bucket is required" .Values.cloud.provider.aws.bucket }}
+            - name: REGISTRY_STORAGE_S3_REGION
+              value: {{ .Values.cloud.provider.aws.region }}
+      {{- if .Values.cloud.provider.aws.iam.accessKeyID }}
+            - name: REGISTRY_STORAGE_S3_ACCESSKEY
+              value: {{ .Values.cloud.provider.aws.iam.accessKeyID }}
+            - name: REGISTRY_STORAGE_S3_SECRETKEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.cloud.secret.name }}
+                  key: {{ .Values.cloud.secret.key }}
+      {{- end }}
+              
+    {{- else if .Values.cloud.provider.digitalocean.enabled}}
+            - name: REGISTRY_STORAGE_S3_BUCKET
+              value: {{ required "A valid .Values.cloud.provider.digitalocean.bucket is required" .Values.cloud.provider.digitalocean.bucket }}
+            - name: REGISTRY_STORAGE_S3_REGION
+              value: {{ .Values.cloud.provider.digitalocean.region }}
+            - name: REGISTRY_STORAGE_S3_REGIONENDPOINT
+              value: {{ .Values.cloud.provider.digitalocean.region }}.digitaloceanspaces.com
+    {{- end }}
+  {{- end }}
+          volumeMounts:
+            - name: config
+              mountPath: "/etc/docker/registry"
+              readOnly: true
+            - name: tls-certs
+              mountPath: /run/secrets/tls
+              readOnly: true
+            {{- if .Values.registry.storage.filesystem.enabled }}
+            - name: data
+              mountPath: /var/lib/registry/
+            {{- end }}          
+            {{- if .Values.cloud.provider.gcp.enabled }}
+            - name: gcs-account
+              mountPath: /run/secrets/gcs/
+              readOnly: true
+            {{- end }}
+          resources:
+{{ toYaml .Values.registry.resources | indent 12 }}
+{{- end }}

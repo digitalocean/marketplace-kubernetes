@@ -1,0 +1,152 @@
+apiVersion: admissionregistration.k8s.io/v1beta1
+kind: MutatingWebhookConfiguration
+metadata:
+  name: "{{ include "okteto.webhook" . }}"
+  labels:
+    app.kubernetes.io/name: "{{ include "okteto.webhook" . }}"
+    helm.sh/chart: {{ include "okteto.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+  annotations:
+      cert-manager.io/inject-ca-from: "{{ .Release.Namespace }}/{{ include "okteto.internalCertificate" . }}"
+webhooks:
+  - name: ingress.webhook.okteto.com
+    failurePolicy: Fail
+    clientConfig:
+      service:
+        name: "{{ include "okteto.webhook" . }}"
+        path: "/mutate/ingress"
+        namespace: "{{ .Release.Namespace }}"
+      caBundle: 
+    rules:
+      - operations: [ "CREATE", "UPDATE" ]
+        apiGroups: ["extensions"]
+        apiVersions: ["v1beta1"]
+        resources: ["ingresses"]
+      - operations: [ "CREATE", "UPDATE" ]
+        apiGroups: ["networking.k8s.io"]
+        apiVersions: ["v1beta1"]
+        resources: ["ingresses"]
+    namespaceSelector:
+      matchLabels:
+        dev.okteto.com: "true"
+  - name: service.webhook.okteto.com
+    failurePolicy: Fail
+    clientConfig:
+      service:
+        name: "{{ include "okteto.webhook" . }}"
+        path: "/mutate/service"
+        namespace: "{{ .Release.Namespace }}"
+      caBundle: 
+    rules:
+      - operations: [ "CREATE", "UPDATE", "DELETE"]
+        apiGroups: [""]
+        apiVersions: ["v1"]
+        resources: ["services"]
+    namespaceSelector:
+      matchLabels:
+        dev.okteto.com: "true"
+  - name: deployment.webhook.okteto.com
+    failurePolicy: Fail
+    clientConfig:
+      service:
+        name: "{{ include "okteto.webhook" . }}"
+        path: "/mutate/deployment"
+        namespace: "{{ .Release.Namespace }}"
+      caBundle: 
+    rules:
+      - operations: [ "CREATE", "UPDATE"]
+        apiGroups: ["apps"]
+        apiVersions: ["v1"]
+        resources: ["deployments"]
+      - operations: [ "CREATE", "UPDATE"]
+        apiGroups: ["extensions"]
+        apiVersions: ["v1beta1"]
+        resources: ["deployments"]
+    namespaceSelector:
+      matchLabels:
+        dev.okteto.com: "true"
+  - name: statefulset.webhook.okteto.com
+    failurePolicy: Fail
+    clientConfig:
+      service:
+        name: "{{ include "okteto.webhook" . }}"
+        path: "/mutate/statefulset"
+        namespace: "{{ .Release.Namespace }}"
+      caBundle: 
+    rules:
+      - operations: [ "CREATE", "UPDATE"]
+        apiGroups: ["apps"]
+        apiVersions: ["v1"]
+        resources: ["statefulsets"]
+      - operations: [ "CREATE", "UPDATE"]
+        apiGroups: ["extensions"]
+        apiVersions: ["v1beta1"]
+        resources: ["statefulsets"]
+    namespaceSelector:
+      matchLabels:
+        dev.okteto.com: "true"
+  - name: pod.webhook.okteto.com
+    failurePolicy: Fail
+    clientConfig:
+      service:
+        name: "{{ include "okteto.webhook" . }}"
+        path: "/mutate/pod"
+        namespace: "{{ .Release.Namespace }}"
+      caBundle:
+    rules:
+      - operations: [ "CREATE"]
+        apiGroups: [""]
+        apiVersions: ["v1"]
+        resources: ["pods"]
+    namespaceSelector:
+      matchLabels:
+        dev.okteto.com: "true"
+  - name: serviceaccount.webhook.okteto.com
+    failurePolicy: Fail
+    clientConfig:
+      service:
+        name: "{{ include "okteto.webhook" . }}"
+        path: "/mutate/serviceaccount"
+        namespace: "{{ .Release.Namespace }}"
+      caBundle:
+    rules:
+      - operations: [ "CREATE", "UPDATE"]
+        apiGroups: [""]
+        apiVersions: ["v1"]
+        resources: ["serviceaccounts"]
+    namespaceSelector:
+      matchLabels:
+        dev.okteto.com: "true"
+  - name: role.webhook.okteto.com
+    failurePolicy: Fail
+    clientConfig:
+      service:
+        name: "{{ include "okteto.webhook" . }}"
+        path: "/mutate/role"
+        namespace: "{{ .Release.Namespace }}"
+      caBundle: 
+    rules:
+      - operations: [ "CREATE", "UPDATE"]
+        apiGroups: ["rbac.authorization.k8s.io"]
+        apiVersions: ["v1"]
+        resources: ["roles"]
+    namespaceSelector:
+      matchLabels:
+        dev.okteto.com: "true"
+  - name: rolebinding.webhook.okteto.com
+    failurePolicy: Fail
+    clientConfig:
+      service:
+        name: "{{ include "okteto.webhook" . }}"
+        path: "/mutate/rolebinding"
+        namespace: "{{ .Release.Namespace }}"
+      caBundle: 
+    rules:
+      - operations: [ "CREATE", "UPDATE"]
+        apiGroups: ["rbac.authorization.k8s.io"]
+        apiVersions: ["v1"]
+        resources: ["rolebindings"]
+    namespaceSelector:
+      matchLabels:
+        dev.okteto.com: "true"

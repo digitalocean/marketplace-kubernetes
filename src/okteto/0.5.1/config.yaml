@@ -1,0 +1,23 @@
+email:
+
+cluster:
+  endpoint: 
+
+subdomain: 
+license:
+
+auth:
+  google:
+    enabled: true
+    clientId: 
+    clientSecret: 
+
+cloud:
+  provider:
+    aws:
+      enabled: true
+      bucket:
+      region:
+      iam:
+        accessKeyID:
+

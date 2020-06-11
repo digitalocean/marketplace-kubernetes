@@ -1,0 +1,88 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+    app.kubernetes.io/name: "{{ include "okteto.fullname" . }}"
+    helm.sh/chart: {{ include "okteto.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/component: "api"
+    app.kubernetes.io/part-of: "okteto"
+  name: "{{ include "okteto.fullname" . }}"
+  namespace: {{ .Release.Namespace }}
+data:
+  "OKTETO_MAINTENANCE": "{{ .Values.maintenance }}"
+  "CLUSTER_PUBLIC_ENDPOINT": "{{ .Values.cluster.endpoint }}"
+  "OKTETO_APP_INSTALLER_CLUSTER_ROLE": "{{ include "okteto.fullname" . }}-app-installer"
+  "OKTETO_APPLICATIONS_REPOSITORY": "{{ .Values.applications.repository }}"
+  "OKTETO_BASE_DOMAIN": "{{ .Values.subdomain }}"
+  "OKTETO_DEV_CLUSTER_ROLE": "{{ default (include "okteto.devclusterrole" .) .Values.clusterRole }}"
+  "OKTETO_MULTITENANCY_HARD": "{{ .Values.multitenancy.hard }}"
+  "OKTETO_POD_SECURITY_POLICY": "{{ include "okteto.fullname" . }}-restrictive"
+  "OKTETO_PRODUCTION_MODE": "{{ .Values.production.enabled }}"
+  "OKTETO_PUBLIC_URL": "{{ include "okteto.public" . }}"
+  "OKTETO_SCHEDULE_PODS_BY_PRESSURE": "{{ .Values.scheduleByPodPressure }}"
+  "OKTETO_USER_DEFINED_NAMESPACES": "{{ .Values.userDefinedNamespaces }}"
+  "OKTETO_TELEMETRY_TOKEN": "{{ .Values.telemetry.token }}"
+{{- if .Values.auth.google.enabled }}
+  "GOOGLE_CLIENTID": "{{ .Values.auth.google.clientId }}"
+{{- else if .Values.auth.github.enabled }}
+  "GITHUB_CLIENTID": "{{ .Values.auth.github.clientId }}"
+  "OKTETO_GITHUB_WHITELIST": "{{ include "okteto.joinListWithComma" .Values.auth.github.whitelist }}"
+{{- end}}  
+{{- if .Values.telemetry.token }}
+  "OKTETO_TELEMETRY_TOKEN": "{{ .Values.telemetry.token }}"
+{{- end }}
+{{- if .Values.telemetry.planWebhook }}
+  "OKTETO_PLAN_UPDATE_WEBHOOK": "{{ .Values.telemetry.planWebhook }}"
+{{- end }}
+  "OKTETO_DEFAULT_PLAN": "{{ .Values.unsupported.defaultPlan }}"
+  "OKTETO_PRO_PLAN_POOL": "{{ .Values.unsupported.proPlanPool }}"
+{{- if .Values.multitenancy.hard }}
+  "OKTETO_MULTITENANCY_CIDR": "{{ .Values.multitenancy.cidr }}"
+  "OKTETO_MULTITENANCY_INGRESS_RELOAD_DELAY": "{{ .Values.multitenancy.ingressReloadDelay }}"
+  "OKTETO_MULTITENANCY_NETWORK_CONNECTIONS": "{{ .Values.multitenancy.network.connections }}"
+  "OKTETO_MULTITENANCY_NETWORK_EGRESS": "{{ .Values.multitenancy.network.egress }}"
+  "OKTETO_MULTITENANCY_NETWORK_INGRESS": "{{ .Values.multitenancy.network.ingress }}"
+  "OKTETO_MULTITENANCY_NETWORK_RPS": "{{ .Values.multitenancy.network.rps }}"
+  "OKTETO_MULTITENANCY_NETWORK_RPM": "{{ .Values.multitenancy.network.rpm }}"
+  "OKTETO_MULTITENANCY_REQUESTS_CPU": "{{ .Values.multitenancy.requests.cpu }}"
+  "OKTETO_MULTITENANCY_REQUESTS_MEMORY": "{{ .Values.multitenancy.requests.memory }}"
+  "OKTETO_MULTITENANCY_LIMITS_CPU": "{{ .Values.multitenancy.limits.cpu }}"
+  "OKTETO_MULTITENANCY_LIMITS_MEMORY": "{{ .Values.multitenancy.limits.memory }}"
+  "OKTETO_MULTITENANCY_LIMITRANGES_LIMITS_CPU": "{{ .Values.multitenancy.limitranges.limits.cpu }}"
+  "OKTETO_MULTITENANCY_LIMITRANGES_LIMITS_MEMORY": "{{ .Values.multitenancy.limitranges.limits.memory }}"
+  "OKTETO_MULTITENANCY_LIMITRANGES_MAX_CPU": "{{ .Values.multitenancy.limitranges.max.cpu }}"
+  "OKTETO_MULTITENANCY_LIMITRANGES_MAX_MEMORY": "{{ .Values.multitenancy.limitranges.max.memory }}"
+  "OKTETO_MULTITENANCY_LIMITRANGES_REQUESTS_CPU": "{{ .Values.multitenancy.limitranges.requests.cpu }}"
+  "OKTETO_MULTITENANCY_LIMITRANGES_REQUESTS_MEMORY": "{{ .Values.multitenancy.limitranges.requests.memory }}"
+{{- end }}
+{{- if .Values.registry.enabled }}
+  "OKTETO_REGISTRY_URL": "{{ include "okteto.registry"  . }}"
+  "OKTETO_BUILDKIT_URL": "tcp://{{ include "okteto.buildkit"  . }}:{{ .Values.buildkit.port}}"
+{{- end }}
+{{- if .Values.unsupported.billing.enabled }}
+  "OKTETO_BILLING_APIKEY": "{{ .Values.unsupported.billing.apiKey }}"
+  "OKTETO_BILLING_PLAN": "{{ .Values.unsupported.billing.plan }}"
+  "OKTETO_BILLING_WHSECRET": "{{ .Values.unsupported.billing.whSecret }}"
+  "OKTETO_CRM_API": "{{ .Values.unsupported.billing.crm.apiKey }}"
+  "OKTETO_CRM_TRIAL_STARTED": "{{ .Values.unsupported.billing.crm.trialStarted }}"
+  "OKTETO_CRM_TRIAL_EXPIRED": "{{ .Values.unsupported.billing.crm.trialExpired }}"
+{{- end }}
+
+{{- if .Values.unsupported.opentracing.enabled }}
+  "JAEGER_AGENT_HOST": "{{ .Values.unsupported.opentracing.agent.host }}"
+  "JAEGER_AGENT_PORT": "{{ .Values.unsupported.opentracing.agent.port }}"
+  "JAEGER_SAMPLER_TYPE": "{{ .Values.unsupported.opentracing.sampler.type }}"
+  "JAEGER_SAMPLER_PARAM": "{{ .Values.unsupported.opentracing.sampler.param }}"
+{{- end}}
+{{- if .Values.unsupported.scope.apiKey }}
+  "SCOPE_APIKEY": "{{ .Values.unsupported.scope.apiKey }}"
+  "SCOPE_COMMIT_SHA": "{{ .Values.unsupported.scope.commitSHA }}"
+  "SCOPE_REPOSITORY": "https://github.com/okteto/app"
+  "SCOPE_SOURCE_ROOT": "/app"
+{{- end }}
+{{- if .Values.unsupported.mailgun.enabled }}
+  "MG_DOMAIN": "{{ .Values.unsupported.mailgun.domain }}"
+{{- end }}
+

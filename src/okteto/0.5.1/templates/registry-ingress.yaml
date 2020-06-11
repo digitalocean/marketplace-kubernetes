@@ -1,0 +1,34 @@
+{{- if .Values.registry.enabled }}
+{{- if .Values.registry.ingress.enabled }}
+{{- $registryURL := include "okteto.registry" . -}}
+apiVersion: {{ template "okteto.ingress.apiVersion" . }}
+kind: Ingress
+metadata:
+  name: {{ include "okteto.fullname" . }}-registry
+  labels:
+    app.kubernetes.io/name: {{ include "okteto.name" . }}-registry
+    helm.sh/chart: {{ include "okteto.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/part-of: "okteto"
+    app.kubernetes.io/component: "registry"
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "0"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    {{- range $key, $value := .Values.ingress.annotations }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+spec:
+  tls:
+  - hosts:
+    - {{ $registryURL }}
+  rules:
+    - host: {{ $registryURL }}
+      http:
+        paths:
+          - path: "/"
+            backend:
+              serviceName: {{ include "okteto.fullname" . }}-registry
+              servicePort: {{ .Values.registry.port }}
+{{- end }}
+{{- end }}

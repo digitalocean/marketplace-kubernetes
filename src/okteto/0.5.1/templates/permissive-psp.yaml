@@ -1,0 +1,33 @@
+apiVersion: policy/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  name: "{{ include "okteto.fullname" . }}-permissive"
+  annotations:
+    seccomp.security.alpha.kubernetes.io/allowedProfileNames: '*'
+  labels:
+    app.kubernetes.io/name: "{{ include "okteto.fullname" . }}-permissive"
+    helm.sh/chart: {{ include "okteto.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  privileged: true
+  hostNetwork: true
+  allowPrivilegeEscalation: true
+  defaultAllowPrivilegeEscalation: true
+  hostPID: true
+  hostIPC: true
+  runAsUser:
+    rule: RunAsAny
+  fsGroup:
+    rule: RunAsAny
+  seLinux:
+    rule: RunAsAny
+  supplementalGroups:
+    rule: RunAsAny
+  hostPorts:
+  - min: 0
+    max: 65535
+  volumes:
+  - '*'
+  allowedCapabilities:
+  - '*'

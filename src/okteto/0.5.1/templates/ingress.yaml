@@ -1,0 +1,38 @@
+{{- $publicUrl := include "okteto.defaultpublic" . -}}
+{{- $fullname := include "okteto.fullname" . -}}
+apiVersion: {{ template "okteto.ingress.apiVersion" . }}
+kind: Ingress
+metadata:
+  name: {{ include "okteto.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "okteto.name" . }}
+    helm.sh/chart: {{ include "okteto.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/part-of: "okteto"
+    app.kubernetes.io/component: "api"
+  annotations:
+    {{- range $key, $value := .Values.ingress.annotations }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+spec:
+  tls:
+  - hosts:
+    - {{ $publicUrl }}
+  rules:
+  {{- range tuple $publicUrl "localhost" }}
+    - host: {{ . }}
+      http:
+        paths:
+          {{- range tuple "/healthz" "/github" "/graphql" "/auth" }}
+          - path: {{ . }}
+            backend:
+              serviceName: {{ $fullname }}-api
+              servicePort: {{ $.Values.api.port }}
+          {{- end }}
+          
+          - path: "/"
+            backend:
+              serviceName: {{ $fullname }}-frontend
+              servicePort: {{ $.Values.frontend.port }}
+    {{- end }}

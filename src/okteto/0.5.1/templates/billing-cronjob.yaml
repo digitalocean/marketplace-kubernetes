@@ -1,0 +1,48 @@
+{{- if .Values.unsupported.billing.enabled }}
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: "{{ include "okteto.fullname" . }}-billing"
+  labels:
+    app.kubernetes.io/component: "billing"
+    app.kubernetes.io/part-of: "okteto"
+    app.kubernetes.io/name: "{{ include "okteto.fullname" . }}-billing"
+    helm.sh/chart: {{ include "okteto.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  schedule: "{{ .Values.unsupported.billing.schedule }}"
+  jobTemplate:
+    metadata:
+      labels:
+        app.kubernetes.io/component: "billing"
+        app.kubernetes.io/part-of: "okteto"
+    spec:
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/component: "billing"
+            app.kubernetes.io/part-of: "okteto"
+        spec:
+          serviceAccountName: {{ include "okteto.fullname" . }}
+          volumes:
+          - name: tls-certs
+            secret:
+              defaultMode: 420
+              secretName: {{ .Values.wildcardCertificate.name }}
+          restartPolicy: Never
+          containers:
+            - name: billing
+              image: {{ .Values.backend.image.registry }}:{{ .Values.backend.image.tag }}
+              imagePullPolicy: {{ .Values.pullPolicy }}
+              args: [ "expire-trials" ]
+              envFrom:
+              - configMapRef:
+                  name: "{{ include "okteto.fullname" . }}"
+              - secretRef:
+                  name: {{ include "okteto.fullname" . }}
+              volumeMounts:
+                - name: tls-certs
+                  mountPath: /run/secrets/tls
+                  readOnly: true
+{{- end }}

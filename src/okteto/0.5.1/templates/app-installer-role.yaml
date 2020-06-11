@@ -1,0 +1,18 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "okteto.fullname" . }}-app-installer
+  labels:
+    app.kubernetes.io/name:  {{ include "okteto.fullname" . }}-app-installer
+    helm.sh/chart: {{ include "okteto.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+rules:
+- apiGroups:
+  - policy
+  resourceNames:
+  - "{{ include "okteto.fullname" . }}-restrictive"
+  resources:
+  - podsecuritypolicies
+  verbs:
+  - use

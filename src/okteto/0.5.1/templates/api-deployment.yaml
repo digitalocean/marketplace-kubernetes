@@ -1,0 +1,93 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ include "okteto.fullname" . }}-api"
+  labels:
+    app.kubernetes.io/component: "api"
+    app.kubernetes.io/part-of: "okteto"
+    app.kubernetes.io/name: "{{ include "okteto.fullname" . }}-api"
+    helm.sh/chart: {{ include "okteto.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 0
+  replicas: {{ .Values.api.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: "{{ include "okteto.fullname" . }}-api"
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: "{{ include "okteto.fullname" . }}-api"
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/component: "api"
+        app.kubernetes.io/part-of: "okteto"
+      annotations:
+        checksum/configmap: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        checksum/secrets: {{ include (print $.Template.BasePath "/secrets.yaml") . | sha256sum }}
+    spec:
+      {{- if .Values.ha }}
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app.kubernetes.io/name
+                operator: In
+                values:
+                - "{{ include "okteto.fullname" . }}-api"
+            topologyKey: kubernetes.io/hostname        
+      {{- end }}
+      serviceAccountName: {{ include "okteto.fullname" . }}
+      {{- if .Values.unsupported.oktetoPool }}
+      tolerations:
+      - key: "okteto-node-pool"
+        operator: "Equal"
+        value: "{{ .Values.unsupported.oktetoPool }}"
+        effect: "NoSchedule"
+      nodeSelector:
+        okteto-node-pool: "{{ .Values.unsupported.oktetoPool }}"
+      {{- end }}
+      volumes:
+        - name: tls-certs
+          secret:
+            defaultMode: 420
+            secretName: {{ .Values.wildcardCertificate.name }}
+      containers:
+        - name: api
+          image: {{ .Values.backend.image.registry }}:{{ .Values.backend.image.tag }}
+          imagePullPolicy: {{ .Values.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.api.port }}
+              protocol: TCP
+          args: [ "api" ]
+          envFrom:
+          - configMapRef:
+              name: "{{ include "okteto.fullname" . }}"
+          - secretRef:
+              name: {{ include "okteto.fullname" . }}
+          volumeMounts:
+            - name: tls-certs
+              mountPath: /run/secrets/tls
+              readOnly: true
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: {{ .Values.api.port }}
+            initialDelaySeconds: 3
+            periodSeconds: 3
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: {{ .Values.api.port }}
+            initialDelaySeconds: 3
+            periodSeconds: 3
+            failureThreshold: 3
+          resources:
+{{ toYaml .Values.api.resources | indent 12 }}

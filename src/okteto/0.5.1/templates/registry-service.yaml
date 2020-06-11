@@ -1,0 +1,31 @@
+{{- if .Values.registry.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: "{{ include "okteto.fullname" . }}-registry"
+  labels:
+    app.kubernetes.io/component: "registry"
+    app.kubernetes.io/part-of: "okteto"
+    app.kubernetes.io/name: "{{ include "okteto.fullname" . }}-registry"
+    helm.sh/chart: {{ include "okteto.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+  annotations:
+    {{- range $key, $value := .Values.registry.annotations }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+spec:
+  type: {{ .Values.registry.service.type }}
+  {{- if .Values.registry.service.loadBalancerIP }}
+  loadBalancerIP: {{ .Values.registry.service.loadBalancerIP }}
+  {{- end }}
+  {{- if .Values.registry.service.sessionAffinity }}
+  sessionAffinity: {{ .Values.registry.service.sessionAffinity }}
+  {{- end }}
+  ports:
+    - port: {{ .Values.registry.port }}
+      name: registry
+  selector:
+    app.kubernetes.io/name: "{{ include "okteto.fullname" . }}-registry"
+    app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}
