@@ -1,5 +1,4 @@
 email: "admin@example.com"
-adminToken: "PLACEHOLDER_VALUE"
 
 registry:
   storage:
