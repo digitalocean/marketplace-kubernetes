@@ -5,10 +5,10 @@ set -e
 BUILD_DIR=$(mktemp -d)
 ROOT_DIR=$(git rev-parse --show-toplevel)
 
-SRC_VERSION="1.4.1"
-
 cp -r "$ROOT_DIR"/src/op-scim-bridge/"$SRC_VERSION" $BUILD_DIR
 cp -r "$ROOT_DIR"/stacks/op-scim-bridge $BUILD_DIR
+
+SRC_VERSION="1.4.2"
 
 cd $BUILD_DIR
 
