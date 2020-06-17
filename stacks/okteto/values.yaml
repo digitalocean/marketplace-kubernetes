@@ -1,0 +1,11 @@
+email: "admin@example.com"
+
+registry:
+  storage:
+    filesystem:
+      enabled: true
+
+cloud:
+  provider:
+    digitalocean:
+      enabled: true
