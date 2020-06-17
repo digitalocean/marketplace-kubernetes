@@ -1,0 +1,15 @@
+# License terms and conditions for Gluu Cloud Native Edition:
+# https://www.apache.org/licenses/LICENSE-2.0
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: gluu-cloud-native-installer-gluu-gateway
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: gluu-cloud-native-installer
+          imagePullPolicy: Always
+          image: gluufederation/cloud-native:4.1.0_01
+          args: ["helm-install-gg-dbmode"]
