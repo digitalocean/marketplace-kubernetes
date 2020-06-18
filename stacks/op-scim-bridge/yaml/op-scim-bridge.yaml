@@ -73,21 +73,26 @@ spec:
     metadata:
       labels: *ScimDeploymentLabels
     spec:
+      initContainers:
+      - name: scimuser-home-permissions
+        image: alpine:3.12
+        command: ["/bin/sh", "-c"]
+        args: ["mkdir -p /home/scimuser && chown -R 999 /home/scimuser"]
+        volumeMounts:
+        - mountPath: "/home"
+          name: op-scim-bridge-scimsession
       containers:
       - name: op-scim-bridge
-        image: 1password/scim:v1.4.1
+        image: 1password/scim:v1.4.2
         imagePullPolicy: Always
         command: ["/op-scim/op-scim"]
-        args: ["--redis-host=op-scim-bridge-redis-svc", "--session=/secret/scimsession", "--port=8080"]
-        env:
-        # - name: OP_DOMAIN
-        #   value: 
+        args: ["--redis-host=op-scim-bridge-redis-svc", "--session=/home/scimuser/scimsession", "--port=8080"]
         ports:
         - containerPort: 8080
         - containerPort: 8443
         volumeMounts:
         - name: op-scim-bridge-scimsession
-          mountPath: "/secret"
+          mountPath: "/home"
           readOnly: false
       volumes:
       - name: op-scim-bridge-scimsession
