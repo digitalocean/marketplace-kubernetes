@@ -2,10 +2,10 @@
 
 When adding your application to the [digitalocean/marketplace-kubernetes](https://github.com/digitalocean/marketplace-kubernetes) repository, you’ll need
 to make modifications within 2 directories: **src** and **stacks**. **src** will
-contain the Helm template or raw YAML for your application. **stacks** will contain
+contain the Helm template for your application. **stacks** will contain
 the rendered YAML manifest and deployment scripts necessary to deploy your application
 onto a Kubernetes cluster. You can customize your rendered manifest by specifying
-custom Helm values (if applicable), kustomize, or a combination of both.
+custom Helm values.
 
 ## Adding Your Application
 
@@ -13,7 +13,7 @@ custom Helm values (if applicable), kustomize, or a combination of both.
 
 1. Clone the [digitalocean/marketplace-kubernetes](https://github.com/digitalocean/marketplace-kubernetes) repository
 2. Create a branch for your application
-3. If your application is deployed using Helm:
+3. Run the following commands to get the appropriate helm chart for your application:
 
 ```bash
 
@@ -26,17 +26,6 @@ mkdir src/$APP_NAME
 cd src/$APP_NAME
 helm fetch --version $HELM_CHART_VERSION --untar $HELM_CHART_NAME
 mv $APP_NAME $HELM_CHART_VERSION
-# commit your changes
-```
-
-If your application is deployed via raw YAML:
-
-```bash
-# create a new directory for your application in src
-mkdir src/$APP_NAME
-cd src/$APP_NAME
-mkdir $VERSION
-# add your YAML files to src/$APP_NAME/$VERSION
 # commit your changes
 ```
 
@@ -53,6 +42,8 @@ re-render the YAML so that your stack always points to the latest version of you
 For the best results export your logo as a transparent svg with a 1:1 aspect ratio. This is the logo that will be used on your Marketplace "tile" as well as at the top of your Marketplace app listing page.
 
 ### Step 4: Once everything looks good, commit your changes and open a PR.
+
+### Step 5: Once your PR is merged, email one-clicks-team@digitalocean.com to get access to the Marketplace Vendor Portal. This is where you will create your application's listing page and launch your application into the Marketplace.
 
 ## How to deploy your application in production
 

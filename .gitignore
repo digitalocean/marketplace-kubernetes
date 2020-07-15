@@ -1,3 +1,7 @@
+# Vim
+*~
+*.bak
+
 # macOS
 .DS_Store
 
