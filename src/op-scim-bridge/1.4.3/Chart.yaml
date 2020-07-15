@@ -1,6 +1,6 @@
 apiVersion: v1
 name: op-scim
-version: 1.4.2
+version: 1.4.3
 description: The 1Password SCIM bridge
 keywords:
   - "azure active directory"
