@@ -1,5 +1,26 @@
 # Contributing
 
+To add your Kubernetes application to the [DigitalOcean Marketplace](https://marketplace.digitalocean.com/), you'll need to do the following:
+1. Add a Helm 3 deployment file to this repo.
+1. Get an account set up within the [DigitalOcean Marketplace Vendor Portal](https://marketplace.digitalocean.com/vendorportal)
+
+## Adding Your Application
+1. Clone or fork the [digitalocean/marketplace-kubernetes](https://github.com/digitalocean/marketplace-kubernetes) repository
+1. Create a git branch that include the name of your app (example: `$APP_NAME-first-pr`)
+1. Run the following to generate the files necessary to render and deploy your application. They will be located in `stacks/$APP_NAME`:
+```
+export STACK_NAME=$APP_NAME
+export CHART_NAME=$APP_NAME/$APP_NAME
+export CHART_VERSION=1.0.0
+export NAMESPACE=$APP_NAME
+
+./utils/generate-stack.sh
+```
+
+## Updating Your Application
+
+## Getting Vendor Portal Access
+
 When adding your application to the [digitalocean/marketplace-kubernetes](https://github.com/digitalocean/marketplace-kubernetes) repository, you’ll need
 to make modifications within 2 directories: **src** and **stacks**. **src** will
 contain the Helm template for your application. **stacks** will contain

@@ -2,22 +2,33 @@
 
 set -e
 
-# create namespace
-cat <<EOF | kubectl apply -f -
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: {{STACK_NAME}}
-EOF
+################################################################################
+# repo
+################################################################################
+helm repo add {{HELM_REPO_NAME}} {{HELM_REPO_URL}}
+helm repo update
 
-# set kubectl namespace
-kubectl config set-context --current --namespace={{STACK_NAME}}
+################################################################################
+# chart
+################################################################################
+STACK="{{STACK_NAME}}"
+CHART="{{CHART_NAME}}"
+CHART_VERSION="{{CHART_VERSION}}"
+NAMESPACE="{{NAMESPACE}}"
 
-# deploy {{STACK_NAME}}
-kubectl apply -f https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/{{STACK_NAME}}/yaml/{{STACK_NAME}}.yaml
+if [ -z "${MP_KUBERNETES}" ]; then
+  # use local version of values.yml
+  ROOT_DIR=$(git rev-parse --show-toplevel)
+  values="$ROOT_DIR/stacks/{{STACK_NAME}}/values.yml"
+else
+  # use github hosted master version of values.yml
+  values="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/{{STACK_NAME}}/values.yml"
+fi
 
-# ensure services are running
-kubectl get deployments -o custom-columns=NAME:.metadata.name | tail -n +2 | while read -r line
-do
-  kubectl rollout status -w deployment/"$line"
-done
+helm upgrade "$STACK" "$CHART" \
+  --install \
+  --create-namespace \
+  --namespace "$NAMESPACE" \
+  --values "$values" \
+  --version "$CHART_VERSION" \
+  --wait
