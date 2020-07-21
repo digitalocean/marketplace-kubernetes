@@ -1,6 +1,7 @@
 # Contributing
 
 To add your Kubernetes application to the [DigitalOcean Marketplace](https://marketplace.digitalocean.com/), you'll need to do the following:
+1. Ensure that you have Helm 3 installed on your machine. [Instructions](https://helm.sh/docs/intro/install/)
 1. Add a Helm 3 deployment (`deploy.sh`) file to this repo.
 1. Get an account set up within the [DigitalOcean Marketplace Vendor Portal](https://marketplace.digitalocean.com/vendorportal)
 
