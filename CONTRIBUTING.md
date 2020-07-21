@@ -1,14 +1,16 @@
 # Contributing
 
 To add your Kubernetes application to the [DigitalOcean Marketplace](https://marketplace.digitalocean.com/), you'll need to do the following:
-1. Add a Helm 3 deployment file to this repo.
+1. Add a Helm 3 deployment (`deploy.sh`) file to this repo.
 1. Get an account set up within the [DigitalOcean Marketplace Vendor Portal](https://marketplace.digitalocean.com/vendorportal)
 
 ## Adding Your Application
 1. Clone or fork the [digitalocean/marketplace-kubernetes](https://github.com/digitalocean/marketplace-kubernetes) repository
-1. Create a git branch that include the name of your app (example: `$APP_NAME-first-pr`)
-1. Run the following to generate the files necessary to render and deploy your application. They will be located in `stacks/$APP_NAME`:
-```
+1. Create a git branch that includes the name of your app (example: `$APP_NAME-first-pr`)
+1. Run the following commands to create your `deploy.sh` and `values.yml` files. They will be located in `stacks/$APP_NAME`:
+```bash
+export HELM_REPO_NAME=stable
+export HELM_REPO_URL=https://kubernetes-charts.storage.googleapis.com/
 export STACK_NAME=$APP_NAME
 export CHART_NAME=$APP_NAME/$APP_NAME
 export CHART_VERSION=1.0.0
@@ -16,8 +18,13 @@ export NAMESPACE=$APP_NAME
 
 ./utils/generate-stack.sh
 ```
+4. Optionally, specify your Helm chart's configuration values in `stacks/$APP_NAME/values.yml`
+5. Test out your stack by deploying it locally to a k8s cluster: `./stacks/$APP_NAME/deploy.sh`
 
 ## Updating Your Application
+1. To deploy a newer version of your app's Helm chart, simply update the `CHART_VERSION` value in your `stacks/$APP_NAME/deploy.sh` file. If necessary, update your `values.yml` as well.
+1. Open a PR.
+1. Once your PR is merged, make the necessary listing copy updates in the [Vendor Portal](https://marketplace.digitalocean.com/vendorportal). The changes you make there will be reflected within your Marketplace listing.
 
 ## Getting Vendor Portal Access
 
