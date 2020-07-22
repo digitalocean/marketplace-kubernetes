@@ -5,16 +5,15 @@ set -e
 ################################################################################
 # repo
 ################################################################################
-helm repo add {{HELM_REPO_NAME}} {{HELM_REPO_URL}}
+helm repo add datawire https://getambassador.io
 helm repo update
 
 ################################################################################
 # chart
 ################################################################################
-STACK="{{STACK_NAME}}"
-CHART="{{CHART_NAME}}"
-CHART_VERSION="{{CHART_VERSION}}"
-NAMESPACE="{{NAMESPACE}}"
+STACK="ambassador"
+CHART="datawire/ambassador"
+NAMESPACE="ambassador"
 
 if [ -z "${MP_KUBERNETES}" ]; then
   # use local version of values.yml
@@ -30,5 +29,4 @@ helm upgrade "$STACK" "$CHART" \
   --create-namespace \
   --namespace "$NAMESPACE" \
   --values "$values" \
-  --version "$CHART_VERSION" \
   --wait

@@ -2,23 +2,33 @@
 
 set -e
 
-# create namespace
-cat <<EOF | kubectl apply -f -
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: ambassador-operator
-EOF
+################################################################################
+# repo
+################################################################################
+helm repo add datawire https://getambassador.io
+helm repo update
 
-# set kubectl namespace
-kubectl config set-context --current --namespace=ambassador-operator
+################################################################################
+# chart
+################################################################################
+STACK="ambassador"
+CHART="datawire/ambassador"
+NAMESPACE="ambassador"
 
-# deploy ambassador-operator
-kubectl apply -f https://github.com/datawire/ambassador-operator/releases/latest/download/ambassador-operator-crds.yaml
-kubectl apply -f https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/ambassador-operator/yaml/ambassador-operator.yaml
+if [ -z "${MP_KUBERNETES}" ]; then
+  # use local version of values.yml
+  ROOT_DIR=$(git rev-parse --show-toplevel)
+  values="$ROOT_DIR/stacks/ambassador/values.yml"
+else
+  # use github hosted master version of values.yml
+  values="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/ambassadorvalues.yml"
+fi
 
-# ensure services are running
-kubectl get deployments -o custom-columns=NAME:.metadata.name | tail -n +2 | while read -r line
-do
-  kubectl rollout status -w deployment/"$line"
-done
+kubectl apply -f https://getambassador.io/yaml/aes-crds.yaml
+
+helm upgrade "$STACK" "$CHART" \
+  --install \
+  --create-namespace \
+  --namespace "$NAMESPACE" \
+  --values "$values" \
+  --wait

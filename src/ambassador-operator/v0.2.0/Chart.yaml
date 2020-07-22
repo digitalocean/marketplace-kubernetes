@@ -1,6 +1,0 @@
-apiVersion: v2
-appVersion: v1.2.8
-description: A Helm chart for Kubernetes
-name: ambassador-operator
-type: application
-version: 0.2.0

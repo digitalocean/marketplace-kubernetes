@@ -1,7 +1,7 @@
 # Description
 [Ambassador Edge Stack](https://getambassador.io/) is a popular, high-performance [Ingress Controller](https://www.getambassador.io/products/edge-stack/api-gateway/) and [API Gateway](https://www.getambassador.io/learn/kubernetes-glossary/api-gateway/) built on [Envoy Proxy](https://www.envoyproxy.io/). Envoy Proxy was designed from the ground up for [cloud-native](https://www.getambassador.io/learn/kubernetes-glossary/cloud-native/) applications. Ambassador exposes Envoy's functionality as [Custom Resource Definitions](https://www.getambassador.io/learn/kubernetes-glossary/custom-resource-definition/), with integrated support for rate limiting, authentication, load balancing, observability, and more.
 
-The DigitalOcean 1-click application installs the [Ambassador Operator](https://www.getambassador.io/docs/latest/topics/install/aes-operator/), a version and configuration management tool for deploying Ambassador to your cloud.  The Operator uses a declarative model for maintaining a full Ambassador Edge Stack deployment, ensuring that your configurations are properly maintained from version to version.  Additionally, the Operator uses the SemVer convention to allow for automatic updates and supports specifying update windows for scheduled maintenance.
+The DigitalOcean 1-click application installs the Helm 3 version of Ambassador Edge Stack.  This version includes the Authentication and Rate Limiting plugins as well as the Dev Portal.  It also includes the option of upgrading your installation to include Service Preview and MicroCD, two Edge Stack components that improve and streamline the developer self-service model.  To explore the features of these components, see the links below.
 
 Edge Stack Components:
   - [Rate Limiting](https://www.getambassador.io/docs/latest/topics/using/rate-limits/rate-limits/): Rate limit to ensure the reliability, security and scalability of your microservices.
@@ -18,7 +18,7 @@ Thank you to all the [contributors](https://github.com/datawire/ambassador/graph
 
 | Package               | Version                                        | License                                                                                    |
 | --------------------- | ---------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| Ambassador Operator | 1.2.8 | [Apache 2.0](https://github.com/datawire/ambassador/blob/master/LICENSE) |
+| Ambassador Edge Stack | 1.6.0 | [Apache 2.0](https://github.com/datawire/ambassador/blob/master/LICENSE) |
 
 # Getting Started
 
@@ -47,36 +47,20 @@ You should now be able to connect to your DigitalOcean Kubernetes Cluster and su
 kubectl get pods -A
 ```
 
-### Confirm Ambassador Operator is running: 
-After you are able to successfully connect to your DigitalOcean Kubernetes cluster you’ll be able to see Ambassador Operator running in the `ambassador-operator` namespace by issuing:
+### Confirm Ambassador is running: 
+After you are able to successfully connect to your DigitalOcean Kubernetes cluster you’ll be able to see Ambassador Operator running in the `ambassador` namespace by issuing:
  ```
- kubectl get pods -n ambassador-operator
+ kubectl get pods -n ambassador
  ``` 
- Confirm all `ambassador-operator` pods are in a “`Running`” state under the “`STATUS`” column:
+ Confirm all `ambassador` pods are in a “`Running`” state under the “`STATUS`” column:
 
 ```
-NAMESPACE              NAME                                    READY    STATUS    RESTARTS    AGE
-ambassador-operator    ambassador-operator-677f58bd99-fx47c    1/1      Running   0           6m34s
+NAME                                READY   STATUS    RESTARTS   AGE
+ambassador-79c76bb8-64x96           1/1     Running   0          11m
+ambassador-79c76bb8-bzlqn           1/1     Running   0          11m
+ambassador-79c76bb8-c2b6x           1/1     Running   0          11m
+ambassador-redis-6594476754-hgqbb   1/1     Running   0          11m
 ```
-
-### Creating an AmbassadorInstallation
-
-1. Create a namespace for Ambassador.
-    ```bash
-    kubectl create namespace ambassador
-    ```
-1. Create and apply an AmbassadorInstallation into the `ambassador` Namespace.
-    ```yaml
-    ---
-    apiVersion: getambassador.io/v2
-    kind: AmbassadorInstallation
-    metadata:
-      name: ambassador
-      namespace: ambassador
-    spec:
-      version: "*"
-    ```
-    * Customize your deployment with [Helm values](https://www.getambassador.io/docs/latest/topics/install/aes-operator/#customizing-the-installation-with-some-helm-values) to fit your needs.
 
 ### Exposing a Service with Ambassador
 
