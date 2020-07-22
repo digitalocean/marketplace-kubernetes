@@ -8,7 +8,7 @@ ROOT_DIR=$(git rev-parse --show-toplevel)
 cp -r "$ROOT_DIR"/src/op-scim-bridge/"$SRC_VERSION" $BUILD_DIR
 cp -r "$ROOT_DIR"/stacks/op-scim-bridge $BUILD_DIR
 
-SRC_VERSION="1.4.2"
+SRC_VERSION="1.4.3"
 
 cd $BUILD_DIR
 

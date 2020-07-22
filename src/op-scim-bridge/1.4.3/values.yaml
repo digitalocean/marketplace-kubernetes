@@ -1,0 +1,7 @@
+applicationName: op-scim-bridge
+scimsessionFile: scimsession
+opscimImage: 1password/scim:v1.4.3
+redisImage: redis:latest
+scimUserID: 999
+scimUserName: scimuser
+scimUserHome: /home/scimuser
