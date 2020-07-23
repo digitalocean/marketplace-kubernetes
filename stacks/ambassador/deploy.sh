@@ -13,6 +13,7 @@ helm repo update
 ################################################################################
 STACK="ambassador"
 CHART="datawire/ambassador"
+CHART_VERSION="6.5.0"
 NAMESPACE="ambassador"
 
 if [ -z "${MP_KUBERNETES}" ]; then
@@ -30,5 +31,6 @@ helm upgrade "$STACK" "$CHART" \
   --install \
   --create-namespace \
   --namespace "$NAMESPACE" \
+  --version "$CHART_VERSION"
   --values "$values" \
   --wait
