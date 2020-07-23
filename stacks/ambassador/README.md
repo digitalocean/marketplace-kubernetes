@@ -1,7 +1,7 @@
 # Description
 [Ambassador Edge Stack](https://getambassador.io/) is a popular, high-performance [Ingress Controller](https://www.getambassador.io/products/edge-stack/api-gateway/) and [API Gateway](https://www.getambassador.io/learn/kubernetes-glossary/api-gateway/) built on [Envoy Proxy](https://www.envoyproxy.io/). Envoy Proxy was designed from the ground up for [cloud-native](https://www.getambassador.io/learn/kubernetes-glossary/cloud-native/) applications. Ambassador exposes Envoy's functionality as [Custom Resource Definitions](https://www.getambassador.io/learn/kubernetes-glossary/custom-resource-definition/), with integrated support for rate limiting, authentication, load balancing, observability, and more.
 
-The DigitalOcean 1-click application installs the Helm 3 version of Ambassador Edge Stack.  This version includes the Authentication and Rate Limiting plugins as well as the Dev Portal.  It also includes the option of upgrading your installation to include Service Preview and MicroCD, two Edge Stack components that improve and streamline the developer self-service model.  To explore the features of these components, see the links below.
+The DigitalOcean 1-click application installs the [Helm 3](https://helm.sh/docs/intro/install/) version of Ambassador Edge Stack.  This version includes the Authentication and Rate Limiting plugins as well as the Dev Portal.  It also includes the option of upgrading your installation to include Service Preview and MicroCD, two Edge Stack components that improve and streamline the developer self-service model.  To explore the features of these components, see the links below.
 
 Edge Stack Components:
   - [Rate Limiting](https://www.getambassador.io/docs/latest/topics/using/rate-limits/rate-limits/): Rate limit to ensure the reliability, security and scalability of your microservices.
@@ -134,6 +134,14 @@ spec:
       ```bash
       kubectl get svc -n ambassador -o 'go-template={{range .status.loadBalancer.ingress}}{{print .ip "\n"}}{{end}}'
       ```
+
+### Upgrading
+
+To upgrade Ambassador Edge Stack, use the following:
+```
+kubectl apply -f https://www.getambassador.io/yaml/aes-crds.yaml
+helm repo update && helm upgrade -n ambassador ambassador datawire/ambassador
+```
 
 ### Additional Resources
   - [Quick Start](https://www.getambassador.io/docs/latest/tutorials/getting-started/)
