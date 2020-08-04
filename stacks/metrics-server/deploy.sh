@@ -36,8 +36,8 @@ else
 fi
 
 helm upgrade "$STACK" "$CHART" \
+  --atomic \
   --install \
   --namespace "$NAMESPACE" \
   --values "$values" \
-  --version "$CHART_VERSION" \
-  --wait
+  --version "$CHART_VERSION"
