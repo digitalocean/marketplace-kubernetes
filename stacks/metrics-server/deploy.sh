@@ -12,22 +12,32 @@ else
   exit 0
 fi
 
-# install metrics-server
+################################################################################
+# repo
+################################################################################
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm repo update
+
+################################################################################
+# chart
+################################################################################
 STACK="metrics-server"
-CHART="stable/metrics-server"
-CHART_VERSION="2.11.1"
+CHART="bitnami/metrics-server"
+CHART_VERSION="4.3.0"
 NAMESPACE="kube-system"
 
 if [ -z "${MP_KUBERNETES}" ]; then
-  VALUES="values.yaml"
+  # use local version of values.yml
+  ROOT_DIR=$(git rev-parse --show-toplevel)
+  values="$ROOT_DIR/stacks/metrics-server/values.yml"
 else
-  VALUES="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/${STACK}/values.yaml"
+  # use github hosted master version of values.yml
+  values="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/metrics-server/values.yml"
 fi
 
 helm upgrade "$STACK" "$CHART" \
   --install \
-  --create-namespace \
   --namespace "$NAMESPACE" \
-  --values "$VALUES" \
+  --values "$values" \
   --version "$CHART_VERSION" \
   --wait
