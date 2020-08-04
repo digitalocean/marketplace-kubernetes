@@ -2,21 +2,33 @@
 
 set -e
 
+################################################################################
+# repo
+################################################################################
+helm repo add stable https://kubernetes-charts.storage.googleapis.com
+helm repo update
+
+################################################################################
+# chart
+################################################################################
 STACK="prometheus-operator"
 CHART="stable/prometheus-operator"
-CHART_VERSION="8.13.7"
+CHART_VERSION="9.3.0"
 NAMESPACE="prometheus-operator"
 
 if [ -z "${MP_KUBERNETES}" ]; then
-  VALUES="values.yaml"
+  # use local version of values.yml
+  ROOT_DIR=$(git rev-parse --show-toplevel)
+  values="$ROOT_DIR/stacks/prometheus-operator/values.yml"
 else
-  VALUES="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/${STACK}/values.yaml"
+  # use github hosted master version of values.yml
+  values="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/prometheus-operator/values.yml"
 fi
 
 helm upgrade "$STACK" "$CHART" \
   --install \
   --create-namespace \
   --namespace "$NAMESPACE" \
-  --values "$VALUES" \
+  --values "$values" \
   --version "$CHART_VERSION" \
   --wait
