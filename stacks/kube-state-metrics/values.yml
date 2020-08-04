@@ -1,0 +1,5 @@
+# bitnami/kube-state-metrics
+
+global:
+  labels:
+    app.kubernetes.io/installed-by: digitalocean-marketplace
