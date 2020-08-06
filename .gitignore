@@ -2,6 +2,9 @@
 *~
 *.bak
 
+#Goland
+.idea/
+
 # macOS
 .DS_Store
 
