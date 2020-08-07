@@ -2,42 +2,35 @@
 
 set -e
 
-# check if metrics-server is already installed
-CHECK=$(kubectl get svc metrics-server -n kube-system --ignore-not-found)
-if [ "$CHECK" = "" ]
-then
-  echo "metrics-server not found"
-else
-  echo "metrics-server found, exiting"
-  exit 0
-fi
-
 ################################################################################
 # repo
 ################################################################################
-helm repo add bitnami https://charts.bitnami.com/bitnami
+helm repo add datawire https://getambassador.io
 helm repo update
 
 ################################################################################
 # chart
 ################################################################################
-STACK="metrics-server"
-CHART="bitnami/metrics-server"
-CHART_VERSION="4.3.0"
-NAMESPACE="kube-system"
+STACK="ambassador"
+CHART="datawire/ambassador"
+CHART_VERSION="6.5.0"
+NAMESPACE="ambassador"
 
 if [ -z "${MP_KUBERNETES}" ]; then
   # use local version of values.yml
   ROOT_DIR=$(git rev-parse --show-toplevel)
-  values="$ROOT_DIR/stacks/metrics-server/values.yml"
+  values="$ROOT_DIR/stacks/ambassador/values.yml"
 else
   # use github hosted master version of values.yml
-  values="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/metrics-server/values.yml"
+  values="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/ambassadorvalues.yml"
 fi
 
+kubectl apply -f https://getambassador.io/yaml/aes-crds.yaml
+
 helm upgrade "$STACK" "$CHART" \
-  --atomic \
   --install \
+  --create-namespace \
   --namespace "$NAMESPACE" \
-  --values "$values" \
   --version "$CHART_VERSION"
+  --values "$values" \
+  --wait
