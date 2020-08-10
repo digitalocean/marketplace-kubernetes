@@ -1,4 +1,4 @@
-# Prometheus Operator
+# kube-prometheus
 
-https://github.com/coreos/prometheus-operator
-https://github.com/helm/charts/tree/master/stable/prometheus-operator
+* https://github.com/prometheus-operator/kube-prometheus
+* https://github.com/helm/charts/tree/master/stable/prometheus-operator
