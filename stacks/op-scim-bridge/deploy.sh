@@ -15,5 +15,5 @@ helm upgrade "$STACK" "$CHART" \
   --install \
   --create-namespace \
   --namespace "$NAMESPACE" \
-  --version "$CHART_VERSION" \
+  --version "$CHART_VERSION"
 
