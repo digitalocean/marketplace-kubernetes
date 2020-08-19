@@ -2,19 +2,18 @@
 
 set -e
 
-# create namespace
-cat <<EOF | kubectl apply -f -
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: op-scim-bridge
-EOF
+helm repo add op-scim-bridge https://raw.githubusercontent.com/1Password/op-scim-helm/main/
+helm repo update
 
-# set kubectl namespace
-kubectl config set-context --current --namespace=op-scim-bridge
+STACK="op-scim-bridge"
+CHART="op-scim-bridge/op-scim"
+CHART_VERSION="1.4.4"
+NAMESPACE="op-scim-bridge"
 
-# deploy op-scim-bridge
-kubectl apply -f https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/op-scim-bridge/yaml/op-scim-bridge.yaml
+helm upgrade "$STACK" "$CHART" \
+  --atomic \
+  --install \
+  --create-namespace \
+  --namespace "$NAMESPACE" \
+  --version "$CHART_VERSION"
 
-# ensure services are running
-kubectl rollout status -w deployment/op-scim-bridge
