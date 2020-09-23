@@ -1,0 +1,15 @@
+
+---
+
+export APP_INSTANCE_NAME=k8s-monitor;
+export NAMESPACE=k8s-monitor;
+export GRAFANA_GENERATED_PASSWORD="$(echo -n 'k8s-monitor-pass' | base64)";
+kubectl create namespace "$NAMESPACE";
+
+kubectl apply -f "${APP_INSTANCE_NAME}_manifest.yaml" --namespace "${NAMESPACE}"
+
+kubectl -n k8s-monitor port-forward k8s-monitor-grafana-0 4000:3000
+
+login grafana at localhost:4000 id: admin, password: k8s-monitor-pass
+
+Dashborad Mange Kuernetes/Node
