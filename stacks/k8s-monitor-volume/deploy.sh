@@ -7,7 +7,14 @@ export NAMESPACE=k8s-monitor;
 export GRAFANA_GENERATED_PASSWORD="$(echo -n 'k8s-monitor-pass' | base64)";
 
 # create namespace
-kubectl create namespace "$NAMESPACE";
+# kubectl create namespace "$NAMESPACE";
+
+cat <<EOF | kubectl apply -f -
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: k8s-monitor 
+EOF
 
 # deploy k8s-monitor-stack 
 kubectl apply -f "${APP_INSTANCE_NAME}_manifest.yaml" --namespace "${NAMESPACE}"

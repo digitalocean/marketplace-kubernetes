@@ -543,8 +543,8 @@ spec:
             cpu: 100m
             memory: 30Mi
           requests:
-            cpu: 100m
-            memory: 30Mi
+            cpu: 1m
+            memory: 1Mi
         env:
           - name: MY_POD_NAME
             valueFrom:
@@ -641,8 +641,8 @@ spec:
               cpu: 10m
               memory: 50Mi
             requests:
-              cpu: 10m
-              memory: 50Mi
+              cpu: 1m
+              memory: 1Mi
       # The `hostNetwork` and `hostPID` Pod Security parameters are set to `true` to allow `node-exporter` 
       # to  access the host process ID namespace and Node network namespace, which are required for scraping Node metrics
       hostNetwork: true

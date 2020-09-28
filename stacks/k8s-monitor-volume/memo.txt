@@ -13,3 +13,11 @@ kubectl -n k8s-monitor port-forward k8s-monitor-grafana-0 4000:3000
 login grafana at localhost:4000 id: admin, password: k8s-monitor-pass
 
 Dashborad Mange Kuernetes/Node
+
+# access prometheus UI
+kubectl port-forward --namespace k8s-monitor k8s-monitor-prometheus-0 9090:9090
+localhost:9090 in browser
+
+# access alertmanager UI
+kubectl port-forward --namespace ${NAMESPACE} k8s-monitor-alertmanager-0 9093
+localhost:9093 in browser
