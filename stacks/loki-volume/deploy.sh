@@ -18,14 +18,14 @@ CHART="loki-volume/loki-stack"
 CHART_VERSION="0.40.1"
 NAMESPACE="loki"
 
-if [ -z "${MP_KUBERNETES}" ]; then
-  # use local version of values.yml
-  ROOT_DIR=$(git rev-parse --show-toplevel)
-  values="$ROOT_DIR/stacks/loki-volume/values.yml"
-else
-  # use github hosted master version of values.yml
-  values="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/loki-volume/values.yml"
-fi
+# if [ -z "${MP_KUBERNETES}" ]; then
+#   # use local version of values.yml
+#   ROOT_DIR=$(git rev-parse --show-toplevel)
+#   values="$ROOT_DIR/stacks/loki-volume/values.yml"
+# else
+#   # use github hosted master version of values.yml
+#   values="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/loki-volume/values.yml"
+# fi
 
 helm upgrade "$STACK" "$CHART" \
   --atomic \
