@@ -48,7 +48,7 @@ search for any service in the dropdown and click Find Traces at localhost:16686.
 
 uninject linkerd 
 <br/>
-kubectl -n emojivoto deploy -o yaml | linkerd uninject - | kubectl apply -f -
+kubectl -n emojivoto get deploy -o yaml | linkerd uninject - | kubectl apply -f -
 
 delete emojivoto deployment
 <br/>
