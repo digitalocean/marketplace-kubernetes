@@ -2,6 +2,12 @@
 
 set -e
 
+# POCHECK=$(helm ls -n prometheus-operator |grep prometheus-operator)
+
+helm uninstall -n prometheus-operator prometheus-operator || echo -n 'prometheus-operator not installed'
+
+kubectl delete ns prometheus-operator --ignore-not-found
+
 ################################################################################
 # repo
 ################################################################################
@@ -16,14 +22,14 @@ CHART="stable/prometheus-operator"
 CHART_VERSION="9.3.0"
 NAMESPACE="prometheus-operator"
 
-if [ -z "${MP_KUBERNETES}" ]; then
-  # use local version of values.yml
-  ROOT_DIR=$(git rev-parse --show-toplevel)
-  values="$ROOT_DIR/stacks/prometheus-operator/values.yml"
-else
-  # use github hosted master version of values.yml
-  values="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/prometheus-operator/values.yml"
-fi
+# if [ -z "${MP_KUBERNETES}" ]; then
+#   # use local version of values.yml
+#   ROOT_DIR=$(git rev-parse --show-toplevel)
+#   values="$ROOT_DIR/stacks/prometheus-operator/values.yml"
+# else
+#   # use github hosted master version of values.yml
+#   values="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/prometheus-operator/values.yml"
+# fi
 
 helm upgrade "$STACK" "$CHART" \
   --atomic \
@@ -31,4 +37,5 @@ helm upgrade "$STACK" "$CHART" \
   --create-namespace \
   --namespace "$NAMESPACE" \
   --values "$values" \
-  --version "$CHART_VERSION"
+  --version "$CHART_VERSION" \
+  --values "values.yaml"  \
