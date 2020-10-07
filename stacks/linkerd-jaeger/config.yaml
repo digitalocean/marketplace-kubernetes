@@ -1,0 +1,10 @@
+tracing:
+  enabled: true
+  collector:
+    resources:
+      cpu:
+        limit: 100m
+        request: 1m
+      memory:
+        limit: 100Mi
+        request: 1Mi

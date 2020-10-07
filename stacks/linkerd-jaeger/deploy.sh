@@ -20,22 +20,23 @@ linkerd install | kubectl apply -f -
 
 # #add distributed tracing with linkerd
 
-cat >> config.yaml << EOF
-tracing:
-  enabled: true
-  collector:
-    resources:
-      cpu:
-        limit: 100m
-        request: 1m
-      memory:
-        limit: 100Mi
-        request: 1Mi
-EOF
+# cat >> config.yaml << EOF
+# tracing:
+#   enabled: true
+#   collector:
+#     resources:
+#       cpu:
+#         limit: 100m
+#         request: 1m
+#       memory:
+#         limit: 100Mi
+#         request: 1Mi
+# EOF
 
 linkerd upgrade --addon-config config.yaml | kubectl apply -f -
 
-rm -rf config.yaml
+# rm -rf config.yaml
+
 # ---------
 
 
