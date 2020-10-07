@@ -2,8 +2,6 @@
 
 set -e
 
-# POCHECK=$(helm ls -n prometheus-operator |grep prometheus-operator)
-
 helm uninstall -n prometheus-operator prometheus-operator || echo -n 'prometheus-operator not installed'
 
 kubectl delete ns prometheus-operator --ignore-not-found
