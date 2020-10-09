@@ -19,7 +19,7 @@ spec:
         - name: cloud-native-installer
           ports:
             - containerPort: 5000
-          image: gluufederation/cloud-native:4.2.1_a3
+          image: gluufederation/cloud-native:4.2.1_a4
 ---
 kind: Service
 apiVersion: v1
