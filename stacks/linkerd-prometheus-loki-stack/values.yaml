@@ -1,0 +1,18 @@
+prometheus:
+  server:
+    persistentVolume:
+      enabled: true
+  prometheusSpec:
+    replicas: 1
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 15Gi
+alertmanager:
+  alertmanagerSpec:
+    replicas: 1
+grafana:
+  replicas: 1
