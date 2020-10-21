@@ -1,0 +1,16 @@
+# cockroachdb/cockroachdb
+statefulset:
+  resources:
+    limits:
+      memory: "8Gi"
+    requests:
+      memory: "8Gi"
+conf:
+  cache: "2Gi"
+  max-sql-memory: "2Gi"
+tls:
+  enabled: true
+statefulset:
+  env:
+  - name: COCKROACH_CHANNEL
+    value: "digitalocean_mkt_helm"
