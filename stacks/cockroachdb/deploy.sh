@@ -31,4 +31,3 @@ helm upgrade "$STACK" "$CHART" \
   --create-namespace \
   --namespace "$NAMESPACE" \
   --values "$values" \
-  --version "$CHART_VERSION" \
