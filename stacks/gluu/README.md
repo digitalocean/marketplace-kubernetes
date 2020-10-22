@@ -32,17 +32,19 @@ This stack source is open source and supported by Gluu enterprise [subscriptions
 
 Contributions on bug fixes and features will be kindly reviewed.
 
-**Note: This stack requires a minimum configuration of 3 Nodes of machine type `CPU-Optimized nodes` at the $40/Month per node ($0.060/hr) plan (4GB memory / 2 vCPU).**
+**Note: This stack requires a minimum configuration of 3 Nodes of machine type `CPU-Optimized nodes` at the $80/Month per node ($0.118/hr) plan (6GB memory / 4 vCPU). If all services are going to be enabled a minimum of 4 nodes are needed.**
 
 **Note: This stack may take up to 12 mins to start.**
+
+**Note: This stack is for demonstration. Please consult our [docs](<https://gluu.org/docs/gluu-server/4.2/installation-guide/install-kubernetes/>) for more details.**
 
 # Software included
 
 | Package               | Version                                        | License                                                                                    |
 | --------------------- | ---------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| Gluu                  | [4.1](https://gluu.org/docs/gluu-server/4.1/)  | [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0.html)                             |
-| oxd OAuth client      | [4.1](https://gluu.org/docs/oxd/4.1/)          | [AGPL](https://opensource.org/licenses/AGPL-3.0)                                           |
-| Gluu Gateway  [alpha] | [4.2](https://gluu.org/docs/gg/4.2/)           | [Apache 2.0](https://raw.githubusercontent.com/GluuFederation/gluu-gateway/master/LICENSE) |
+| Gluu                  | [4.2](https://gluu.org/docs/gluu-server/4.2/)  | [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0.html)                             |
+| oxd OAuth client      | [4.2](https://gluu.org/docs/oxd/4.2/)          | [AGPL](https://opensource.org/licenses/AGPL-3.0)                                           |
+| Gluu Gateway  [beta ] | [4.2](https://gluu.org/docs/gg/4.2/)           | [Apache 2.0](https://raw.githubusercontent.com/GluuFederation/gluu-gateway/master/LICENSE) |
 | Casa [beta]           | [4.2](https://gluu.org/docs/casa/4.2/)         | [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0.html)                             |
 
 # Getting Started
@@ -72,10 +74,20 @@ You should now be able to connect to your DigitalOcean Kubernetes Cluster and su
 ```
 kubectl get pods -A
 ```
+### Start Gluu Installation
 
+1. Get the load balancer ip
+
+    ```
+    kubectl get service cloud-native-installer --output jsonpath='{.status.loadBalancer.ingress[0].ip}'
+    157.230.197.222
+    ```
+
+1. Access GUI installation at `http://157.230.197.222` and complete installation steps from there.
+    
 ### Confirm Gluu is running:
 
-After you are able to successfully connect to your DigitalOcean Kubernetes cluster you’ll be able to see Gluu running in the `gluu` namespace by issuing:
+After you are able to successfully connect to your DigitalOcean Kubernetes cluster you’ll be able to see Gluu running in the namespace Gluu was installed in i.e `gluu` by issuing:
 
 ```
 kubectl get pods -n gluu
@@ -105,7 +117,7 @@ gluu-persistence-4q5dv               0/1     Completed   0          74m
 gluu-radius-7cbf9cd575-2grtl         1/1     Running     0          74m
 ```
 
-Check nginx ingress is running in `ningress` namespace:
+Check nginx ingress is running in the chosen ingress namespace i.e ningress:
 
 ```
 kubectl get pods -n ningress
@@ -118,9 +130,9 @@ ingress-nginx-nginx-ingress-default-backend-6c4f68bfb6-lhmfp   1/1     Running  
 ```
 
 
-Check gluu-gateway is running in `gluu-gateway` namespace:
+Check gluu-gateway is running in the namesapce gluu-gateway was installed in i.e `gluu-gateway`  if it was installed:
 
-**Note: Gluu-Gateway  is alpha in this installation**
+**Note: Gluu-Gateway  is beta in this installation**
 
 ```
 kubectl get pods -n gluu-gateway
@@ -132,9 +144,9 @@ gg-kong-648ddf8f69-jtrdc        2/2     Running     2          71m
 gg-kong-init-migrations-62vz7   0/1     Completed   0          71m
 ```
 
-Check gluu-gateway ui is running in `gg-ui` namespace:
+Check gluu-gateway ui is running in the namespace gluu gateway ui was installed in i.e `gg-ui` if it was installed:
 
-**Note: Gluu-Gateway UI is alpha in this installation**
+**Note: Gluu-Gateway UI is beta in this installation**
 
 ```
 kubectl get pods -n gg-ui
@@ -146,67 +158,20 @@ ggui-gluu-gateway-ui-5db6c9dbf6-jdzhq    1/1     Running     0          69m
 ggui-gluu-gateway-ui-preperation-nmt75   0/1     Completed   0          69m
 ```
 
+### Clean up
+
+1. Once installation has finished you may delete the loadbalancer for the GUI. 
+
+    ```
+    kubectl -n gluu delete service cloud-native-installer && kubectl -n gluu delete job cloud-native-installer 
+    ```
+    
 ### Connect/Use Gluu
-
-1. Get the admin password by running the following script as `bash get_password.sh`. The password will be outputted to `admin_pass`. Save the admin password for login later in the admin UI.
-
-    ```bash
-    #!/bin/bash
-    set -e
-    mkdir delete_me && cd delete_me
-    kubectl get secret gluu -o json -n gluu | grep '"encoded_salt":' | sed -e 's#.*:\(\)#\1#' | tr -d '"' | tr -d "," | tr -d '[:space:]' > encoded_salt
-    base64 -d encoded_salt > decoded_salt
-    kubectl get secret gluu -o json -n gluu | grep '"encoded_ox_ldap_pw":' | sed -e 's#.*:\(\)#\1#' | tr -d '"' | tr -d "," | tr -d '[:space:]' > encoded_ox_ldap_pw
-    base64 -d encoded_ox_ldap_pw > encoded_ox_ldap_pw_decoded
-    cat <<EOF > decode.py
-    #!/usr/bin/python3
     
-    import sys
-    import base64
-    from pyDes import *
-    
-    key = ""
-    with open('decoded_salt', 'r') as file:
-    # PLACE YOUR decoded_salt BELOW
-       key = file.read()
-    
-    encoded_ox_ldap_pw_decoded = ""
-    with open('encoded_ox_ldap_pw_decoded', 'r') as file:
-       encoded_ox_ldap_pw_decoded = file.read()
-    
-    def unobscure(s=""):
-       engine = triple_des(key, ECB, pad=None, padmode=PAD_PKCS5)
-       cipher = triple_des(key)
-       decrypted = cipher.decrypt(base64.b64decode(s), padmode=PAD_PKCS5)
-       return decrypted.decode('utf-8')
-    
-    with open('admin_pass', 'w+') as file:
-       file.write(unobscure(encoded_ox_ldap_pw_decoded))
-    
-    EOF
-    python3 decode.py
-    ```
-    
-    Script steps explained:
-    
-    1. Make a directory called `delete_me`
-
-    1. Get the `encoded_salt` from gluu secret
-    
-    1. Base64 decode the salt
-       
-    1. Get the `encoded_ox_ldap_pw`  from backend secret and save `encoded_ox_ldap_pw`  in a file called `encoded_ox_ldap_pw`
-
-    1. Base64 decode the `encoded_ox_ldap_pw` and save the decoded `encoded_ox_ldap_pw` in a file called `encoded_ox_ldap_pw_decoded`
-
-    1. Create the following python script as `decode.py` to decode your `encoded_ox_ldap_pw_decoded` by reading the salt and `encoded_ox_ldap_pw_decoded` files in the python snippet.
-       
-    1. Run script and the password will be outputted to file `admin_pass`.
-    
-1. Get the load balancer ip
+1. Once installation has finished, get the load balancer ip from the ingress service. 
 
     ```
-    kubectl -n ningress get service ingress-nginx-nginx-ingress-controller --output jsonpath='{.status.loadBalancer.ingress[0].ip}'
+    kubectl -n <ingress-nginx-namespace>  get service <ingress-nginx-name> --output jsonpath='{.status.loadBalancer.ingress[0].ip}'
     157.230.197.224
     ```
 
@@ -232,4 +197,4 @@ ggui-gluu-gateway-ui-preperation-nmt75   0/1     Completed   0          69m
 
 ### Additional Resources
 
-- [Kubernetes Gluu installation recipies](https://gluu.org/docs/gluu-server/4.1/installation-guide/install-kubernetes/)
+- [Kubernetes Gluu installation recipies](https://gluu.org/docs/gluu-server/4.2/installation-guide/install-kubernetes/)
