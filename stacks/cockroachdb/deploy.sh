@@ -30,4 +30,4 @@ helm upgrade "$STACK" "$CHART" \
   --install \
   --create-namespace \
   --namespace "$NAMESPACE" \
-  --values "$values" \
+  --values "$values"
