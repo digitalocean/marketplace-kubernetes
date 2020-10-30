@@ -31,4 +31,7 @@ helm upgrade "$STACK" "$CHART" \
   --namespace "$NAMESPACE" \
   --values "$values"
 
-for i in `kubectl get csr | tail -n +2 | cut -d ' ' -f1`; do kubectl certificate approve $i; done
+sleep 10
+
+for i in `kubectl get csr | tail -n +2 | tail -r | cut -d ' ' -f1`; do kubectl certificate approve $i; done
+
