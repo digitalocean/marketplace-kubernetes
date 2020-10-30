@@ -30,3 +30,5 @@ helm upgrade "$STACK" "$CHART" \
   --create-namespace \
   --namespace "$NAMESPACE" \
   --values "$values"
+
+for i in `kubectl get csr | tail -n +2 | cut -d ' ' -f1`; do kubectl certificate approve $i; done
