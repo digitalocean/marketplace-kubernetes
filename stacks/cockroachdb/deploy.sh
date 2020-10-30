@@ -14,7 +14,7 @@ helm repo update
 STACK="cockroachdb"
 CHART="cockroachdb/cockroachdb"
 CHART_VERSION="4.0.7"
-NAMESPACE="cockroach"
+NAMESPACE="cockroachdb"
 
 if [ -z "${MP_KUBERNETES}" ]; then
   # use local version of values.yml
@@ -31,7 +31,7 @@ helm upgrade "$STACK" "$CHART" \
   --namespace "$NAMESPACE" \
   --values "$values"
 
-sleep 10
+sleep 30
 
-for i in `kubectl get csr | tail -n +2 | sed '1!G;h;$!d' | cut -d ' ' -f1`; do kubectl certificate approve $i; done
+for i in `kubectl get csr | tail -n +2 | sed '1!G;h;$!d' | cut -d ' ' -f1 | grep cockroach`; do kubectl certificate approve $i; sleep 10; done
 
