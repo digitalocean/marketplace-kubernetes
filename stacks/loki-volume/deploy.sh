@@ -37,6 +37,7 @@ helm upgrade "$STACK" "$CHART" \
   --set "loki.persistence.enabled=true" --set "loki.persistence.size=10Gi" --set "loki.persistence.storageClassName=do-block-storage" --set "grafana.enabled=true"
 
 
+kubectl -n loki patch deployment loki-volume-grafana --patch "$(cat grafana-patch-file.yaml)"
 
 # #grab the password of admin user (admin) for grafana:
 # kubectl get secret --namespace loki loki-volume-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
@@ -46,3 +47,5 @@ helm upgrade "$STACK" "$CHART" \
 # kubectl port-forward <<loki-grafan pod name>> 4000:3000 -n loki 
 
 # #open localhost:4000 in browser
+
+## to see log in revese order, after deployment upgrade loki-volume-grafana image version > grafana/grafana:7.3.0
