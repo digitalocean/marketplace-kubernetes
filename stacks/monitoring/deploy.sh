@@ -9,15 +9,21 @@ kubectl delete ns prometheus-operator --ignore-not-found
 ################################################################################
 # repo
 ################################################################################
-helm repo add stable https://kubernetes-charts.storage.googleapis.com
+# helm repo add stable https://kubernetes-charts.storage.googleapis.com
+# helm repo update
+
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo add stable https://charts.helm.sh/stable
 helm repo update
 
 ################################################################################
 # chart
 ################################################################################
 STACK="prometheus-operator"
-CHART="stable/prometheus-operator"
-CHART_VERSION="9.3.0"
+# CHART="stable/prometheus-operator"
+CHART="prometheus-community/kube-prometheus-stack"
+# CHART_VERSION="9.3.0"
+CHART_VERSION="11.0.2"
 NAMESPACE="prometheus-operator"
 
 # if [ -z "${MP_KUBERNETES}" ]; then
