@@ -84,3 +84,6 @@ NAMESPACE="kube-system"
 # fi
 
 helm upgrade --install "$STACK" "$CHART" --atomic --namespace "$NAMESPACE" --version "$CHART_VERSION" -f metrics-server-values.yaml
+
+# # kube-prometheus-stack
+# # https://artifacthub.io/packages/helm/prometheus-community/kube-prometheus-stack#configuration
