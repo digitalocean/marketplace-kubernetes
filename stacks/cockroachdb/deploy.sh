@@ -13,7 +13,7 @@ helm repo update
 ################################################################################
 STACK="cockroachdb"
 CHART="cockroachdb/cockroachdb"
-CHART_VERSION="4.0.7"
+CHART_VERSION="5.0.0"
 NAMESPACE="cockroachdb"
 
 if [ -z "${MP_KUBERNETES}" ]; then
@@ -29,9 +29,9 @@ helm upgrade "$STACK" "$CHART" \
   --install \
   --create-namespace \
   --namespace "$NAMESPACE" \
-  --values "$values"
+  --values "$values" \
+  --version "$CHART_VERSION"
 
 sleep 30
 
-for i in `kubectl get csr | tail -n +2 | sed '1!G;h;$!d' | cut -d ' ' -f1 | grep cockroach`; do kubectl certificate approve $i; sleep 10; done
-
+for i in $(kubectl get csr | tail -n +2 | sed '1!G;h;$!d' | cut -d ' ' -f1 | grep cockroach); do kubectl certificate approve "$i"; sleep 10; done
