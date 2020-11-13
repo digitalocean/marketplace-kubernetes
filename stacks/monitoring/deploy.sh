@@ -2,9 +2,9 @@
 
 set -e
 
-helm uninstall -n prometheus-operator prometheus-operator || echo -n 'prometheus-operator not installed'
+# helm uninstall -n prometheus-operator prometheus-operator || echo -n 'prometheus-operator not installed'
 
-kubectl delete ns prometheus-operator --ignore-not-found
+# kubectl delete ns prometheus-operator --ignore-not-found
 
 ################################################################################
 # repo
