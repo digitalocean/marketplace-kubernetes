@@ -24,11 +24,12 @@ export NAMESPACE=$APP_NAME
 4. Optionally, customize your `deploy.sh` and specify your Helm chart's configuration values in `values.yml`. Both can be found in `stacks/$APP_NAME`
 4. Test out your stack by deploying it locally to a k8s cluster: `./stacks/$APP_NAME/deploy.sh`
 4. Open a PR
+4. Once the PR is reviewed and merged by DigitalOcean, visit the [DigitalOcean Marketplace Vendor Portal](https://marketplace.digitalocean.com/vendorportal) and submit your App Listing, refering to this PR in the appropriate input field.
 
 ## Updating Your Application
 1. To deploy a newer version of your app's Helm chart, simply update the `CHART_VERSION` value in your `stacks/$APP_NAME/deploy.sh` file. If necessary, update your `values.yml` as well.
 1. Open a PR
-1. Once your PR is merged, make the necessary listing copy updates in the [Vendor Portal](https://marketplace.digitalocean.com/vendorportal). The changes you make there will be reflected within your Marketplace listing.
+1. Once your PR is merged, make any needed updates in the [Vendor Portal](https://marketplace.digitalocean.com/vendorportal) to your App Listing, including referring to the URL of the PR that was merged. **Your new PR will not take effect until you do this final step in the Vendor Portal.**
 
 ## Getting Vendor Portal Access
 
