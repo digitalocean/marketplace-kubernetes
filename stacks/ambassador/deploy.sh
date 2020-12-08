@@ -13,7 +13,7 @@ helm repo update
 ################################################################################
 STACK="ambassador"
 CHART="datawire/ambassador"
-CHART_VERSION="6.5.0"
+CHART_VERSION="6.5.13"
 NAMESPACE="ambassador"
 
 if [ -z "${MP_KUBERNETES}" ]; then
@@ -22,7 +22,7 @@ if [ -z "${MP_KUBERNETES}" ]; then
   values="$ROOT_DIR/stacks/ambassador/values.yml"
 else
   # use github hosted master version of values.yml
-  values="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/ambassadorvalues.yml"
+  values="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/ambassador/values.yml"
 fi
 
 kubectl apply -f https://getambassador.io/yaml/aes-crds.yaml
@@ -31,6 +31,6 @@ helm upgrade "$STACK" "$CHART" \
   --install \
   --create-namespace \
   --namespace "$NAMESPACE" \
-  --version "$CHART_VERSION"
+  --version "$CHART_VERSION" \
   --values "$values" \
   --wait
