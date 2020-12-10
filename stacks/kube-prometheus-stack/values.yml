@@ -1,0 +1,6 @@
+# prometheus-community/kube-prometheus-stack
+
+grafana:
+  persistence:
+    enabled: true
+    size: 10Gi
