@@ -1,0 +1,7 @@
+# portainer/portainer
+
+# Since we're deploying to DO Marketplace, it's likely we'll be using the DO 
+# Kubernetes load-balancer. To _avoid_ this default behavior, set service.type below to
+# "ClusterIP" instead
+service:
+  type: LoadBalancer
