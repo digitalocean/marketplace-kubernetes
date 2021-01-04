@@ -2,19 +2,33 @@
 
 set -e
 
-# create namespace
-cat <<EOF | kubectl apply -f -
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: loki 
-EOF
+################################################################################
+# repo
+################################################################################
+helm repo add grafana https://grafana.github.io/helm-charts
+helm repo update
 
-# set kubectl namespace
-kubectl config set-context --current --namespace=loki
+################################################################################
+# chart
+################################################################################
+STACK="loki"
+CHART="grafana/loki-stack"
+CHART_VERSION="2.3.1"
+NAMESPACE="loki-stack"
 
-# deploy loki 
-kubectl apply -f https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/loki/yaml/loki.yaml
+if [ -z "${MP_KUBERNETES}" ]; then
+  # use local version of values.yml
+  ROOT_DIR=$(git rev-parse --show-toplevel)
+  values="$ROOT_DIR/stacks/loki/values.yml"
+else
+  # use github hosted master version of values.yml
+  values="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/loki/values.yml"
+fi
 
-# ensure services are running
-kubectl rollout status -w statefulset/loki
+helm upgrade "$STACK" "$CHART" \
+  --atomic \
+  --create-namespace \
+  --install \
+  --namespace "$NAMESPACE" \
+  --values "$values" \
+  --version "$CHART_VERSION"
