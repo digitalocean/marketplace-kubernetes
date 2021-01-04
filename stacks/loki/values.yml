@@ -1,1 +1,12 @@
 # grafana/loki-stack
+
+grafana:
+  enabled: true
+  persistence:
+    enabled: true
+    size: 10Gi
+
+loki:
+  persistence:
+    enabled: true
+    size: 50Gi
