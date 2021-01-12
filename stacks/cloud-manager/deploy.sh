@@ -6,7 +6,7 @@ set -e
 # repo
 ################################################################################
 helm repo add ei https://cdn.einnovator.org/charts
-helm repo update
+helm repo update > /dev/null
 
 ################################################################################
 # chart

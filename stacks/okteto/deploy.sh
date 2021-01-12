@@ -33,7 +33,7 @@ ADMIN_TOKEN=$(head -c 12 /dev/urandom | shasum| cut -d' ' -f1)
 
 # install okteto
 helm repo add okteto https://charts.okteto.com
-helm repo update
+helm repo update > /dev/null
 
 helm upgrade "$RELEASE" "okteto/okteto-enterprise"  \
   --install \

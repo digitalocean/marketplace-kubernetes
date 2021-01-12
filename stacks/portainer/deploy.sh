@@ -6,7 +6,7 @@ set -e
 # repo
 ################################################################################
 helm repo add portainer https://portainer.github.io/k8s/
-helm repo update
+helm repo update > /dev/null
 
 ################################################################################
 # chart
