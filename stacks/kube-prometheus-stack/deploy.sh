@@ -6,7 +6,7 @@ set -e
 # repo
 ################################################################################
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-helm repo update
+helm repo update > /dev/null
 
 ################################################################################
 # chart

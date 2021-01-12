@@ -16,7 +16,7 @@ fi
 # repo
 ################################################################################
 helm repo add bitnami https://charts.bitnami.com/bitnami
-helm repo update
+helm repo update > /dev/null
 
 ################################################################################
 # chart
