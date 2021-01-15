@@ -2,8 +2,8 @@
 
 set -e
 
-# deploy nginx ingress
-sh -c "curl --location --silent --show-error https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/nginx-ingress/deploy.sh | sh"
+# deploy ingress-nginx
+sh -c "curl --location --silent --show-error https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/ingress-nginx/deploy.sh | sh"
 
 # create mysql-operator namespace
 cat <<EOF | kubectl apply -f -
@@ -14,7 +14,7 @@ metadata:
 EOF
 
 # deploy mysql-operator
-kubectl apply -n mysql-operator -f https://raw.githubusercontent.com/mattermost/mattermost-operator/v0.8.0/docs/mysql-operator/mysql-operator.yaml
+kubectl apply -n mysql-operator -f https://raw.githubusercontent.com/mattermost/mattermost-operator/v1.12.0/docs/mysql-operator/mysql-operator.yaml
 
 # create minio-operator namespace
 cat <<EOF | kubectl apply -f -
@@ -25,7 +25,7 @@ metadata:
 EOF
 
 # deploy minio-operator
-kubectl apply -n minio-operator -f https://raw.githubusercontent.com/mattermost/mattermost-operator/v0.8.0/docs/minio-operator/minio-operator.yaml
+kubectl apply -n minio-operator -f https://raw.githubusercontent.com/mattermost/mattermost-operator/v1.12.0/docs/minio-operator/minio-operator.yaml
 
 # create mattermost-operator namespace
 cat <<EOF | kubectl apply -f -
@@ -36,7 +36,7 @@ metadata:
 EOF
 
 # deploy mattermost-operator
-kubectl apply -n mattermost-operator -f https://raw.githubusercontent.com/mattermost/mattermost-operator/v0.8.0/docs/mattermost-operator/mattermost-operator.yaml
+kubectl apply -n mattermost-operator -f https://raw.githubusercontent.com/mattermost/mattermost-operator/v1.12.0/docs/mattermost-operator/mattermost-operator.yaml
 
 # ensure services are running
 kubectl rollout status -w deployment/mattermost-operator -n mattermost-operator
