@@ -7,7 +7,7 @@ metadata:
   labels:
     heritage: Helm
     release: netdata
-    chart: netdata-1.1.22
+    chart: netdata-1.1.23
 spec:
   allowPrivilegeEscalation: true
   allowedCapabilities:
@@ -36,7 +36,7 @@ apiVersion: v1
 metadata:
   labels:
     app: netdata
-    chart: netdata-1.1.22
+    chart: netdata-1.1.23
     release: netdata
     heritage: Helm
   name: netdata
@@ -48,7 +48,7 @@ metadata:
   name: netdata-conf-slave
   labels:
     app: netdata
-    chart: netdata-1.1.22
+    chart: netdata-1.1.23
     release: netdata
     heritage: Helm
 data:
@@ -89,7 +89,7 @@ metadata:
   name: netdata-conf-master
   labels:
     app: netdata
-    chart: netdata-1.1.22
+    chart: netdata-1.1.23
     release: netdata
     heritage: Helm
 data:
@@ -136,7 +136,7 @@ metadata:
   name: netdata
   labels:
     app: netdata
-    chart: netdata-1.1.22
+    chart: netdata-1.1.23
     release: netdata
     heritage: Helm
 rules:
@@ -162,7 +162,7 @@ metadata:
   name: netdata-psp
   labels:
     app: netdata
-    chart: netdata-1.1.22
+    chart: netdata-1.1.23
     release: netdata
     heritage: Helm
 rules:
@@ -179,7 +179,7 @@ metadata:
   name: netdata
   labels:
     app: netdata
-    chart: netdata-1.1.22
+    chart: netdata-1.1.23
     release: netdata
     heritage: Helm
 roleRef:
@@ -198,7 +198,7 @@ metadata:
   name: netdata-psp
   labels:
     app: netdata
-    chart: netdata-1.1.22
+    chart: netdata-1.1.23
     release: netdata
     heritage: Helm
 roleRef:
@@ -217,7 +217,7 @@ metadata:
   name: netdata
   labels:
     app: netdata
-    chart: netdata-1.1.22
+    chart: netdata-1.1.23
     release: netdata
     heritage: Helm
     role: master
@@ -240,7 +240,7 @@ metadata:
   name: netdata-slave
   labels:
     app: netdata
-    chart: netdata-1.1.22
+    chart: netdata-1.1.23
     release: netdata
     heritage: Helm
     role: slave
@@ -254,7 +254,7 @@ spec:
     metadata:
       annotations:
         container.apparmor.security.beta.kubernetes.io/netdata: unconfined
-        checksum/config: f6ede7f3ab363bb1b824c92e35da49a9e51305a63d7b018c8a092cd6e2cb09dd
+        checksum/config: 24ac6ebff3ae1fd046333ab990e3207b8e34364b6f86b4ac7b7e3aad88593533
       labels:
         app: netdata
         release: netdata
@@ -268,7 +268,7 @@ spec:
       initContainers:
       containers:
         - name: netdata
-          image: "netdata/netdata:v1.28.0"
+          image: "netdata/netdata:v1.29.1"
           imagePullPolicy: Always
           env:
             - name: MY_POD_NAME
@@ -358,7 +358,7 @@ metadata:
   name: netdata-master
   labels:
     app: netdata
-    chart: netdata-1.1.22
+    chart: netdata-1.1.23
     release: netdata
     heritage: Helm
     role: master
@@ -386,7 +386,7 @@ spec:
         release: netdata
         role: master
       annotations:
-        checksum/config: f6ede7f3ab363bb1b824c92e35da49a9e51305a63d7b018c8a092cd6e2cb09dd
+        checksum/config: 24ac6ebff3ae1fd046333ab990e3207b8e34364b6f86b4ac7b7e3aad88593533
     spec:
       securityContext:
         fsGroup: 201
@@ -394,7 +394,7 @@ spec:
       initContainers:
       containers:
         - name: netdata
-          image: "netdata/netdata:v1.28.0"
+          image: "netdata/netdata:v1.29.1"
           imagePullPolicy: Always
           env:
             - name: MY_POD_NAME
@@ -455,7 +455,7 @@ metadata:
   name: netdata
   labels:
     app: netdata
-    chart: netdata-1.1.22
+    chart: netdata-1.1.23
     release: netdata
     heritage: Helm
   annotations:
