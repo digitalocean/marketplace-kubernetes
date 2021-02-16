@@ -5,7 +5,7 @@ set -e
 BUILD_DIR=$(mktemp -d)
 ROOT_DIR=$(git rev-parse --show-toplevel)
 
-SRC_VERSION="1.1.0"
+SRC_VERSION="1.12.1"
 
 cp -r "$ROOT_DIR"/src/robomotion/"$SRC_VERSION" $BUILD_DIR
 cp -r "$ROOT_DIR"/stacks/robomotion $BUILD_DIR
@@ -20,7 +20,7 @@ rm -rf "$ROOT_DIR"/stacks/robomotion/yaml
 mkdir -p "$ROOT_DIR"/stacks/robomotion/yaml
 
 helm template \
- --name robomotion \
+  robomotion \
  --namespace robomotion-system \
  --values "$ROOT_DIR"/src/robomotion/"$SRC_VERSION"/values.yaml \
  "$SRC_VERSION" > "$ROOT_DIR"/stacks/robomotion/yaml/robomotion.yaml

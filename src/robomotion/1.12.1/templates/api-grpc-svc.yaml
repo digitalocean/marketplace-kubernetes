@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "robomotion-api.fullname" . }}-grpc
+  labels:
+    app: {{ template "robomotion-api.fullname" . }}
+    chart: {{ template "robomotion.chart" . }}
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
+    component: {{ .Values.api.name }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+  - name: grpc
+    port: 9000
+    protocol: TCP
+    targetPort: 9000
+  selector:
+    app: {{ template "robomotion-api.fullname" . }}
