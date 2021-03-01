@@ -1,0 +1,5 @@
+# netdata/netdata
+
+parent:
+  alarms:
+    volumesize: 1Gi
