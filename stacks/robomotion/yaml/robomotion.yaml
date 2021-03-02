@@ -1,43 +1,30 @@
 ---
-# Source: robomotion/charts/minio/templates/post-install-prometheus-metrics-serviceaccount.yaml
+# Source: robomotion/charts/ingress-nginx/templates/controller-serviceaccount.yaml
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: robomotion-minio-update-prometheus-secret
   labels:
-    app: minio-update-prometheus-secret
-    chart: minio-5.0.25
-    release: robomotion
-    heritage: Helm
+    helm.sh/chart: ingress-nginx-3.16.1
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/instance: robomotion
+    app.kubernetes.io/version: "0.41.2"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: controller
+  name: robomotion-ingress-nginx
 ---
 # Source: robomotion/charts/minio/templates/serviceaccount.yaml
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: "robomotion-minio"
+  name: robomotion-minio
   namespace: "robomotion-system"
----
-# Source: robomotion/charts/nginx-ingress/templates/controller-serviceaccount.yaml
-apiVersion: v1
-kind: ServiceAccount
-metadata:
   labels:
-    app: nginx-ingress
-    chart: nginx-ingress-1.36.3
-    heritage: Helm
-    release: robomotion
-  name: robomotion-nginx-ingress
----
-# Source: robomotion/charts/nginx-ingress/templates/default-backend-serviceaccount.yaml
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  labels:
-    app: nginx-ingress
-    chart: nginx-ingress-1.36.3
-    heritage: Helm
-    release: robomotion
-  name: robomotion-nginx-ingress-backend
+    app.kubernetes.io/name: minio
+    helm.sh/chart: minio-4.1.0
+    app.kubernetes.io/instance: robomotion
+    app.kubernetes.io/managed-by: Helm
+secrets:
+  - name: robomotion-minio
 ---
 # Source: robomotion/templates/service-account.yaml
 apiVersion: v1
@@ -47,7 +34,7 @@ metadata:
   namespace: robomotion-system
   labels:
     app: robomotion
-    chart: robomotion-1.1.0
+    chart: robomotion-1.12.2
     release: robomotion
     heritage: Helm
 ---
@@ -56,15 +43,16 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: robomotion-minio
+  namespace: "robomotion-system"
   labels:
-    app: minio
-    chart: minio-5.0.25
-    release: robomotion
-    heritage: Helm
+    app.kubernetes.io/name: minio
+    helm.sh/chart: minio-4.1.0
+    app.kubernetes.io/instance: robomotion
+    app.kubernetes.io/managed-by: Helm
 type: Opaque
 data:
-  accesskey: "QUtJQUlPU0ZPRE5ON0VYQU1QTEU="
-  secretkey: "d0phbHJYVXRuRkVNSS9LN01ERU5HL2JQeFJmaUNZRVhBTVBMRUtFWQ=="
+  access-key: "ck5TbzJFUmZ4bg=="
+  secret-key: "MzhEY2l1SEpxVUJNaUFSdTVFUGx3UUphdGoyVmt4dFlUU1VQMVNSTQ=="
 ---
 # Source: robomotion/charts/postgresql/templates/secrets.yaml
 apiVersion: v1
@@ -72,128 +60,86 @@ kind: Secret
 metadata:
   name: robomotion-postgresql
   labels:
-    app: postgresql
-    chart: postgresql-8.9.4
-    release: "robomotion"
-    heritage: "Helm"
+    app.kubernetes.io/name: postgresql
+    helm.sh/chart: postgresql-10.1.1
+    app.kubernetes.io/instance: robomotion
+    app.kubernetes.io/managed-by: Helm
 type: Opaque
 data:
-  postgresql-password: "VzdNSmdqU0hzWQ=="
+  postgresql-postgres-password: "bWhPenAwZkMwRg=="
+  postgresql-password: "dUg4aHhZcURQcQ=="
 ---
 # Source: robomotion/charts/redis/templates/secret.yaml
 apiVersion: v1
 kind: Secret
 metadata:
   name: robomotion-redis
+  namespace: "robomotion-system"
   labels:
     app: redis
-    chart: redis-10.5.7
+    chart: redis-12.1.1
     release: "robomotion"
     heritage: "Helm"
 type: Opaque
 data:
-  redis-password: "SXBMZWlHajRlZw=="
+  redis-password: "TnVFWTMwRWFEOA=="
 ---
-# Source: robomotion/charts/minio/templates/configmap.yaml
+# Source: robomotion/charts/ingress-nginx/templates/controller-configmap.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: robomotion-minio
   labels:
-    app: minio
-    chart: minio-5.0.25
-    release: robomotion
-    heritage: Helm
+    helm.sh/chart: ingress-nginx-3.16.1
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/instance: robomotion
+    app.kubernetes.io/version: "0.41.2"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: controller
+  name: robomotion-ingress-nginx-controller
 data:
-  initialize: |-
-    #!/bin/sh
-    set -e ; # Have script exit in the event of a failed command.
-    MC_CONFIG_DIR="/etc/minio/mc/"
-    MC="/usr/bin/mc --config-dir ${MC_CONFIG_DIR}"
-    
-    # connectToMinio
-    # Use a check-sleep-check loop to wait for Minio service to be available
-    connectToMinio() {
-      SCHEME=$1
-      ATTEMPTS=0 ; LIMIT=29 ; # Allow 30 attempts
-      set -e ; # fail if we can't read the keys.
-      ACCESS=$(cat /config/accesskey) ; SECRET=$(cat /config/secretkey) ;
-      set +e ; # The connections to minio are allowed to fail.
-      echo "Connecting to Minio server: $SCHEME://$MINIO_ENDPOINT:$MINIO_PORT" ;
-      MC_COMMAND="${MC} config host add myminio $SCHEME://$MINIO_ENDPOINT:$MINIO_PORT $ACCESS $SECRET" ;
-      $MC_COMMAND ;
-      STATUS=$? ;
-      until [ $STATUS = 0 ]
-      do
-        ATTEMPTS=`expr $ATTEMPTS + 1` ;
-        echo \"Failed attempts: $ATTEMPTS\" ;
-        if [ $ATTEMPTS -gt $LIMIT ]; then
-          exit 1 ;
-        fi ;
-        sleep 2 ; # 1 second intervals between attempts
-        $MC_COMMAND ;
-        STATUS=$? ;
-      done ;
-      set -e ; # reset `e` as active
-      return 0
-    }
-    
-    # checkBucketExists ($bucket)
-    # Check if the bucket exists, by using the exit code of `mc ls`
-    checkBucketExists() {
-      BUCKET=$1
-      CMD=$(${MC} ls myminio/$BUCKET > /dev/null 2>&1)
-      return $?
-    }
-    
-    # createBucket ($bucket, $policy, $purge)
-    # Ensure bucket exists, purging if asked to
-    createBucket() {
-      BUCKET=$1
-      POLICY=$2
-      PURGE=$3
-    
-      # Purge the bucket, if set & exists
-      # Since PURGE is user input, check explicitly for `true`
-      if [ $PURGE = true ]; then
-        if checkBucketExists $BUCKET ; then
-          echo "Purging bucket '$BUCKET'."
-          set +e ; # don't exit if this fails
-          ${MC} rm -r --force myminio/$BUCKET
-          set -e ; # reset `e` as active
-        else
-          echo "Bucket '$BUCKET' does not exist, skipping purge."
-        fi
-      fi
-    
-      # Create the bucket if it does not exist
-      if ! checkBucketExists $BUCKET ; then
-        echo "Creating bucket '$BUCKET'"
-        ${MC} mb myminio/$BUCKET
-      else
-        echo "Bucket '$BUCKET' already exists."
-      fi
-    
-      # At this point, the bucket should exist, skip checking for existence
-      # Set policy on the bucket
-      echo "Setting policy of bucket '$BUCKET' to '$POLICY'."
-      ${MC} policy set $POLICY myminio/$BUCKET
-    }
-    
-    # Try connecting to Minio instance
-    scheme=http
-    connectToMinio $scheme
-    # Create the bucket
-    createBucket robomotion none false
+---
+# Source: robomotion/charts/redis/templates/configmap-scripts.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: robomotion-redis-scripts
+  namespace: "robomotion-system"
+  labels:
+    app: redis
+    chart: redis-12.1.1
+    heritage: Helm
+    release: robomotion
+data:
+  start-master.sh: |
+    #!/bin/bash
+    useradd redis
+    chown -R redis /data
+    if [[ -n $REDIS_PASSWORD_FILE ]]; then
+      password_aux=`cat ${REDIS_PASSWORD_FILE}`
+      export REDIS_PASSWORD=$password_aux
+    fi
+    if [[ ! -f /opt/bitnami/redis/etc/master.conf ]];then
+      cp /opt/bitnami/redis/mounted-etc/master.conf /opt/bitnami/redis/etc/master.conf
+    fi
+    if [[ ! -f /opt/bitnami/redis/etc/redis.conf ]];then
+      cp /opt/bitnami/redis/mounted-etc/redis.conf /opt/bitnami/redis/etc/redis.conf
+    fi
+    ARGS=("--port" "${REDIS_PORT}")
+    ARGS+=("--requirepass" "${REDIS_PASSWORD}")
+    ARGS+=("--masterauth" "${REDIS_PASSWORD}")
+    ARGS+=("--include" "/opt/bitnami/redis/etc/redis.conf")
+    ARGS+=("--include" "/opt/bitnami/redis/etc/master.conf")
+    exec /run.sh "${ARGS[@]}"
 ---
 # Source: robomotion/charts/redis/templates/configmap.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: robomotion-redis
+  namespace: "robomotion-system"
   labels:
     app: redis
-    chart: redis-10.5.7
+    chart: redis-12.1.1
     heritage: Helm
     release: robomotion
 data:
@@ -218,17 +164,19 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: robomotion-redis-health
+  namespace: "robomotion-system"
   labels:
     app: redis
-    chart: redis-10.5.7
+    chart: redis-12.1.1
     heritage: Helm
     release: robomotion
 data:
   ping_readiness_local.sh: |-
+    #!/bin/bash
+    export REDISCLI_AUTH="$REDIS_PASSWORD"
     response=$(
-      timeout -s 9 $1 \
+      timeout -s 3 $1 \
       redis-cli \
-        -a $REDIS_PASSWORD --no-auth-warning \
         -h localhost \
         -p $REDIS_PORT \
         ping
@@ -238,10 +186,11 @@ data:
       exit 1
     fi
   ping_liveness_local.sh: |-
+    #!/bin/bash
+    export REDISCLI_AUTH="$REDIS_PASSWORD"
     response=$(
-      timeout -s 9 $1 \
+      timeout -s 3 $1 \
       redis-cli \
-        -a $REDIS_PASSWORD --no-auth-warning \
         -h localhost \
         -p $REDIS_PORT \
         ping
@@ -251,10 +200,11 @@ data:
       exit 1
     fi
   ping_readiness_master.sh: |-
+    #!/bin/bash
+    export REDISCLI_AUTH="$REDIS_MASTER_PASSWORD"
     response=$(
-      timeout -s 9 $1 \
+      timeout -s 3 $1 \
       redis-cli \
-        -a $REDIS_MASTER_PASSWORD --no-auth-warning \
         -h $REDIS_MASTER_HOST \
         -p $REDIS_MASTER_PORT_NUMBER \
         ping
@@ -264,10 +214,11 @@ data:
       exit 1
     fi
   ping_liveness_master.sh: |-
+    #!/bin/bash
+    export REDISCLI_AUTH="$REDIS_MASTER_PASSWORD"
     response=$(
-      timeout -s 9 $1 \
+      timeout -s 3 $1 \
       redis-cli \
-        -a $REDIS_MASTER_PASSWORD --no-auth-warning \
         -h $REDIS_MASTER_HOST \
         -p $REDIS_MASTER_PORT_NUMBER \
         ping
@@ -289,16 +240,17 @@ data:
     "$script_dir/ping_liveness_master.sh" $1 || exit_status=$?
     exit $exit_status
 ---
-# Source: robomotion/charts/minio/templates/pvc.yaml
-apiVersion: v1
+# Source: robomotion/charts/minio/templates/pvc-standalone.yaml
 kind: PersistentVolumeClaim
+apiVersion: v1
 metadata:
   name: robomotion-minio
+  namespace: "robomotion-system"
   labels:
-    app: minio
-    chart: minio-5.0.25
-    release: robomotion
-    heritage: Helm
+    app.kubernetes.io/name: minio
+    helm.sh/chart: minio-4.1.0
+    app.kubernetes.io/instance: robomotion
+    app.kubernetes.io/managed-by: Helm
 spec:
   accessModes:
     - "ReadWriteOnce"
@@ -306,16 +258,17 @@ spec:
     requests:
       storage: "3Gi"
 ---
-# Source: robomotion/charts/nginx-ingress/templates/clusterrole.yaml
+# Source: robomotion/charts/ingress-nginx/templates/clusterrole.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
-    app: nginx-ingress
-    chart: nginx-ingress-1.36.3
-    heritage: Helm
-    release: robomotion
-  name: robomotion-nginx-ingress
+    helm.sh/chart: ingress-nginx-3.16.1
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/instance: robomotion
+    app.kubernetes.io/version: "0.41.2"
+    app.kubernetes.io/managed-by: Helm
+  name: robomotion-ingress-nginx
 rules:
   - apiGroups:
       - ""
@@ -366,6 +319,14 @@ rules:
       - ingresses/status
     verbs:
       - update
+  - apiGroups:
+      - "networking.k8s.io" # k8s 1.14+
+    resources:
+      - ingressclasses
+    verbs:
+      - get
+      - list
+      - watch
 ---
 # Source: robomotion/templates/api-role.yaml
 kind: ClusterRole
@@ -378,23 +339,24 @@ rules:
    resources: ["namespaces"]
    verbs: ["get"]
 ---
-# Source: robomotion/charts/nginx-ingress/templates/clusterrolebinding.yaml
+# Source: robomotion/charts/ingress-nginx/templates/clusterrolebinding.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   labels:
-    app: nginx-ingress
-    chart: nginx-ingress-1.36.3
-    heritage: Helm
-    release: robomotion
-  name: robomotion-nginx-ingress
+    helm.sh/chart: ingress-nginx-3.16.1
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/instance: robomotion
+    app.kubernetes.io/version: "0.41.2"
+    app.kubernetes.io/managed-by: Helm
+  name: robomotion-ingress-nginx
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: robomotion-nginx-ingress
+  name: robomotion-ingress-nginx
 subjects:
   - kind: ServiceAccount
-    name: robomotion-nginx-ingress
+    name: robomotion-ingress-nginx
     namespace: robomotion-system
 ---
 # Source: robomotion/templates/api-rolebinding.yaml
@@ -412,53 +374,18 @@ subjects:
   namespace: robomotion-system
   name: robomotion
 ---
-# Source: robomotion/charts/minio/templates/post-install-prometheus-metrics-role.yaml
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
-metadata:
-  name: robomotion-minio-update-prometheus-secret
-  labels:
-    app: minio-update-prometheus-secret
-    chart: minio-5.0.25
-    release: robomotion
-    heritage: Helm
-rules:
-  - apiGroups:
-      - ""
-    resources:
-      - secrets
-    verbs:
-      - get
-      - create
-      - update
-      - patch
-    resourceNames:
-      - robomotion-minio-prometheus
-  - apiGroups:
-      - ""
-    resources:
-      - secrets
-    verbs:
-      - create
-  - apiGroups:
-      - monitoring.coreos.com
-    resources:
-      - servicemonitors
-    verbs:
-      - get
-    resourceNames:
-      - robomotion-minio
----
-# Source: robomotion/charts/nginx-ingress/templates/controller-role.yaml
+# Source: robomotion/charts/ingress-nginx/templates/controller-role.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   labels:
-    app: nginx-ingress
-    chart: nginx-ingress-1.36.3
-    heritage: Helm
-    release: robomotion
-  name: robomotion-nginx-ingress
+    helm.sh/chart: ingress-nginx-3.16.1
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/instance: robomotion
+    app.kubernetes.io/version: "0.41.2"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: controller
+  name: robomotion-ingress-nginx
 rules:
   - apiGroups:
       - ""
@@ -503,6 +430,14 @@ rules:
     verbs:
       - update
   - apiGroups:
+      - "networking.k8s.io" # k8s 1.14+
+    resources:
+      - ingressclasses
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
       - ""
     resources:
       - configmaps
@@ -533,77 +468,65 @@ rules:
       - create
       - patch
 ---
-# Source: robomotion/charts/minio/templates/post-install-prometheus-metrics-rolebinding.yaml
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  name: robomotion-minio-update-prometheus-secret
-  labels:
-    app: minio-update-prometheus-secret
-    chart: minio-5.0.25
-    release: robomotion
-    heritage: Helm
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: robomotion-minio-update-prometheus-secret
-subjects:
-  - kind: ServiceAccount
-    name: robomotion-minio-update-prometheus-secret
-    namespace: robomotion-system
----
-# Source: robomotion/charts/nginx-ingress/templates/controller-rolebinding.yaml
+# Source: robomotion/charts/ingress-nginx/templates/controller-rolebinding.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   labels:
-    app: nginx-ingress
-    chart: nginx-ingress-1.36.3
-    heritage: Helm
-    release: robomotion
-  name: robomotion-nginx-ingress
+    helm.sh/chart: ingress-nginx-3.16.1
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/instance: robomotion
+    app.kubernetes.io/version: "0.41.2"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: controller
+  name: robomotion-ingress-nginx
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: robomotion-nginx-ingress
+  name: robomotion-ingress-nginx
 subjects:
   - kind: ServiceAccount
-    name: robomotion-nginx-ingress
+    name: robomotion-ingress-nginx
     namespace: robomotion-system
 ---
-# Source: robomotion/charts/minio/templates/service.yaml
+# Source: robomotion/charts/ingress-nginx/templates/controller-service-webhook.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: robomotion-minio
   labels:
-    app: minio
-    chart: minio-5.0.25
-    release: robomotion
-    heritage: Helm
+    helm.sh/chart: ingress-nginx-3.16.1
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/instance: robomotion
+    app.kubernetes.io/version: "0.41.2"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: controller
+  name: robomotion-ingress-nginx-controller-admission
 spec:
   type: ClusterIP
   ports:
-    - name: http
-      port: 9000
-      protocol: TCP
-      targetPort: 9000
+    - name: https-webhook
+      port: 443
+      targetPort: webhook
   selector:
-    app: minio
-    release: robomotion
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/instance: robomotion
+    app.kubernetes.io/component: controller
 ---
-# Source: robomotion/charts/nginx-ingress/templates/controller-service.yaml
+# Source: robomotion/charts/ingress-nginx/templates/controller-service.yaml
 apiVersion: v1
 kind: Service
 metadata:
+  annotations:
   labels:
-    app: nginx-ingress
-    chart: nginx-ingress-1.36.3
-    component: "controller"
-    heritage: Helm
-    release: robomotion
-  name: robomotion-nginx-ingress-controller
+    helm.sh/chart: ingress-nginx-3.16.1
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/instance: robomotion
+    app.kubernetes.io/version: "0.41.2"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: controller
+  name: robomotion-ingress-nginx-controller
 spec:
+  type: LoadBalancer
   ports:
     - name: http
       port: 80
@@ -614,33 +537,31 @@ spec:
       protocol: TCP
       targetPort: https
   selector:
-    app: nginx-ingress
-    release: robomotion
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/instance: robomotion
     app.kubernetes.io/component: controller
-  type: "LoadBalancer"
 ---
-# Source: robomotion/charts/nginx-ingress/templates/default-backend-service.yaml
+# Source: robomotion/charts/minio/templates/service.yaml
 apiVersion: v1
 kind: Service
 metadata:
+  name: robomotion-minio
+  namespace: "robomotion-system"
   labels:
-    app: nginx-ingress
-    chart: nginx-ingress-1.36.3
-    component: "default-backend"
-    heritage: Helm
-    release: robomotion
-  name: robomotion-nginx-ingress-default-backend
+    app.kubernetes.io/name: minio
+    helm.sh/chart: minio-4.1.0
+    app.kubernetes.io/instance: robomotion
+    app.kubernetes.io/managed-by: Helm
 spec:
+  type: ClusterIP
   ports:
-    - name: http
-      port: 80
-      protocol: TCP
-      targetPort: http
+    - name: minio
+      port: 9000
+      targetPort: minio
+      nodePort: null
   selector:
-    app: nginx-ingress
-    release: robomotion
-    app.kubernetes.io/component: default-backend
-  type: "ClusterIP"
+    app.kubernetes.io/name: minio
+    app.kubernetes.io/instance: robomotion
 ---
 # Source: robomotion/charts/postgresql/templates/svc-headless.yaml
 apiVersion: v1
@@ -648,20 +569,29 @@ kind: Service
 metadata:
   name: robomotion-postgresql-headless
   labels:
-    app: postgresql
-    chart: postgresql-8.9.4
-    release: "robomotion"
-    heritage: "Helm"
+    app.kubernetes.io/name: postgresql
+    helm.sh/chart: postgresql-10.1.1
+    app.kubernetes.io/instance: robomotion
+    app.kubernetes.io/managed-by: Helm
+    # Use this annotation in addition to the actual publishNotReadyAddresses
+    # field below because the annotation will stop being respected soon but the
+    # field is broken in some versions of Kubernetes:
+    # https://github.com/kubernetes/kubernetes/issues/58662
+    service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
 spec:
   type: ClusterIP
   clusterIP: None
+  # We want all pods in the StatefulSet to have their addresses published for
+  # the sake of the other Postgresql pods even before they're ready, since they
+  # have to be able to talk to each other in order to become ready.
+  publishNotReadyAddresses: true
   ports:
     - name: tcp-postgresql
       port: 5432
       targetPort: tcp-postgresql
   selector:
-    app: postgresql
-    release: "robomotion"
+    app.kubernetes.io/name: postgresql
+    app.kubernetes.io/instance: robomotion
 ---
 # Source: robomotion/charts/postgresql/templates/svc.yaml
 apiVersion: v1
@@ -669,10 +599,10 @@ kind: Service
 metadata:
   name: robomotion-postgresql
   labels:
-    app: postgresql
-    chart: postgresql-8.9.4
-    release: "robomotion"
-    heritage: "Helm"
+    app.kubernetes.io/name: postgresql
+    helm.sh/chart: postgresql-10.1.1
+    app.kubernetes.io/instance: robomotion
+    app.kubernetes.io/managed-by: Helm
   annotations:
 spec:
   type: ClusterIP
@@ -681,27 +611,28 @@ spec:
       port: 5432
       targetPort: tcp-postgresql
   selector:
-    app: postgresql
-    release: "robomotion"
-    role: master
+    app.kubernetes.io/name: postgresql
+    app.kubernetes.io/instance: robomotion
+    role: primary
 ---
 # Source: robomotion/charts/redis/templates/headless-svc.yaml
 apiVersion: v1
 kind: Service
 metadata:
   name: robomotion-redis-headless
+  namespace: "robomotion-system"
   labels:
     app: redis
-    chart: redis-10.5.7
+    chart: redis-12.1.1
     release: robomotion
     heritage: Helm
 spec:
   type: ClusterIP
   clusterIP: None
   ports:
-  - name: redis
-    port: 6379
-    targetPort: redis
+    - name: redis
+      port: 6379
+      targetPort: redis
   selector:
     app: redis
     release: robomotion
@@ -711,17 +642,18 @@ apiVersion: v1
 kind: Service
 metadata:
   name: robomotion-redis-master
+  namespace: "robomotion-system"
   labels:
     app: redis
-    chart: redis-10.5.7
+    chart: redis-12.1.1
     release: robomotion
     heritage: Helm
 spec:
   type: ClusterIP
   ports:
-  - name: redis
-    port: 6379
-    targetPort: redis
+    - name: redis
+      port: 6379
+      targetPort: redis
   selector:
     app: redis
     release: robomotion
@@ -734,7 +666,7 @@ metadata:
   name: robomotion-admin
   labels:
     app: robomotion-admin
-    chart: robomotion-1.1.0
+    chart: robomotion-1.12.2
     heritage: Helm
     release: robomotion
     component: admin
@@ -756,7 +688,7 @@ metadata:
   name: robomotion-api-grpc
   labels:
     app: robomotion-api
-    chart: robomotion-1.1.0
+    chart: robomotion-1.12.2
     heritage: Helm
     release: robomotion
     component: api
@@ -777,7 +709,7 @@ metadata:
   name: robomotion-api
   labels:
     app: robomotion-api
-    chart: robomotion-1.1.0
+    chart: robomotion-1.12.2
     heritage: Helm
     release: robomotion
     component: api
@@ -799,7 +731,7 @@ metadata:
   name: robomotion-authorization
   labels:
     app: robomotion-authorization
-    chart: robomotion-1.1.0
+    chart: robomotion-1.12.2
     heritage: Helm
     release: robomotion
     component: authorization
@@ -821,7 +753,7 @@ metadata:
   name: robomotion-designer
   labels:
     app: robomotion-designer
-    chart: robomotion-1.1.0
+    chart: robomotion-1.12.2
     heritage: Helm
     release: robomotion
     component: designer
@@ -843,7 +775,7 @@ metadata:
   name: robomotion-proxy-grpc
   labels:
     app: robomotion-proxy
-    chart: robomotion-1.1.0
+    chart: robomotion-1.12.2
     heritage: Helm
     release: robomotion
     component: proxy
@@ -864,7 +796,7 @@ metadata:
   name: robomotion-proxy
   labels:
     app: robomotion-proxy
-    chart: robomotion-1.1.0
+    chart: robomotion-1.12.2
     heritage: Helm
     release: robomotion
     component: proxy
@@ -885,7 +817,7 @@ metadata:
   name: robomotion-scheduler-grpc
   labels:
     app: robomotion-scheduler
-    chart: robomotion-1.1.0
+    chart: robomotion-1.12.2
     heritage: Helm
     release: robomotion
     component: scheduler
@@ -899,140 +831,53 @@ spec:
   selector:
     app: robomotion-scheduler
 ---
-# Source: robomotion/charts/minio/templates/deployment.yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: robomotion-minio
-  labels:
-    app: minio
-    chart: minio-5.0.25
-    release: robomotion
-    heritage: Helm
-spec:
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxSurge: 100%
-      maxUnavailable: 0
-  selector:
-    matchLabels:
-      app: minio
-      release: robomotion
-  template:
-    metadata:
-      name: robomotion-minio
-      labels:
-        app: minio
-        release: robomotion
-      annotations:
-        rollme: "WO2Os"
-        checksum/secrets: 56fdbb4e78fd53f66893ba9d23e02af970f4f0446020b2abd76886c0920be090
-        checksum/config: 17469c39110ac6267454a3c2bbafebb2b304ab776578b63cf08776d921fc982b
-    spec:
-      serviceAccountName: "robomotion-minio"
-      securityContext:
-        runAsUser: 1000
-        runAsGroup: 1000
-        fsGroup: 1000
-      containers:
-        - name: minio
-          image: "minio/minio:RELEASE.2020-04-28T23-56-56Z"
-          imagePullPolicy: IfNotPresent
-          command: [ "/bin/sh",
-          "-ce",
-          "/usr/bin/docker-entrypoint.sh minio -S /etc/minio/certs/ server /export" ]
-          volumeMounts:
-            - name: export
-              mountPath: /export
-          ports:
-            - name: http
-              containerPort: 9000
-          env:
-            - name: MINIO_ACCESS_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: robomotion-minio
-                  key: accesskey
-            - name: MINIO_SECRET_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: robomotion-minio
-                  key: secretkey
-          livenessProbe:
-            httpGet:
-              path: /minio/health/live
-              port: http
-              scheme: HTTP
-            initialDelaySeconds: 5
-            periodSeconds: 30
-            timeoutSeconds: 1
-            successThreshold: 1
-            failureThreshold: 3
-          readinessProbe:
-            httpGet:
-              path: /minio/health/ready
-              port: http
-            initialDelaySeconds: 60
-            periodSeconds: 15
-            timeoutSeconds: 1
-            successThreshold: 1
-            failureThreshold: 3
-          resources:
-            requests:
-              cpu: 250m
-              memory: 256Mi
-      volumes:
-        - name: export
-          persistentVolumeClaim:
-            claimName: robomotion-minio
-        - name: minio-user
-          secret:
-            secretName: robomotion-minio
----
-# Source: robomotion/charts/nginx-ingress/templates/controller-deployment.yaml
+# Source: robomotion/charts/ingress-nginx/templates/controller-deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: nginx-ingress
-    chart: nginx-ingress-1.36.3
-    heritage: Helm
-    release: robomotion
+    helm.sh/chart: ingress-nginx-3.16.1
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/instance: robomotion
+    app.kubernetes.io/version: "0.41.2"
+    app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: controller
-  name: robomotion-nginx-ingress-controller
-  annotations:
-    {}
+  name: robomotion-ingress-nginx-controller
 spec:
   selector:
     matchLabels:
-      app: nginx-ingress
-      release: robomotion
+      app.kubernetes.io/name: ingress-nginx
+      app.kubernetes.io/instance: robomotion
+      app.kubernetes.io/component: controller
   replicas: 1
   revisionHistoryLimit: 10
-  strategy:
-    {}
   minReadySeconds: 0
   template:
     metadata:
       labels:
-        app: nginx-ingress
-        release: robomotion
-        component: "controller"
+        app.kubernetes.io/name: ingress-nginx
+        app.kubernetes.io/instance: robomotion
         app.kubernetes.io/component: controller
     spec:
       dnsPolicy: ClusterFirst
       containers:
-        - name: nginx-ingress-controller
-          image: "quay.io/kubernetes-ingress-controller/nginx-ingress-controller:0.30.0"
-          imagePullPolicy: "IfNotPresent"
+        - name: controller
+          image: "k8s.gcr.io/ingress-nginx/controller:v0.41.2@sha256:1f4f402b9c14f3ae92b11ada1dfe9893a88f0faeb0b2f4b903e2c67a0c3bf0de"
+          imagePullPolicy: IfNotPresent
+          lifecycle: 
+            preStop:
+              exec:
+                command:
+                - /wait-shutdown
           args:
             - /nginx-ingress-controller
-            - --default-backend-service=robomotion-system/robomotion-nginx-ingress-default-backend
-            - --publish-service=robomotion-system/robomotion-nginx-ingress-controller
+            - --publish-service=$(POD_NAMESPACE)/robomotion-ingress-nginx-controller
             - --election-id=ingress-controller-leader
             - --ingress-class=nginx
-            - --configmap=robomotion-system/robomotion-nginx-ingress-controller
+            - --configmap=$(POD_NAMESPACE)/robomotion-ingress-nginx-controller
+            - --validating-webhook=:8443
+            - --validating-webhook-certificate=/usr/local/certificates/cert
+            - --validating-webhook-key=/usr/local/certificates/key
           securityContext:
             capabilities:
                 drop:
@@ -1050,7 +895,19 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
+            - name: LD_PRELOAD
+              value: /usr/local/lib/libmimalloc.so
           livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 10254
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 5
+          readinessProbe:
             httpGet:
               path: /healthz
               port: 10254
@@ -1067,82 +924,133 @@ spec:
             - name: https
               containerPort: 443
               protocol: TCP
-          readinessProbe:
-            httpGet:
-              path: /healthz
-              port: 10254
-              scheme: HTTP
-            initialDelaySeconds: 10
-            periodSeconds: 10
-            timeoutSeconds: 1
-            successThreshold: 1
-            failureThreshold: 3
-          resources:
-            {}
-      hostNetwork: false
-      serviceAccountName: robomotion-nginx-ingress
-      terminationGracePeriodSeconds: 60
+            - name: webhook
+              containerPort: 8443
+              protocol: TCP
+          volumeMounts:
+            - name: webhook-cert
+              mountPath: /usr/local/certificates/
+              readOnly: true
+          resources: 
+            requests:
+              cpu: 100m
+              memory: 90Mi
+      nodeSelector: 
+        kubernetes.io/os: linux
+      serviceAccountName: robomotion-ingress-nginx
+      terminationGracePeriodSeconds: 300
+      volumes:
+        - name: webhook-cert
+          secret:
+            secretName: robomotion-ingress-nginx-admission
 ---
-# Source: robomotion/charts/nginx-ingress/templates/default-backend-deployment.yaml
+# Source: robomotion/charts/minio/templates/deployment-standalone.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  name: robomotion-minio
+  namespace: "robomotion-system"
   labels:
-    app: nginx-ingress
-    chart: nginx-ingress-1.36.3
-    heritage: Helm
-    release: robomotion
-    app.kubernetes.io/component: default-backend
-  name: robomotion-nginx-ingress-default-backend
+    app.kubernetes.io/name: minio
+    helm.sh/chart: minio-4.1.0
+    app.kubernetes.io/instance: robomotion
+    app.kubernetes.io/managed-by: Helm
 spec:
+  strategy: 
+    type: Recreate
   selector:
     matchLabels:
-      app: nginx-ingress
-      release: robomotion
-  replicas: 1
-  revisionHistoryLimit: 10
+      app.kubernetes.io/name: minio
+      app.kubernetes.io/instance: robomotion
   template:
     metadata:
       labels:
-        app: nginx-ingress
-        release: robomotion
-        app.kubernetes.io/component: default-backend
+        app.kubernetes.io/name: minio
+        helm.sh/chart: minio-4.1.0
+        app.kubernetes.io/instance: robomotion
+        app.kubernetes.io/managed-by: Helm
+      annotations:
+        checksum/credentials-secret: 41b32cc5e9090897014eb8a4748a06e6c7e0175167e2036c9ab4a571b0a97aa7
     spec:
+      serviceAccountName: robomotion-minio
+      
+      affinity:
+        podAffinity:
+          
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/name: minio
+                    app.kubernetes.io/instance: robomotion
+                namespaces:
+                  - robomotion-system
+                topologyKey: kubernetes.io/hostname
+              weight: 1
+        nodeAffinity:
+          
+      securityContext:
+        fsGroup: 1001
       containers:
-        - name: nginx-ingress-default-backend
-          image: "k8s.gcr.io/defaultbackend-amd64:1.5"
+        - name: minio
+          image: docker.io/bitnami/minio:2020.11.25-debian-10-r0
           imagePullPolicy: "IfNotPresent"
-          args:
           securityContext:
-            runAsUser: 65534
+            runAsUser: 1001
+          env:
+            - name: BITNAMI_DEBUG
+              value: "false"
+            - name: MINIO_FORCE_NEW_KEYS
+              value: "no"
+            - name: MINIO_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: robomotion-minio
+                  key: access-key
+            - name: MINIO_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: robomotion-minio
+                  key: secret-key
+            - name: MINIO_DEFAULT_BUCKETS
+              value: robomotion
+            - name: MINIO_BROWSER
+              value: "on"
+            - name: MINIO_PROMETHEUS_AUTH_TYPE
+              value: public
+          
+          ports:
+            - name: minio
+              containerPort: 9000
           livenessProbe:
-            httpGet:
-              path: /healthz
-              port: 8080
-              scheme: HTTP
-            initialDelaySeconds: 30
-            periodSeconds: 10
-            timeoutSeconds: 5
-            successThreshold: 1
-            failureThreshold: 3
-          readinessProbe:
-            httpGet:
-              path: /healthz
-              port: 8080
-              scheme: HTTP
-            initialDelaySeconds: 0
+            initialDelaySeconds: 5
             periodSeconds: 5
             timeoutSeconds: 5
             successThreshold: 1
-            failureThreshold: 6
-          ports:
-            - name: http
-              containerPort: 8080
-              protocol: TCP
-          resources:
-            {}
-      serviceAccountName: robomotion-nginx-ingress-backend
-      terminationGracePeriodSeconds: 60
+            failureThreshold: 5
+            httpGet:
+              path: /minio/health/live
+              port: minio
+          readinessProbe:
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 5
+            tcpSocket:
+              port: minio
+          resources: 
+            limits: {}
+            requests:
+              memory: 512Mi
+          volumeMounts:
+            - name: "data"
+              mountPath: /data
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: robomotion-minio
 ---
 # Source: robomotion/templates/admin-deployment.yaml
 apiVersion: apps/v1
@@ -1151,7 +1059,7 @@ metadata:
   name: robomotion-admin
   labels:
     app: robomotion-admin
-    chart: robomotion-1.1.0
+    chart: robomotion-1.12.2
     heritage: Helm
     release: robomotion
     component: admin
@@ -1167,7 +1075,7 @@ spec:
     spec:
       containers:
       - name: robomotion-admin
-        image: "gcr.io/robomotion/robomotion-admin:fe495b36a"
+        image: "gcr.io/robomotion/robomotion-admin:28b860969"
         ports:
         - containerPort: 80
           name: http
@@ -1189,7 +1097,7 @@ metadata:
   name: robomotion-api
   labels:
     app: robomotion-api
-    chart: robomotion-1.1.0
+    chart: robomotion-1.12.2
     heritage: Helm
     release: robomotion
     component: api
@@ -1206,7 +1114,7 @@ spec:
       serviceAccountName: robomotion
       containers:
       - name: robomotion-api
-        image: "gcr.io/robomotion/robomotion-api-service:4f41302e4"
+        image: "gcr.io/robomotion/robomotion-api-service:28b860969"
         ports:
         - containerPort: 80
           name: http
@@ -1246,12 +1154,12 @@ spec:
             valueFrom:
               secretKeyRef:
                 name: robomotion-minio
-                key: accesskey
+                key: access-key
           - name: STORE_SECRET
             valueFrom:
               secretKeyRef:
                 name: robomotion-minio
-                key: secretkey
+                key: secret-key
           - name: POSTGRES_HOST
             value: robomotion-postgresql
           - name: POSTGRES_PORT
@@ -1273,7 +1181,7 @@ metadata:
   name: robomotion-authorization
   labels:
     app: robomotion-authorization
-    chart: robomotion-1.1.0
+    chart: robomotion-1.12.2
     heritage: Helm
     release: robomotion
     component: authorization
@@ -1289,7 +1197,7 @@ spec:
     spec:
       containers:
       - name: robomotion-authorization
-        image: "gcr.io/robomotion/robomotion-authorization:fe495b36a"
+        image: "gcr.io/robomotion/robomotion-authorization:28b860969"
         ports:
         - containerPort: 80
           name: http
@@ -1313,7 +1221,7 @@ metadata:
   name: robomotion-designer
   labels:
     app: robomotion-designer
-    chart: robomotion-1.1.0
+    chart: robomotion-1.12.2
     heritage: Helm
     release: robomotion
     component: designer
@@ -1329,7 +1237,7 @@ spec:
     spec:
       containers:
       - name: robomotion-designer
-        image: "gcr.io/robomotion/robomotion-designer:fe495b36a"
+        image: "gcr.io/robomotion/robomotion-designer:28b860969"
         ports:
         - containerPort: 80
           name: http
@@ -1355,7 +1263,7 @@ metadata:
   name: robomotion-proxy
   labels:
     app: robomotion-proxy
-    chart: robomotion-1.1.0
+    chart: robomotion-1.12.2
     heritage: Helm
     release: robomotion
     component: proxy
@@ -1371,7 +1279,7 @@ spec:
     spec:
       containers:
       - name: robomotion-proxy
-        image: "gcr.io/robomotion/robomotion-proxy:0ecef7927"
+        image: "gcr.io/robomotion/robomotion-proxy:28b860969"
         ports:
         - containerPort: 80
           name: http
@@ -1401,7 +1309,7 @@ metadata:
   name: robomotion-scheduler
   labels:
     app: robomotion-scheduler
-    chart: robomotion-1.1.0
+    chart: robomotion-1.12.2
     heritage: Helm
     release: robomotion
     component: scheduler
@@ -1417,7 +1325,7 @@ spec:
     spec:
       containers:
       - name: robomotion-scheduler
-        image: "gcr.io/robomotion/robomotion-scheduler:fe495b36a"
+        image: "gcr.io/robomotion/robomotion-scheduler:28b860969"
         ports:
         - containerPort: 8080
           name: grpc
@@ -1445,12 +1353,12 @@ spec:
             valueFrom:
               secretKeyRef:
                 name: robomotion-minio
-                key: accesskey
+                key: access-key
           - name: STORE_SECRET
             valueFrom:
               secretKeyRef:
                 name: robomotion-minio
-                key: secretkey
+                key: secret-key
 ---
 # Source: robomotion/charts/postgresql/templates/statefulset.yaml
 apiVersion: apps/v1
@@ -1458,10 +1366,10 @@ kind: StatefulSet
 metadata:
   name: robomotion-postgresql
   labels:
-    app: postgresql
-    chart: postgresql-8.9.4
-    release: "robomotion"
-    heritage: "Helm"
+    app.kubernetes.io/name: postgresql
+    helm.sh/chart: postgresql-10.1.1
+    app.kubernetes.io/instance: robomotion
+    app.kubernetes.io/managed-by: Helm
   annotations:
 spec:
   serviceName: robomotion-postgresql-headless
@@ -1470,24 +1378,24 @@ spec:
     type: RollingUpdate
   selector:
     matchLabels:
-      app: postgresql
-      release: "robomotion"
-      role: master
+      app.kubernetes.io/name: postgresql
+      app.kubernetes.io/instance: robomotion
+      role: primary
   template:
     metadata:
       name: robomotion-postgresql
       labels:
-        app: postgresql
-        chart: postgresql-8.9.4
-        release: "robomotion"
-        heritage: "Helm"
-        role: master
+        app.kubernetes.io/name: postgresql
+        helm.sh/chart: postgresql-10.1.1
+        app.kubernetes.io/instance: robomotion
+        app.kubernetes.io/managed-by: Helm
+        role: primary
     spec:      
       securityContext:
         fsGroup: 1001
       containers:
         - name: robomotion-postgresql
-          image: docker.io/bitnami/postgresql:11.7.0-debian-10-r90
+          image: docker.io/bitnami/postgresql:11.10.0-debian-10-r9
           imagePullPolicy: "IfNotPresent"
           resources:
             requests:
@@ -1515,6 +1423,20 @@ spec:
               value: "robomotion"
             - name: POSTGRESQL_ENABLE_LDAP
               value: "no"
+            - name: POSTGRESQL_ENABLE_TLS
+              value: "no"
+            - name: POSTGRESQL_LOG_HOSTNAME
+              value: "false"
+            - name: POSTGRESQL_LOG_CONNECTIONS
+              value: "false"
+            - name: POSTGRESQL_LOG_DISCONNECTIONS
+              value: "false"
+            - name: POSTGRESQL_PGAUDIT_LOG_CATALOG
+              value: "off"
+            - name: POSTGRESQL_CLIENT_MIN_MESSAGES
+              value: "error"
+            - name: POSTGRESQL_SHARED_PRELOAD_LIBRARIES
+              value: "pgaudit"
           ports:
             - name: tcp-postgresql
               containerPort: 5432
@@ -1523,7 +1445,7 @@ spec:
               command:
                 - /bin/sh
                 - -c
-                - exec pg_isready -U "postgres" -d "robomotion" -h 127.0.0.1 -p 5432
+                - exec pg_isready -U "postgres" -d "dbname=robomotion" -h 127.0.0.1 -p 5432
             initialDelaySeconds: 30
             periodSeconds: 10
             timeoutSeconds: 5
@@ -1536,7 +1458,7 @@ spec:
                 - -c
                 - -e
                 - |
-                  exec pg_isready -U "postgres" -d "robomotion" -h 127.0.0.1 -p 5432
+                  exec pg_isready -U "postgres" -d "dbname=robomotion" -h 127.0.0.1 -p 5432
                   [ -f /opt/bitnami/postgresql/tmp/.initialized ] || [ -f /bitnami/postgresql/.initialized ]
             initialDelaySeconds: 5
             periodSeconds: 10
@@ -1569,9 +1491,10 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: robomotion-redis-master
+  namespace: "robomotion-system"
   labels:
     app: redis
-    chart: redis-10.5.7
+    chart: redis-12.1.1
     release: robomotion
     heritage: Helm
 spec:
@@ -1585,100 +1508,94 @@ spec:
     metadata:
       labels:
         app: redis
-        chart: redis-10.5.7
+        chart: redis-12.1.1
         release: robomotion
         role: master
       annotations:
-        checksum/health: fee68b9e109d39831bda540b5a7ecce6afdfc8dcc7e1b9e6cc119f6037e7157a
-        checksum/configmap: d77fa32c464694fda22137dd76ea97106cdb5413581fbe4348ca71949123991b
-        checksum/secret: b7b32fdd777f86a902533d5c5adc8944b8b57181058c373d3c15f06f4739a982
-    spec:      
+        checksum/health: 1249f656b609421e25eb5e68abca9f4053ed02ab0d149d89c9151fe8574abd7a
+        checksum/configmap: 8f2c2540891c37c26d68db3ceca0fdf9247fb4bebb47f6abd0923a59f6ecd4a5
+        checksum/secret: 3da294429583ea18f147010d138c727f98e4363d74c10efe520332364eabcd53
+    spec:
+      
       securityContext:
         fsGroup: 1001
-      serviceAccountName: "default"
+      serviceAccountName: default
       containers:
-      - name: robomotion-redis
-        image: "docker.io/bitnami/redis:5.0.7-debian-10-r32"
-        imagePullPolicy: "IfNotPresent"
-        securityContext:
-          runAsUser: 1001
-        command:
-        - /bin/bash
-        - -c
-        - |
-          if [[ -n $REDIS_PASSWORD_FILE ]]; then
-            password_aux=`cat ${REDIS_PASSWORD_FILE}`
-            export REDIS_PASSWORD=$password_aux
-          fi
-          if [[ ! -f /opt/bitnami/redis/etc/master.conf ]];then
-            cp /opt/bitnami/redis/mounted-etc/master.conf /opt/bitnami/redis/etc/master.conf
-          fi
-          if [[ ! -f /opt/bitnami/redis/etc/redis.conf ]];then
-            cp /opt/bitnami/redis/mounted-etc/redis.conf /opt/bitnami/redis/etc/redis.conf
-          fi
-          ARGS=("--port" "${REDIS_PORT}")
-          ARGS+=("--requirepass" "${REDIS_PASSWORD}")
-          ARGS+=("--masterauth" "${REDIS_PASSWORD}")
-          ARGS+=("--include" "/opt/bitnami/redis/etc/redis.conf")
-          ARGS+=("--include" "/opt/bitnami/redis/etc/master.conf")
-          /run.sh ${ARGS[@]}
-        env:
-        - name: REDIS_REPLICATION_MODE
-          value: master
-        - name: REDIS_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: robomotion-redis
-              key: redis-password
-        - name: REDIS_PORT
-          value: "6379"
-        ports:
         - name: redis
-          containerPort: 6379
-        livenessProbe:
-          initialDelaySeconds: 5
-          periodSeconds: 5
-          timeoutSeconds: 5
-          successThreshold: 1
-          failureThreshold: 5
-          exec:
-            command:
-            - sh
+          image: docker.io/bitnami/redis:6.0.9-debian-10-r13
+          imagePullPolicy: "IfNotPresent"
+          securityContext:
+            runAsUser: 1001
+          command:
+            - /bin/bash
             - -c
-            - /health/ping_liveness_local.sh 5
-        readinessProbe:
-          initialDelaySeconds: 5
-          periodSeconds: 5
-          timeoutSeconds: 1
-          successThreshold: 1
-          failureThreshold: 5
-          exec:
-            command:
-            - sh
-            - -c
-            - /health/ping_readiness_local.sh 5
-        resources:
-          null
-        volumeMounts:
-        - name: health
-          mountPath: /health
-        - name: redis-data
-          mountPath: /data
-          subPath: 
-        - name: config
-          mountPath: /opt/bitnami/redis/mounted-etc
-        - name: redis-tmp-conf
-          mountPath: /opt/bitnami/redis/etc/
+            - /opt/bitnami/scripts/start-scripts/start-master.sh
+          env:
+            - name: REDIS_REPLICATION_MODE
+              value: master
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: robomotion-redis
+                  key: redis-password
+            - name: REDIS_TLS_ENABLED
+              value: "no"
+            - name: REDIS_PORT
+              value: "6379"
+          ports:
+            - name: redis
+              containerPort: 6379
+          livenessProbe:
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            # One second longer than command timeout should prevent generation of zombie processes.
+            timeoutSeconds: 6
+            successThreshold: 1
+            failureThreshold: 5
+            exec:
+              command:
+                - sh
+                - -c
+                - /health/ping_liveness_local.sh 5
+          readinessProbe:
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 2
+            successThreshold: 1
+            failureThreshold: 5
+            exec:
+              command:
+                - sh
+                - -c
+                - /health/ping_readiness_local.sh 1
+          resources:
+            null
+          volumeMounts:
+            - name: start-scripts
+              mountPath: /opt/bitnami/scripts/start-scripts
+            - name: health
+              mountPath: /health
+            - name: redis-data
+              mountPath: /data
+              subPath: 
+            - name: config
+              mountPath: /opt/bitnami/redis/mounted-etc
+            - name: redis-tmp-conf
+              mountPath: /opt/bitnami/redis/etc/
       volumes:
-      - name: health
-        configMap:
-          name: robomotion-redis-health
-          defaultMode: 0755
-      - name: config
-        configMap:
-          name: robomotion-redis
-      - name: redis-tmp-conf
-        emptyDir: {}
+        - name: start-scripts
+          configMap:
+            name: robomotion-redis-scripts
+            defaultMode: 0755
+        - name: health
+          configMap:
+            name: robomotion-redis-health
+            defaultMode: 0755
+        - name: config
+          configMap:
+            name: robomotion-redis
+        - name: redis-tmp-conf
+          emptyDir: {}
   volumeClaimTemplates:
     - metadata:
         name: redis-data
@@ -1704,7 +1621,7 @@ kind: Job
 metadata:
   name: robomotion-migrations
 spec:
-  activeDeadlineSeconds: 360
+  activeDeadlineSeconds: 1800
   backoffLimit: 1
   template:
     spec:
@@ -1722,7 +1639,7 @@ spec:
           do echo waiting for database; sleep 2; done;']
       containers:
         - name: robomotion-migrations
-          image: "gcr.io/robomotion/robomotion-migrations:fe495b36a"
+          image: "gcr.io/robomotion/robomotion-migrations:28b860969"
           env:
             - name: POSTGRES_HOST
               value: robomotion-postgresql
@@ -1853,6 +1770,60 @@ spec:
           serviceName: robomotion-proxy
           servicePort: 80
 ---
+# Source: robomotion/charts/ingress-nginx/templates/admission-webhooks/validating-webhook.yaml
+# before changing this value, check the required kubernetes version
+# https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#prerequisites
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingWebhookConfiguration
+metadata:
+  labels:
+    helm.sh/chart: ingress-nginx-3.16.1
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/instance: robomotion
+    app.kubernetes.io/version: "0.41.2"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: admission-webhook
+  name: robomotion-ingress-nginx-admission
+webhooks:
+  - name: validate.nginx.ingress.kubernetes.io
+    matchPolicy: Equivalent
+    rules:
+      - apiGroups:
+          - networking.k8s.io
+        apiVersions:
+          - v1beta1
+        operations:
+          - CREATE
+          - UPDATE
+        resources:
+          - ingresses
+    failurePolicy: Fail
+    sideEffects: None
+    admissionReviewVersions:
+      - v1
+      - v1beta1
+    clientConfig:
+      service:
+        namespace: robomotion-system
+        name: robomotion-ingress-nginx-controller-admission
+        path: /networking/v1beta1/ingresses
+---
+# Source: robomotion/charts/ingress-nginx/templates/admission-webhooks/job-patch/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: robomotion-ingress-nginx-admission
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade,post-install,post-upgrade
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+  labels:
+    helm.sh/chart: ingress-nginx-3.16.1
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/instance: robomotion
+    app.kubernetes.io/version: "0.41.2"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: admission-webhook
+---
 # Source: robomotion/templates/session-store-secret.yaml
 apiVersion: v1
 kind: Secret
@@ -1863,57 +1834,201 @@ metadata:
     "helm.sh/hook-delete-policy": "before-hook-creation"
   labels:
     app.kubernetes.io/name: robomotion
-    helm.sh/chart: robomotion-1.1.0
+    helm.sh/chart: robomotion-1.12.2
     app.kubernetes.io/instance: robomotion
     app.kubernetes.io/managed-by: Helm
 type: Opaque
 data:
-  secret: puzTq4ZsBstHXsSX4trEbz2J8rSKO8s5
+  secret: bz5FqOvFgWIbwF2lY7OjhyZbstMcjsbh
 ---
-# Source: robomotion/charts/minio/templates/post-install-create-bucket-job.yaml
+# Source: robomotion/charts/ingress-nginx/templates/admission-webhooks/job-patch/clusterrole.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: robomotion-ingress-nginx-admission
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade,post-install,post-upgrade
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+  labels:
+    helm.sh/chart: ingress-nginx-3.16.1
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/instance: robomotion
+    app.kubernetes.io/version: "0.41.2"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: admission-webhook
+rules:
+  - apiGroups:
+      - admissionregistration.k8s.io
+    resources:
+      - validatingwebhookconfigurations
+    verbs:
+      - get
+      - update
+---
+# Source: robomotion/charts/ingress-nginx/templates/admission-webhooks/job-patch/clusterrolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name:  robomotion-ingress-nginx-admission
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade,post-install,post-upgrade
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+  labels:
+    helm.sh/chart: ingress-nginx-3.16.1
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/instance: robomotion
+    app.kubernetes.io/version: "0.41.2"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: admission-webhook
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: robomotion-ingress-nginx-admission
+subjects:
+  - kind: ServiceAccount
+    name: robomotion-ingress-nginx-admission
+    namespace: robomotion-system
+---
+# Source: robomotion/charts/ingress-nginx/templates/admission-webhooks/job-patch/role.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name:  robomotion-ingress-nginx-admission
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade,post-install,post-upgrade
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+  labels:
+    helm.sh/chart: ingress-nginx-3.16.1
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/instance: robomotion
+    app.kubernetes.io/version: "0.41.2"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: admission-webhook
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+    verbs:
+      - get
+      - create
+---
+# Source: robomotion/charts/ingress-nginx/templates/admission-webhooks/job-patch/rolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: robomotion-ingress-nginx-admission
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade,post-install,post-upgrade
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+  labels:
+    helm.sh/chart: ingress-nginx-3.16.1
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/instance: robomotion
+    app.kubernetes.io/version: "0.41.2"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: admission-webhook
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: robomotion-ingress-nginx-admission
+subjects:
+  - kind: ServiceAccount
+    name: robomotion-ingress-nginx-admission
+    namespace: robomotion-system
+---
+# Source: robomotion/charts/ingress-nginx/templates/admission-webhooks/job-patch/job-createSecret.yaml
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: robomotion-minio-make-bucket-job
-  labels:
-    app: minio-make-bucket-job
-    chart: minio-5.0.25
-    release: robomotion
-    heritage: Helm
+  name: robomotion-ingress-nginx-admission-create
   annotations:
-    "helm.sh/hook": post-install,post-upgrade
-    "helm.sh/hook-delete-policy": hook-succeeded
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+  labels:
+    helm.sh/chart: ingress-nginx-3.16.1
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/instance: robomotion
+    app.kubernetes.io/version: "0.41.2"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: admission-webhook
 spec:
   template:
     metadata:
+      name: robomotion-ingress-nginx-admission-create
       labels:
-        app: minio-job
-        release: robomotion
+        helm.sh/chart: ingress-nginx-3.16.1
+        app.kubernetes.io/name: ingress-nginx
+        app.kubernetes.io/instance: robomotion
+        app.kubernetes.io/version: "0.41.2"
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/component: admission-webhook
     spec:
-      restartPolicy: OnFailure
-      volumes:
-        - name: minio-configuration
-          projected:
-            sources:
-            - configMap:
-                name: robomotion-minio
-            - secret:
-                name: robomotion-minio
-      serviceAccountName: "robomotion-minio"
       containers:
-      - name: minio-mc
-        image: "minio/mc:RELEASE.2020-04-25T00-43-23Z"
-        imagePullPolicy: IfNotPresent
-        command: ["/bin/sh", "/config/initialize"]
-        env:
-          - name: MINIO_ENDPOINT
-            value: robomotion-minio
-          - name: MINIO_PORT
-            value: "9000"
-        volumeMounts:
-          - name: minio-configuration
-            mountPath: /config
-        resources:
-          requests:
-            cpu: 250m
-            memory: 256Mi
+        - name: create
+          image: "docker.io/jettech/kube-webhook-certgen:v1.5.0"
+          imagePullPolicy: IfNotPresent
+          args:
+            - create
+            - --host=robomotion-ingress-nginx-controller-admission,robomotion-ingress-nginx-controller-admission.$(POD_NAMESPACE).svc
+            - --namespace=$(POD_NAMESPACE)
+            - --secret-name=robomotion-ingress-nginx-admission
+          env:
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+      restartPolicy: OnFailure
+      serviceAccountName: robomotion-ingress-nginx-admission
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 2000
+---
+# Source: robomotion/charts/ingress-nginx/templates/admission-webhooks/job-patch/job-patchWebhook.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: robomotion-ingress-nginx-admission-patch
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+  labels:
+    helm.sh/chart: ingress-nginx-3.16.1
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/instance: robomotion
+    app.kubernetes.io/version: "0.41.2"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: admission-webhook
+spec:
+  template:
+    metadata:
+      name: robomotion-ingress-nginx-admission-patch
+      labels:
+        helm.sh/chart: ingress-nginx-3.16.1
+        app.kubernetes.io/name: ingress-nginx
+        app.kubernetes.io/instance: robomotion
+        app.kubernetes.io/version: "0.41.2"
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/component: admission-webhook
+    spec:
+      containers:
+        - name: patch
+          image: "docker.io/jettech/kube-webhook-certgen:v1.5.0"
+          imagePullPolicy: IfNotPresent
+          args:
+            - patch
+            - --webhook-name=robomotion-ingress-nginx-admission
+            - --namespace=$(POD_NAMESPACE)
+            - --patch-mutating=false
+            - --secret-name=robomotion-ingress-nginx-admission
+            - --patch-failure-policy=Fail
+          env:
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+      restartPolicy: OnFailure
+      serviceAccountName: robomotion-ingress-nginx-admission
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 2000

@@ -1,0 +1,61 @@
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: {{ template "robomotion-proxy.fullname" . }}
+  labels:
+    app: {{ template "robomotion-proxy.fullname" . }}
+    chart: {{ template "robomotion.chart" . }}
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
+    component: {{ .Values.proxy.name }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ template "robomotion-proxy.fullname" . }}
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: {{ template "robomotion-proxy.fullname" . }}
+    spec:
+      containers:
+      - name: {{ template "robomotion-proxy.fullname" . }}
+        image: "{{ .Values.proxy.image }}:{{ .Values.proxy.imageTag }}"
+        ports:
+        - containerPort: 80
+          name: http
+        - containerPort: 9000
+          name: grpc
+        env:
+          - name: API_SRV
+            value: {{ template "robomotion-api.fullname" . }}-grpc        
+          - name: PROXY_PATH
+            value: {{ .Values.proxy.ingress.path }}
+          - name: REDIS_SCHEME
+            value: {{ default "redis" .Values.redis.scheme }}
+          - name: REDIS_HOST
+          {{- if .Values.redis.enabled }}
+            value: {{ template "robomotion.redis.host" . }}
+          {{- else }}
+            value: {{ .Values.externalRedis.host | quote }}
+          {{- end }}
+          - name: REDIS_PORT
+          {{- if .Values.redis.enabled }}
+            value: {{ .Values.redis.redisPort | quote }}
+          {{- else }}
+            value: {{ .Values.externalRedis.port | quote }}
+          {{- end }}
+          - name: REDIS_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                {{- if .Values.redis.enabled }}
+                name: {{ template "robomotion.redis.fullname" . }}
+                key: redis-password
+                {{- else }}
+                name: {{ printf "%s-%s" .Release.Name "external-redis"  }}
+                key: password
+                {{- end }}
+      {{- if .Values.registry.secret }}
+      imagePullSecrets:
+      - name: {{ .Values.registry.secret }}
+      {{- end }}

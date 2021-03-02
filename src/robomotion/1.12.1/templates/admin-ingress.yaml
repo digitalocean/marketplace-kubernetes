@@ -1,0 +1,26 @@
+{{- $host := ( index .Values.ingress.hosts 0 ) -}}
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{ template "robomotion-admin.fullname" . }}
+  annotations:
+{{- if .Values.certmanager.enabled }}
+    certmanager.k8s.io/issuer: "{{ .Release.Name }}-issuer"
+{{- end }}
+    nginx.ingress.kubernetes.io/ssl-redirect: {{ $host.tls | quote }}
+{{ toYaml .Values.ingress.annotations | indent 4 }}
+spec:
+{{- if $host.tls }}
+  tls:
+  - hosts:
+    - {{ $host.name }}
+    secretName: {{ $host.tlsSecret }}
+{{- end }}
+  rules:
+  - host: {{ .Values.api.ingress.hostname | default $host.name }}
+    http:
+      paths:
+      - path: {{ .Values.admin.ingress.path }}
+        backend:
+          serviceName: {{ template "robomotion-admin.fullname" . }}
+          servicePort: 80
