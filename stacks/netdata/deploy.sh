@@ -2,21 +2,33 @@
 
 set -e
 
-# create namespace
-cat <<EOF | kubectl apply -f -
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: netdata
-EOF
+################################################################################
+# repo
+################################################################################
+helm repo add netdata https://netdata.github.io/helmchart
+helm repo update > /dev/null
 
-# set kubectl namespace
-kubectl config set-context --current --namespace=netdata
+################################################################################
+# chart
+################################################################################
+STACK="netdata"
+CHART="netdata/netdata"
+CHART_VERSION="3.6.3"
+NAMESPACE="netdata"
 
-# deploy netdata
-kubectl apply -f https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/netdata/yaml/netdata.yaml
+if [ -z "${MP_KUBERNETES}" ]; then
+  # use local version of values.yml
+  ROOT_DIR=$(git rev-parse --show-toplevel)
+  values="$ROOT_DIR/stacks/netdata/values.yml"
+else
+  # use github hosted master version of values.yml
+  values="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/netdata/values.yml"
+fi
 
-# ensure services are running
-kubectl rollout status -w statefulset/netdata-master
-kubectl rollout status -w daemonset/netdata-slave
-
+helm upgrade "$STACK" "$CHART" \
+  --atomic \
+  --create-namespace \
+  --install \
+  --namespace "$NAMESPACE" \
+  --values "$values" \
+  --version "$CHART_VERSION"
