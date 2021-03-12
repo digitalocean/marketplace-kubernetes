@@ -2,21 +2,33 @@
 
 set -e
 
+################################################################################
+# repo
+################################################################################
+helm repo add openebs https://openebs.github.io/charts
+helm repo update > /dev/null
+
+################################################################################
+# chart
+################################################################################
 STACK="openebs"
-CHART="stable/openebs"
-CHART_VERSION="1.10.0"
+CHART="openebs/openebs"
+CHART_VERSION="2.6.0"
 NAMESPACE="openebs"
 
 if [ -z "${MP_KUBERNETES}" ]; then
-  VALUES="values.yaml"
+  # use local version of values.yml
+  ROOT_DIR=$(git rev-parse --show-toplevel)
+  VALUES="$ROOT_DIR/stacks/${STACK}/values.yml"
 else
+  # use github hosted master version of values.yml
   VALUES="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/${STACK}/values.yaml"
 fi
 
-helm install "$CHART" \
+helm upgrade "$STACK" "$CHART" \
+  --atomic \
   --create-namespace \
-  --generate-name \
+  --install \
   --namespace "$NAMESPACE" \
-  --values "$VALUES" \
-  --version "$CHART_VERSION" \
-  --wait
+  --values "$values" \
+  --version "$CHART_VERSION"
