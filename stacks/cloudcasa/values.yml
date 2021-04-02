@@ -1,0 +1,94 @@
+# cloudcasa-helmchart/cloudcasa
+
+## Global Docker image parameters
+## Please, note that this will override the image parameters, including dependencies, configured to use the global value
+## Current available global Docker image parameters: imageRegistry
+##
+
+## Required namespace
+namespace: cloudcasa-io
+
+## Velero csi plugin image
+## ref: https://hub.docker.com/r/velero/velero-plugin-for-csi/tags/
+velero_csi_plugin_image:
+  registry: docker.io
+  repository: catalogicsoftware/velero-plugin-for-csi
+  tag: v0.1.2.1
+  pullPolicy: IfNotPresent
+  debug: false
+##
+
+## Velero aws plugin image
+## ref: https://hub.docker.com/r/velero/velero-plugin-for-aws/tags/
+velero_aws_plugin_image:
+  registry: docker.io
+  repository: velero/velero-plugin-for-aws
+  tag: v1.1.0
+  pullPolicy: IfNotPresent
+  debug: false
+##
+
+## Velero image
+## ref: https://hub.docker.com/r/velero/velero/tags
+velero_image:
+  registry: docker.io
+  repository: velero/velero
+  tag: v1.5.3
+  pullPolicy: IfNotPresent
+  debug: false
+##
+
+## Cloudcasa kubeagent image
+## ref: https://hub.docker.com/r/catalogicsoftware/amds-kagent/tags/
+kagent_image:
+  registry: docker.io
+  repository: catalogicsoftware/amds-kagent
+  tag: 0.1.0-rc.515
+  pullPolicy: IfNotPresent
+  debug: false
+##
+
+## Cloudcasa AMDS Cluster ID. To be provided by the user
+cluster_id: ""
+
+## Resources to be used by velero and kubeagent pods
+request_velero_memory: 128Mi
+request_velero_cpu: 500m
+limit_velero_memory: 512Mi
+limit_velero_cpu: 1
+request_kubeagent_memory: 32Mi
+request_kubeagent_cpu: 250m
+limit_kubeagent_memory: 64Mi
+limit_kubeagent_cpu: 500m
+
+## Placeholder configuration below this line ##
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+
+securityContext: {}
+
+resources: {}
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 1
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+##
