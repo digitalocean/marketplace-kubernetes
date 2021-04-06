@@ -13,8 +13,8 @@ helm repo update > /dev/null
 ################################################################################
 STACK="cockroachdb"
 CHART="cockroachdb/cockroachdb"
-CHART_VERSION="5.0.0"
 NAMESPACE="cockroachdb"
+# CHART_VERSION is intentionally unset to guarantee customers get the latest patch release of cockroachdb. Unfortunately, there's a hard linkage between chart version and db version so we don't want to lock the chart version.
 
 if [ -z "${MP_KUBERNETES}" ]; then
   # use local version of values.yml
@@ -29,8 +29,7 @@ helm upgrade "$STACK" "$CHART" \
   --install \
   --create-namespace \
   --namespace "$NAMESPACE" \
-  --values "$values" \
-  --version "$CHART_VERSION"
+  --values "$values"
 
 sleep 30
 

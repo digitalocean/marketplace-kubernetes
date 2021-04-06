@@ -2,22 +2,33 @@
 
 set -e
 
-# create namespace
-cat <<EOF | kubectl apply -f -
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: wordpress
-EOF
+################################################################################
+# repo
+################################################################################
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm repo update > /dev/null
 
-# set kubectl namespace
-kubectl config set-context --current --namespace=wordpress
+################################################################################
+# chart
+################################################################################
+STACK="wordpress"
+CHART="bitnami/wordpress"
+CHART_VERSION="10.6.12"
+NAMESPACE="wordpress"
 
-# deploy wordpress
-kubectl apply -f https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/wordpress/yaml/wordpress.yaml
+if [ -z "${MP_KUBERNETES}" ]; then
+  # use local version of values.yml
+  ROOT_DIR=$(git rev-parse --show-toplevel)
+  values="$ROOT_DIR/stacks/wordpress/values.yml"
+else
+  # use github hosted master version of values.yml
+  values="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/wordpress/values.yml"
+fi
 
-# ensure services are running
-kubectl get deployments -o custom-columns=NAME:.metadata.name | tail -n +2 | while read -r line
-do
-  kubectl rollout status -w deployment/"$line"
-done
+helm upgrade "$STACK" "$CHART" \
+  --atomic \
+  --create-namespace \
+  --install \
+  --namespace "$NAMESPACE" \
+  --values "$values" \
+  --version "$CHART_VERSION"

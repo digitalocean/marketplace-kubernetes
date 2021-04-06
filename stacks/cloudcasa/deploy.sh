@@ -5,24 +5,24 @@ set -e
 ################################################################################
 # repo
 ################################################################################
-helm repo add openebs https://openebs.github.io/charts
+helm repo add cloudcasa-helmchart https://catalogicsoftware.github.io/cloudcasa-helmchart/
 helm repo update > /dev/null
 
 ################################################################################
 # chart
 ################################################################################
-STACK="openebs"
-CHART="openebs/openebs"
-CHART_VERSION="2.6.0"
-NAMESPACE="openebs"
+STACK="cloudcasa"
+CHART="cloudcasa-helmchart/cloudcasa"
+CHART_VERSION="0.1.0"
+NAMESPACE="default"
 
 if [ -z "${MP_KUBERNETES}" ]; then
   # use local version of values.yml
   ROOT_DIR=$(git rev-parse --show-toplevel)
-  VALUES="$ROOT_DIR/stacks/${STACK}/values.yml"
+  values="$ROOT_DIR/stacks/cloudcasa/values.yml"
 else
   # use github hosted master version of values.yml
-  VALUES="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/${STACK}/values.yaml"
+  values="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/cloudcasa/values.yml"
 fi
 
 helm upgrade "$STACK" "$CHART" \
