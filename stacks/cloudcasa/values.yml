@@ -13,7 +13,7 @@ namespace: cloudcasa-io
 velero_csi_plugin_image:
   registry: docker.io
   repository: catalogicsoftware/velero-plugin-for-csi
-  tag: v0.1.2.1
+  tag: v0.1.2.3
   pullPolicy: IfNotPresent
   debug: false
 ##
@@ -43,7 +43,7 @@ velero_image:
 kagent_image:
   registry: docker.io
   repository: catalogicsoftware/amds-kagent
-  tag: 0.1.0-rc.515
+  tag: 0.1.0-prod.47
   pullPolicy: IfNotPresent
   debug: false
 ##

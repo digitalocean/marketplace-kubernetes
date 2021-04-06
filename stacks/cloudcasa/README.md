@@ -47,4 +47,3 @@ https://www.digitalocean.com/docs/kubernetes/how-to/connect-to-cluster/
  
 Additional instructions are included in the DigitalOcean Kubernetes control panel:
 https://cloud.digitalocean.com/kubernetes/clusters/ 
-
