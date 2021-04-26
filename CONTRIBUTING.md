@@ -4,7 +4,7 @@
 
 To add your application to the [DigitalOcean Marketplace](https://marketplace.digitalocean.com/), you'll need to do the following:
 1. Ensure that you have Helm 3 installed on your machine. [Instructions](https://helm.sh/docs/intro/install/)
-1. Add a Helm 3 deployment (`deploy.sh`), upgrade (`upgrade.sh`) and uninstall (`uninstall.sh`) files to this repo.
+1. Add the Helm 3 deployment (`deploy.sh`), upgrade (`upgrade.sh`) and uninstall (`uninstall.sh`) files to this repo.
 1. Get an account set up within the [DigitalOcean Marketplace Vendor Portal](https://marketplace.digitalocean.com/vendorportal)
 
 ## Adding Your Application
@@ -23,8 +23,8 @@ export NAMESPACE=$APP_NAME
 ```
 4. Optionally, customize your `deploy.sh`, `upgrade.sh`, `uninstall.sh` and specify your Helm chart's configuration values in `values.yml`. Both can be found in `stacks/$APP_NAME`
 4. Test out installing your stack by deploying it locally to a k8s cluster: `./stacks/$APP_NAME/deploy.sh`
-4. Test out upgrading your stack by deploying it locally to a k8s cluster: `./stacks/$APP_NAME/upgrade.sh`
-4. Test out uninstalling your stack by deploying it locally to a k8s cluster: `./stacks/$APP_NAME/uninstall.sh`
+4. Test out upgrading your stack by updating it locally on a k8s cluster: `./stacks/$APP_NAME/upgrade.sh`
+4. Test out uninstalling your stack by deleting it locally from a k8s cluster: `./stacks/$APP_NAME/uninstall.sh`
 4. Open a PR
 4. Once the PR is reviewed and merged by DigitalOcean, visit the [DigitalOcean Marketplace Vendor Portal](https://marketplace.digitalocean.com/vendorportal) and submit your App Listing, refering to this PR in the appropriate input field.
 
