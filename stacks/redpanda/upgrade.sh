@@ -24,7 +24,7 @@ if [ -z "${MP_KUBERNETES}" ]; then
     values="$ROOT_DIR/stacks/Redpanda/values.yml"
 else
     # use github hosted master version of values.yml
-    values="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/Redpanda/values.yml"
+    values="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/redpanda/values.yml"
 fi
 
 helm upgrade \
