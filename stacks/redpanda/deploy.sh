@@ -7,7 +7,6 @@ set -e
 ################################################################################
 helm repo add vectorized https://charts.vectorized.io/
 helm repo add jetstack https://charts.jetstack.io
-helm repo add prom https://prometheus-community.github.io/helm-charts
 helm repo update > /dev/null
 
 ################################################################################
@@ -35,14 +34,6 @@ helm upgrade \
   --namespace cert-manager \
   --version v1.2.0 \
   --set installCRDs=true
-
-helm upgrade \
-  prometheus-operator prom/kube-prometheus-stack \
-  --atomic \
-  --create-namespace \
-  --install \
-  --namespace monitoring \
-  --version 15.4.4
 
 kubectl apply -k "https://github.com/vectorizedio/redpanda/src/go/k8s/config/crd?ref=$CHART_VERSION"
 
