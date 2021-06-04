@@ -48,12 +48,5 @@ helm upgrade "$STACK" "$CHART" \
 MAX=50
 CURRENT=0
 
-until $(kubectl apply -f "https://raw.githubusercontent.com/vectorizedio/redpanda/$CHART_VERSION/src/go/k8s/config/samples/external_connectivity.yaml" >/dev/null 2>&1); do
-  CURRENT=$((CURRENT + 1))
-  sleep 1
-
-  if [ "$CURRENT" -gt "$MAX" ]; then
-    echo "FAILED: Webhook not ready, giving up."
-    exit 1
-  fi
-done
+kubectl wait pod -l app.kubernetes.io/instance=redpanda -n $NAMESPACE --timeout=10m --for condition=ready
+kubectl apply -f "https://raw.githubusercontent.com/vectorizedio/redpanda/$CHART_VERSION/src/go/k8s/config/samples/external_connectivity.yaml"
