@@ -49,4 +49,5 @@ MAX=50
 CURRENT=0
 
 kubectl wait pod -l app.kubernetes.io/instance=redpanda -n $NAMESPACE --timeout=10m --for condition=ready
+kubectl config set-context --current --namespace default
 kubectl apply -f "https://raw.githubusercontent.com/vectorizedio/redpanda/$CHART_VERSION/src/go/k8s/config/samples/external_connectivity.yaml"
