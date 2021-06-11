@@ -7,12 +7,12 @@ _Write a few paragraphs about *WHAT* the listing is, *WHAT* the software does, a
 
 _Include specific details on what this 1-click provides, and the value to users. Enumerate the values this 1-click's config gives the user. Enumerate the value this software combination, specifically for apps containing multiple pieces of software, bring to the user._ 
 
-_Include links for the user to learn more about the software that are not included in the software included section._
+_Include links for the user to learn more about the software that is not included in the software included section._
 
 _Recommend CPU and Memory minimum requirements and node pools for test/dev and production for X amount of user._
 
 _If your software is Open Source, a thank you to all the contributors is a nice touch. Suggest to add something to the effect:_
-Thank you to all the contributors whose hard work make this software valuable for users.
+Thank you to all the contributors whose hard work makes this software valuable for users.
 
 
 # Getting Started
@@ -31,7 +31,7 @@ If you just want to give this app a quick spin without `doctl` give the followin
 Assuming you have done the following:
 1. Created a cluster in the DigitalOcean control panel (https://cloud.digitalocean.com/kubernetes/clusters/).
 1. Downloaded the Kubernetes config file to ~/Downloads directory on your local machine. The config file will have a name like `monitoring-k8s-1-15-3-do-1-sfo-kubeconfig.yaml`.
-1. Installed Kubernetes command line tool, `kubectl`, (https://kubernetes.io/docs/tasks/tools/install-kubectl/) on your local machine.
+1. Installed Kubernetes command-line tool, `kubectl`, (https://kubernetes.io/docs/tasks/tools/install-kubectl/) on your local machine.
 
 Copy the Kubernetes config file to the default directory `kubectl` looks in.
 ```
@@ -44,7 +44,7 @@ kubectl get pods -A
 ```
 
 ### Confirm [app] is running: 
-After you are able to successfully connect to your DigitalOcean Kubernetes cluster you’ll be able to see [app] running in the `[app]` namespace by issuing:
+After you can successfully connect to your DigitalOcean Kubernetes cluster you’ll be able to see [app] running in the `[app]` namespace by issuing:
  ```
  kubectl get pods -A
  ``` 
@@ -59,7 +59,7 @@ NAMESPACE    NAME                          READY    STATUS    RESTARTS    AGE
 [app]    [app]-7c45798d44-rxhnq    2/2      Running   0           6m32s
 [app]    [app]-6d5b85476c-nf445    2/2      Running   0           6m34s
 ```
-_Be sure to call out all apps the user needs to ensure are running for proper function of the `[app]`._
+_Be sure to call out all apps the user needs to ensure are running for the proper function of the `[app]`._
 
 ### Install [app] CLI (optional)
 
@@ -72,7 +72,7 @@ _If possible provide an example app, chart, or module which allows the user to s
 
 _Include in-line documentation when possible._
 
-_Include screen shots and images when possible_ 
+_Include screenshots and images when possible_ 
 
 ![alt text][image]
 
