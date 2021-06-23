@@ -1,0 +1,197 @@
+# Default values for ks-installer.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+registry: ""
+image:
+  repository: kubesphere/ks-installer
+  pullPolicy: Always
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: v3.1.0
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+resources:
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  limits:
+    cpu: "1"
+    memory: 1Gi
+  requests:
+    cpu: 20m
+    memory: 100Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+persistence:
+  storageClass: ""
+
+# Keep the jwtSecret consistent with the host cluster. Retrive the jwtSecret by executing
+# "kubectl -n kubesphere-system get cm kubesphere-config -o yaml | grep -v "apiVersion" | grep jwtSecret"
+# on the host cluster.
+authentication:
+  jwtSecret: ""
+
+etcd:
+  monitoring: false
+  endpointIps: localhost
+  tlsEnable: true
+
+common:
+  redis:
+    enabled: false
+  openldap:
+    enabled: false
+  minioVolumeSize: 20Gi
+  openldapVolumeSize: 2Gi
+  redisVolumSize: 2Gi
+  # Storage backend for logging, events and auditing.
+  es:
+    elasticsearchMasterVolumeSize: 4Gi
+    elasticsearchDataVolumeSize: 20Gi
+    logMaxAge: 7
+    elkPrefix: logstash
+    basicAuth:
+      enabled: false
+      username: ""
+      password: ""
+    externalElasticsearchUrl: ""
+    externalElasticsearchPort: ""
+
+# Enable or disable simultaneous logins. It allows different users
+# to log in with the same account at the same time.
+console:
+  enableMultiLogin: true
+  port: 30880
+
+# It enables users to customize alerting policies to send messages
+# to receivers in time with different time intervals and alerting
+# levels to choose from.
+alerting:
+  enabled: false
+
+# Provide a security-relevant chronological set of records，recording
+# the sequence of activities happening on the platform, initiated by
+# different tenants.
+auditing:
+  enabled: false
+
+# Provide an out-of-the-box CI/CD system based on Jenkins, and automated
+# workflow tools including Source-to-Image & Binary-to-Image.
+devops:
+  enabled: false
+  jenkinsMemoryLim: 2Gi
+  jenkinsMemoryReq: 1500Mi
+  jenkinsVolumeSize: 8Gi
+  jenkinsJavaOpts_Xms: 512m
+  jenkinsJavaOpts_Xmx: 512m
+  jenkinsJavaOpts_MaxRAM: 2g
+
+# Provide a graphical web console for Kubernetes Events exporting,
+# filtering and alerting in multi-tenant Kubernetes clusters.
+events:
+  enabled: false
+  ruler:
+    enabled: true
+    replicas: 2
+
+# Flexible logging functions are provided for log query, collection
+# and management in a unified console. Additional log collectors can
+# be added, such as Elasticsearch, Kafka and Fluentd.
+logging:
+  enabled: false
+  logsidecar:
+    enabled: true
+    replicas: 2
+
+# Whether to install metrics-server. IT enables HPA (Horizontal Pod Autoscaler).
+metrics_server:
+  enabled: false
+
+monitoring:
+  # If there is an independent StorageClass you need for Prometheus, you can
+  # specify it here. The default StorageClass is used by default.
+  storageClass: ""
+  # Prometheus request memory.
+  prometheusMemoryRequest: 400Mi
+  # Prometheus PVC size.
+  prometheusVolumeSize: 20Gi
+
+# You can install a solo cluster, or specify it as the Host or Member Cluster.
+# host | member | none
+multicluster:
+  clusterRole: none
+
+network:
+  # Network policies allow network isolation within the same cluster, which means
+  # firewalls can be set up between certain instances (Pods).
+  # Make sure that the CNI network plugin used by the cluster supports NetworkPolicy.
+  # There are a number of CNI network plugins that support NetworkPolicy, including
+  # Calico, Cilium, Kube-router, Romana and Weave Net.
+  networkpolicy:
+    enabled: false
+  # Use Pod IP Pools to manage the Pod network address space. Pods to be created can
+  # be assigned IP addresses from a Pod IP Pool.
+  # Specify "calico" for this field if Calico is used as your CNI plugin. "none" means
+  # that Pod IP Pools are disabled.
+  ippool:
+    type: none
+  # Use Service Topology to view Service-to-Service communication based on Weave Scope.
+  # Specify "weave-scope" for this field to enable Service Topology. "none" means that
+  # Service Topology is disabled.
+  topology:
+    type: none
+
+# An App Store that is accessible to all platform tenants. You can use it to manage
+# apps across their entire lifecycle.
+openpitrix:
+  store:
+    enabled: false
+
+# Provide fine-grained traffic management, observability and tracing, and visualized traffic topology.
+# Base component (pilot). Enable or disable KubeSphere Service Mesh (Istio-based).
+servicemesh:
+  enabled: false
+
+# Add edge nodes to your cluster and deploy workloads on edge nodes.
+kubeedge:
+  enabled: false
+  cloudCore:
+    nodeSelector: {"node-role.kubernetes.io/worker": ""}
+    tolerations: []
+    cloudhubPort: "10000"
+    cloudhubQuicPort: "10001"
+    cloudhubHttpsPort: "10002"
+    cloudstreamPort: "10003"
+    tunnelPort: "10004"
+    cloudHub:
+      advertiseAddress: # At least a public IP address or an IP address which can be accessed by edge nodes must be provided.
+        - ""            # Note that once KubeEdge is enabled, CloudCore will malfunction if the address is not provided.
+      nodeLimit: "100"
+    service:
+      cloudhubNodePort: "30000"
+      cloudhubQuicNodePort: "30001"
+      cloudhubHttpsNodePort: "30002"
+      cloudstreamNodePort: "30003"
+      tunnelNodePort: "30004"
+  edgeWatcher:
+    nodeSelector: {"node-role.kubernetes.io/worker": ""}
+    tolerations: []
+    edgeWatcherAgent:
+      nodeSelector: {"node-role.kubernetes.io/worker": ""}
+      tolerations: []
