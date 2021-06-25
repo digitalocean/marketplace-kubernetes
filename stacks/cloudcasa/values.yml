@@ -6,6 +6,9 @@
 ## Required namespace
 namespace: cloudcasa-io
 
+## Required deployment_platform
+deployment_platform: "digitalocean"
+
 ## Velero csi plugin image
 ## ref: https://hub.docker.com/r/velero/velero-plugin-for-csi/tags/
 velero_csi_plugin_image:
@@ -59,7 +62,7 @@ velero_image:
 kagent_image:
   registry: docker.io
   repository: catalogicsoftware/amds-kagent
-  tag: 0.1.0-prod.69
+  tag: 0.1.0-prod.83
   pullPolicy: IfNotPresent
   debug: false
 ##
