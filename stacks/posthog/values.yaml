@@ -1,8 +1,0 @@
-cloud: "do"
-ingress:
-  hostname: "posthog.click"
-
-# smtp login and key ommited as it's a public repo
-# email:
-#   user: # TODO
-#   password: # TODO

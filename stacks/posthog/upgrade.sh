@@ -5,7 +5,7 @@ set -e
 ################################################################################
 # repo
 ################################################################################
-helm repo add posthog https://posthog.github.io/charts-clickhouse/
+helm repo add charts-clickhouse https://posthog.github.io/charts-clickhouse/
 helm repo update > /dev/null
 
 ################################################################################
@@ -13,22 +13,17 @@ helm repo update > /dev/null
 ################################################################################
 STACK="posthog"
 CHART="posthog/posthog"
-CHART_VERSION="1.4.29"
 NAMESPACE="posthog"
 
 if [ -z "${MP_KUBERNETES}" ]; then
-  # use local version of values.yml
-  ROOT_DIR=$(git rev-parse --show-toplevel)
-  values="$ROOT_DIR/stacks/posthog/values.yml"
+    # use local version of values.yml
+    ROOT_DIR=$(git rev-parse --show-toplevel)
+    values="$ROOT_DIR/stacks/posthog/values.yml"
 else
-  # use github hosted master version of values.yml
-  values="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/posthog/values.yml"
+    # use github hosted master version of values.yml
+    values="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/posthog/values.yml"
 fi
 
 helm upgrade "$STACK" "$CHART" \
-  --atomic \
-  --create-namespace \
-  --install \
-  --namespace "$NAMESPACE" \
-  --values "$values" \
-  --version "$CHART_VERSION"
+--namespace "$NAMESPACE" \
+--values "$values" \

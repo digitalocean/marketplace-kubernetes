@@ -57,4 +57,4 @@ kubectl port-forward --namespace posthog posthog-web-5d5dccdfcd-tpbwb 8000:8000
 
 You should now be able to navigate to PostHog at http://localhost:8000/ 
 
-You are now all set up to start trying out PostHog!
+You are now all set up to start trying PostHog!
