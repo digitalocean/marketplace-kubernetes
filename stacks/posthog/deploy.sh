@@ -2,10 +2,10 @@
 
 set -e
 
-STACK="jaeger"
-CHART="jaegertracing/jaeger"
-CHART_VERSION="0.28.0"
-NAMESPACE="jaeger"
+STACK="posthog"
+CHART="PostHog/charts-clickhouse"
+CHART_VERSION="1.4.29"
+NAMESPACE="posthog"
 
 if [ -z "${MP_KUBERNETES}" ]; then
   VALUES="values.yaml"
