@@ -1,2 +1,6 @@
-# posthog/posthog
 cloud: "do"
+ingress:
+  redirectToTLS: false
+  letsencrypt: false 
+web:
+  secureCookies: false
