@@ -21,12 +21,16 @@ export NAMESPACE=$APP_NAME
 
 ./utils/generate-stack.sh
 ```
-4. Optionally, customize your `deploy.sh`, `upgrade.sh`, `uninstall.sh` and specify your Helm chart's configuration values in `values.yml`. Both can be found in `stacks/$APP_NAME`
-4. Test out installing your stack by deploying it locally to a k8s cluster: `./stacks/$APP_NAME/deploy.sh`
-4. Test out upgrading your stack by updating it locally on a k8s cluster: `./stacks/$APP_NAME/upgrade.sh`
-4. Test out uninstalling your stack by deleting it locally from a k8s cluster: `./stacks/$APP_NAME/uninstall.sh`
-4. Open a PR
-4. Once the PR is reviewed and merged by DigitalOcean, visit the [DigitalOcean Marketplace Vendor Portal](https://marketplace.digitalocean.com/vendorportal) and submit your App Listing, refering to this PR in the appropriate input field.
+4. **Required:** In `do_config.yml`, specify minimum resource requirements for your application. We use this information to prevent applications from being installed on undersized clusters. We follow [Kubernetes resource units](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#resource-units-in-kubernetes) standard to define CPU and memory requirements. Update the following parameters under `minimum_resource_requirements`:
+    - `node_count`: minimum number of nodes needed in a cluster to run your application reliably. 
+    - `cpu`: minimum number of CPUs in total cluster capacity needed to power your application.
+    - `memory`: minimum amount of memory in total cluster capacity needed to power your application.
+6. Optionally, customize your `deploy.sh`, `upgrade.sh`, `uninstall.sh` and specify your Helm chart's configuration values in `values.yml`. Both can be found in `stacks/$APP_NAME`
+7. Test out installing your stack by deploying it locally to a k8s cluster: `./stacks/$APP_NAME/deploy.sh`
+8. Test out upgrading your stack by updating it locally on a k8s cluster: `./stacks/$APP_NAME/upgrade.sh`
+9. Test out uninstalling your stack by deleting it locally from a k8s cluster: `./stacks/$APP_NAME/uninstall.sh`
+10. Open a PR
+11. Once the PR is reviewed and merged by DigitalOcean, visit the [DigitalOcean Marketplace Vendor Portal](https://marketplace.digitalocean.com/vendorportal) and submit your App Listing, refering to this PR in the appropriate input field.
 
 ## Updating Your Application
 1. To deploy a newer version of your app's Helm chart, simply update the `CHART_VERSION` value in your `stacks/$APP_NAME/deploy.sh` file. If necessary, update your `values.yml` as well.
