@@ -1,7 +1,7 @@
 # Please read out contributing guide to learn how to properly complete this file.
 # https://github.com/digitalocean/marketplace-kubernetes/blob/master/CONTRIBUTING.md#adding-your-application
 
-# resource_requirements:
+# minimum_resource_requirements:
 #   node_count: 2
 #   cpu: "500m"
 #   memory: "64Mi"
