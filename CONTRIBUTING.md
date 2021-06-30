@@ -21,7 +21,7 @@ export NAMESPACE=$APP_NAME
 
 ./utils/generate-stack.sh
 ```
-4. **Required:** In `do_config.yml`, specify minimum resource requirements for your application. We use this information to prevent applications from being installed on undersized clusters. We follow [Kubernetes resource units](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#resource-units-in-kubernetes) standard to define CPU and memory requirements. Update the following parameters under `minimum_resource_requirements`:
+4. **Required:** In `do_config.yml`, update minimum resource requirements for your application. We use this information to prevent applications from being installed on undersized clusters. We follow [Kubernetes resource units](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#resource-units-in-kubernetes) standard to define CPU and memory requirements. Update the following parameters under `minimum_resource_requirements`:
     - `node_count`: minimum number of nodes needed in a cluster to run your application reliably. 
     - `cpu`: minimum number of CPUs in total cluster capacity needed to power your application.
     - `memory`: minimum amount of memory in total cluster capacity needed to power your application.
