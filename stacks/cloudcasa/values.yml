@@ -1,5 +1,3 @@
-# cloudcasa-helmchart/cloudcasa
-
 ## Global Docker image parameters
 ## Please, note that this will override the image parameters, including dependencies, configured to use the global value
 ## Current available global Docker image parameters: imageRegistry
@@ -7,6 +5,9 @@
 
 ## Required namespace
 namespace: cloudcasa-io
+
+## Required deployment_platform
+deployment_platform: "digitalocean"
 
 ## Velero csi plugin image
 ## ref: https://hub.docker.com/r/velero/velero-plugin-for-csi/tags/
@@ -18,12 +19,30 @@ velero_csi_plugin_image:
   debug: false
 ##
 
+## Velero plugin image
+velero_plugin_image:
+  registry: docker.io
+  repository: catalogicsoftware/amds-veleroplugin
+  tag: 0.0.1-rc.251
+  pullPolicy: IfNotPresent
+  debug: false
+##
+
 ## Velero aws plugin image
 ## ref: https://hub.docker.com/r/velero/velero-plugin-for-aws/tags/
 velero_aws_plugin_image:
   registry: docker.io
   repository: velero/velero-plugin-for-aws
-  tag: v1.1.0
+  tag: v1.2.0
+  pullPolicy: IfNotPresent
+  debug: false
+##
+
+## Velero azure plugin image
+velero_azure_plugin_image:
+  registry: docker.io
+  repository: velero/velero-plugin-for-microsoft-azure
+  tag: v1.2.0
   pullPolicy: IfNotPresent
   debug: false
 ##
@@ -33,7 +52,7 @@ velero_aws_plugin_image:
 velero_image:
   registry: docker.io
   repository: velero/velero
-  tag: v1.5.3
+  tag: v1.6.0
   pullPolicy: IfNotPresent
   debug: false
 ##
@@ -43,7 +62,7 @@ velero_image:
 kagent_image:
   registry: docker.io
   repository: catalogicsoftware/amds-kagent
-  tag: 0.1.0-prod.47
+  tag: 0.1.0-prod.83
   pullPolicy: IfNotPresent
   debug: false
 ##
