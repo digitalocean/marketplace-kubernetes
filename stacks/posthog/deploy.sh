@@ -13,7 +13,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="posthog"
 CHART="posthog/posthog"
-CHART_VERSION="1.4.29"
+CHART_VERSION="1.4.33"
 NAMESPACE="posthog"
 
 if [ -z "${MP_KUBERNETES}" ]; then
