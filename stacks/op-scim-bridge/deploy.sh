@@ -7,7 +7,7 @@ helm repo update > /dev/null
 
 STACK="op-scim-bridge"
 CHART="op-scim-bridge/op-scim"
-CHART_VERSION="2.0.2"
+CHART_VERSION="2.1.0"
 NAMESPACE="op-scim-bridge"
 
 helm upgrade "$STACK" "$CHART" \
