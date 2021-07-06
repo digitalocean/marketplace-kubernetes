@@ -32,5 +32,4 @@ helm upgrade "$STACK" "$CHART" \
   --namespace "$NAMESPACE" \
   --values "$values" \
   --timeout 10m \
-  --debug \
   --version "$CHART_VERSION"
