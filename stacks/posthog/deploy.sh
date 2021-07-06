@@ -13,7 +13,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="posthog"
 CHART="posthog/posthog"
-CHART_VERSION="1.4.33"
+CHART_VERSION="1.4.35"
 NAMESPACE="posthog"
 
 if [ -z "${MP_KUBERNETES}" ]; then
@@ -31,4 +31,6 @@ helm upgrade "$STACK" "$CHART" \
   --install \
   --namespace "$NAMESPACE" \
   --values "$values" \
+  --timeout 10m \
+  --debug \
   --version "$CHART_VERSION"
