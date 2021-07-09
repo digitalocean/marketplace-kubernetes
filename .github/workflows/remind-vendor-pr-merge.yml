@@ -1,0 +1,20 @@
+name: Remind Vendor on PR Merge
+
+# only trigger on pull request closed events
+on:
+  pull_request:
+    types: [ closed ]
+
+jobs:
+  merge_job:
+    # this job will only run if the PR has been merged
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: bubkoo/auto-comment@v1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          pullRequestClosed: >
+            👋 @{{ author }}
+            
+            Your PR is now merged,  please update the version on [vendor portal](https://cloud.digitalocean.com/vendorportal/) so that your changes get reflected on [DigitalOcean Marketplace](https://marketplace.digitalocean.com/apps)
