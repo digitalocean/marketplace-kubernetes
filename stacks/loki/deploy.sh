@@ -13,7 +13,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="loki"
 CHART="grafana/loki-stack"
-CHART_VERSION="2.3.1"
+CHART_VERSION="2.4.1"
 NAMESPACE="loki-stack"
 
 if [ -z "${MP_KUBERNETES}" ]; then
