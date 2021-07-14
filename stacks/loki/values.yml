@@ -3,7 +3,7 @@
 grafana:
   enabled: true
   image:
-    tag: 7.5.4
+    tag: 8.0.5
   persistence:
     enabled: true
     size: 10Gi
