@@ -22,7 +22,7 @@ if [ -z "${MP_KUBERNETES}" ]; then
   VALUES="$ROOT_DIR/stacks/${STACK}/values.yml"
 else
   # use github hosted master version of values.yml
-  VALUES= "https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/${STACK}/values.yaml"
+  VALUES="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/${STACK}/values.yaml"
 fi
 
 helm upgrade "$STACK" "$CHART" \
