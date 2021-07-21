@@ -5,7 +5,7 @@ set -e
 ################################################################################
 # repo
 ################################################################################
-helm repo add charts-clickhouse https://posthog.github.io/charts-clickhouse/
+helm repo add posthog https://posthog.github.io/charts-clickhouse/
 helm repo update > /dev/null
 
 ################################################################################
