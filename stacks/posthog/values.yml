@@ -2,6 +2,7 @@ cloud: "do"
 deploymentType: "DigitalOcean 1-click"
 ingress:
   nginx:
+    enabled: true
     redirectToTLS: false
   letsencrypt: false
 web:
