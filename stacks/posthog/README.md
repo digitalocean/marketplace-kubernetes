@@ -26,7 +26,7 @@ You are now all set up to start trying PostHog!
 
 Sadly it's not possible to provide parameters to DigitalOcean yet, so we need post-install steps to enable TLS.
 
-1. Create a DNS record from your desired hostname to the external IP (`kubectl get --namespace posthog ingress posthog -o jsonpath="{.status.loadBalancer.ingress[0].ip}`).
+1. Create a DNS record from your desired hostname to the external IP (`kubectl get --namespace posthog ingress posthog -o jsonpath="{.status.loadBalancer.ingress[0].ip}"`).
 2. Create `values.yaml`
 ```yaml
 cloud: "do"
