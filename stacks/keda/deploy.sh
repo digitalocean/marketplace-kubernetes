@@ -13,7 +13,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="keda"
 CHART="kedacore/keda"
-CHART_VERSION="2.3.2"
+CHART_VERSION="2.4.0"
 NAMESPACE="keda"
 
 if [ -z "${MP_KUBERNETES}" ]; then
