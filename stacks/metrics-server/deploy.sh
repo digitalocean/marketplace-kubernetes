@@ -23,7 +23,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="metrics-server"
 CHART="bitnami/metrics-server"
-CHART_VERSION="5.3.1"
+CHART_VERSION="5.9.2"
 NAMESPACE="kube-system"
 
 if [ -z "${MP_KUBERNETES}" ]; then
