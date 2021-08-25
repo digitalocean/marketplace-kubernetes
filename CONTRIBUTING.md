@@ -21,10 +21,6 @@ export NAMESPACE=$APP_NAME
 
 ./utils/generate-stack.sh
 ```
-4. **Required:** In `do_config.yml`, update minimum resource requirements for your application. We use this information to prevent applications from being installed on undersized clusters. We follow [Kubernetes resource units](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#resource-units-in-kubernetes) standard to define CPU and memory requirements. Update the following parameters under `minimum_resource_requirements`:
-    - `node_count`: minimum number of nodes needed in a cluster to run your application reliably. 
-    - `cpu`: minimum number of CPUs in total cluster capacity needed to power your application.
-    - `memory`: minimum amount of memory in total cluster capacity needed to power your application.
 6. Optionally, customize your `deploy.sh`, `upgrade.sh`, `uninstall.sh` and specify your Helm chart's configuration values in `values.yml`. Both can be found in `stacks/$APP_NAME`
 7. Test out installing your stack by deploying it locally to a k8s cluster: `./stacks/$APP_NAME/deploy.sh`
 8. Test out upgrading your stack by updating it locally on a k8s cluster: `./stacks/$APP_NAME/upgrade.sh`
