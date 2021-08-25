@@ -11,7 +11,10 @@ jobs:
   run:
     runs-on: ubuntu-latest
     steps:
-      - uses: bubkoo/auto-comment@v1
+      - name: Check out repository
+        uses: actions/checkout@v2
+      - name: Use local Auto Comment Bot
+        uses: ./.github/actions/auto-comment-bot
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           issuesOpened: >
@@ -84,7 +87,10 @@ jobs:
   run:
     runs-on: ubuntu-latest
     steps:
-      - uses: bubkoo/auto-comment@v1
+      - name: Check out repository
+        uses: actions/checkout@v2
+      - name: Use local Auto Comment Bot
+        uses: ./.github/actions/auto-comment-bot
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           issuesOpenedReactions: 'hooray, +1'
