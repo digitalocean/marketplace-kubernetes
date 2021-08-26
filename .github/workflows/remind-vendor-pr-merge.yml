@@ -11,7 +11,10 @@ jobs:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
-      - uses: bubkoo/auto-comment@v1
+      - name: Check out repository
+        uses: actions/checkout@v2
+      - name: Use local Auto Comment Bot
+        uses: ./.github/actions/auto-comment-bot
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           pullRequestClosed: >
