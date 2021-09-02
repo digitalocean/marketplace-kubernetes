@@ -7,9 +7,9 @@ set -x
 ################################################################################
 STACK="redpanda"
 NAMESPACE="redpanda-system"
-CHART_VERSION="v21.5.1"
+CHART_VERSION="v21.8.1"
 
-kubectl delete -f "https://raw.githubusercontent.com/vectorizedio/redpanda/v21.5.1/src/go/k8s/config/samples/external_connectivity.yaml"
+kubectl delete -f "https://raw.githubusercontent.com/vectorizedio/redpanda/v21.8.1/src/go/k8s/config/samples/external_connectivity.yaml"
 
 helm uninstall "$STACK" \
   --namespace "$NAMESPACE"

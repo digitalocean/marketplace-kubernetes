@@ -15,7 +15,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="redpanda"
 CHART="vectorized/redpanda-operator"
-CHART_VERSION="v21.5.1"
+CHART_VERSION="v21.8.1"
 NAMESPACE="redpanda-system"
 
 if [ -z "${MP_KUBERNETES}" ]; then
@@ -43,7 +43,7 @@ helm upgrade "$STACK" "$CHART" \
 --namespace "$NAMESPACE" \
 --values "$values" \
 
-until $(kubectl apply -f "https://raw.githubusercontent.com/vectorizedio/redpanda/v21.5.1/src/go/k8s/config/samples/external_connectivity.yaml" >/dev/null 2>&1); do
+until $(kubectl apply -f "https://raw.githubusercontent.com/vectorizedio/redpanda/v21.8.1/src/go/k8s/config/samples/external_connectivity.yaml" >/dev/null 2>&1); do
   CURRENT=$((CURRENT + 1))
   sleep 1
 
