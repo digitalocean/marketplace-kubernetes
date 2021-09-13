@@ -1,0 +1,23 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: ssl-certificate
+spec:
+  secretName: ssl-certificate
+  duration: 87600h
+  commonName: ${INGRESS_EXTERNAL_ADDRESS}
+  dnsNames:
+  - "${INGRESS_EXTERNAL_ADDRESS}"
+  - "*.${INGRESS_EXTERNAL_ADDRESS}"
+  privateKey:
+    algorithm: RSA
+    size: 2048
+  issuerRef:
+    name: selfsigned
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: selfsigned
+spec:
+  selfSigned: {}

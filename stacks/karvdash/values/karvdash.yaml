@@ -1,0 +1,5 @@
+karvdash:
+  stateVolumeClaim: karvdash-state-pvc
+  datasetsAvailable: 1
+  disabledDatasetTemplates:
+  - s3-local
