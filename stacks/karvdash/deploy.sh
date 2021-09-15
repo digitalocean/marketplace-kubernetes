@@ -31,6 +31,15 @@ get_yaml () {
     echo "$yaml"
 }
 
+get_yaml_contents () {
+    yaml=$(get_yaml $1)
+    if [ "${yaml:0:5}" = https ]; then
+        curl -s $yaml
+    else
+        cat $yaml
+    fi
+}
+
 install_chart () {
     helm upgrade "$STACK" "$CHART" \
     --atomic \
@@ -73,12 +82,10 @@ INGRESS_EXTERNAL_ADDRESS=${INGRESS_EXTERNAL_IP}.nip.io
 if kubectl -n $NAMESPACE get secret ssl-certificate; then
     :
 else
-    export INGRESS_EXTERNAL_ADDRESS
-
     # retry until ready (https://github.com/jetstack/cert-manager/issues/2908)
     max_attempts=5
     for i in $(seq 1 $max_attempts); do
-        envsubst < $(get_yaml yaml/ingress-certificate.yaml) | kubectl -n $NAMESPACE apply -f - && break
+        echo "$(get_yaml_contents yaml/ingress-certificate.yaml)" | sed "s|example.com|$INGRESS_EXTERNAL_ADDRESS|" | kubectl -n $NAMESPACE apply -f - && break
         echo "WARNING: The cert-manager webhook is not ready... Retrying in 5 seconds... (attempt $i/$max_attempts)"
         sleep 5
     done

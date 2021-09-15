@@ -5,10 +5,10 @@ metadata:
 spec:
   secretName: ssl-certificate
   duration: 87600h
-  commonName: ${INGRESS_EXTERNAL_ADDRESS}
+  commonName: example.com
   dnsNames:
-  - "${INGRESS_EXTERNAL_ADDRESS}"
-  - "*.${INGRESS_EXTERNAL_ADDRESS}"
+  - "example.com"
+  - "*.example.com"
   privateKey:
     algorithm: RSA
     size: 2048
