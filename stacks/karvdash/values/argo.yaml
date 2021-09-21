@@ -1,0 +1,30 @@
+controller:
+  image:
+    tag: v3.1.1
+  containerRuntimeExecutor: k8sapi
+executor:
+  image:
+    tag: v3.1.1
+server:
+  image:
+    tag: v3.1.1
+  extraArgs:
+  - --auth-mode=sso
+  volumeMounts:
+  - name: ssl-certificate-volume
+    subPath: ca.crt
+  volumes:
+  - name: ssl-certificate-volume
+    configMap:
+      name: ssl-certificate
+  ingress:
+    enabled: true
+  sso:
+    clientId:
+      name: karvdash-oauth-argo
+      key: client-id
+    clientSecret:
+      name: karvdash-oauth-argo
+      key: client-secret
+    rbac:
+      enabled: true

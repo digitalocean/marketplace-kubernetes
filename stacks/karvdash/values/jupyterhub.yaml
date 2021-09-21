@@ -1,0 +1,43 @@
+hub:
+  config:
+    JupyterHub:
+      authenticator_class: generic-oauth
+    Authenticator:
+      auto_login: true
+    GenericOAuthenticator:
+      tls_verify: false
+      scope:
+      - openid
+      - profile
+      - email
+      username_key: preferred_username
+  extraConfig:
+    myConfig.py: |
+      c.ConfigurableHTTPProxy.api_url = "http://proxy-api.jupyterhub.svc:8001"
+      c.JupyterHub.hub_connect_url = "http://hub.jupyterhub.svc:8081"
+      c.KubeSpawner.enable_user_namespaces = True
+      c.KubeSpawner.user_namespace_template = "karvdash-{username}"
+      c.KubeSpawner.notebook_dir = "/private/notebooks"
+  networkPolicy:
+    enabled: false
+proxy:
+  service:
+    type: ClusterIP
+  chp:
+    networkPolicy:
+      enabled: false
+singleuser:
+  networkPolicy:
+    enabled: false
+  storage:
+    type: none
+prePuller:
+  hook:
+    enabled: false
+  continuous:
+    enabled: false
+scheduling:
+  userScheduler:
+    enabled: false
+ingress:
+  enabled: true
