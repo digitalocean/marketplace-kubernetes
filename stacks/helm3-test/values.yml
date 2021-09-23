@@ -1,0 +1,4 @@
+# stable/kube-state-metrics
+
+customLabels:
+  app.kubernetes.io/installed-by: digitalocean-marketplace

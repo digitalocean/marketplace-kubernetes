@@ -21,12 +21,12 @@ export NAMESPACE=$APP_NAME
 
 ./utils/generate-stack.sh
 ```
-4. Optionally, customize your `deploy.sh`, `upgrade.sh`, `uninstall.sh` and specify your Helm chart's configuration values in `values.yml`. Both can be found in `stacks/$APP_NAME`
-4. Test out installing your stack by deploying it locally to a k8s cluster: `./stacks/$APP_NAME/deploy.sh`
-4. Test out upgrading your stack by updating it locally on a k8s cluster: `./stacks/$APP_NAME/upgrade.sh`
-4. Test out uninstalling your stack by deleting it locally from a k8s cluster: `./stacks/$APP_NAME/uninstall.sh`
-4. Open a PR
-4. Once the PR is reviewed and merged by DigitalOcean, visit the [DigitalOcean Marketplace Vendor Portal](https://marketplace.digitalocean.com/vendorportal) and submit your App Listing, refering to this PR in the appropriate input field.
+6. Optionally, customize your `deploy.sh`, `upgrade.sh`, `uninstall.sh` and specify your Helm chart's configuration values in `values.yml`. Both can be found in `stacks/$APP_NAME`
+7. Test out installing your stack by deploying it locally to a k8s cluster: `./stacks/$APP_NAME/deploy.sh`
+8. Test out upgrading your stack by updating it locally on a k8s cluster: `./stacks/$APP_NAME/upgrade.sh`
+9. Test out uninstalling your stack by deleting it locally from a k8s cluster: `./stacks/$APP_NAME/uninstall.sh`
+10. Open a PR
+11. Once the PR is reviewed and merged by DigitalOcean, visit the [DigitalOcean Marketplace Vendor Portal](https://marketplace.digitalocean.com/vendorportal) and submit your App Listing, refering to this PR in the appropriate input field.
 
 ## Updating Your Application
 1. To deploy a newer version of your app's Helm chart, simply update the `CHART_VERSION` value in your `stacks/$APP_NAME/deploy.sh` file. If necessary, update your `values.yml` as well.

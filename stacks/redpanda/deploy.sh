@@ -14,7 +14,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="redpanda"
 CHART="vectorized/redpanda-operator"
-CHART_VERSION="v21.5.5"
+CHART_VERSION="v21.8.1"
 NAMESPACE="redpanda-system"
 
 if [ -z "${MP_KUBERNETES}" ]; then

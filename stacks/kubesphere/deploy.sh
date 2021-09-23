@@ -2,41 +2,32 @@
 
 set -e
 
-# check if metrics-server is already installed
-CHECK=$(kubectl get svc metrics-server -n kube-system --ignore-not-found)
-if [ "$CHECK" = "" ]
-then
-  echo "metrics-server not found"
-else
-  echo "metrics-server found, exiting"
-  exit 0
-fi
-
 ################################################################################
 # repo
 ################################################################################
-helm repo add bitnami https://charts.bitnami.com/bitnami
+helm repo add main https://charts.kubesphere.io/main
 helm repo update > /dev/null
 
 ################################################################################
 # chart
 ################################################################################
-STACK="metrics-server"
-CHART="bitnami/metrics-server"
-CHART_VERSION="5.9.2"
-NAMESPACE="kube-system"
+STACK="kubesphere"
+CHART="main/ks-installer"
+CHART_VERSION="0.2.2"
+NAMESPACE="kubesphere-system"
 
 if [ -z "${MP_KUBERNETES}" ]; then
   # use local version of values.yml
   ROOT_DIR=$(git rev-parse --show-toplevel)
-  values="$ROOT_DIR/stacks/metrics-server/values.yml"
+  VALUES="$ROOT_DIR/stacks/${STACK}/values.yml"
 else
   # use github hosted master version of values.yml
-  values="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/metrics-server/values.yml"
+  VALUES="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/${STACK}/values.yaml"
 fi
 
 helm upgrade "$STACK" "$CHART" \
   --atomic \
+  --create-namespace \
   --install \
   --namespace "$NAMESPACE" \
   --values "$values" \

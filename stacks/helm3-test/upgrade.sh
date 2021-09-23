@@ -13,22 +13,17 @@ helm repo update > /dev/null
 ################################################################################
 STACK="helm3-test"
 CHART="stable/kube-state-metrics"
-CHART_VERSION="2.8.4"
 NAMESPACE="helm3-test"
 
 if [ -z "${MP_KUBERNETES}" ]; then
-  # use local version of values.yml
-  ROOT_DIR=$(git rev-parse --show-toplevel)
-  values="$ROOT_DIR/stacks/helm3-test/values.yml"
+    # use local version of values.yml
+    ROOT_DIR=$(git rev-parse --show-toplevel)
+    values="$ROOT_DIR/stacks/helm3-test/values.yml"
 else
-  # use github hosted master version of values.yml
-  values="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/helm3-test/values.yml"
+    # use github hosted master version of values.yml
+    values="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/helm3-test/values.yml"
 fi
 
 helm upgrade "$STACK" "$CHART" \
-  --atomic \
-  --create-namespace \
-  --install \
-  --namespace "$NAMESPACE" \
-  --values "$values" \
-  --version "$CHART_VERSION"
+--namespace "$NAMESPACE" \
+--values "$values" \

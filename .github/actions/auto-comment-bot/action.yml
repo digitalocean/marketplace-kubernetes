@@ -1,0 +1,285 @@
+name: Auto Comment Bot
+description: Auto comment issues or PRs on events triggered.
+
+inputs:
+  GITHUB_TOKEN:
+    description: Your GitHub token for authentication
+    required: true
+
+  issuesOpened:
+    required: false
+
+  issuesEdited:
+    required: false
+
+  issuesDeleted:
+    required: false
+
+  issuesTransferred:
+    required: false
+
+  issuesPinned:
+    required: false
+
+  issuesUnpinned:
+    required: false
+
+  issuesClosed:
+    required: false
+
+  issuesReopened:
+    required: false
+
+  issuesAssigned:
+    required: false
+
+  issuesUnassigned:
+    required: false
+
+  issuesLabeled:
+    required: false
+
+  issuesUnlabeled:
+    required: false
+
+  issuesLocked:
+    required: false
+
+  issuesUnlocked:
+    required: false
+
+  issuesMilestoned:
+    required: false
+
+  issuesDemilestoned:
+    required: false
+
+  pullRequestAssigned:
+    required: false
+
+  pullRequestUnassigned:
+    required: false
+
+  pullRequestLabeled:
+    required: false
+
+  pullRequestUnlabeled:
+    required: false
+
+  pullRequestEdited:
+    required: false
+
+  pullRequestOpened:
+    required: false
+
+  pullRequestClosed:
+    required: false
+
+  pullRequestReopened:
+    required: false
+
+  pullRequestSynchronize:
+    required: false
+
+  pullRequestReadyForReview:
+    required: false
+
+  pullRequestLocked:
+    required: false
+
+  pullRequestUnlocked:
+    required: false
+
+  pullRequestReviewRequested:
+    required: false
+
+  pullRequestReviewRequestRemoved:
+    required: false
+
+  issuesOpenedComment:
+    required: false
+
+  issuesEditedComment:
+    required: false
+
+  issuesDeletedComment:
+    required: false
+
+  issuesTransferredComment:
+    required: false
+
+  issuesPinnedComment:
+    required: false
+
+  issuesUnpinnedComment:
+    required: false
+
+  issuesClosedComment:
+    required: false
+
+  issuesReopenedComment:
+    required: false
+
+  issuesAssignedComment:
+    required: false
+
+  issuesUnassignedComment:
+    required: false
+
+  issuesLabeledComment:
+    required: false
+
+  issuesUnlabeledComment:
+    required: false
+
+  issuesLockedComment:
+    required: false
+
+  issuesUnlockedComment:
+    required: false
+
+  issuesMilestonedComment:
+    required: false
+
+  issuesDemilestonedComment:
+    required: false
+
+  pullRequestAssignedComment:
+    required: false
+
+  pullRequestUnassignedComment:
+    required: false
+
+  pullRequestLabeledComment:
+    required: false
+
+  pullRequestUnlabeledComment:
+    required: false
+
+  pullRequestEditedComment:
+    required: false
+
+  pullRequestOpenedComment:
+    required: false
+
+  pullRequestClosedComment:
+    required: false
+
+  pullRequestReopenedComment:
+    required: false
+
+  pullRequestSynchronizeComment:
+    required: false
+
+  pullRequestReadyForReviewComment:
+    required: false
+
+  pullRequestLockedComment:
+    required: false
+
+  pullRequestUnlockedComment:
+    required: false
+
+  pullRequestReviewRequestedComment:
+    required: false
+
+  pullRequestReviewRequestRemovedComment:
+    required: false
+
+  issuesOpenedReactions:
+    required: false
+
+  issuesEditedReactions:
+    required: false
+
+  issuesDeletedReactions:
+    required: false
+
+  issuesTransferredReactions:
+    required: false
+
+  issuesPinnedReactions:
+    required: false
+
+  issuesUnpinnedReactions:
+    required: false
+
+  issuesClosedReactions:
+    required: false
+
+  issuesReopenedReactions:
+    required: false
+
+  issuesAssignedReactions:
+    required: false
+
+  issuesUnassignedReactions:
+    required: false
+
+  issuesLabeledReactions:
+    required: false
+
+  issuesUnlabeledReactions:
+    required: false
+
+  issuesLockedReactions:
+    required: false
+
+  issuesUnlockedReactions:
+    required: false
+
+  issuesMilestonedReactions:
+    required: false
+
+  issuesDemilestonedReactions:
+    required: false
+
+  pullRequestAssignedReactions:
+    required: false
+
+  pullRequestUnassignedReactions:
+    required: false
+
+  pullRequestLabeledReactions:
+    required: false
+
+  pullRequestUnlabeledReactions:
+    required: false
+
+  pullRequestEditedReactions:
+    required: false
+
+  pullRequestOpenedReactions:
+    required: false
+
+  pullRequestClosedReactions:
+    required: false
+
+  pullRequestReopenedReactions:
+    required: false
+
+  pullRequestSynchronizeReactions:
+    required: false
+
+  pullRequestReadyForReviewReactions:
+    required: false
+
+  pullRequestLockedReactions:
+    required: false
+
+  pullRequestUnlockedReactions:
+    required: false
+
+  pullRequestReviewRequestedReactions:
+    required: false
+
+  pullRequestReviewRequestRemovedReactions:
+    required: false
+
+runs:
+  using: node12
+  main: dist/index.js
+
+branding:
+  icon: send
+  color: blue

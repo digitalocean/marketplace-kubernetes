@@ -1,0 +1,23 @@
+name: Remind Vendor on PR Merge
+
+# only trigger on pull request closed events
+on:
+  pull_request:
+    types: [ closed ]
+
+jobs:
+  merge_job:
+    # this job will only run if the PR has been merged
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+      - name: Use local Auto Comment Bot
+        uses: ./.github/actions/auto-comment-bot
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          pullRequestClosed: >
+            👋 @{{ author }}
+            
+            Before this app update can go live on the Marketplace, you'll need to update the PR link for your app on our [Vendor Portal](https://cloud.digitalocean.com/vendorportal/). Thanks!

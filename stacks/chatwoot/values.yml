@@ -1,0 +1,3 @@
+# chatwoot/chatwoot
+env:
+  INSTALLATION_ENV: "helm-do"
