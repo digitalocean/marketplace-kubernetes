@@ -36,7 +36,7 @@ helm upgrade "$STACK" "$CHART" \
 if [ -z "${MP_KUBERNETES}" ]; then
   TVM="$ROOT_DIR/stacks/$STACK/triliovault-manager.yaml"
 else
-  TVM="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/$STACK/triliovault-manager.yaml"
+  TVM="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/triliovault-operator/triliovault-manager.yaml"
 fi
 
 kubectl apply -f "$TVM" --namespace "$NAMESPACE"
