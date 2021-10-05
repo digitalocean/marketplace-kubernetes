@@ -21,7 +21,7 @@ if [ -z "${MP_KUBERNETES}" ]; then
     values="$ROOT_DIR/stacks/helpy/values.yml"
 else
     # use github hosted master version of values.yml
-  values="https://raw.githubusercontent.com/scott/helpy-helm/master/charts/helpy/values.yaml"
+  values="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/helpy/values.yml"
 fi
 
 helm upgrade "$STACK" "$CHART" \
