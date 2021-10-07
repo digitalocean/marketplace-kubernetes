@@ -13,7 +13,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="helpy"
 CHART="helpyio/helpy"
-CHART_VERSION=1.2.0
+CHART_VERSION=1.2.1
 NAMESPACE="helpy"
 
 if [ -z "${MP_KUBERNETES}" ]; then

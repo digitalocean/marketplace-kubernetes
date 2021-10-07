@@ -4,7 +4,7 @@
 # also determines whether or not to launch a Postgres DB into the cluster.
 # NOTE: it is recommended you use a DBAAS for production workloads
 #
-appReplicaCount: 1
+appReplicaCount: 2
 workerReplicaCount: 1
 appHostName: 'help.atyour.site'
 enableSSL: false
@@ -38,8 +38,18 @@ ingress:
 # 
 loadBalancer:
   enabled: true
-  annotations: {}
-
+  annotations:
+    service.beta.kubernetes.io/do-loadbalancer-name: "do-mktplace-helpy-lb"
+    service.beta.kubernetes.io/do-loadbalancer-size-slug: "lb-small"
+    service.beta.kubernetes.io/do-loadbalancer-healthcheck-port: "80"
+    service.beta.kubernetes.io/do-loadbalancer-healthcheck-protocol: "http"
+    service.beta.kubernetes.io/do-loadbalancer-healthcheck-path: "/en"
+    service.beta.kubernetes.io/do-loadbalancer-healthcheck-check-interval-seconds: "3"
+    service.beta.kubernetes.io/do-loadbalancer-healthcheck-response-timeout-seconds: "5"
+    service.beta.kubernetes.io/do-loadbalancer-healthcheck-unhealthy-threshold: "3"
+    service.beta.kubernetes.io/do-loadbalancer-healthcheck-healthy-threshold: "5"
+  externalTrafficPolicy: Cluster
+  
 # Rails App Server configuration
 # Sets a number of app server configs
 #

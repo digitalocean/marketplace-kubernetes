@@ -8,6 +8,5 @@ set -e
 STACK="helpy"
 NAMESPACE="helpy"
 
-
 helm uninstall "$STACK" \
   --namespace "$NAMESPACE"
