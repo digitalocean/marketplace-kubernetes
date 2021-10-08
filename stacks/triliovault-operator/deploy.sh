@@ -157,9 +157,6 @@ sleep 5
 echo "Verifying license status on namespace $NAMESPACE ..."
 lic_status=$(kubectl get license test-license-1 -n tvk -o 'jsonpath={.status.status}')
 exp_status="Active"
-#ret=$(kubectl get license --namespace "$NAMESPACE" | grep -q Active)
-#ret_code=$?
-echo $lic_status
 
 if [ "$lic_status" != "$exp_status" ] ; then
   echo "License installation failed, license status is '$lic_status'"
