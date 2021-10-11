@@ -155,7 +155,7 @@ EOF
 
 sleep 5
 echo "Verifying license status on namespace $NAMESPACE ..."
-lic_status=$(kubectl get license test-license-1 -n tvk -o 'jsonpath={.status.status}')
+lic_status=$(kubectl get license test-license-1 --namespace $NAMESPACE -o 'jsonpath={.status.status}')
 exp_status="Active"
 
 if [ "$lic_status" != "$exp_status" ] ; then
