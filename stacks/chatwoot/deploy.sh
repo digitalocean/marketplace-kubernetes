@@ -14,7 +14,6 @@ helm repo update > /dev/null
 STACK="chatwoot"
 CHART="chatwoot/chatwoot"
 NAMESPACE="chatwoot"
-CHART_VERSION="0.6.4"
 
 if [ -z "${MP_KUBERNETES}" ]; then
   # use local version of values.yml
@@ -31,4 +30,4 @@ helm upgrade "$STACK" "$CHART" \
   --install \
   --namespace "$NAMESPACE" \
   --values "$values" \
-  --version "$CHART_VERSION"
+  --timeout 10m
