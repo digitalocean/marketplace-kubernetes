@@ -1,0 +1,208 @@
+# helpy/helpy
+# Cluster Configuration 
+# determines the number of app and worker servers to be launched into the cluster.
+# also determines whether or not to launch a Postgres DB into the cluster.
+# NOTE: it is recommended you use a DBAAS for production workloads
+#
+appReplicaCount: 2
+workerReplicaCount: 1
+appHostName: 'help.atyour.site'
+enableSSL: false
+sslEmail: 'administrator@your.site'
+
+image:
+  name: helpypro
+  repository: helpyio/helpypro
+  tag: latest
+  pullPolicy: Always
+
+service:
+  type: NodePort
+  externalPort: 80
+  internalPort: 3000
+
+ingress:
+  enabled: false
+  annotations: #{}
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+  # hosts:
+  #   - host: helpy.local
+  #     paths: ["/"]
+  # tls: []
+  #  - secretName: helpy-tls
+  #    hosts:
+  #      - example.local
+
+# Load Balancer Config
+# 
+loadBalancer:
+  enabled: true
+  annotations:
+    service.beta.kubernetes.io/do-loadbalancer-name: "do-mktplace-helpy-lb"
+    service.beta.kubernetes.io/do-loadbalancer-size-slug: "lb-small"
+    service.beta.kubernetes.io/do-loadbalancer-healthcheck-port: "80"
+    service.beta.kubernetes.io/do-loadbalancer-healthcheck-protocol: "http"
+    service.beta.kubernetes.io/do-loadbalancer-healthcheck-path: "/en"
+    service.beta.kubernetes.io/do-loadbalancer-healthcheck-check-interval-seconds: "3"
+    service.beta.kubernetes.io/do-loadbalancer-healthcheck-response-timeout-seconds: "5"
+    service.beta.kubernetes.io/do-loadbalancer-healthcheck-unhealthy-threshold: "3"
+    service.beta.kubernetes.io/do-loadbalancer-healthcheck-healthy-threshold: "5"
+  externalTrafficPolicy: Cluster
+  
+# Rails App Server configuration
+# Sets a number of app server configs
+#
+rails:
+  railsEnv: 'production'
+  logToStandardOut: true
+  serveStaticFiles: false
+  pumaConcurency: '1'
+  podRam: '1024'
+  secretKey: 'your_secret'
+  sessionDuration: 20
+  sessionStore: 'cookie'
+
+# Redis config
+# Helpy uses an internal redis in memory cache. You can change
+# this here
+#
+redis:
+  url: 'redis://redis.default.svc.cluster.local:6379/0/cache'
+  port: '6379' 
+  repository: redis
+  tag: '4.0'
+
+# Nginx config
+# Helpy uses nginx to proxy requests to the Helpy Service
+#
+nginx:
+  repository: nginx
+  tag: '1.15'
+
+# Postgres DB Config
+# Configure the postgresql database being used by Helpy
+# The default values use an internal db.  This is not recommended for
+# production use
+#
+postgres:
+  enabled: true # recommended for testing only
+  repository: postgres
+  tag: 10.7-alpine
+  capacity: 24Gi
+
+  # If you are using a DBAAS, provide connection details here
+  host: postgres
+  port: '5432'
+  db: 'helpy_production'
+  user: 'postgres'
+  password: 'helpy'
+
+# Minio
+# You can add a minio object store to your K8s cluser
+# 
+minio:
+  enabled: false
+  repository: minio/minio
+  tag: latest
+  capacity: 24Gi
+
+# Storage
+# Helpy uses an S3 based storage for user files, ticket attachments and images.
+# If you have enabled minio for this, the supplied key and secret will be used
+# for the minio server.
+#
+storage:
+  remote: true
+  key: minio
+  secret: minio123
+  region: us-east-1
+  host: minio-service
+  endPoint: http://localhost:9000
+  pathStyle: true
+  bucketName: helpy-k8s
+
+# Mail Fetcher
+# Helpy provides strategies to handle incoming email via ESPs
+# like SendGrid or Mandrill, or via IMAP.  These settings configure
+# certain aspects of the IMAP fetcher.  Enabling this will launch
+# a cronjob every N minutes.
+# 
+imap:
+  enabled: false
+  frequencyInMinutes: 1
+
+# License (optional)
+# Add your Helpy Pro license here. You can run a limited version of Helpy
+# Pro without a license code.
+# 
+license:
+  keyName: 
+  key: 
+
+podSecurityContext:
+  {}
+  # fsGroup: 2000
+
+securityContext:
+  {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+# Resources
+# We usually recommend not to specify default resources and to leave this as a conscious
+# choice for the user. This also increases chances charts run on environments with little
+# resources, such as Minikube. If you do want to specify resources, uncomment the following
+# lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+# 
+resources:
+  app: {}
+    # limits:
+    #   cpu: 200m
+    #   memory: 1024Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 512Mi
+
+  nginx: {}
+    # limits:
+    #   cpu: 300m
+    #   memory: 512Mi
+    # requests:
+    #   cpu: 200m
+    #   memory: 256Mi
+
+  worker: {}
+    # limits:
+    #   cpu: 200m
+    #   memory: 1024Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 512Mi
+
+  redis: {}
+    # limits:
+    #   cpu: 200m
+    #   memory: 256Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+
+  postgres: {}
+    # limits:
+    #   cpu: 250m
+    #   memory: 512Mi
+    # requests:
+    #   cpu: 150m
+    #   memory: 256Mi
+
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
