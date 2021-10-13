@@ -12,7 +12,7 @@ helm repo update > /dev/null
 # chart
 ################################################################################
 STACK="kapp-controller"
-CHART="kapp-controller"
+CHART="link-society-incubator/kapp-controller"
 NAMESPACE="kapp-controller"
 
 if [ -z "${MP_KUBERNETES}" ]; then

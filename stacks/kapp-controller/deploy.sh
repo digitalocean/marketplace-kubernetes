@@ -12,7 +12,7 @@ helm repo update > /dev/null
 # chart
 ################################################################################
 STACK="kapp-controller"
-CHART="kapp-controller"
+CHART="link-society-incubator/kapp-controller"
 CHART_VERSION="0.1.0"
 NAMESPACE="kapp-controller"
 
