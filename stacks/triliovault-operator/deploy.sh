@@ -1,7 +1,5 @@
 #!/bin/sh
 
-set -e
-
 ################################################################################
 # repo
 ################################################################################
@@ -130,39 +128,19 @@ install_license () {
   pip3 install lxml
 
   echo "Installing Freetrial license..."
-
-  cat <<EOF | python3
-#!/usr/bin/python3
   
-from bs4 import BeautifulSoup
-import requests
-import sys
-import subprocess
-  
-headers = {'Content-type': 'application/x-www-form-urlencoded; charset=utf-8'}
-endpoint="https://doc.trilio.io:5000/8d92edd6-514d-4acd-90f6-694cb8d83336/0061K00000i9ORf"
-result = subprocess.check_output("kubectl get ns $NAMESPACE -o=jsonpath='{.metadata.uid}'", shell=True)
-kubeid = result.decode("utf-8")
-data = "kubescope=clusterscoped&kubeuid={0}".format(kubeid)
-r = requests.post(endpoint, data=data, headers=headers)
-contents=r.content
-soup = BeautifulSoup(contents, 'lxml')
-sys.stdout = open("license_file1.yaml", "w")
-print(soup.body.find('div', attrs={'class':'yaml-content'}).text)
-sys.stdout.close()
-result = subprocess.check_output("kubectl apply -f license_file1.yaml --namespace $NAMESPACE", shell=True)
-EOF
+  ./stacks/$STACK/dist/install_license/install_license
 
-sleep 5
-echo "Verifying license status on namespace $NAMESPACE ..."
-lic_status=$(kubectl get license test-license-1 --namespace $NAMESPACE -o 'jsonpath={.status.status}')
-exp_status="Active"
+  sleep 5
+  echo "Verifying license status on namespace $NAMESPACE ..."
+  lic_status=$(kubectl get license test-license-1 --namespace $NAMESPACE -o 'jsonpath={.status.status}')
+  exp_status="Active"
 
-if [ "$lic_status" != "$exp_status" ] ; then
-  echo "License installation failed, license status is '$lic_status'"
-else 
-  echo "License is installed successfully, license status is '$lic_status'"
-fi
+  if [ "$lic_status" != "$exp_status" ] ; then
+    echo "License installation failed, license status is '$lic_status'"
+  else 
+    echo "License is installed successfully, license status is '$lic_status'"
+  fi
 }
 
 ################################################################################
