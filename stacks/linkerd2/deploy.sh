@@ -2,7 +2,7 @@
 
 set -e
 
-LINKERD2_VERSION="stable-2.7.1"
+LINKERD2_VERSION="stable-2.11.0"
 TMP_DIR=$(mktemp -d)
 
 # determine OS
@@ -30,6 +30,9 @@ kubectl get deployments -o custom-columns=NAME:.metadata.name | tail -n +2 | whi
 do
   kubectl rollout status -w deployment/"$line"
 done
+
+# install the viz extension
+$BINARY viz install | kubectl apply -f -
 
 # cleanup
 rm -rf "$TMP_DIR"
