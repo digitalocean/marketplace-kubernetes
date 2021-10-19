@@ -32,3 +32,9 @@ helm upgrade "$STACK" "$CHART" \
   --namespace "$NAMESPACE" \
   --values "$values" \
   --version "$CHART_VERSION"
+# ensure services are running
+kubectl get deployments -o custom-columns=NAME:.metadata.name | tail -n +2 | while read -r line
+do
+  kubectl rollout status -w deployment/"$line"
+done
+
