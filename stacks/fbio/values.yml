@@ -1,0 +1,14 @@
+# fbio
+
+version: "3.8"
+services:
+ fbio:
+  tty: true
+  image : beyondfuture/faceservice:v1
+  container_name: face
+  ports:
+  - 5050:5050
+  - 5502:5502
+  - 8642:8642
+  - 6100:6100
+  - 7325:7325
