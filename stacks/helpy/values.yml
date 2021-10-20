@@ -59,7 +59,7 @@ rails:
   serveStaticFiles: false
   pumaConcurency: '1'
   podRam: '1024'
-  secretKey: 'your_secret'
+  secretKey: ''
   sessionDuration: 20
   sessionStore: 'cookie'
 
