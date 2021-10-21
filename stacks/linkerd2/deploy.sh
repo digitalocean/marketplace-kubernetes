@@ -9,7 +9,7 @@ TMP_DIR=$(mktemp -d)
 if [ "$(uname -s)" = "Darwin" ]; then
   OS=darwin
 else
-  OS=linux
+  OS=linux-amd64
 fi
 
 FILENAME="linkerd2-cli-$LINKERD2_VERSION-$OS"
