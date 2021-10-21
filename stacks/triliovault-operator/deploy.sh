@@ -163,9 +163,11 @@ if [ "$lic_status" != "$exp_status" ] ; then
   echo "License installation failed, license status is '$lic_status'"
 else
   echo "License is installed successfully, license status is '$lic_status'"
-  if [ -e "$ROOT_DIR/tvk_do_license.yaml" ] ; then
-    echo "Deleting TVK license file $ROOT_DIR/tvk_do_license.yaml"
-    rm $ROOT_DIR/tvk_do_license.yaml
+  if [ -e "tvk_do_license.yaml" ] ; then
+    echo "Deleting TVK license file tvk_do_license.yaml"
+    rm tvk_do_license.yaml
+  else
+    echo "TVK license file not found"
   fi
 fi
 }
