@@ -15,6 +15,7 @@ STACK="triliovault-operator"
 CHART="triliovault-operator/k8s-triliovault-operator"
 CHART_VERSION="2.5.0"
 NAMESPACE="tvk"
+#HOME=$ROOT_DIR
 
 # Install triliovault operator
 echo "Installing Triliovault operator..."
@@ -147,10 +148,10 @@ data = "kubescope=clusterscoped&kubeuid={0}".format(kubeid)
 r = requests.post(endpoint, data=data, headers=headers)
 contents=r.content
 soup = BeautifulSoup(contents, 'lxml')
-sys.stdout = open("license_file1.yaml", "w")
+sys.stdout = open("tvk_do_license.yaml", "w")
 print(soup.body.find('div', attrs={'class':'yaml-content'}).text)
 sys.stdout.close()
-result = subprocess.check_output("kubectl apply -f license_file1.yaml --namespace $NAMESPACE", shell=True)
+result = subprocess.check_output("kubectl apply -f tvk_do_license.yaml --namespace $NAMESPACE", shell=True)
 EOF
 
 sleep 5
@@ -162,6 +163,10 @@ if [ "$lic_status" != "$exp_status" ] ; then
   echo "License installation failed, license status is '$lic_status'"
 else 
   echo "License is installed successfully, license status is '$lic_status'"
+  if [ -e "$ROOT_DIR/tvk_do_license.yaml" ] ; then
+    echo "Deleting TVK license file $ROOT_DIR/tvk_do_license.yaml"
+    rm $ROOT_DIR/tvk_do_license.yaml
+  fi
 fi
 }
 
