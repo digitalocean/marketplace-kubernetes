@@ -53,7 +53,7 @@ install_tvm () {
   retcode=$?
 
   if [ "$retcode" -ne 0 ];then
-    echo "There is some error during triliovault-operator installation using helm, please contanct Trilio support" 
+    echo "There is some error during triliovault-operator installation using helm, please contanct Trilio support"
     return 1
   fi
 
@@ -134,12 +134,12 @@ install_license () {
 
   cat <<EOF | python3
 #!/usr/bin/python3
-  
+
 from bs4 import BeautifulSoup
 import requests
 import sys
 import subprocess
-  
+
 headers = {'Content-type': 'application/x-www-form-urlencoded; charset=utf-8'}
 endpoint="https://doc.trilio.io:5000/8d92edd6-514d-4acd-90f6-694cb8d83336/0061K00000i9ORf"
 result = subprocess.check_output("kubectl get ns $NAMESPACE -o=jsonpath='{.metadata.uid}'", shell=True)
@@ -161,7 +161,7 @@ exp_status="Active"
 
 if [ "$lic_status" != "$exp_status" ] ; then
   echo "License installation failed, license status is '$lic_status'"
-else 
+else
   echo "License is installed successfully, license status is '$lic_status'"
   if [ -e "$ROOT_DIR/tvk_do_license.yaml" ] ; then
     echo "Deleting TVK license file $ROOT_DIR/tvk_do_license.yaml"
@@ -177,4 +177,3 @@ fi
 install_tvm
 configure_ui
 install_license
-
