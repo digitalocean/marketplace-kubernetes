@@ -1,8 +1,5 @@
 # Contributing
 
-## Updating Version Numberes 
-lkaslkdnflsjdflksdjflksjdflksjldkfj
-
 **Requirement: Your application must be deployable via Helm 3**
 
 To add your application to the [DigitalOcean Marketplace](https://marketplace.digitalocean.com/), you'll need to do the following:
