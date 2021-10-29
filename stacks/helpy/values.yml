@@ -59,7 +59,7 @@ rails:
   serveStaticFiles: false
   pumaConcurency: '1'
   podRam: '1024'
-  secretKey: ''
+  # secretKey: ''
   sessionDuration: 20
   sessionStore: 'cookie'
 
@@ -83,15 +83,17 @@ nginx:
 # Postgres DB Config
 # Configure the postgresql database being used by Helpy
 # The default values use an internal db.  This is not recommended for
-# production use
+# production use.
 #
 postgres:
-  enabled: true # recommended for testing only
+  enabled: true # Set to false to use an external Postgres host
   repository: postgres
   tag: 10.7-alpine
   capacity: 24Gi
 
-  # If you are using a DBAAS, provide connection details here
+  # The following values are for the included postgres instance
+  # If you are using a DBAAS, you should change this to provide connection 
+  # details here
   host: postgres
   port: '5432'
   db: 'helpy_production'
@@ -99,7 +101,7 @@ postgres:
   password: 'helpy'
 
 # Minio
-# You can add a minio object store to your K8s cluser
+# You can add a minio object store to your K8s cluser.  Currently not working.
 # 
 minio:
   enabled: false
@@ -109,18 +111,18 @@ minio:
 
 # Storage
 # Helpy uses an S3 based storage for user files, ticket attachments and images.
-# If you have enabled minio for this, the supplied key and secret will be used
-# for the minio server.
+# This means using an Amazon S3 compatible provider like DigitalOcean Spaces.
+# You can specify the configuration using the values here (example shows nyc3):
 #
 storage:
   remote: true
-  key: minio
-  secret: minio123
-  region: us-east-1
-  host: minio-service
-  endPoint: http://localhost:9000
-  pathStyle: true
-  bucketName: helpy-k8s
+  key: do-storage-key
+  secret: do-storage-secret
+  region: nyc3
+  host: https://nyc3.digitaloceanspaces.com
+  endPoint: https://nyc3.digitaloceanspaces.com
+  pathStyle: false
+  bucketName: space-name
 
 # Mail Fetcher
 # Helpy provides strategies to handle incoming email via ESPs
