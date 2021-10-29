@@ -13,7 +13,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="prometheus-operator"
 CHART="stable/prometheus-operator"
-CHART_VERSION="9.3.0"
+CHART_VERSION="12.11.13"
 NAMESPACE="prometheus-operator"
 
 if [ -z "${MP_KUBERNETES}" ]; then
