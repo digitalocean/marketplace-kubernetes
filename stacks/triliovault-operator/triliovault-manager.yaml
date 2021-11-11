@@ -5,7 +5,7 @@ metadata:
     triliovault: triliovault
   name: triliovault-manager
 spec:
-  trilioVaultAppVersion: 2.5.1
+  trilioVaultAppVersion: 2.6.0
   helmVersion:
     version: v3
   applicationScope: Cluster
