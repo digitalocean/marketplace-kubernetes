@@ -13,7 +13,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="triliovault-operator"
 CHART="triliovault-operator/k8s-triliovault-operator"
-CHART_VERSION="2.5.0"
+CHART_VERSION="2.6.0"
 NAMESPACE="tvk"
 #HOME=$ROOT_DIR
 
@@ -100,12 +100,12 @@ configure_ui () {
 
   port=$(kubectl get svc k8s-triliovault-ingress-gateway --namespace "$NAMESPACE" -o jsonpath='{.spec.ports[?(@.name=="http")].nodePort}')
 
-  if ! kubectl patch ingress k8s-triliovault-ingress-master --namespace "$NAMESPACE" -p '{"spec":{"rules":[{"host":"'"${tvkhost_name}"'"}]}}';then
+  if ! kubectl patch ingress k8s-triliovault-master --namespace "$NAMESPACE" -p '{"spec":{"rules":[{"host":"'"${tvkhost_name}"'"}]}}';then
     echo "TVK UI configuration failed, please check ingress"
     return 1
   fi
   if ! kubectl patch svc k8s-triliovault-ingress-gateway --namespace "$NAMESPACE" -p '{"spec": {"type": "NodePort"}}' ; then
-    echo "TVK UI configuration failed, please check ingress"
+    echo "TVK UI configuration failed, please check service"
     return 1
   fi
 
