@@ -5,28 +5,27 @@ set -e
 ################################################################################
 # repo
 ################################################################################
-helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo add helpyio https://scott.github.io/helpy-helm/
 helm repo update > /dev/null
 
 ################################################################################
 # chart
 ################################################################################
-STACK="kube-prometheus-stack"
-CHART="prometheus-community/kube-prometheus-stack"
-CHART_VERSION="19.1.0"
-NAMESPACE="kube-prometheus-stack"
+STACK="helpy"
+CHART="helpyio/helpy"
+CHART_VERSION=1.2.3
+NAMESPACE="helpy"
 
 if [ -z "${MP_KUBERNETES}" ]; then
   # use local version of values.yml
   ROOT_DIR=$(git rev-parse --show-toplevel)
-  values="$ROOT_DIR/stacks/kube-prometheus-stack/values.yml"
+  values="$ROOT_DIR/stacks/helpy/values.yml"
 else
   # use github hosted master version of values.yml
-  values="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/kube-prometheus-stack/values.yml"
+  values="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/helpy/values.yml"
 fi
 
 helm upgrade "$STACK" "$CHART" \
-  --atomic \
   --create-namespace \
   --install \
   --namespace "$NAMESPACE" \

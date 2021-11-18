@@ -5,24 +5,24 @@ set -e
 ################################################################################
 # repo
 ################################################################################
-helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo add link-society-incubator https://charts.link-society.com/incubator
 helm repo update > /dev/null
 
 ################################################################################
 # chart
 ################################################################################
-STACK="kube-prometheus-stack"
-CHART="prometheus-community/kube-prometheus-stack"
-CHART_VERSION="19.1.0"
-NAMESPACE="kube-prometheus-stack"
+STACK="kapp-controller"
+CHART="link-society-incubator/kapp-controller"
+CHART_VERSION="0.1.0"
+NAMESPACE="kapp-controller"
 
 if [ -z "${MP_KUBERNETES}" ]; then
   # use local version of values.yml
   ROOT_DIR=$(git rev-parse --show-toplevel)
-  values="$ROOT_DIR/stacks/kube-prometheus-stack/values.yml"
+  values="$ROOT_DIR/stacks/kapp-controller/values.yml"
 else
   # use github hosted master version of values.yml
-  values="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/kube-prometheus-stack/values.yml"
+  values="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/kapp-controller/values.yml"
 fi
 
 helm upgrade "$STACK" "$CHART" \

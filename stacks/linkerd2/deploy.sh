@@ -2,14 +2,14 @@
 
 set -e
 
-LINKERD2_VERSION="stable-2.7.1"
+LINKERD2_VERSION="stable-2.11.0"
 TMP_DIR=$(mktemp -d)
 
 # determine OS
 if [ "$(uname -s)" = "Darwin" ]; then
   OS=darwin
 else
-  OS=linux
+  OS=linux-amd64
 fi
 
 FILENAME="linkerd2-cli-$LINKERD2_VERSION-$OS"
@@ -30,6 +30,9 @@ kubectl get deployments -o custom-columns=NAME:.metadata.name | tail -n +2 | whi
 do
   kubectl rollout status -w deployment/"$line"
 done
+
+# install the viz extension
+$BINARY viz install | kubectl apply -f -
 
 # cleanup
 rm -rf "$TMP_DIR"
