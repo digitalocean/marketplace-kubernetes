@@ -13,7 +13,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="ls-k8s-webadc"
 CHART="ls-k8s-webadc/ls-k8s-webadc"
-CHART_VERSION="0.1.13"
+CHART_VERSION="0.1.15"
 NAMESPACE="ls-k8s-webadc"
 
 kubectl get secret ls-k8s-webadc -n ls-k8s-webadc > /dev/null 2>&1
