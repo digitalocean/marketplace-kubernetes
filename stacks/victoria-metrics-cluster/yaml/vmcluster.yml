@@ -1,3 +1,4 @@
+cat << EOF | kubectl apply -f -
 apiVersion: operator.victoriametrics.com/v1beta1
 kind: VMCluster
 metadata:
@@ -11,3 +12,4 @@ spec:
     replicaCount: 2
   vminsert:
     replicaCount: 2
+EOF

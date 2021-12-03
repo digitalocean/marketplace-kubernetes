@@ -13,4 +13,4 @@ spec:
   staticScrapeNamespaceSelector: {}
   replicaCount: 1
   remoteWrite:
-    - url: "http://vminsert-vmcluster-persistent.default.svc.cluster.local:8480/insert/0/prometheus/api/v1/write"
+    - url: "http://vminsert-vmcluster.default.svc.cluster.local:8480/insert/0/prometheus/api/v1/write"
