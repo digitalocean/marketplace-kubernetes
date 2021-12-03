@@ -13,7 +13,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="openebs"
 CHART="openebs/openebs"
-CHART_VERSION="3.0.0"
+CHART_VERSION="3.0.2"
 NAMESPACE="openebs"
 
 if [ -z "${MP_KUBERNETES}" ]; then
