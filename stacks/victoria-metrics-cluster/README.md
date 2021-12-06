@@ -88,5 +88,3 @@ Then open in browser `http://127.0.0.1:8481/select/0/vmui/` , enter `vm_app_upti
 - [https://docs.victoriametrics.com/guides](https://docs.victoriametrics.com/guides)
 - [https://github.com/VictoriaMetrics/helm-charts](https://github.com/VictoriaMetrics/helm-charts)
 - [https://docs.victoriametrics.com/Articles.html](https://docs.victoriametrics.com/Articles.html)
-
-## 
