@@ -11,3 +11,4 @@ spec:
     replicaCount: 2
   vminsert:
     replicaCount: 2
+    
