@@ -36,7 +36,7 @@ across nodes to ensure availability.
 | ------------- | ------------- | ------------- |
 | VictoriaMetrics Cluster  | 1.70.0  | Apache 2.0  |
 | VMAgent  | 1.70.0  | Apache 2.0  |
-| VMOperator  | 1.70.0  | Apache 2.0  |
+| VMOperator  | 0.21.0  | Apache 2.0  |
 
 ## Getting started after deploying VictoriaMetrics Cluster
 
@@ -88,3 +88,5 @@ Then open in browser `http://127.0.0.1:8481/select/0/vmui/` , enter `vm_app_upti
 - [https://docs.victoriametrics.com/guides](https://docs.victoriametrics.com/guides)
 - [https://github.com/VictoriaMetrics/helm-charts](https://github.com/VictoriaMetrics/helm-charts)
 - [https://docs.victoriametrics.com/Articles.html](https://docs.victoriametrics.com/Articles.html)
+
+## 
