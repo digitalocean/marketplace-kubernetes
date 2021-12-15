@@ -9,16 +9,13 @@ spec:
       image:
         repository: victoriametrics/vmstorage
         tag: v1.70.0-cluster
-        pullPolicy: Always
   vmselect:
       replicaCount: 2
       image:
         repository: victoriametrics/vmselect
         tag: v1.70.0-cluster
-        pullPolicy: Always
   vminsert:
       replicaCount: 2
       image:
         repository: victoriametrics/vminsert
         tag: v1.70.0-cluster
-        pullPolicy: Always
