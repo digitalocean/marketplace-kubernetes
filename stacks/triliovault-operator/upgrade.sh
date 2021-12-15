@@ -13,7 +13,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="triliovault-operator"
 CHART="triliovault-operator/k8s-triliovault-operator"
-CHART_VERSION="2.6.0"
+CHART_VERSION="2.6.3"
 NAMESPACE="tvk"
 #HOME=$ROOT_DIR
 
