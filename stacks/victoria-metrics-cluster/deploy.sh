@@ -11,7 +11,7 @@ helm repo update > /dev/null
 ################################################################################
 # Install vmoperator from the Helm chart
 ################################################################################
-helm install vmoperator vm/victoria-metrics-operator
+helm install -n default vmoperator vm/victoria-metrics-operator
 
 # Install VictoriaMetrics Cluster with CRDs
 if [ -z "${MP_KUBERNETES}" ]; then
@@ -23,6 +23,6 @@ if [ -z "${MP_KUBERNETES}" ]; then
   kubectl apply -f "$VMAGENT"
 else
   # use github hosted master version of values.yml
-  kubectl apply -f https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/victoria-metrics-cluster/yaml/vmcluster.yaml
-  kubectl apply -f https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/victoria-metrics-cluster/yaml/vmagent.yaml
+  kubectl apply -n default -f https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/victoria-metrics-cluster/yaml/vmcluster.yaml
+  kubectl apply -n default -f https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/victoria-metrics-cluster/yaml/vmagent.yaml
 fi
