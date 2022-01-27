@@ -27,11 +27,9 @@ if [ -z "${MP_KUBERNETES}" ]; then
   # use local version of values.yml
   ROOT_DIR=$(git rev-parse --show-toplevel)
   values="$ROOT_DIR/stacks/triliovault-operator/values.yml"
-  #TVM="$ROOT_DIR/stacks/$STACK/triliovault-manager.yaml"
 else
   # use github hosted master version of values.yml
   values="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/triliovault-operator/values.yml"
-  #TVM="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/triliovault-operator/triliovault-manager.yaml"
 fi
 
 helm upgrade "$STACK" "$CHART" \
@@ -54,10 +52,10 @@ fi
 until (kubectl get pods --namespace "$NAMESPACE" -l "release=triliovault-operator" 2>/dev/null | grep Running); do sleep 3; done
 
 until (kubectl get pods --namespace "$NAMESPACE" -l "triliovault.trilio.io/owner=triliovault-manager" 2>/dev/null | grep Running); do sleep 3; done
-until (kubectl get pods --namespace "$NAMESPACE" -l app=k8s-triliovault-exporter 2>/dev/null | grep 2/2); do sleep 3; done
-until (kubectl get pods --namespace "$NAMESPACE" -l app=k8s-triliovault-ingress-gateway 2>/dev/null | grep 2/2); do sleep 3; done
-until (kubectl get pods --namespace "$NAMESPACE" -l app=k8s-triliovault-web 2>/dev/null | grep 2/2); do sleep 3; done
-until (kubectl get pods --namespace "$NAMESPACE" -l app=k8s-triliovault-web-backend 2>/dev/null | grep 2/2); do sleep 3; done
+until (kubectl get pods --namespace "$NAMESPACE" -l app=k8s-triliovault-exporter 2>/dev/null | grep 1/1); do sleep 3; done
+until (kubectl get pods --namespace "$NAMESPACE" -l app=k8s-triliovault-ingress-gateway 2>/dev/null | grep 1/1); do sleep 3; done
+until (kubectl get pods --namespace "$NAMESPACE" -l app=k8s-triliovault-web 2>/dev/null | grep 1/1); do sleep 3; done
+until (kubectl get pods --namespace "$NAMESPACE" -l app=k8s-triliovault-web-backend 2>/dev/null | grep 1/1); do sleep 3; done
 until (kubectl get pods --namespace "$NAMESPACE" -l app=k8s-triliovault-control-plane 2>/dev/null | grep 2/2); do sleep 3; done
 until (kubectl get pods --namespace "$NAMESPACE" -l app=k8s-triliovault-admission-webhook 2>/dev/null | grep 1/1); do sleep 3; done
 
