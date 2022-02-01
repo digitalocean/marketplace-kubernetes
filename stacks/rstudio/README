@@ -1,0 +1,9 @@
+1. After creating the Kubernetes instance, forward port 8787 with
+kubectl port-forward deploy/rstudio 8787 &
+
+2. Verify that RStudio is running with
+kubectl get pods -A
+
+3. change the user/password, this Kubernetes instance uses rstudio/rstudio,
+which is Rocker's default setting. From RStudio terminal on localhost:8787
+passwd rstudio

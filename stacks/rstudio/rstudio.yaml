@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rstudio
+  labels:
+    name: rstudio
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: rstudio
+  template:
+    metadata:
+      labels:
+        name: rstudio
+    spec:
+      containers:
+      - name : rstudio
+        image: rocker/rstudio 
+        imagePullPolicy: "Always"
+        ports:
+        - containerPort: 8787
+          protocol: TCP
+        command:
+         - "/bin/bash"
+         - "-c"
+         - "--"
+        args :
+         - 'rstudio-server start ; sleep infinity'
