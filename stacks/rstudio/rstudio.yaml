@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name : rstudio
-        image: rocker/rstudio 
+        image: rocker/tidyverse 
         imagePullPolicy: "Always"
         ports:
         - containerPort: 8787
