@@ -2,9 +2,13 @@
 
 set -e
 
-# set kubectl namespace
+# create namespace
 kubectl create namespace rstudio
-kubectl config set-context --current --namespace=rstudio
 
 # deploy rstudio
-kubectl apply -f rstudio.yaml
+if [ -z "${MP_KUBERNETES}" ]; then
+  ROOT_DIR=$(git rev-parse --show-toplevel)
+  kubectl apply -n rstudio -f "$ROOT_DIR"/stacks/rstudio/rstudio.yaml
+else
+  kubectl apply -n rstudio -f https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/rstudio/rstudio.yaml
+fi
