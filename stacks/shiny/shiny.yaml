@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shiny
+  labels:
+    name: shiny
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: shiny
+  template:
+    metadata:
+      labels:
+        name: shiny
+    spec:
+      containers:
+      - name : shiny
+        image: rocker/shiny-verse 
+        imagePullPolicy: "Always"
+        ports:
+        - containerPort: 8787
+          protocol: TCP
+        command:
+         - "/bin/bash"
+         - "-c"
+         - "--"
+        args :
+         - 'shiny-server start ; sleep infinity'
