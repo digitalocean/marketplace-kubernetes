@@ -19,7 +19,7 @@ spec:
         image: rocker/shiny-verse 
         imagePullPolicy: "Always"
         ports:
-        - containerPort: 8787
+        - containerPort: 3838
           protocol: TCP
         command:
          - "/bin/bash"
