@@ -1,8 +1,5 @@
 1. Verify that RStudio is running with
-kubectl get pods
+kubectl get pods -A
 
-2. Forward port 8787 with
-kubectl port-forward deploy/rstudio 8787
-
-3. change the user/password (defaults to rstudio/rstudio) from RStudio terminal on localhost:8787
-passwd rstudio
+2. Forward port 3838 with
+kubectl -n shiny port-forward deploy/shiny 3838
