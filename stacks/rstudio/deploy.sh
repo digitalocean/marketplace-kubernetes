@@ -12,3 +12,4 @@ if [ -z "${MP_KUBERNETES}" ]; then
 else
   kubectl apply -n rstudio -f https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/rstudio/rstudio.yaml
 fi
+
