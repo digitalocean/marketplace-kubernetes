@@ -26,4 +26,4 @@ spec:
          - "-c"
          - "--"
         args :
-         - 'shiny-server start ; sleep infinity'
+         - 'ln -s /etc/shiny-server/shiny-server.conf /start; shiny-server start; sleep infinity'
