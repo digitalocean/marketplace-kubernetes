@@ -13,7 +13,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="triliovault-operator"
 CHART="triliovault-operator/k8s-triliovault-operator"
-CHART_VERSION="2.6.7"
+CHART_VERSION="latest"
 NAMESPACE="tvk"
 #HOME=$ROOT_DIR
 
@@ -54,6 +54,10 @@ until (kubectl get pods --namespace "$NAMESPACE" -l "release=triliovault-operato
 install_tvm () {
   # Upgrade triliovault manager
   echo "Upgrading Triliovault manager..."
+  
+  # Replace TVM.yaml with latest version
+  UPGRADE_VERSION=$(helm show chart triliovault-operator/k8s-triliovault-operator | grep appVersion | awk -F ':' '{gsub(/ /,""); print $2 }')
+  sed -i '/^spec:/{n;s/trilioVaultAppVersion:.*/trilioVaultAppVersion: '$UPGRADE_VERSION'/;}' $ROOT_DIR/stacks/$STACK/triliovault-manager.yaml
 
   kubectl apply -f "$TVM" --namespace "$NAMESPACE"
   retcode=$?
