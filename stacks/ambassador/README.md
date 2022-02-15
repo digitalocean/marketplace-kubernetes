@@ -69,7 +69,7 @@ helm uninstall edge-stack -n ambassador
 followed by:
 
 ```bash
-kubeclt delete ns ambassador
+kubectl delete ns ambassador
 ```
 
 ### Additional Resources
