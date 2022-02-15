@@ -13,6 +13,7 @@ NAMESPACE="op-scim-bridge"
 helm upgrade "$STACK" "$CHART" \
   --atomic \
   --install \
+  --timeout 8m0s \
   --create-namespace \
   --namespace "$NAMESPACE" \
   --version "$CHART_VERSION"
