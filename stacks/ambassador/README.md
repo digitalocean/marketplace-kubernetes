@@ -46,8 +46,8 @@ helm ls -n ambassador
 The output looks similar to (notice that the `STATUS` column value is `deployed`):
 
 ```text
-NAME      	NAMESPACE 	REVISION	UPDATED                             	STATUS  	CHART           	APP VERSION
-edge-stack	ambassador	1       	2022-02-14 18:02:21.554041 +0200 EET	deployed	edge-stack-7.2.2	2.1.2
+NAME       NAMESPACE  REVISION UPDATED                              STATUS   CHART            APP VERSION
+edge-stack ambassador 1        2022-02-14 18:02:21.554041 +0200 EET deployed edge-stack-7.2.2 2.1.2
 ```
 
 After you deploy the stack you will need to configure a few more resources for the Ambassador Ingress Controller to work:
@@ -70,6 +70,8 @@ followed by:
 
 ```bash
 kubectl delete ns ambassador
+
+kubectl delete -f https://app.getambassador.io/yaml/edge-stack/2.1.2/aes-crds.yaml
 ```
 
 ### Additional Resources

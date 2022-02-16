@@ -1,7 +1,6 @@
----
-# Default values for ambassador.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
+## Stack name: datawire/edge-stack
+## Ref: https://github.com/emissary-ingress/emissary/tree/chart/v7.2.2/charts/emissary-ingress
+##
 
 # Deployment replica count
 replicaCount: 2
