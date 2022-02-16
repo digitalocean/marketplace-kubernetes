@@ -1,18 +1,22 @@
 # Description
 
-[Prometheus](https://prometheus.io/) is a very popular and comprehensive systems monitoring solution. It is a standalone open source project and maintained independently of any company. A big plus is the capability to monitor `Kubernetes` clusters as well, which tend to be pretty complex in nature. Prometheus eases the challenges that may arise along the way in setting up a monitoring stack.
+[Prometheus](https://prometheus.io/) is a very popular and comprehensive systems monitoring solution. It is a standalone open source project and maintained independently of any company. A big plus is the capability to monitor `Kubernetes` clusters as well, which tend to be pretty complex in nature. Prometheus eases the operational tasks that are required in setting up a monitoring stack.
 
-The [kube-prometheus-stack](https://github.com/prometheus-operator/kube-prometheus/) is meant for cluster monitoring, so it is pre-configured to collect metrics from all Kubernetes components. In addition to that it delivers a default set of dashboards and alerting rules. Many of the useful dashboards and alerts come from the [kubernetes-mixin](https://github.com/kubernetes-monitoring/kubernetes-mixin/) project, similar to this project it provides composable jsonnet as a library for users to customize to their needs.
-
-The [Alertmanager](https://github.com/prometheus/alertmanager/) handles alerts sent by client applications such as the Prometheus server. It takes care of deduplicating, grouping, and routing them to the correct receiver integration such as email, PagerDuty, or Slack. It also takes care of silencing and inhibition of alerts.
+The [kube-prometheus-stack](https://github.com/prometheus-operator/kube-prometheus/) is meant for `cluster monitoring`, so it is `pre-configured` to collect metrics from all `Kubernetes components`. In addition to that it delivers a default set of `dashboards` and `alerting` rules. Many of the useful dashboards and alerts come from the [kubernetes-mixin](https://github.com/kubernetes-monitoring/kubernetes-mixin/) project.
 
 The `kube-prometheus-stack` consists of three main components:
 
 - `Prometheus Operator`, for spinning up and managing `Prometheus` instances in your `DOKS` cluster.
-- `Grafana`, for visualizing metrics and grouping them inside stunning dashboards.
-- `Alertmanager`, for configuring various notifications (e.g. `PagerDuty`, `Slack`, `Email`, etc) based on various alerts received from the Prometheus main server.
+- `Grafana`, for visualizing metrics and plot data using stunning dashboards.
+- `Alertmanager`, for configuring various notifications (e.g. `PagerDuty`, `Slack`, `email`, etc) based on various alerts received from the Prometheus main server.
 
-Please visit the official page for each of the stack components:
+Prometheus follows a `pull` model when it comes to metrics gathering, meaning that it expects a `/metrics` endpoint to be exposed by the service in question for scraping. For every metric that is being fetched by Prometheus, a time series database is used to store the data points.
+
+`Grafana` helps you gather data points from the Prometheus time series database, and plot everything using beautiful graphs grouped into dashboards. You can also perform queries using the `PromQL` language. To persist all the data (metrics and various settings), you need to allocate block storage for both Prometheus and Grafana instances via `Persistent Volumes` (or PVs).
+
+The [Alertmanager](https://github.com/prometheus/alertmanager/) component handles alerts sent by client applications such as the Prometheus server. It takes care of `deduplicating`, `grouping`, and `routing` them to the correct `receiver` integration such as `email`, `PagerDuty`, or `Slack`. It also takes care of `silencing` and `inhibition` of alerts.
+
+Please make sure to visit the official documentation page for each of the components to learn more:
 
 - [Prometheus](https://prometheus.io/docs/), to learn more about all the available features, as well as various configuration options.
 - [Prometheus Operator](https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/user-guides/getting-started.md), which provides useful information on how to use the operator.
