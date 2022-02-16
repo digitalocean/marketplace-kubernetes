@@ -150,6 +150,14 @@ To delete your installation of NGINX Ingress Controller, please run the followin
 helm uninstall ingress-nginx -n ingress-nginx
 ```
 
+**Note:**
+
+Above command will delete all the associated `Kubernetes` resources installed by the `ingress-nginx` Helm chart, except the namespace itself. To delete the `ingress-nginx namespace` as well, please run below command:
+
+```console
+kubectl delete ns ingress-nginx
+```
+
 ### Additional Resources
 
 You can visit the [Starter Kit](https://github.com/digitalocean/Kubernetes-Starter-Kit-Developers/) set of guides provided by DigitalOcean for further study. Specifically for [Nginx](https://github.com/digitalocean/Kubernetes-Starter-Kit-Developers/blob/main/03-setup-ingress-controller/nginx.md), you can access the following content:
