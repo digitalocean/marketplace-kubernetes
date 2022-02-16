@@ -133,8 +133,15 @@ The above ingress resource tells `Nginx` to `route` each `HTTP request` that is 
 
 ### Upgrading the Nginx Ingress Chart
 
+You can check what versions are available to upgrade, by navigating to the [ingress-nginx](https://github.com/kubernetes/ingress-nginx/releases) official releases page from GitHub. Alternatively, you can also use [ArtifactHUB](https://artifacthub.io/packages/helm/ingress-nginx/ingress-nginx), which provides a more rich and user friendly interface.
+
+Then, to upgrade the stack to a newer version, please run the following command (make sure to replace the `<>` placeholders first):
+
 ```console
-helm upgrade [RELEASE_NAME] [CHART]
+helm upgrade ingress-nginx ingress-nginx/ingress-nginx \
+  --version <INGRESS_NGINX_STACK_NEW_VERSION> \
+  --namespace ingress-nginx \
+  --values <YOUR_HELM_VALUES_FILE>
 ```
 
 See [helm upgrade](https://helm.sh/docs/helm/helm_upgrade/) for command documentation.
