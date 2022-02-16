@@ -15,6 +15,12 @@ To know more about the community maintained version of the Nginx Ingress Control
 - DigitalOcean is using `Helm v3` to deploy the Nginx Ingress Controller to your DOKS cluster.
 - The NGINX Ingress Controller 1-Click App also includes a $10/month DigitalOcean Load Balancer to ensure that ingress traffic is distributed across all of the nodes in your Kubernetes cluster.
 
+## Nginx Example Setup Diagram
+
+Below is a diagram depicting a more complete example for an Nginx based setup (for setting up production ready TLS certificates via `Cert-Manager`, you can browse the [additional resources](#additional-resources) provided at the end of this quick guide):
+
+![Nginx Example Setup](assets/images/arch_nginx.png)
+
 ## Software Included
 
 | Package | Application Version | Helm Chart Version | License |
@@ -79,6 +85,14 @@ You can always inspect all the available options, as well as the default values 
 
 ```console
 helm show values ingress-nginx/ingress-nginx --version 4.0.13
+```
+
+After tweaking the Helm values file (`values.yml`) according to your needs, you can always apply the changes via `helm upgrade` command, as shown below:
+
+```console
+helm upgrade ingress-nginx ingress-nginx/ingress-nginx --version 4.0.13 \
+  --namespace ingress-nginx \
+  --values values.yml
 ```
 
 ### Configuring Nginx Ingress Rules for Backend Services

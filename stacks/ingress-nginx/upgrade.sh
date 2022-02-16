@@ -26,4 +26,4 @@ fi
 
 helm upgrade "$STACK" "$CHART" \
 --namespace "$NAMESPACE" \
---values "$values" \
+--values "$values"
