@@ -20,4 +20,8 @@ jobs:
           pullRequestClosed: >
             👋 @{{ author }}
             
-            Before this app update can go live on the Marketplace, please update and submit your app from the [Vendor Portal](https://cloud.digitalocean.com/vendorportal/). Thanks!
+            If this is an EXISTING Marketplace app, now that the PR is merged, all new users of your app will get the current version. You should visit the [Vendor Portal](https://cloud.digitalocean.com/vendorportal/) to make sure you update any version numbers, Description, or Getting Started information that are related to the merged PR.
+            
+            If this is a BRAND NEW Marketplace app, before this app update can go live on the Marketplace, please update and submit your app from the [Vendor Portal](https://cloud.digitalocean.com/vendorportal/). 
+            
+            Thanks!

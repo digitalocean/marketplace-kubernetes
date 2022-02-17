@@ -13,22 +13,23 @@ helm repo update > /dev/null
 ################################################################################
 STACK="triliovault-operator"
 CHART="triliovault-operator/k8s-triliovault-operator"
-CHART_VERSION="2.6.3"
+CHART_VERSION="latest"
 NAMESPACE="tvk"
 #HOME=$ROOT_DIR
+INSTALL_TVM=true
+TVK_HOSTNAME="tvk.doks.com"
+INGRESS_SERVICE_TYPE="NodePort"
 
-# Install triliovault operator
-echo "Installing Triliovault operator..."
+# Install triliovault operator and triliovault manager
+echo "Installing TrilioVault operator and TrilioVault Manager with one-click install functionality"
 
 if [ -z "${MP_KUBERNETES}" ]; then
   # use local version of values.yml
   ROOT_DIR=$(git rev-parse --show-toplevel)
   values="$ROOT_DIR/stacks/triliovault-operator/values.yml"
-  TVM="$ROOT_DIR/stacks/$STACK/triliovault-manager.yaml"
 else
   # use github hosted master version of values.yml
   values="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/triliovault-operator/values.yml"
-  TVM="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/triliovault-operator/triliovault-manager.yaml"
 fi
 
 helm upgrade "$STACK" "$CHART" \
@@ -37,40 +38,32 @@ helm upgrade "$STACK" "$CHART" \
   --install \
   --namespace "$NAMESPACE" \
   --values "$values" \
-  --version "$CHART_VERSION"
+  --version "$CHART_VERSION" \
+  --set installTVK.enabled="$INSTALL_TVM" \
+  --set installTVK.ingressConfig.host="$TVK_HOSTNAME" \
+  --set installTVK.ComponentConfiguration.ingressController.service.type="$INGRESS_SERVICE_TYPE"
+
+retcode=$?
+if [ "$retcode" -ne 0 ]; then
+  echo "There is some error during triliovault-operator installation using helm, please contanct Trilio support"
+  return 1
+fi
 
 until (kubectl get pods --namespace "$NAMESPACE" -l "release=triliovault-operator" 2>/dev/null | grep Running); do sleep 3; done
 
-################################################################################
-# TVK Manager installation
-################################################################################
-
-install_tvm () {
-  # Install triliovault manager
-  echo "Installing Triliovault manager..."
-
-  kubectl apply -f "$TVM" --namespace "$NAMESPACE"
-  retcode=$?
-
-  if [ "$retcode" -ne 0 ];then
-    echo "There is some error during triliovault-operator installation using helm, please contanct Trilio support"
-    return 1
-  fi
-
-  until (kubectl get pods --namespace "$NAMESPACE" -l "triliovault.trilio.io/owner=triliovault-manager" 2>/dev/null | grep Running); do sleep 3; done
-
-  until (kubectl get pods --namespace "$NAMESPACE" -l app=k8s-triliovault-control-plane 2>/dev/null | grep Running); do sleep 3; done
-
-  until (kubectl get pods --namespace "$NAMESPACE" -l app=k8s-triliovault-admission-webhook 2>/dev/null | grep Running); do sleep 3; done
-}
+until (kubectl get pods --namespace "$NAMESPACE" -l "triliovault.trilio.io/owner=triliovault-manager" 2>/dev/null | grep Running); do sleep 3; done
+until (kubectl get pods --namespace "$NAMESPACE" -l app=k8s-triliovault-exporter 2>/dev/null | grep 1/1); do sleep 3; done
+until (kubectl get pods --namespace "$NAMESPACE" -l app=k8s-triliovault-ingress-gateway 2>/dev/null | grep 1/1); do sleep 3; done
+until (kubectl get pods --namespace "$NAMESPACE" -l app=k8s-triliovault-web 2>/dev/null | grep 1/1); do sleep 3; done
+until (kubectl get pods --namespace "$NAMESPACE" -l app=k8s-triliovault-web-backend 2>/dev/null | grep 1/1); do sleep 3; done
+until (kubectl get pods --namespace "$NAMESPACE" -l app=k8s-triliovault-control-plane 2>/dev/null | grep 2/2); do sleep 3; done
+until (kubectl get pods --namespace "$NAMESPACE" -l app=k8s-triliovault-admission-webhook 2>/dev/null | grep 1/1); do sleep 3; done
 
 ################################################################################
 # Enable TVK Management Console using NodePort
 ################################################################################
 
-configure_ui () {
-  #This method is used to configure TVK UI through nodeport
-  tvkhost_name="tvk.doks.com"
+access_tvk_ui () {
 
   echo ""
   echo "################################################################################"
@@ -100,19 +93,10 @@ configure_ui () {
 
   port=$(kubectl get svc k8s-triliovault-ingress-gateway --namespace "$NAMESPACE" -o jsonpath='{.spec.ports[?(@.name=="http")].nodePort}')
 
-  if ! kubectl patch ingress k8s-triliovault-master --namespace "$NAMESPACE" -p '{"spec":{"rules":[{"host":"'"${tvkhost_name}"'"}]}}';then
-    echo "TVK UI configuration failed, please check ingress"
-    return 1
-  fi
-  if ! kubectl patch svc k8s-triliovault-ingress-gateway --namespace "$NAMESPACE" -p '{"spec": {"type": "NodePort"}}' ; then
-    echo "TVK UI configuration failed, please check service"
-    return 1
-  fi
-
   echo ""
   echo "################################################################################"
-  echo "Please add '$ip $tvkhost_name' entry to your /etc/hosts file before launching the management console"
-  echo "After creating an entry, TVK UI can be accessed through http://$tvkhost_name:$port/login"
+  echo "Please add '$ip $TVK_HOSTNAME' entry to your /etc/hosts file before launching the management console"
+  echo "After creating an entry, TVK UI can be accessed through http://$TVK_HOSTNAME:$port/login"
   echo ""
   echo "If you still face issues while access UI, please refer - https://docs.trilio.io/kubernetes/management-console/user-interface/accessing-the-ui"
   echo "################################################################################"
@@ -176,7 +160,6 @@ fi
 # TVK one-click installation code starts here
 ################################################################################
 
-install_tvm
-configure_ui
+access_tvk_ui
 install_license
 

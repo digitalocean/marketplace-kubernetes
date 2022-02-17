@@ -13,7 +13,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="kubesphere"
 CHART="main/ks-installer"
-CHART_VERSION="0.2.2"
+CHART_VERSION="0.3.1"
 NAMESPACE="kubesphere-system"
 
 if [ -z "${MP_KUBERNETES}" ]; then
@@ -22,7 +22,7 @@ if [ -z "${MP_KUBERNETES}" ]; then
   VALUES="$ROOT_DIR/stacks/${STACK}/values.yml"
 else
   # use github hosted master version of values.yml
-  VALUES="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/${STACK}/values.yaml"
+  VALUES="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/${STACK}/values.yml"
 fi
 
 helm upgrade "$STACK" "$CHART" \
