@@ -6,7 +6,7 @@ set -e
 # chart
 ################################################################################
 STACK="loki"
-NAMESPACE="monitoring"
+NAMESPACE="loki-stack"
 
 helm uninstall "$STACK" \
   --namespace "$NAMESPACE"

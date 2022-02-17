@@ -13,7 +13,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="loki"
 CHART="grafana/loki-stack"
-NAMESPACE="monitoring"
+NAMESPACE="loki-stack"
 
 if [ -z "${MP_KUBERNETES}" ]; then
     # use local version of values.yml
