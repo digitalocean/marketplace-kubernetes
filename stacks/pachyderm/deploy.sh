@@ -8,7 +8,7 @@ set -e
 ################################################################################
 # repo
 ################################################################################
-helm repo add stable https://charts.helm.sh/stable
+helm repo add pachyderm https://helm.pachyderm.com
 helm repo update > /dev/null
 
 ################################################################################
@@ -16,7 +16,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="pachyderm"
 CHART="pachyderm/pachyderm"
-CHART_VERSION="2.0.7"
+CHART_VERSION="2.0.8"
 NAMESPACE="pachyderm"
 
 if [ -z "${MP_KUBERNETES}" ]; then
