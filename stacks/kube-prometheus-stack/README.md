@@ -36,9 +36,9 @@ Below is a diagram depicting a simple example for backend services monitoring, a
 
 ## Software Included
 
-| Package | Prometheus Operator Version | Helm Chart Version | License |
-|---------|---------------------|--------------------| ------- |
-| Kubernetes Prometheus Stack | 0.53.1 | [30.0.1](https://github.com/prometheus-community/helm-charts/tree/kube-prometheus-stack-30.0.1/charts/kube-prometheus-stack/)  | [Apache 2.0](https://github.com/prometheus-operator/kube-prometheus/blob/main/LICENSE) |
+| Package | Prometheus Version | Prometheus Operator Version | Helm Chart Version | License |
+|---------|--------------------|-----------------------------| ------------------ |-------- |
+| Kubernetes Prometheus Stack | [2.32.1](https://github.com/prometheus/prometheus/releases/tag/v2.32.1) | [0.53.1](https://github.com/prometheus-operator/prometheus-operator/releases/tag/v0.53.1) | [30.0.1](https://github.com/prometheus-community/helm-charts/releases/tag/kube-prometheus-stack-30.0.1)  | [Apache 2.0](https://github.com/prometheus-operator/kube-prometheus/blob/main/LICENSE) |
 
 ## Getting Started
 
@@ -167,6 +167,8 @@ helm upgrade kube-prometheus-stack prometheus-community/kube-prometheus-stack \
   --namespace kube-prometheus-stack \
   --values values.yml
 ```
+
+You can also check the full list of available [CRDs](https://github.com/prometheus-operator/prometheus-operator#customresourcedefinitions) which you can use to control the Prometheus Operator, by visiting the official GitHub documentation page.
 
 ### Upgrading Kubernetes Prometheus Stack
 
