@@ -10,16 +10,11 @@ loki:
     accessModes: ["ReadWriteOnce"]
     size: 5Gi
 
-grafana:
-  enabled: true
-  persistence:
-    enabled: true
-    storageClassName: do-block-storage
-    accessModes: ["ReadWriteOnce"]
-    size: 5Gi
-
 promtail:
   enabled: true
+
+grafana:
+  enabled: false
 
 fluent-bit:
   enabled: false

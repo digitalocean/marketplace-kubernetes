@@ -20,7 +20,7 @@ Loki is like Prometheus, but for logs: we prefer a multidimensional label-based 
 **Notes:**
 
 * This stack requires a minimum configuration of 2 Nodes at the $10/month plan (2GB memory / 1 vCPU).
-* The Loki stack 1-Click App also includes a $1/month block storage for both Grafana and Loki time series database (two PVs of 5GB each, to start with).
+* The Loki stack 1-Click App also includes a $1/month block storage for Loki time series database (PVs of 5GB, to start with).
 
 ## Software included
 
@@ -66,27 +66,26 @@ The output looks similar to (all Pods should be in a `READY` state, and `STATUS`
 ```text
 NAME                           READY   STATUS    RESTARTS   AGE
 loki-0                         1/1     Running   0          20h
-loki-grafana-575479b9f-ggxwn   1/1     Running   0          20h
 loki-promtail-kvjxr            1/1     Running   0          20h
 loki-promtail-nc7zg            1/1     Running   0          20h
 loki-promtail-strvq            1/1     Running   0          20h
 ```
 
-### Accessing Loki Grafana Web Panel
+### Configure Grafana with Loki
 
-To get the admin password for the Grafana, run the following command:
+First, you need to expose the Grafana web interface on your local machine:
+
+**Note:**
+
+`Grafana` isn't installed by default when the `Loki Stack` 1-Click App is installed and needs to be installed. We recomand to be used [Kubernetes Monitoring Stack](https://marketplace.digitalocean.com/apps/kubernetes-monitoring-stack) 1-Click App that will install for you the monitoring components and also the `Grafana`.
+
+You can access Grafana Web Panel (default credentials: `admin/prom-operator`):
 
 ```console
-kubectl get secret --namespace loki-stack loki-grafana -o jsonpath="{.data.admin-password}" | base64 --decode
+kubectl port-forward svc/kube-prometheus-stack-grafana 3000:80 -n kube-prometheus-stack
 ```
 
-You can access Loki Grafana web console by port forwarding the `loki-grafana` service:
-
-```console
-kubectl --namespace loki-stack port-forward svc/loki-grafana 8080:80
-```
-
-Navigate to <http://localhost:8080/> and login with admin and the password output above. Then follow the instructions for adding the loki datasource, using the URL <http://loki:3100/>.
+Navigate to <http://localhost:80/> and login with admin and the password. Then follow the instructions for adding the loki datasource, using the URL <http://loki:3100/>.
 
 Please refer to the [Loki](https://github.com/digitalocean/Kubernetes-Starter-Kit-Developers/blob/main/05-setup-loki-stack/README.md) tutorial, for more details about deployment status and functionality.
 
