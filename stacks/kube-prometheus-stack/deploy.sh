@@ -29,6 +29,7 @@ helm upgrade "$STACK" "$CHART" \
   --atomic \
   --create-namespace \
   --install \
+  --timeout 8m0s \
   --namespace "$NAMESPACE" \
   --values "$values" \
   --version "$CHART_VERSION"

@@ -2,7 +2,7 @@
 
 [Prometheus](https://prometheus.io/) is a very popular and comprehensive systems monitoring solution. It is a standalone open source project and maintained independently of any company. A big plus is the capability to monitor `Kubernetes` clusters as well, which tend to be pretty complex in nature. Prometheus eases the operational tasks that are required in setting up a monitoring stack.
 
-The [kube-prometheus-stack](https://github.com/prometheus-operator/kube-prometheus/) is meant for `cluster monitoring`, so it is `pre-configured` to collect metrics from all `Kubernetes components`. In addition to that it delivers a default set of `dashboards` and `alerting` rules. Many of the useful dashboards and alerts come from the [kubernetes-mixin](https://github.com/kubernetes-monitoring/kubernetes-mixin/) project.
+The [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack/) is meant for `cluster monitoring`, so it is `pre-configured` to collect metrics from all `Kubernetes components`. In addition to that it delivers a default set of `dashboards` and `alerting` rules. Many of the useful dashboards and alerts come from the [kubernetes-mixin](https://github.com/kubernetes-monitoring/kubernetes-mixin/) project.
 
 The `kube-prometheus-stack` consists of three main components:
 
@@ -100,7 +100,7 @@ kubectl port-forward svc/kube-prometheus-stack-grafana 3000:80 -n kube-prometheu
 
 Next, launch a web browser of your choice, and enter the following URL: http://localhost:3000. You can take a look around, and see what dashboards are available for you to use from the [kubernetes-mixin](https://github.com/kubernetes-monitoring/kubernetes-mixin) project as an example, by navigating to the following URL: http://localhost:3000/dashboards?tag=kubernetes-mixin.
 
-### Tweaking Helm Values
+### Tweaking Helm Chart Values
 
 The `kube-prometheus-stack` provides some custom values to start with. Please have a look at the [values](./values.yml) file from the main GitHub repository (explanations are provided inside, where necessary).
 
@@ -118,9 +118,9 @@ helm upgrade kube-prometheus-stack prometheus-community/kube-prometheus-stack --
   --values values.yml
 ```
 
-### Configuring Service Monitors
+### Configuring Service Monitors for Prometheus
 
-To monitor applications in your cluster, you usually define a so called `ServiceMonitor`. This is a custom resource definition provided by the `Prometheus Operator`, which helps you in the process of adding new services that need to be monitored.
+To monitor applications in your cluster, you usually define a so called `ServiceMonitor` CRD. This is a custom resource definition provided by the `Prometheus Operator`, which helps you in the process of adding new services that need to be monitored.
 
 A typical `ServiceMonitor` configuration looks like below:
 
@@ -168,7 +168,7 @@ helm upgrade kube-prometheus-stack prometheus-community/kube-prometheus-stack \
   --values values.yml
 ```
 
-### Upgrading the Kube-Prometheus Chart
+### Upgrading Kubernetes Prometheus Stack
 
 You can check what versions are available to upgrade, by navigating to the [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/releases) official releases page from GitHub. Alternatively, you can also use [ArtifactHUB](https://artifacthub.io/packages/helm/prometheus-community/kube-prometheus-stack), which provides a more rich and user friendly interface.
 
@@ -181,9 +181,11 @@ helm upgrade kube-prometheus-stack prometheus-community/kube-prometheus-stack \
   --values <YOUR_HELM_VALUES_FILE>
 ```
 
-See [helm upgrade](https://helm.sh/docs/helm/helm_upgrade/) for command documentation.
+See [helm upgrade](https://helm.sh/docs/helm/helm_upgrade/) for command documentation. 
 
-### Uninstalling the Kube-Prometheus Stack
+Also, please make sure to check the official recommendations for various [upgrade paths](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack#upgrading-chart), from an existing release to a new major version of the Prometheus stack.
+
+### Uninstalling Kubernetes Prometheus Stack
 
 To delete your installation of `kube-prometheus-stack`, please run the following `Helm` command:
 
