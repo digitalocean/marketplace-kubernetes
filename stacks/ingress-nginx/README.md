@@ -1,6 +1,6 @@
 # Description
 
-[Nginx](https://github.com/kubernetes/ingress-nginx/) is a very popular `Ingress Controller`, and sits at the `edge` of your `VPC` acting as an entry point for your network. It knows how to handle and route `HTTP` requests to your web applications, thus it operates at `layer 7` of the `OSI` model.
+[NGINX](https://github.com/kubernetes/ingress-nginx/) is an Ingress Controller, and sits at the edge of your VPC acting as an entry point for your network. It operates at layer 7 of the OSI model and handles and routes HTTP requests to your web applications.
 
 When `Nginx` is deployed to your `DOKS` cluster, a `Load Balancer` is created as well, through which it receives the outside traffic. Then, you will have a `domain` set up with `A` type records (hosts), which in turn point to your load balancer `external IP`. So, data flow goes like this: `User Request -> Host.DOMAIN -> Load Balancer -> Ingress Controller (NGINX) -> Backend Applications (Services)`.
 
