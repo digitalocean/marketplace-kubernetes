@@ -1,14 +1,23 @@
-# grafana/loki-stack
-
-grafana:
-  enabled: true
-  image:
-    tag: 8.0.5
-  persistence:
-    enabled: true
-    size: 10Gi
+## Stack name: grafana/loki-stack
+## Ref: https://artifacthub.io/packages/helm/grafana/loki-stack/2.5.1
+##
 
 loki:
+  enabled: true
   persistence:
     enabled: true
-    size: 50Gi
+    storageClassName: do-block-storage
+    accessModes: ["ReadWriteOnce"]
+    size: 5Gi
+
+promtail:
+  enabled: true
+
+grafana:
+  enabled: false
+
+fluent-bit:
+  enabled: false
+
+prometheus:
+  enabled: false
