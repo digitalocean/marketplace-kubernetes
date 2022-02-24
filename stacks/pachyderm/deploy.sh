@@ -16,7 +16,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="pachyderm"
 CHART="pachyderm/pachyderm"
-CHART_VERSION="2.0.8"
+CHART_VERSION="2.1"
 NAMESPACE="pachyderm"
 
 if [ -z "${MP_KUBERNETES}" ]; then
