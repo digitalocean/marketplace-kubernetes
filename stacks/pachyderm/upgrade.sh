@@ -9,7 +9,7 @@ set -e
 ################################################################################
 # repo
 ################################################################################
-helm repo add stable https://charts.helm.sh/stable
+helm repo add pachyderm https://helm.pachyderm.com
 helm repo update > /dev/null
 
 ################################################################################
@@ -33,4 +33,4 @@ helm upgrade "$STACK" "$CHART" \
      --values "$values" \
      --set-string global.postgresql.postgresqlPostgresPassword=$(kubectl get secret postgres -o yaml -n "$NAMESPACE" | grep postgresql-postgres-password | awk  '{print $2}' | base64 -d) \
      --set-string global.postgresql.postgresqlPassword=$(kubectl get secret postgres -o yaml -n "$NAMESPACE" | grep postgresql-password | awk  '{print $2}' | base64 -d) \
-     --set-string pachd.clusterDeploymentID=$(kubectl get secret -n pachyderm pachyderm-deployment-id-secret -o yaml | grep CLUSTER_DEPLOYMENT_ID | awk '{print $2}' | base64 -d)
+     --set-string pachd.clusterDeploymentID=$(kubectl get secret -n "$NAMESPACE" pachyderm-deployment-id-secret -o yaml | grep CLUSTER_DEPLOYMENT_ID | awk '{print $2}' | base64 -d)
