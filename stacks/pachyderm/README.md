@@ -1,3 +1,4 @@
+<!-- SPDX-FileCopyrightText: © 2022 Pachyderm, Inc. <info@pachyderm.com> -->
 # Pachyderm
 
 ### Prerequisites
