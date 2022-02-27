@@ -14,7 +14,7 @@ helm repo update > /dev/null
 STACK="triliovault-operator"
 CHART="triliovault-operator/k8s-triliovault-operator"
 LATEST="$(curl -s https://charts.k8strilio.net/trilio-stable/k8s-triliovault-operator/index.yaml | grep -m 1 appVersion | awk -F ':' '{gsub(/ /,""); print $2 }')"
-echo "Installing TVK version: $LATEST"
+echo "Upgrading TVK to latest version: $LATEST"
 CHART_VERSION=$LATEST
 NAMESPACE="tvk"
 #HOME=$ROOT_DIR
@@ -71,7 +71,7 @@ install_tvm () {
 
   until (kubectl get pods --namespace "$NAMESPACE" -l "triliovault.trilio.io/owner=triliovault-manager" 2>/dev/null | grep Running); do sleep 3; done
   until (kubectl get pods --namespace "$NAMESPACE" -l app=k8s-triliovault-exporter 2>/dev/null | grep 1/1); do sleep 3; done
-  until (kubectl get pods --namespace "$NAMESPACE" -l app=k8s-triliovault-ingress-gateway 2>/dev/null | grep 1/1); do sleep 3; done
+  until (kubectl get pods --namespace "$NAMESPACE" -l app=k8s-triliovault-ingress-nginx-controller 2>/dev/null | grep 1/1); do sleep 3; done
   until (kubectl get pods --namespace "$NAMESPACE" -l app=k8s-triliovault-web 2>/dev/null | grep 1/1); do sleep 3; done
   until (kubectl get pods --namespace "$NAMESPACE" -l app=k8s-triliovault-web-backend 2>/dev/null | grep 1/1); do sleep 3; done
   until (kubectl get pods --namespace "$NAMESPACE" -l app=k8s-triliovault-control-plane 2>/dev/null | grep 2/2); do sleep 3; done

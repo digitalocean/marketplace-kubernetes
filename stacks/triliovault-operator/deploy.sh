@@ -55,7 +55,7 @@ until (kubectl get pods --namespace "$NAMESPACE" -l "release=triliovault-operato
 
 until (kubectl get pods --namespace "$NAMESPACE" -l "triliovault.trilio.io/owner=triliovault-manager" 2>/dev/null | grep Running); do sleep 3; done
 until (kubectl get pods --namespace "$NAMESPACE" -l app=k8s-triliovault-exporter 2>/dev/null | grep 1/1); do sleep 3; done
-until (kubectl get pods --namespace "$NAMESPACE" -l app=k8s-triliovault-ingress-gateway 2>/dev/null | grep 1/1); do sleep 3; done
+until (kubectl get pods --namespace "$NAMESPACE" -l app=k8s-triliovault-ingress-nginx-controller 2>/dev/null | grep 1/1); do sleep 3; done
 until (kubectl get pods --namespace "$NAMESPACE" -l app=k8s-triliovault-web 2>/dev/null | grep 1/1); do sleep 3; done
 until (kubectl get pods --namespace "$NAMESPACE" -l app=k8s-triliovault-web-backend 2>/dev/null | grep 1/1); do sleep 3; done
 until (kubectl get pods --namespace "$NAMESPACE" -l app=k8s-triliovault-control-plane 2>/dev/null | grep 2/2); do sleep 3; done
@@ -71,21 +71,21 @@ access_tvk_ui () {
   echo "################################################################################"
   echo "TVK UI will be configured with NodePort but if you are not able to access it, please run below command to use port-forward from the machine you are accessing the TVK UI from."
   echo ""
-  echo "kubectl port-forward --address 0.0.0.0 svc/k8s-triliovault-ingress-gateway --namespace $NAMESPACE 80:80 &"
+  echo "kubectl port-forward --address 0.0.0.0 svc/k8s-triliovault-ingress-nginx-controller --namespace $NAMESPACE 80:80 &"
   echo ""
   echo "Copy & paste the above command into the terminal session and TVK management console traffic will be forwarded to your localhost IP of 127.0.0.1 via port 80."
   echo "Provide the kubeconfig file which can be downloaded from DOKS cluster UI"
   echo "################################################################################"
   echo ""
 
-  gateway=$(kubectl get pods --no-headers=true --namespace "$NAMESPACE" 2>/dev/null | awk '/k8s-triliovault-ingress-gateway/{print $1}')
+  controller=$(kubectl get pods --no-headers=true --namespace "$NAMESPACE" 2>/dev/null | awk '/k8s-triliovault-ingress-nginx-controller/{print $1}')
 
-  if [ -z "$gateway" ]; then
-    echo "Not able to find k8s-triliovault-ingress-gateway resource,TVK UI configuration failed"
+  if [ -z "$controller" ]; then
+    echo "Not able to find k8s-triliovault-ingress-nginx-controller resource,TVK UI configuration failed"
     return 1
   fi
 
-  node=$(kubectl get pods "$gateway" --namespace "$NAMESPACE" -o jsonpath='{.spec.nodeName}')
+  node=$(kubectl get pods "$controller" --namespace "$NAMESPACE" -o jsonpath='{.spec.nodeName}')
   ip=$(kubectl get node "$node" --namespace "$NAMESPACE" -o jsonpath='{.status.addresses[?(@.type=="ExternalIP")].address}')
 
   if [ -z "$ip" ]; then
@@ -93,7 +93,7 @@ access_tvk_ui () {
     ip=$(kubectl get node "$node" --namespace "$NAMESPACE" -o jsonpath='{.status.addresses[?(@.type=="InternalIP")].address}')
   fi
 
-  port=$(kubectl get svc k8s-triliovault-ingress-gateway --namespace "$NAMESPACE" -o jsonpath='{.spec.ports[?(@.name=="http")].nodePort}')
+  port=$(kubectl get svc k8s-triliovault-ingress-nginx-controller --namespace "$NAMESPACE" -o jsonpath='{.spec.ports[?(@.name=="http")].nodePort}')
 
   echo ""
   echo "################################################################################"
@@ -164,4 +164,3 @@ fi
 
 access_tvk_ui
 install_license
-
