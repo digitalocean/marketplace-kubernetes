@@ -1,8 +1,14 @@
 # Description
 
-[OpenFaaS](https://docs.openfaas.com/) makes it easy for developers to deploy event-driven functions and microservices to Kubernetes without repetitive, boiler-plate coding. Package your code or an existing binary in a Docker image to get a highly scalable endpoint with auto-scaling and metrics. Your workloads can be accessed through the OpenFaaS gateway or triggered by a number of event sources such as Kafka, RabbitMQ, Redis and Cron.
+[OpenFaaS](https://docs.openfaas.com/) is an award-winning open source project that makes it easy for developers to deploy applications to Kubernetes in a Serverless-style. Any microservice, API, binary, or function can be packaged and deployed in a very short period of time. Once [a workload](https://docs.openfaas.com/reference/workloads/) is deployed via the OpenFaaS [CLI](https://docs.openfaas.com/cli/install/), API or UI metrics will be tracked and used to auto-scale your code in response to demand.
 
-The DigitalOcean 1-click application installs the [Helm 3](https://helm.sh/docs/intro/install/) version of OpenFaaS alongside with [NGINX Ingress Controller](https://kubernetes.github.io/ingress-nginx/) and [Cert-Manager](https://cert-manager.io/docs/).
+OpenFaaS comes with built-in auto-scaling, [detailed metrics](https://docs.openfaas.com/architecture/metrics/) and [queue-processing](https://docs.openfaas.com/reference/async/). You can take advantage of pre-made functions from the Function, or a series of templates for Functions or Microservices covering a wide range of languages such as C#, Java, Go, Ruby, PHP, and more.
+
+Your workloads can be accessed through the OpenFaaS gateway or triggered by a number of [event sources](https://docs.openfaas.com/reference/triggers/) such as Kafka, RabbitMQ, Redis and Cron.
+
+The project is built around open interfaces that can be extended easily. Tutorials and guides can help you [enable TLS](https://docs.openfaas.com/reference/ssl/kubernetes-with-cert-manager/), [setup custom domains](https://docs.openfaas.com/reference/ssl/kubernetes-with-cert-manager/#20-ssl-and-custom-domains-for-functions), CI/CD, OAuth2, multi-user support, and many other features.
+
+You can find out more about OpenFaaS at <https://www.openfaas.com/> or take the [free workshop online](https://github.com/openfaas/workshop/).
 
 Note: This stack requires a minimum configuration of 2 Nodes at the $10/month plan (2GB memory / 1 vCPU).
 
@@ -65,7 +71,7 @@ Finally, OpenFaaS should now be successfully installed and running.
 
 ### Tweaking Helm Values
 
-The OpenFaaS provides some custom values to start with. You can always inspect all the available options, as well as the default values for the Ambassador Ingress Helm chart by running below command:
+The OpenFaaS provides some custom values to start with. You can always inspect all the available options, as well as the default values for the OpenFaaS Helm chart by running below command:
 
 ```console
 helm show values openfaas/openfaas --version 10.0.13
@@ -182,7 +188,7 @@ Then, to upgrade the stack to a newer version, please run the following command 
 
 ```console
 helm upgrade openfaas openfaas/openfaas \
-  --version <INGRESS_AMBASSADOR_STACK_NEW_VERSION> \
+  --version <OPENFAAS_STACK_NEW_VERSION> \
   --namespace openfaas \
   --values <YOUR_HELM_VALUES_FILE>
 ```
@@ -209,10 +215,6 @@ kubectl delete namespace openfaas openfaas-fn
 
 ### Additional Resources
 
-To further enrich your experience, you can also visit the official Ambassador Edge Stack documentation sites:
+To further enrich your experience, you can also visit the official OpenFaaS documentation sites:
 
-- [Documentation](https://www.getambassador.io/docs/latest/)
-- [Kubernetes Glossary](https://www.getambassador.io/learn/kubernetes-glossary/)
-- [Ambassador Community Resources](https://www.getambassador.io/community/)
-- [Community Slack Channel](https://join.slack.com/t/datawire-oss/shared_invite/zt-8rbpcp4x-vqcfpwmJYxcCVSL1CPxGLw)
-- [FAQ](https://www.getambassador.io/docs/latest/about/faq/)
+- [Documentation](https://docs.openfaas.com/community/)
