@@ -107,7 +107,7 @@ Now create a DNS A record in your DNS manager pointing to your IngressController
 
 Before creating the ssl certificate an issuer needs to be created. For convenience we will create an Issuer using Let's Encrypt production API. Replace `<your-email-here>` with the contact email that will be shown with the TLS certificate.
 
-```text
+```yaml
 apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
@@ -134,9 +134,9 @@ spec:
 kubectl apply -f letsencrypt-issuer.yaml
 ```
 
-Add TSL to OpenFaaS by creating a custom helm values file. Replace `<your-domain-here>` with the domain that will be used.
+Add TSL to OpenFaaS by creating a custom helm value file. Replace `<your-domain-here>` with the domain that will be used.
 
-```text
+```yaml
 # tls.yaml
 ingress:
   enabled: true
@@ -165,9 +165,16 @@ helm upgrade openfaas \
 A certificate will be created automatically through cert-manager. You can validate that certificate has been obtained successfully using:
 
 ```console
-kubectl describe certificate \
+kubectl get certificate \
   -n openfaas \
   openfaas-crt
+```
+
+The output looks similar to (notice the READY column status which should be True):
+
+```bash
+NAME           READY   SECRET         AGE
+openfaas-crt   True    openfaas-crt   152m
 ```
 
 Finally, you can access the OpenFaaS UI and you can start creating functions.
@@ -178,6 +185,54 @@ Retrieve the OpenFaaS credentials running
 ```console
 kubectl -n openfaas get secret basic-auth -o jsonpath="{.data.basic-auth-password}" | base64 --decode
 
+```
+
+### Log into OpenFaaS using faas-cli
+
+You can install the CLI with a curl utility script, brew or by downloading the binary from the releases page. Once installed you'll get the faas-cli command and faas alias. More details can be found here <https://docs.openfaas.com/cli/install/>
+
+First, extract the password:
+
+```console
+kubectl get secret -n openfaas basic-auth -o jsonpath="{.data.basic-auth-password}" | base64 --decode > password.txt
+```
+
+Next, authenticate to the `faas-cli`
+
+```console
+export OPENFAAS_URL=https://<your-domain-here>
+
+cat password.txt | faas-cli login --username admin --password-stdin --gateway https://<your-domain-here>
+```
+
+**Note:**
+
+Replace `<your-domain-here>` with the domain that will be used.
+
+Finaly, check that everything worked by deploying a function:
+
+```console
+faas-cli store list
+
+# Find one you like
+
+faas-cli store deploy nodeinfo
+
+# List your functions
+
+faas-cli list --verbose
+
+# Check when the function is ready
+
+faas-cli describe nodeinfo
+
+Name:                nodeinfo
+Status:              Ready
+
+# Invoke the function using the URL given above, or via `faas-cli invoke`
+
+echo | faas-cli invoke nodeinfo
+echo -n "verbose" | faas-cli invoke nodeinfo
 ```
 
 ### Upgrading the OpenFaaS Chart
