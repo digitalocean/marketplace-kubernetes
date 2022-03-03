@@ -235,6 +235,79 @@ echo | faas-cli invoke nodeinfo
 echo -n "verbose" | faas-cli invoke nodeinfo
 ```
 
+### Create your first Python function with OpenFaaS
+
+First, create a working folder for your first function:
+
+```bash
+mkdir -p ~/functions && scd ~/functions
+```
+
+Then, let's scaffold a new Python function using the CLI:
+
+```bash
+faas-cli new --lang python3 hello-python
+```
+
+The output looks similar to the following:
+
+```text
+2022/03/03 15:18:07 No templates found in current directory.
+2022/03/03 15:18:07 Attempting to expand templates from https://github.com/openfaas/templates.git
+2022/03/03 15:18:09 Fetched 16 template(s) : [csharp dockerfile go java11 java11-vert-x node node12 node12-debian node14 node16 node17 php7 python python3 python3-debian ruby] from https://github.com/openfaas/templates.git
+Folder: hello-python created.
+```
+
+All your functions should be specified in a YAML file like this - it tells the CLI what to build and deploy onto your OpenFaaS cluster.
+
+Checkout the YAML file `hello-python.yml`:
+
+- gateway- here we can specify a remote gateway if we need to, what the programming language is and where our handler is located within the filesystem.
+
+- functions - this block defines the functions in our stack
+
+- lang: python - even though Docker is used behind the scenes to package your function. You don't have to write your own Dockerfile unless you want to.
+
+- handler - this is the folder / path to your handler.py file and any other source code you need
+
+- image - this is the Docker image name. If you are going to push to the Docker Hub change the prefix from hello-python to include your Docker Hub account - i.e. alexellis/hello-python
+
+Next, let's build the function and push the function image to a registry or the [Docker Hub](https://hub.docker.com/)
+
+**Note:**
+In the `hello-python.yml` the image name needs to include your Hub account (eg `image: alexellis2/hello-python`).
+
+Upload the function to a remote registry:
+
+```bash
+faas-cli build -f ./hello-python.yml
+```
+
+Next, let's deploy the function:
+
+```bash
+faas-cli deploy -f ./hello-python.yml
+```
+
+The output looks similar to:
+
+```bash
+Deploying: hello-python.
+
+Deployed. 202 Accepted.
+URL: https://<your-domain>/function/hello-python
+```
+
+Finally, test the function using `faas-cli`:
+
+```bash
+echo "Hello" | faas-cli invoke hello-python
+```
+
+The response from the function will be `Hello`.
+
+For different OpenFaaS tutorrials please checkout <https://docs.openfaas.com/tutorials/featured/>
+
 ### Upgrading the OpenFaaS Chart
 
 You can check what versions are available to upgrade, by navigating to the [OpenFaaS](https://artifacthub.io/packages/helm/openfaas/openfaas/) official helm charts from Artifacthub.
