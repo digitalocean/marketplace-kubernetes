@@ -240,7 +240,7 @@ echo -n "verbose" | faas-cli invoke nodeinfo
 First, create a working folder for your first function:
 
 ```bash
-mkdir -p ~/functions && scd ~/functions
+mkdir -p ~/functions && cd ~/functions
 ```
 
 Then, let's scaffold a new Python function using the CLI:
