@@ -108,6 +108,7 @@ Now create a DNS A record in your DNS manager pointing to your IngressController
 Before creating the ssl certificate an issuer needs to be created. For convenience we will create an Issuer using Let's Encrypt production API. Replace `<your-email-here>` with the contact email that will be shown with the TLS certificate.
 
 ```yaml
+# letsencrypt-issuer.yaml
 apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
@@ -134,7 +135,7 @@ spec:
 kubectl apply -f letsencrypt-issuer.yaml
 ```
 
-Add TSL to OpenFaaS by creating a custom helm value file. Replace `<your-domain-here>` with the domain that will be used.
+Add TLS to OpenFaaS by creating a custom helm value file. Replace `<your-domain-here>` with the domain that will be used.
 
 ```yaml
 # tls.yaml
