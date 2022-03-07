@@ -8,14 +8,14 @@ spec:
       replicaCount: 2
       image:
         repository: victoriametrics/vmstorage
-        tag: v1.73.0-cluster
+        tag: v1.74.0-cluster
   vmselect:
       replicaCount: 2
       image:
         repository: victoriametrics/vmselect
-        tag: v1.73.0-cluster
+        tag: v1.74.0-cluster
   vminsert:
       replicaCount: 2
       image:
         repository: victoriametrics/vminsert
-        tag: v1.73.0-cluster
+        tag: v1.74.0-cluster
