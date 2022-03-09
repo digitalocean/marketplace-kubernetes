@@ -26,7 +26,7 @@ Meet [Knative](https://knative.dev), an open source solution empowering users to
 
 Below diagram is a simplified overview of how `Knative Serving` works:
 
-![Knative Serving Overview](assets/images/arch_knative.png)
+![Knative Serving Overview](assets/images/arch_knative_serving.png)
 
 **Notes:**
 
@@ -197,7 +197,7 @@ spec:
 
 Explanations for the above configuration:
 
-- `spec.version`: Tells Knative Operator what version of `KnativeServing` to install in your `DOKS` cluster (e.g. `1.2.3`).
+- `spec.version`: Tells `Knative Operator` what version of `KnativeServing` to install in your `DOKS` cluster (e.g. `1.2.3`).
 - `spec.ingress` and `spec.config.network`: Tells Knative what implementation to use for the networking layer (e.g. `Kourier`).
 
 Above example tells `Knative` to use `Kourier` as the default networking implementation to handle ingress configuration. You're not limited to Kourier only, and you can also choose among other available options like `Istio` and `Contour`, for example. Please bear in mind that `Kourier` is the only option which comes `bundled` with `Knative`. For the other networking implementations mentioned earlier, you need to install the stacks separately (e.g. `Istio`).
@@ -226,7 +226,7 @@ spec:
   version: "0.26.3"
 ```
 
-The above configuration tells the `Knative Operator` to install the `0.26.3` version of `KnativeEventing` component in your `DOKS` cluster, via the `spec.version` field. If no version is specified, then the latest one available is picked automatically. You can also configure other options like message broker configurations, resources requests and limits for the underlying containers, etc.
+The above configuration tells `Knative Operator` to install the `0.26.3` version of `KnativeEventing` component in your `DOKS` cluster, via the `spec.version` field. If no version is specified, then the latest one available is picked automatically. You can also configure other options like message broker configurations, resources requests and limits for the underlying containers, etc.
 
 **Important note:**
 
@@ -234,7 +234,7 @@ The `Knative Operator` only permits `upgrades` or `downgrades` by one `minor rel
 
 Please visit [KnativeEventing](https://knative.dev/docs/install/operator/configuring-eventing-cr) CRD official documentation for more details and available options.
 
-### Creating a Service via Knative
+### Creating a Serverless Application via Knative
 
 For every serverless application you create, a `Knative Service` CRD must be defined (not to be confused with the `Kubernetes Service` resource). Each `Knative Service` is handled by the `Knative Serving` component presented earlier. A `Knative Service` abstracts all the required implementation details for your application to run (e.g. Kubernetes deployments, exposing the application via Ingress objects, autoscaling, etc). In the end, you will be presented with a HTTP URL resource to access your custom application.
 
@@ -294,15 +294,46 @@ kn service list -n knative-samples
 # hello   http://hello.knative-samples.example.com   hello-world   2m33s   3 OK / 3     True 
 ```
 
+### Testing the Knative Service
+
 Assuming that there's a valid [DNS](https://knative.dev/docs/install/operator/knative-with-operators/#configure-dns) set up, you should be able to access the link shown in the above `URL` column:
 
 ```console
-curl http://hello.default.example.com 
+curl http://hello.knative-samples.example.com
 ```
 
 Running above command should display the now ubiquitous `Hello World!` message. Behind the scenes Knative automatically created for you all required resources for your custom application, like deployments, routes, revisions, etc.
 
-Using the `kn` CLI, you can perform a drill down operation and get specific information about each resource type:
+**Hint:**
+
+If you don't have a real DNS setup yet, you can quickly test the service by creating a local mapping in the `/etc/hosts` file. Please follow steps below:
+
+1. Fetch the `public IP` of the DO load balancer created by the Kourier ingress deployment:
+
+    ```console
+    kubectl get svc/kourier -n knative-serving
+    ```
+
+    The output looks similar to (`EXTERNAL-IP` column gives you the `Kourier` ingress controller `public IP` address):
+
+    ```text
+    NAME      TYPE           CLUSTER-IP       EXTERNAL-IP       PORT(S)                      AGE
+    kourier   LoadBalancer   10.245.147.203   188.166.137.187   80:30611/TCP,443:30228/TCP   47h
+    ```
+
+2. Create a new entry for your Knative service in the `/etc/hosts` file (please replace the `<>` placeholders accordingly):
+
+    ```text
+    <YOUR_KOURIER_INGRESS_PUBLIC_IP_HERE> hello.knative-samples.example.com
+    ```
+
+3. Finally, go ahead and test your service (please bear in mind that it takes several seconds for Knative to `cold start` your `serverless` application):
+
+    ```console
+    curl http://hello.knative-samples.example.com
+    ```
+
+Next, you can use the `kn` CLI to get specific information about each resource type:
 
 - List available `services` from the `knative-samples` namespace:
   
@@ -322,7 +353,25 @@ kn route list -n knative-samples
 kn revision list -n knative-sample
 ```
 
-Please check the official documentation to see all available options for [Serving](https://knative.dev/docs/serving/#serving-resources) resources.
+Please check the official documentation to see all available options for [Serving](https://knative.dev/docs/serving/#serving-resources) resources. Also, you can configure [custom domains](https://knative.dev/docs/serving/services/custom-domains) for your applications, and enable production ready TLS certificates support via [Cert-Manager](https://knative.dev/docs/install/installing-cert-manager).
+
+## Taking Advantage of Knative Eventing to Develop Event Driven Applications
+
+When creating event driven architectures, usually there are three main components involved:
+
+1. Event `producers`. These are applications that fire specific events.
+2. Event `consumers` (or `subscribers`), and the associated `triggers`. A `trigger` defines what events a consumer (or subscriber) should respond to.
+3. A `broker` that knows how to route all events from source to destination.
+
+In a nutshell, we have a system composed of event producers and consumers (or subscribers). Usually, consumers `filter events` and act on specific `triggers` only. Subscribers can also respond back with other events as well. A `broker` sits behind the scenes, acting like the backbone of the entire system. Its main job is to make sure that events are `routed` correctly from source to destination. Knative eventing offers support for `In-Memory brokers` (recommended for development and quick testing only), as well as third party implementations, like: `Apache Kafka`, `RabbitMQ`, etc.
+
+Knative services can act like event producers and/or consumers. Acting both like a producer and consumer, allows the service in question to send back events as a response (a feature required by processing pipelines).
+
+Below diagram gives you a quick overview of an event driven system:
+
+![Knative Eventing Overview](assets/images/arch_knative_eventing.png)
+
+Please follow the official documentation to create and test the Knative eventing feature, via the provided step by step [example](https://knative.dev/docs/eventing/getting-started).
 
 ## Upgrading Knative Components via the Operator
 
