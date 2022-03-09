@@ -31,14 +31,6 @@ fi
 kubectl apply -f https://raw.githubusercontent.com/openfaas/faas-netes/master/namespaces.yml
 
 
-helm upgrade ingress-nginx ingress-nginx/ingress-nginx \
-  --atomic \
-  --create-namespace \
-  --install \
-  --timeout 10m0s \
-  --namespace "$NAMESPACE" \
-  --version 4.0.13
-
 helm upgrade "$STACK" "$CHART" \
   --atomic \
   --create-namespace \
@@ -49,12 +41,3 @@ helm upgrade "$STACK" "$CHART" \
   --set generateBasicAuth=true \
   --values "$values" \
   --version "$CHART_VERSION"
-
-helm upgrade cert-manager jetstack/cert-manager \
-  --atomic \
-  --create-namespace \
-  --install \
-  --timeout 8m0s \
-  --set installCRDs=true \
-  --namespace "$NAMESPACE" \
-  --version 1.6.1

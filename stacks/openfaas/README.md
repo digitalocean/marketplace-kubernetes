@@ -47,8 +47,6 @@ The output looks similar to (notice that the `STATUS` column value is `deployed`
 
 ```text
 NAME          NAMESPACE REVISION UPDATED                              STATUS   CHART                APP VERSION
-cert-manager  openfaas  1        2022-03-02 10:36:02.45917 +0200 EET  deployed cert-manager-v1.6.1  v1.6.1
-ingress-nginx openfaas  1        2022-03-02 10:29:43.919627 +0200 EET deployed ingress-nginx-4.0.13 1.1.0
 openfaas      openfaas  1        2022-03-02 10:40:25.804165 +0200 EET deployed openfaas-10.0.13
 ```
 
@@ -89,10 +87,12 @@ helm upgrade openfaas openfaas/openfaas --version 10.0.13 \
 
 The following steps will guide you how to expose your local OpenFaaS functions to the Internet for development & testing.
 
+Before continuing it you need to make sure that the following resources NGINX Ingress Controller and Cert-Manager are installed, you can install them from the [Digital Ocean Marketplace](https://marketplace.digitalocean.com/category/kubernetes) as 1-Click App.
+
 Inspect the external IP address of your Nginx Ingress Controller Load Balancer by running below command:
 
 ```console
-kubectl get svc -n openfaas -l app.kubernetes.io/name=ingress-nginx
+kubectl get svc -n ingress-nginx -l app.kubernetes.io/name=ingress-nginx
 ```
 
 The output looks similar to (look for the `EXTERNAL-IP` column, containing a valid IP address):
@@ -103,7 +103,7 @@ ingress-nginx-controller             LoadBalancer   10.245.110.213   157.230.202
 ingress-nginx-controller-admission   ClusterIP      10.245.133.50    <none>          443/TCP                      88m
 ```
 
-Now create a DNS A record in your DNS manager pointing to your IngressController's public IP.
+Now create a DNS A record in your DNS manager pointing to your IngressController's public IP (more details <https://docs.openfaas.com/reference/ssl/kubernetes-with-cert-manager/#create-a-dns-record>).
 
 Before creating the ssl certificate an issuer needs to be created. For convenience we will create an Issuer using Let's Encrypt production API. Replace `<your-email-here>` with the contact email that will be shown with the TLS certificate.
 

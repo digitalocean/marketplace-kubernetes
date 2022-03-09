@@ -26,10 +26,4 @@ fi
 
 helm upgrade "$STACK" "$CHART" \
 --namespace "$NAMESPACE" \
---values "$values" \
-
-helm upgrade ingress-nginx \
-  --namespace "$NAMESPACE"
-
-helm upgrade cert-manager \
-  --namespace "$NAMESPACE"
+--values "$values"
