@@ -1,0 +1,11 @@
+## Chart: jetstack/cert-manager
+## Ref: https://github.com/cert-manager/cert-manager/blob/v1.6.1/deploy/charts/cert-manager/
+##
+
+# Cert-Manager requires a number of CRD resources to be installed beforehand
+# See https://cert-manager.io/next-docs/installation/helm/#3-install-customresourcedefinitions
+installCRDs: true
+
+# Required only if you want to monitor cert-manager activity
+prometheus:
+  enabled: false

@@ -13,7 +13,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="triliovault-operator"
 CHART="triliovault-operator/k8s-triliovault-operator"
-LATEST="$(curl -s https://charts.k8strilio.net/trilio-stable/k8s-triliovault-operator/index.yaml | grep -m 1 appVersion | awk -F ':' '{gsub(/ /,""); print $2 }')"
+LATEST="$(helm show chart triliovault-operator/k8s-triliovault-operator | grep appVersion | awk -F ':' '{gsub(/ /,""); print $2 }')"
 echo "Upgrading TVK to latest version: $LATEST"
 CHART_VERSION=$LATEST
 NAMESPACE="tvk"
