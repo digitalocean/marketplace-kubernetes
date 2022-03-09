@@ -444,11 +444,12 @@ kubectl delete -f "https://github.com/knative/operator/releases/download/knative
 
 Please check the following links, for other useful and cool stuff that you can do with `Knative`:
 
-- [Getting Started with Eventing](https://knative.dev/docs/getting-started/getting-started-eventing).
+- [Knative Official Documentation](https://knative.dev/docs).
+- [Knative Eventing - Getting Started](https://knative.dev/docs/getting-started/getting-started-eventing).
 - [Knative Eventing Observability - Collecting Logs](https://knative.dev/docs/eventing/observability/logging/collecting-logs).
 - [Knative Eventing Observability - Collecting Metrics](https://knative.dev/docs/eventing/observability/metrics/collecting-metrics).
 - [Knative Serving Observability - Collecting Logs](https://knative.dev/docs/serving/observability/logging/collecting-logs).
 - [Knative Serving Observability - Collecting Metrics](https://knative.dev/docs/serving/observability/metrics/collecting-metrics).
-- [Knative Serving - Autoscaling](https://knative.dev/docs/serving/autoscaling).
-- [Knative Serving - Traffic Management](https://knative.dev/docs/serving/traffic-management).
+- [Knative Serving - Autoscaling Applications](https://knative.dev/docs/serving/autoscaling).
+- [Knative Serving - Application Traffic Management](https://knative.dev/docs/serving/traffic-management).
 - [Knative Services - Configure Resource Requests and Limits](https://knative.dev/docs/serving/services/configure-requests-limits-services).
