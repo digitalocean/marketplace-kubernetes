@@ -100,7 +100,6 @@ This will open your default browser and load your Linkerd dashboard.
 - Linkerd also includes Grafana to visualize all the great metrics collected by Prometheus and ships with some extremely valuable dashboards.
 - Grafana dashboard available at: <http://localhost:50750/grafana>
 
-
 ### Adding your services to Linkerd
 
 In order for your service to take advantage of Linkerd, it needs to have the proxy sidecar added to its resource definition. This is done by using the Linkerd CLI to update the definition and output YAML that can be passed to kubectl. By using Kubernetes’ rolling updates, the availability of your application will not be affected.
