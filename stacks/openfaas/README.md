@@ -330,10 +330,6 @@ To uninstall OpenFaaS, you'll need to have Helm 3 installed. Once install, run t
 
 ```console
 helm uninstall openfaas --namespace openfaas
-
-helm uninstall ingress-nginx --namespace openfaas
-
-helm uninstall cert-manager --namespace openfaas
 ```
 
 followed by:
