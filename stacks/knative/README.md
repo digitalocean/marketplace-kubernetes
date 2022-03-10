@@ -440,6 +440,16 @@ OPERATOR_VERSION="1.2.2"
 kubectl delete -f "https://github.com/knative/operator/releases/download/knative-v${OPERATOR_VERSION}/operator.yaml"
 ```
 
+Delete associated namespaces (including all custom resources):
+
+```console
+kubectl delete ns knative-serving
+
+kubectl delete ns knative-eventing
+
+kubectl delete ns knative-samples
+```
+
 ### Additional Resources
 
 Please check the following links, for other useful and cool stuff that you can do with `Knative`:
