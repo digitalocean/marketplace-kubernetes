@@ -22,8 +22,13 @@ wget -q $URL -O "$BINARY" && chmod +x "$BINARY"
 # set kubectl namespace
 kubectl config set-context --current --namespace=linkerd
 
-# deploy linkerd
-$BINARY install --ignore-cluster | kubectl apply -f -
+# upgrade linkerd
+$BINARY upgrade | kubectl apply --prune -l linkerd.io/control-plane-ns=linkerd -f -
+
+$BINARY upgrade | kubectl apply --prune -l linkerd.io/control-plane-ns=linkerd \
+  --prune-whitelist=rbac.authorization.k8s.io/v1/clusterrole \
+  --prune-whitelist=rbac.authorization.k8s.io/v1/clusterrolebinding \
+  --prune-whitelist=apiregistration.k8s.io/v1/apiservice -f -
 
 # ensure services are running
 kubectl get deployments -o custom-columns=NAME:.metadata.name | tail -n +2 | while read -r line
@@ -31,7 +36,7 @@ do
   kubectl rollout status -w deployment/"$line"
 done
 
-# install the viz extension
+# upgrade the viz extension
 $BINARY viz install | kubectl apply -f -
 
 # cleanup

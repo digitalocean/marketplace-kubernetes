@@ -19,20 +19,12 @@ BINARY="$TMP_DIR/$FILENAME"
 # download linkerd
 wget -q $URL -O "$BINARY" && chmod +x "$BINARY"
 
-# set kubectl namespace
-kubectl config set-context --current --namespace=linkerd
 
-# deploy linkerd
-$BINARY install --ignore-cluster | kubectl apply -f -
+# uninstall the viz extension
+$BINARY viz uninstall | kubectl delete -f -
 
-# ensure services are running
-kubectl get deployments -o custom-columns=NAME:.metadata.name | tail -n +2 | while read -r line
-do
-  kubectl rollout status -w deployment/"$line"
-done
-
-# install the viz extension
-$BINARY viz install | kubectl apply -f -
+# uninstall linkerd
+$BINARY uninstall | kubectl delete -f -
 
 # cleanup
 rm -rf "$TMP_DIR"
