@@ -73,6 +73,35 @@ wordpress-mariadb   ClusterIP      10.245.42.121   <none>           3306/TCP    
 
 Finally, WordPress stack should now be successfully installed and running
 
+### Connect to WordPress
+
+First, get the WordPress URL by using below command:
+
+```console
+kubectl get svc -n wordpress wordpress
+```
+
+The output looks similar to (notice the `EXTERNAL-IP` column value for the wordpress service):
+
+```text
+NAME        TYPE           CLUSTER-IP      EXTERNAL-IP      PORT(S)                      AGE
+wordpress   LoadBalancer   10.245.59.107   143.244.213.33   80:32589/TCP,443:32044/TCP   46m
+```
+
+```console
+export WORDPRESS_IP=$(kubectl get svc -n wordpress wordpress -o jsonpath='{.status.loadBalancer.ingress[*].ip}')
+echo "WordPress URL: http://$WORDPRESS_IP/"
+echo "WordPress Admin URL: http://$WORDPRESS_IP/admin"
+```
+
+Next, extract the credentials to see admin your WordPress site:
+
+```console
+kubectl get secret --namespace wordpress wordpress -o jsonpath="{.data.wordpress-password}" | base64 --decode
+```
+
+Checkout the [WordPress docs](https://wordpress.org/support/) for more info on using WordPress.
+
 ### Tweaking Helm Values
 
 The WordPress stack provides some custom values to start with. Please have a look at the [values](./values.yml) file from the main GitHub repository (explanations are provided inside, where necessary).
