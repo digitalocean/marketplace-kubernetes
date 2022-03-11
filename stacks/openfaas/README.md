@@ -1,18 +1,18 @@
 # Description
 
-[OpenFaaS](https://docs.openfaas.com/) is an award-winning open source project that makes it easy for developers to deploy applications to Kubernetes in a Serverless-style. Any microservice, API, binary, or function can be packaged and deployed in a very short period of time. Once [a workload](https://docs.openfaas.com/reference/workloads/) is deployed via the OpenFaaS [CLI](https://docs.openfaas.com/cli/install/), API or UI metrics will be tracked and used to auto-scale your code in response to demand.
+[OpenFaaS](https://docs.openfaas.com/) is an open-source project that enables users to deploy applications to Kubernetes in a serverless style. It can package and deploy any micro-service, API, binary, or function. Once you deploy [a workload](https://docs.openfaas.com/reference/workloads/) via the [OpenFaaS CLI](https://docs.openfaas.com/cli/install/), it can auto-scale your code in response to user  demand based on API or UI metrics.
 
-OpenFaaS comes with built-in auto-scaling, [detailed metrics](https://docs.openfaas.com/architecture/metrics/) and [queue-processing](https://docs.openfaas.com/reference/async/). You can take advantage of pre-made functions from the Function, or a series of templates for Functions or Microservices covering a wide range of languages such as C#, Java, Go, Ruby, PHP, and more.
+OpenFaaS comes with built-in auto-scaling, [detailed metrics](https://docs.openfaas.com/architecture/metrics/), and [queue-processing](https://docs.openfaas.com/reference/async/). It also provides pre-made functions and a series of templates for languages such as C#, Java, Go, Ruby, and PHP,
 
-Your workloads can be accessed through the OpenFaaS gateway or triggered by a number of [event sources](https://docs.openfaas.com/reference/triggers/) such as Kafka, RabbitMQ, Redis and Cron.
+You can access your workloads through the OpenFaaS gateway and trigger them with [event sources](https://docs.openfaas.com/reference/triggers/) such as Kafka, RabbitMQ, Redis and Cron.
 
-The project is built around open interfaces that can be extended easily. Tutorials and guides can help you [enable TLS](https://docs.openfaas.com/reference/ssl/kubernetes-with-cert-manager/), [setup custom domains](https://docs.openfaas.com/reference/ssl/kubernetes-with-cert-manager/#20-ssl-and-custom-domains-for-functions), CI/CD, OAuth2, multi-user support, and many other features.
+OpenFaaS is built around extendable open interfaces, which allow you to [enable TLS](https://docs.openfaas.com/reference/ssl/kubernetes-with-cert-manager/) and set up [custom domains](https://docs.openfaas.com/reference/ssl/kubernetes-with-cert-manager/#20-ssl-and-custom-domains-for-functions), CI/CD, OAuth2, multi-user support, etc.
 
-You can find out more about OpenFaaS at <https://www.openfaas.com/> or take the [free workshop online](https://github.com/openfaas/workshop/).
+You can find out more about OpenFaaS at [the official website](https://www.openfaas.com/) or take the [free online workshop](https://github.com/openfaas/workshop/).
 
-Note: This stack requires a minimum configuration of 2 Nodes at the $10/month plan (2GB memory / 1 vCPU).
+**Note:** This stack requires a minimum configuration of 2 Nodes at the $10/month plan (2GB memory / 1 vCPU).
 
-## Software included
+## Software Included
 
 | Package               | Application Version   |License                                                                                    |
 | ---| ---- | ------------- |
@@ -27,36 +27,35 @@ Note: This stack requires a minimum configuration of 2 Nodes at the $10/month pl
 
 ### How to Connect to Your Cluster
 
-As you get started with Kubernetes on DigitalOcean be sure to check out how to connect to your cluster using `kubectl` and `doctl`:
-<https://www.digitalocean.com/docs/kubernetes/how-to/connect-to-cluster/>
+You can connect to your DigitalOcean Kubernetes cluster by following our [how-to guide](https://www.digitalocean.com/docs/kubernetes/how-to/connect-to-cluster/).
 
-Additional instructions for configuring the [DigitalOcean Kubernetes](https://cloud.digitalocean.com/kubernetes/clusters/):
+For additional instructions on configuring a [DigitalOcean Kubernetes](https://cloud.digitalocean.com/kubernetes/clusters/) cluster, see the following guides:
 
 - [How to Set Up a DigitalOcean Managed Kubernetes Cluster (DOKS)](https://github.com/digitalocean/Kubernetes-Starter-Kit-Developers/tree/main/01-setup-DOKS#how-to-set-up-a-digitalocean-managed-kubernetes-cluster-doks)
 - [How to Set up DigitalOcean Container Registry](https://github.com/digitalocean/Kubernetes-Starter-Kit-Developers/tree/main/02-setup-DOCR#how-to-set-up-digitalocean-container-registry)
 
-### How to confirm that OpenFaaS is running
+### How to Confirm that OpenFaaS is Running
 
-First, check if the Helm installation was successful, by running below command:
+First, verify that the Helm installation was successful by running following command:
 
 ```console
 helm ls -n openfaas
 ```
 
-The output looks similar to (notice that the `STATUS` column value is `deployed`):
+If the installation was successful, the `STATUS` column value in the output reads `deployed`:
 
 ```text
 NAME          NAMESPACE REVISION UPDATED                              STATUS   CHART                APP VERSION
 openfaas      openfaas  1        2022-03-02 10:40:25.804165 +0200 EET deployed openfaas-10.0.13
 ```
 
-Next, verify if the OpenFaaS Pods are up and running:
+Next, verify that the OpenFaaS pods are up and running with the following command:
 
 ```console
 kubectl get pods -n openfaas -l 'app in (gateway, nats, queue-worker)'
 ```
 
-The output looks similar to (all Pods should be in a `READY` state, and `STATUS` should be `Running`):
+If they're running, all pods listed in the output are in a `READY` state and the `STATUS` for each reads `Running`:
 
 ```text
 NAME                            READY   STATUS    RESTARTS   AGE
@@ -65,17 +64,17 @@ nats-697d4bd9fd-4pr5g           1/1     Running   0          87m
 queue-worker-7579944c7d-vtf48   1/1     Running   0          87m
 ```
 
-Finally, OpenFaaS should now be successfully installed and running.
+OpenFaaS is now successfully installed and running.
 
 ### Tweaking Helm Values
 
-The OpenFaaS provides some custom values to start with. You can always inspect all the available options, as well as the default values for the OpenFaaS Helm chart by running below command:
+OpenFaaS has custom default Helm values. To inspect its current values, run the following command:
 
 ```console
 helm show values openfaas/openfaas --version 10.0.13
 ```
 
-After tweaking the Helm values file (`values.yml`) according to your needs, you can always apply the changes via `helm upgrade` command, as shown below:
+To change these values, open the Helm values file `values.yml`, change whatever values you want, save and exit the file, and apply the changes by running `helm upgrade` command:
 
 ```console
 helm upgrade openfaas openfaas/openfaas --version 10.0.13 \
@@ -87,15 +86,15 @@ helm upgrade openfaas openfaas/openfaas --version 10.0.13 \
 
 The following steps will guide you how to expose your local OpenFaaS functions to the Internet for development & testing.
 
-Before continuing it you need to make sure that the following resources NGINX Ingress Controller and Cert-Manager are installed, you can install them from the [Digital Ocean Marketplace](https://marketplace.digitalocean.com/category/kubernetes) as 1-Click App.
+To expose your local OpenFaaS functions to the internet, you need to install the NGINX Ingress Controller and Cert-Manager 1-Click Apps via the [Digital Ocean Marketplace](https://marketplace.digitalocean.com/category/kubernetes).
 
-Inspect the external IP address of your Nginx Ingress Controller Load Balancer by running below command:
+Then, inspect the external IP address of your NGINX Ingress Controller Load Balancer by running following command:
 
 ```console
 kubectl get svc -n ingress-nginx -l app.kubernetes.io/name=ingress-nginx
 ```
 
-The output looks similar to (look for the `EXTERNAL-IP` column, containing a valid IP address):
+If installed correctly, the output has the `EXTERNAL-IP` column, containing a valid IP address:
 
 ```text
 NAME                                 TYPE           CLUSTER-IP       EXTERNAL-IP     PORT(S)                      AGE
@@ -103,9 +102,9 @@ ingress-nginx-controller             LoadBalancer   10.245.110.213   157.230.202
 ingress-nginx-controller-admission   ClusterIP      10.245.133.50    <none>          443/TCP                      88m
 ```
 
-Now create a DNS A record in your DNS manager pointing to your IngressController's public IP (more details <https://docs.openfaas.com/reference/ssl/kubernetes-with-cert-manager/#create-a-dns-record>).
+Create a DNS A record pointing to your IngressController's public IP in your DNS manager. For specific instructions on how to do this, see the official [OpenFaaS documentation](https://docs.openfaas.com/reference/ssl/kubernetes-with-cert-manager/#create-a-dns-record).
 
-Before creating the ssl certificate an issuer needs to be created. For convenience we will create an Issuer using Let's Encrypt production API. Replace `<your-email-here>` with the contact email that will be shown with the TLS certificate.
+Then, create an issuer. For convenience, this tutorial uses the Let's Encrypt production API. Create the following YAML file and replace `<your-email-here>` with the contact email that you want the TLS certificate to show.
 
 ```yaml
 # letsencrypt-issuer.yaml
@@ -131,11 +130,13 @@ spec:
           class: nginx
 ```
 
+Apply via `kubectl`:
+
 ```console
 kubectl apply -f letsencrypt-issuer.yaml
 ```
 
-Add TLS to OpenFaaS by creating a custom helm value file. Replace `<your-domain-here>` with the domain that will be used.
+To add TLS to OpenFaaS, create the following custom helm value file and replace `<your-domain-here>` with your desired domain name:
 
 ```yaml
 # tls.yaml
@@ -155,6 +156,8 @@ ingress:
       path: /
 ```
 
+Upgrade via `helm`:
+
 ```console
 helm upgrade openfaas \
     --namespace openfaas \
@@ -163,7 +166,7 @@ helm upgrade openfaas \
     openfaas/openfaas
 ```
 
-A certificate will be created automatically through cert-manager. You can validate that certificate has been obtained successfully using:
+This automatically creates a certificate through cert-manager. You can then verify that you've successfully obtained the certificate by running the following command:
 
 ```console
 kubectl get certificate \
@@ -171,17 +174,17 @@ kubectl get certificate \
   openfaas-crt
 ```
 
-The output looks similar to (notice the READY column status which should be True):
+If successful, the output's `READY` column reads `True`:
 
 ```bash
 NAME           READY   SECRET         AGE
 openfaas-crt   True    openfaas-crt   152m
 ```
 
-Finally, you can access the OpenFaaS UI and you can start creating functions.
+Now, you can access the OpenFaaS UI and start creating functions.
 
 **Note:**
-Retrieve the OpenFaaS credentials running
+To retrieve the OpenFaaS credentials, run the following command:
 
 ```console
 kubectl -n openfaas get secret basic-auth -o jsonpath="{.data.basic-auth-password}" | base64 --decode
@@ -190,7 +193,7 @@ kubectl -n openfaas get secret basic-auth -o jsonpath="{.data.basic-auth-passwor
 
 ### Log into OpenFaaS using faas-cli
 
-You can install the CLI with a curl utility script, brew or by downloading the binary from the releases page. Once installed you'll get the faas-cli command and faas alias. More details can be found here <https://docs.openfaas.com/cli/install/>
+You can install the CLI with a curl utility script, with brew, or by downloading the binary from the releases page. Once installed, you will get the faas-cli command and faas alias. For more details, see the official [installation guide](https://docs.openfaas.com/cli/install/).
 
 First, extract the password:
 
@@ -198,7 +201,7 @@ First, extract the password:
 kubectl get secret -n openfaas basic-auth -o jsonpath="{.data.basic-auth-password}" | base64 --decode > password.txt
 ```
 
-Next, authenticate to the `faas-cli`
+Next, authenticate to the `faas-cli`, replacing `<your-domain-here>` with your desired domain name:
 
 ```console
 export OPENFAAS_URL=https://<your-domain-here>
@@ -206,11 +209,7 @@ export OPENFAAS_URL=https://<your-domain-here>
 cat password.txt | faas-cli login --username admin --password-stdin --gateway https://<your-domain-here>
 ```
 
-**Note:**
-
-Replace `<your-domain-here>` with the domain that will be used.
-
-Finaly, check that everything worked by deploying a function:
+Then, verify it is operational by deploying a function:
 
 ```console
 faas-cli store list
@@ -244,7 +243,7 @@ First, create a working folder for your first function:
 mkdir -p ~/functions && cd ~/functions
 ```
 
-Then, let's scaffold a new Python function using the CLI:
+Then, scaffold a new Python function with the CLI:
 
 ```bash
 faas-cli new --lang python3 hello-python
@@ -259,24 +258,21 @@ The output looks similar to the following:
 Folder: hello-python created.
 ```
 
-All your functions should be specified in a YAML file like this - it tells the CLI what to build and deploy onto your OpenFaaS cluster.
+All of your functions should be specified in a YAML file. This format informs the CLI what to build and deploy onto your OpenFaaS cluster.
 
-Checkout the YAML file `hello-python.yml`:
+Check out the YAML file `hello-python.yml`:
 
-- gateway- here we can specify a remote gateway if we need to, what the programming language is and where our handler is located within the filesystem.
+- gateway: Here, you can specify a remote gateway if needed, what the programming language is, and where our handler is located within the filesystem.
 
-- functions - this block defines the functions in our stack
+- functions - Here, you can define the functions in our stack.
 
-- lang: python - even though Docker is used behind the scenes to package your function. You don't have to write your own Dockerfile unless you want to.
+- lang: python - Even though Docker is used behind the scenes to package your function, you do not have to write your own Dockerfile here.
 
-- handler - this is the folder / path to your handler.py file and any other source code you need
+- handler - This is the folder/path to your `handler.py` file and other source code.
 
-- image - this is the Docker image name. If you are going to push to the Docker Hub change the prefix from hello-python to include your Docker Hub account - i.e. alexellis/hello-python
+- image - This is the Docker image name. If you are going to push to the Docker Hub, change the prefix from `hello-python` to include your Docker Hub account, for example, `alexellis/hello-python`.
 
-Next, let's build the function and push the function image to a registry or the [Docker Hub](https://hub.docker.com/)
-
-**Note:**
-In the `hello-python.yml` the image name needs to include your Hub account (eg `image: alexellis2/hello-python`).
+Next, build the function and push the function image to a registry or the [Docker Hub](https://hub.docker.com/).
 
 Upload the function to a remote registry:
 
@@ -284,7 +280,7 @@ Upload the function to a remote registry:
 faas-cli build -f ./hello-python.yml
 ```
 
-Next, let's deploy the function:
+Deploy the function:
 
 ```bash
 faas-cli deploy -f ./hello-python.yml
@@ -305,15 +301,15 @@ Finally, test the function using `faas-cli`:
 echo "Hello" | faas-cli invoke hello-python
 ```
 
-The response from the function will be `Hello`.
+The response from the function is `Hello`.
 
-For different OpenFaaS tutorrials please checkout <https://docs.openfaas.com/tutorials/featured/>
+For different OpenFaaS tutorrials, please see the list of [featured OpenFaaS tutorials](https://docs.openfaas.com/tutorials/featured/).
 
 ### Upgrading the OpenFaaS Chart
 
-You can check what versions are available to upgrade, by navigating to the [OpenFaaS](https://artifacthub.io/packages/helm/openfaas/openfaas/) official helm charts from Artifacthub.
+You can check what versions are available to upgrade by navigating to the [OpenFaaS](https://artifacthub.io/packages/helm/openfaas/openfaas/) official helm charts from Artifacthub.
 
-Then, to upgrade the stack to a newer version, please run the following command (make sure to replace the `<>` placeholders first):
+To upgrade the stack to a newer version, run the following command, replacing the `< >` placeholders with their corresponding information:
 
 ```console
 helm upgrade openfaas openfaas/openfaas \
@@ -326,13 +322,13 @@ See [helm upgrade](https://helm.sh/docs/helm/helm_upgrade/) for command document
 
 ### Uninstalling
 
-To uninstall OpenFaaS, you'll need to have Helm 3 installed. Once install, run the following:
+To uninstall OpenFaaS, you need to have Helm 3 installed. Once installed, run the following `uninstall` command:
 
 ```console
 helm uninstall openfaas --namespace openfaas
 ```
 
-followed by:
+And then the following `delete` command:
 
 ```console
 kubectl delete namespace openfaas openfaas-fn
@@ -340,6 +336,4 @@ kubectl delete namespace openfaas openfaas-fn
 
 ### Additional Resources
 
-To further enrich your experience, you can also visit the official OpenFaaS documentation sites:
-
-- [Documentation](https://docs.openfaas.com/community/)
+- [Official OpenFaaS Documentation](https://docs.openfaas.com/community/)
