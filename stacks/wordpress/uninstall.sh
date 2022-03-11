@@ -11,3 +11,5 @@ NAMESPACE="wordpress"
 
 helm uninstall "$STACK" \
   --namespace "$NAMESPACE"
+
+kubectl delete ns "$NAMESPACE"
