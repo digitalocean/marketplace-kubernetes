@@ -12,7 +12,7 @@ You can find out more about OpenFaaS at <https://www.openfaas.com/> or take the 
 
 Note: This stack requires a minimum configuration of 2 Nodes at the $10/month plan (2GB memory / 1 vCPU).
 
-## Software included
+## Software Included
 
 | Package               | Application Version   |License                                                                                    |
 | ---| ---- | ------------- |
@@ -25,7 +25,7 @@ Note: This stack requires a minimum configuration of 2 Nodes at the $10/month pl
 
 ## Getting Started
 
-### How to Connect to Your Cluster
+### Connecting to Your Cluster
 
 As you get started with Kubernetes on DigitalOcean be sure to check out how to connect to your cluster using `kubectl` and `doctl`:
 <https://www.digitalocean.com/docs/kubernetes/how-to/connect-to-cluster/>
@@ -35,7 +35,7 @@ Additional instructions for configuring the [DigitalOcean Kubernetes](https://cl
 - [How to Set Up a DigitalOcean Managed Kubernetes Cluster (DOKS)](https://github.com/digitalocean/Kubernetes-Starter-Kit-Developers/tree/main/01-setup-DOKS#how-to-set-up-a-digitalocean-managed-kubernetes-cluster-doks)
 - [How to Set up DigitalOcean Container Registry](https://github.com/digitalocean/Kubernetes-Starter-Kit-Developers/tree/main/02-setup-DOCR#how-to-set-up-digitalocean-container-registry)
 
-### How to confirm that OpenFaaS is running
+### Confirming that OpenFaaS is Running
 
 First, check if the Helm installation was successful, by running below command:
 
@@ -188,7 +188,7 @@ kubectl -n openfaas get secret basic-auth -o jsonpath="{.data.basic-auth-passwor
 
 ```
 
-### Log into OpenFaaS using faas-cli
+### Logging into OpenFaaS using faas-cli
 
 You can install the CLI with a curl utility script, brew or by downloading the binary from the releases page. Once installed you'll get the faas-cli command and faas alias. More details can be found here <https://docs.openfaas.com/cli/install/>
 
@@ -236,7 +236,7 @@ echo | faas-cli invoke nodeinfo
 echo -n "verbose" | faas-cli invoke nodeinfo
 ```
 
-### Create your first Python function with OpenFaaS
+### Creating Your First Python Function with OpenFaaS
 
 First, create a working folder for your first function:
 
