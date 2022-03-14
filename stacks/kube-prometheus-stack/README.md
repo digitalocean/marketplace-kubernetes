@@ -217,4 +217,4 @@ For further study, see the [Starter Kit](https://github.com/digitalocean/Kuberne
 - [Visualizing Metrics using Grafana](https://github.com/digitalocean/Kubernetes-Starter-Kit-Developers/tree/main/04-setup-prometheus-stack#step-4---visualizing-metrics-using-grafana).
 - [Best Practices for Prometheus PV Sizing](https://github.com/digitalocean/Kubernetes-Starter-Kit-Developers/tree/main/04-setup-prometheus-stack#best-practices-for-pv-sizing).
 
-For more resources, see the [media](https://prometheus.io/docs/introduction/media/) in the official Prometheus documentation.
+For more resources, see [media](https://prometheus.io/docs/introduction/media/) in the official Prometheus documentation.
