@@ -101,7 +101,7 @@ You can connect to Grafana by port forwarding the `kube-prometheus-stack-grafana
 ```console
 kubectl port-forward svc/kube-prometheus-stack-grafana 3000:80 -n kube-prometheus-stack
 ```
-Use the default credentials: `admin/prom-operator` as specified in the [values.yml](values.yml#L52)). 
+Use the default credentials: `admin/prom-operator` as specified in the [values.yml](values.yml#L52). 
 
 Next, launch a web browser of your choice, and enter the following URL: http://localhost:3000. You can take a look around, and see what dashboards are available for you to use from the [kubernetes-mixin](https://github.com/kubernetes-monitoring/kubernetes-mixin) project as an example, by navigating to the following URL: http://localhost:3000/dashboards?tag=kubernetes-mixin.
 
