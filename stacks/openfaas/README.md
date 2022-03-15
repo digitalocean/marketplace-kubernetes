@@ -25,7 +25,7 @@ You can find out more about OpenFaaS at [the official website](https://www.openf
 
 ## Getting Started
 
-### How to Connect to Your Cluster
+### Connecting to Your Cluster
 
 You can connect to your DigitalOcean Kubernetes cluster by following our [how-to guide](https://www.digitalocean.com/docs/kubernetes/how-to/connect-to-cluster/).
 
@@ -34,7 +34,7 @@ For additional instructions on configuring a [DigitalOcean Kubernetes](https://c
 - [How to Set Up a DigitalOcean Managed Kubernetes Cluster (DOKS)](https://github.com/digitalocean/Kubernetes-Starter-Kit-Developers/tree/main/01-setup-DOKS#how-to-set-up-a-digitalocean-managed-kubernetes-cluster-doks)
 - [How to Set up DigitalOcean Container Registry](https://github.com/digitalocean/Kubernetes-Starter-Kit-Developers/tree/main/02-setup-DOCR#how-to-set-up-digitalocean-container-registry)
 
-### How to Confirm that OpenFaaS is Running
+### Confirming that OpenFaaS is Running
 
 First, verify that the Helm installation was successful by running following command:
 
@@ -191,7 +191,7 @@ kubectl -n openfaas get secret basic-auth -o jsonpath="{.data.basic-auth-passwor
 
 ```
 
-### Log into OpenFaaS using faas-cli
+### Logging into OpenFaaS using faas-cli
 
 You can install the CLI with a curl utility script, with brew, or by downloading the binary from the releases page. Once installed, you will get the faas-cli command and faas alias. For more details, see the official [installation guide](https://docs.openfaas.com/cli/install/).
 
@@ -235,7 +235,7 @@ echo | faas-cli invoke nodeinfo
 echo -n "verbose" | faas-cli invoke nodeinfo
 ```
 
-### Create your first Python function with OpenFaaS
+### Creating Your First Python Function with OpenFaaS
 
 First, create a working folder for your first function:
 
