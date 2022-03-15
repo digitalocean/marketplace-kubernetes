@@ -13,7 +13,6 @@ helm repo update > /dev/null
 ################################################################################
 STACK="wordpress"
 CHART="bitnami/wordpress"
-CHART_VERSION="13.0.22"
 NAMESPACE="wordpress"
 
 if [ -z "${MP_KUBERNETES}" ]; then
@@ -26,10 +25,8 @@ else
 fi
 
 helm upgrade "$STACK" "$CHART" \
-  --atomic \
-  --create-namespace \
-  --install \
   --namespace "$NAMESPACE" \
-  --version "$CHART_VERSION" \
   --values "$values" \
-  --timeout 10m0s
+  --set wordpressPassword=$(kubectl get secret --namespace "wordpress" wordpress -o jsonpath="{.data.wordpress-password}" | base64 --decode) \
+  --set mariadb.auth.rootPassword=$(kubectl get secret --namespace "wordpress" wordpress-mariadb -o jsonpath="{.data.mariadb-root-password}" | base64 --decode) \
+  --set mariadb.auth.password=$(kubectl get secret --namespace "wordpress" wordpress-mariadb -o jsonpath="{.data.mariadb-password}" | base64 --decode)
