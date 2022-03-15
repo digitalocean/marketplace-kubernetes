@@ -13,7 +13,7 @@ The DigitalOcean 1-click application installs the [Helm 3](https://helm.sh/docs/
 - [Rate Limiting](https://www.getambassador.io/docs/edge-stack/2.1/topics/using/rate-limits/rate-limits/): Rate limit to ensure the reliability, security and scalability of your micro-services.
 - [Authentication](https://www.getambassador.io/docs/edge-stack/2.1/topics/running/aes-extensions/authentication/): Built-in [OAuth2](https://www.getambassador.io/docs/edge-stack/2.1/topics/using/filters/oauth2/) and [JWT](https://www.getambassador.io/docs/edge-stack/2.1/topics/using/filters/jwt/) authentication with the ability to drop in custom AuthService plugins.
 
-Note:** This stack requires a minimum configuration of 2 Nodes at the $10/month plan (2GB memory / 1 vCPU).
+**Note:** This stack requires a minimum configuration of 2 Nodes at the $10/month plan (2GB memory / 1 vCPU).
 
 ## Software included
 
