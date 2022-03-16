@@ -31,6 +31,7 @@ kubectl create namespace portainer -o yaml --dry-run | kubectl apply -f -
 helm upgrade "$STACK" "$CHART" \
   --atomic \
   --install \
+  --timeout 8m0s \
   --namespace "$NAMESPACE" \
   --values "$values" \
   --version "$CHART_VERSION"
