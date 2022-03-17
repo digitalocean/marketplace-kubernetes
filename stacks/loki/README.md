@@ -82,7 +82,7 @@ To access the Grafana Web Panel, run the following command using the default cre
 kubectl port-forward svc/kube-prometheus-stack-grafana 3000:80 -n kube-prometheus-stack
 ```
 
-Navigate to <http://localhost:80/> and login with admin and the password. Then, follow the instructions for adding the Loki datasource, using the URL <http://loki:3100/>.
+Navigate to <http://localhost:80/> and login with admin and the password (default credentials: admin/prom-operator). Then, follow the instructions for adding the Loki datasource, using the URL <http://loki.loki-stack:3100>.
 
 For more details about deployment status and functionality, see the [Loki tutorial](https://github.com/digitalocean/Kubernetes-Starter-Kit-Developers/blob/main/05-setup-loki-stack/README.md).
 
