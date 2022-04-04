@@ -2,21 +2,28 @@
 
 set -e
 
+################################################################################
+# repo
+################################################################################
+helm repo add --force-update cdf https://cdfoundation.github.io/tekton-helm-chart
+helm repo update > /dev/null
+
+################################################################################
+# chart
+################################################################################
+STACK="tekton-pipeline"
+CHART="cdf/tekton-pipeline"
+NAMESPACE="tekton-pipelines"
+
 if [ -z "${MP_KUBERNETES}" ]; then
-  ROOT_DIR=$(git rev-parse --show-toplevel)
-
-  # deploy local version of kapp-controller
-  sh "$ROOT_DIR"/stacks/kapp-controller/deploy.sh
-
-  # use local version of app.yml
-  app="$ROOT_DIR/stacks/tekton-pipelines/app.yml"
+    # use local version of values.yml
+    ROOT_DIR=$(git rev-parse --show-toplevel)
+    values="$ROOT_DIR/stacks/tekton-pipelines/values.yml"
 else
-  # deploy github hosted master version of kapp-controller
-  sh -c "curl --location --silent --show-error https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/kapp-controller/deploy.sh | sh"
-
-  # use github hosted master version of app.yml
-  app="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/tekton-pipelines/app.yml"
+    # use github hosted master version of values.yml
+    values="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/tekton-pipelines/values.yml"
 fi
 
-kubectl apply -f $app
-kubectl wait --for=condition=ReconcileSucceeded app/tekton -n kapp-tekton
+helm upgrade "$STACK" "$CHART" \
+    --namespace "$NAMESPACE" \
+    --values "$values"
