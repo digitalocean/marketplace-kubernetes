@@ -1,1 +1,19 @@
-# tekton-pipelines
+## Chart: cdf/tekton-pipeline
+## Ref: https://github.com/cdfoundation/tekton-helm-chart
+##
+
+auth:
+  git:
+    username: "admin"
+    password: ""
+    url: https://github.com
+  docker:
+    # if specified use the docker config.json style secret like this:
+    # https://github.com/tektoncd/pipeline/blob/master/docs/auth.md#configuring-docker-authentication-for-docker
+    configJson: ""
+
+# overrides any configuration in the config-defaults ConfigMap
+configDefaults: {}
+
+# overrides any feature flags in the feature-flags ConfigMap
+featureFlags: {}

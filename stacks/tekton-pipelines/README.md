@@ -40,7 +40,7 @@ Please follow the official documentation to read and learn more about [Tekton co
 ## Requirements
 
 - A Kubernetes cluster version 1.15 or higher for Tekton Pipelines v0.11.0 or higher, or a Kubernetes cluster version 1.11 or higher for Tekton releases before v0.11.0.
-- To run a CI/CD workflow, you need to provide Tekton a Persistent Volume for storage purposes. Tekton requires a volume of `5Gi` with the default storage class. Please visit Tekton [Persistent Volumes](https://tekton.dev/docs/getting-started/#persistent-volumes) section from the official documentation for more information.
+- To run a CI/CD workflow, you need to provide Tekton a Persistent Volume for storage purposes. The PV is required if you want to share artifacts or other pipelines resources between your tasks. A volume of `5Gi` with the default storage class is sufficient as a starting point. Please visit Tekton [Persistent Volumes](https://tekton.dev/docs/getting-started/#persistent-volumes) section from the official documentation for more information.
 
 ## Software Included
 
