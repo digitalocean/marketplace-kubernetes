@@ -27,7 +27,7 @@ Below is a diagram depicting a more complete example for an NGINX based setup:
 
 | Package | Application Version | Helm Chart Version | License |
 |---------|---------------------|--------------------| ------- |
-| NGINX Ingress Controller | 1.1.0 | [4.0.13](https://github.com/kubernetes/ingress-nginx/tree/helm-chart-4.0.13/charts/ingress-nginx)  | [Apache 2.0](https://github.com/kubernetes/ingress-nginx/blob/main/LICENSE) |
+| NGINX Ingress Controller | v1.2.0-beta.1 | [4.1.0-beta.1](https://github.com/kubernetes/ingress-nginx/tree/helm-chart-4.1.0-beta.1/charts/ingress-nginx)  | [Apache 2.0](https://github.com/kubernetes/ingress-nginx/blob/main/LICENSE) |
 
 ## Getting Started
 
@@ -46,8 +46,8 @@ helm ls -n ingress-nginx
 The output looks similar to the following:
 
 ```text
-NAME            NAMESPACE       REVISION        UPDATED                                 STATUS          CHART                   APP VERSION
-ingress-nginx   ingress-nginx   1               2022-02-14 12:04:06.670028 +0200 EET    deployed        ingress-nginx-4.0.13    1.1.0 
+NAME         	NAMESPACE    	REVISION	UPDATED                             	STATUS  	CHART                     	APP VERSION
+ingress-nginx	ingress-nginx	1       	2022-04-18 18:12:41.623665 -0400 EDT	deployed	ingress-nginx-4.1.0-beta.1	1.2.0-beta.1
 ```
 
 The `STATUS` column value should be `deployed`.
@@ -92,13 +92,13 @@ The NGINX Ingress stack provides some custom values to start with. See the [valu
 You can inspect all the available options, as well as the default values for the NGINX Ingress Helm chart by running the following command:
 
 ```console
-helm show values ingress-nginx/ingress-nginx --version 4.0.13
+helm show values ingress-nginx/ingress-nginx --version 4.1.0-beta.1
 ```
 
 After customizing the Helm values file (`values.yml`), you can apply the changes via `helm upgrade` command, as shown below:
 
 ```console
-helm upgrade ingress-nginx ingress-nginx/ingress-nginx --version 4.0.13 \
+helm upgrade ingress-nginx ingress-nginx/ingress-nginx --version 4.1.0-beta.1 \
   --namespace ingress-nginx \
   --values values.yml
 ```
