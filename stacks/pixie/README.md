@@ -21,7 +21,7 @@ You must have either:
 
 ### Deploying
 
-1. From the Pixie Cloud UI. Go to Admin > Deployment Keys > New Key. If using [Pixie's CLI](https://docs.px.dev/using-pixie/using-cli/), run `px api-key create`.
+1. From the Pixie Cloud UI. Go to Admin > Deployment Keys > New Key. If using [Pixie's CLI](https://docs.px.dev/using-pixie/using-cli/), run `px deploy-key create`.
 2. Update `deployKey` in `values.yml` with the deployKey from above.
 3. Run `deploy.sh`. 
 
