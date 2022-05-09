@@ -2,25 +2,34 @@
 
 set -e
 
-# create namespace
-cat <<EOF | kubectl apply -f -
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: argocd
-EOF
+################################################################################
+# repo
+################################################################################
+helm repo add argo https://argoproj.github.io/argo-helm
+helm repo update > /dev/null
 
-# set kubectl namespace
-kubectl config set-context --current --namespace=argocd
+################################################################################
+# chart
+################################################################################
+STACK="argocd"
+CHART="argo/argo-cd"
+CHART_VERSION="4.2.1"
+NAMESPACE="argocd"
 
-# deploy argocd
-kubectl apply -f https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/src/argocd/1.2.5/argocd.yaml
+if [ -z "${MP_KUBERNETES}" ]; then
+  # use local version of values.yml
+  ROOT_DIR=$(git rev-parse --show-toplevel)
+  values="$ROOT_DIR/stacks/argocd/values.yml"
+else
+  # use github hosted master version of values.yml
+  values="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/argocd/values.yml"
+fi
 
-# add the DigitalOcean LBaaS LoadBalancer
-kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
-
-# ensure services are running
-kubectl get deployments -o custom-columns=NAME:.metadata.name | tail -n +2 | while read -r line
-do
-  kubectl rollout status -w deployment/"$line"
-done
+helm upgrade "$STACK" "$CHART" \
+  --atomic \
+  --create-namespace \
+  --install \
+  --timeout 8m0s \
+  --namespace "$NAMESPACE" \
+  --values "$values" \
+  --version "$CHART_VERSION"

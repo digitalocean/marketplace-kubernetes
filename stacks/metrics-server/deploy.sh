@@ -2,29 +2,19 @@
 
 set -e
 
-# check if metrics-server is already installed
-CHECK=$(kubectl get svc metrics-server -n kube-system --ignore-not-found)
-if [ "$CHECK" = "" ]
-then
-  echo "metrics-server not found"
-else
-  echo "metrics-server found, exiting"
-  exit 0
-fi
-
 ################################################################################
 # repo
 ################################################################################
-helm repo add bitnami https://charts.bitnami.com/bitnami
+helm repo add metrics-server https://kubernetes-sigs.github.io/metrics-server
 helm repo update > /dev/null
 
 ################################################################################
 # chart
 ################################################################################
 STACK="metrics-server"
-CHART="bitnami/metrics-server"
-CHART_VERSION="5.10.5"
-NAMESPACE="kube-system"
+CHART="metrics-server/metrics-server"
+CHART_VERSION="3.8.2"
+NAMESPACE="metrics-server"
 
 if [ -z "${MP_KUBERNETES}" ]; then
   # use local version of values.yml
@@ -37,7 +27,9 @@ fi
 
 helm upgrade "$STACK" "$CHART" \
   --atomic \
+  --create-namespace \
   --install \
+  --timeout 8m0s \
   --namespace "$NAMESPACE" \
   --values "$values" \
   --version "$CHART_VERSION"

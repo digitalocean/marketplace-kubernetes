@@ -2,6 +2,12 @@
 
 set -e
 
-kubectl delete -n kapp-tekton app tekton
-kubectl delete clusterrolebinding kapp-tekton-deployer-admin
-kubectl delete namespace kapp-tekton
+################################################################################
+# chart
+################################################################################
+STACK="tekton-pipeline"
+NAMESPACE="tekton-pipelines"
+
+
+helm uninstall "$STACK" \
+  --namespace "$NAMESPACE"
