@@ -17,7 +17,6 @@ LATEST="$(helm show chart triliovault-operator/k8s-triliovault-operator | grep a
 echo "Upgrading TVK to latest version: $LATEST"
 CHART_VERSION=$LATEST
 NAMESPACE="tvk"
-#HOME=$ROOT_DIR
 
 # Upgrade triliovault operator
 echo "Upgrading Triliovault operator..."
