@@ -13,6 +13,10 @@ helm repo update > /dev/null
 ################################################################################
 STACK="triliovault-operator"
 CHART="triliovault-operator/k8s-triliovault-operator"
+
+ROOT_DIR=$(git rev-parse --show-toplevel)
+TVK_PATH="$ROOT_DIR/stacks/$STACK"
+
 LATEST="$(helm show chart triliovault-operator/k8s-triliovault-operator | grep appVersion | awk -F ':' '{gsub(/ /,""); print $2 }')"
 echo "Upgrading TVK to latest version: $LATEST"
 CHART_VERSION=$LATEST
@@ -24,8 +28,8 @@ echo "Upgrading Triliovault operator..."
 if [ -z "${MP_KUBERNETES}" ]; then
   # use local version of values.yml
   ROOT_DIR=$(git rev-parse --show-toplevel)
-  values="$ROOT_DIR/stacks/triliovault-operator/values.yml"
-  TVM="$ROOT_DIR/stacks/$STACK/triliovault-manager.yaml"
+  values="$TVK_PATH/values.yml"
+  TVM="$TVK_PATH/triliovault-manager.yaml"
 else
   # use github hosted master version of values.yml
   values="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/triliovault-operator/values.yml"

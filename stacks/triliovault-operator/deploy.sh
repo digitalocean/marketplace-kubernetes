@@ -13,6 +13,10 @@ helm repo update > /dev/null
 ################################################################################
 STACK="triliovault-operator"
 CHART="triliovault-operator/k8s-triliovault-operator"
+
+ROOT_DIR=$(git rev-parse --show-toplevel)
+TVK_PATH="$ROOT_DIR/stacks/$STACK"
+
 LATEST="$(helm show chart triliovault-operator/k8s-triliovault-operator | grep appVersion | awk -F ':' '{gsub(/ /,""); print $2 }')"
 echo "Installing TVK version: $LATEST"
 CHART_VERSION=$LATEST
@@ -27,8 +31,7 @@ echo "Installing TrilioVault operator and TrilioVault Manager with one-click ins
 
 if [ -z "${MP_KUBERNETES}" ]; then
   # use local version of values.yml
-  ROOT_DIR=$(git rev-parse --show-toplevel)
-  values="$ROOT_DIR/stacks/triliovault-operator/values.yml"
+  values="$TVK_PATH/values.yml"
 else
   # use github hosted master version of values.yml
   values="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/triliovault-operator/values.yml"
@@ -112,11 +115,11 @@ access_tvk_ui () {
 install_license () {
   #This module is use to install license
   echo "Installing Freetrial license..."
-  kubectl apply -f tvk_install_license.yaml --namespace "$NAMESPACE"
+  kubectl apply -f "$TVK_PATH/tvk_install_license.yaml" --namespace "$NAMESPACE"
   
   sleep 5
   echo "Verifying license generation job..."
-  until (kubectl get pods --namespace tvk -l "job-name=tvk-license-do" 2>/dev/null | grep Completed); do sleep 3; done
+  until (kubectl get pods --namespace "$NAMESPACE" -l "job-name=tvk-license-do" 2>/dev/null | grep Completed); do sleep 3; done
 
   echo "Verifying license status on namespace $NAMESPACE ..."
   lic_status=$(kubectl get license trilio-license --namespace $NAMESPACE -o 'jsonpath={.status.status}')
