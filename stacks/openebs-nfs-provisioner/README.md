@@ -23,9 +23,7 @@ The following diagram shows how OpenEBS Dynamic NFS Provisioner works on a Kuber
 
 You can connect to your DigitalOcean Kubernetes cluster by following our [how-to guide](https://www.digitalocean.com/docs/kubernetes/how-to/connect-to-cluster/).
 
-For additional instructions on configuring a [DigitalOcean Kubernetes](https://cloud.digitalocean.com/kubernetes/clusters/) cluster, see the following guides:
-
-- [How to Set Up a DigitalOcean Managed Kubernetes Cluster (DOKS)](https://github.com/digitalocean/Kubernetes-Starter-Kit-Developers/tree/main/01-setup-DOKS#how-to-set-up-a-digitalocean-managed-kubernetes-cluster-doks)
+For additional instructions on configuring a [DigitalOcean Kubernetes](https://cloud.digitalocean.com/kubernetes/clusters/) cluster, see the following [guide](https://github.com/digitalocean/Kubernetes-Starter-Kit-Developers/tree/main/01-setup-DOKS#how-to-set-up-a-digitalocean-managed-kubernetes-cluster-doks).
 
 ### Confirming that OpenEBS NFS Provisioner is Running
 
@@ -63,7 +61,7 @@ Horizontal pod autoscaling (HPA) is used to scale the WordPress Pods in a dynami
 
 You will configure the default Kubernetes Storage Class (do-block-storage) provided by DigitalOcean as the backend storage for the NFS provisioner. In that case, whichever application uses the newly created Storage Class, can consume shared storage (NFS) on a DigitalOcean volume using OpenEBS NFS provisioner.
 
-Create a YAML file `sc-rwx.yaml`:
+A typical YAML file for a StorageClass looks like the following:
 
 ```yaml
 ---
@@ -87,103 +85,17 @@ Explanations for the above configuration:
 - `provisioner` - defines what storage class is used for provisioning PVs (e.g. openebs.io/nfsrwx)
 - `reclaimPolicy` - dynamically provisioned volumes are automatically deleted when a user deletes the corresponding PersistentVolumeClaim
 
-Apply via kubectl:
-
-```console
-kubectl apply -f assets/manifests/sc-rwx.yaml
-```
-
-Verify that the StorageClass was created by executing the command below:
-
-```console
-kubectl get sc
-```
-
-The ouput looks similar to:
-
-```text
-NAME                         PROVISIONER                 RECLAIMPOLICY   VOLUMEBINDINGMODE   ALLOWVOLUMEEXPANSION   AGE
-do-block-storage (default)   dobs.csi.digitalocean.com   Delete          Immediate           true                   107m
-openebs-kernel-nfs           openebs.io/nfsrwx           Delete          Immediate           false                  84m
-rwx-storage                  openebs.io/nfsrwx           Delete          Immediate           false                  84m
-```
-
-Now, you have a new StorageClass named rwx-storage to dynamically provision shared volumes on top of DigitalOcean Block Storage.
-
-When enabling persistance for a Wordpress installation the storage class created above should be set.
-
-A typical Wordpress manifest:
+You would integrate this in a typical Wordpress manifest by adding the `storageClassName` in the  `persistence` block:
 
 ```yaml
-# WordPress service type
-service:
-  type: ClusterIP
-
+...
 # Enable persistence using Persistent Volume Claims
 persistence:
   enabled: true
   storageClassName: rwx-storage
   accessModes: ["ReadWriteMany"]
   size: 5Gi
-
-volumePermissions:
-  enabled: true
-
-replicaCount: 3
-
-# Prometheus Exporter / Metrics configuration
-metrics:
-  enabled: false
-
-# Level of auto-updates to allow. Allowed values: major, minor or none.
-wordpressAutoUpdateLevel: minor
-
-# Scheme to use to generate WordPress URLs
-wordpressScheme: https
-
-# WordPress credentials
-wordpressUsername: <YOUR_WORDPRESS_USER_NAME_HERE>
-wordpressPassword: <YOUR_WORDPRESS_USER_PASSSWORD_HERE>
-
-# External Database details
-externalDatabase:
-  host: <YOUR_WORDPRESS_MYSQL_DB_HOST_HERE>
-  port: 25060
-  user: <YOUR_WORDPRESS_MYSQL_DB_USER_NAME_HERE>
-  password: <YOUR_WORDPRESS_MYSQL_DB_USER_PASSWORD_HERE>
-  database: <YOUR_WORDPRESS_MYSQL_DB_NAME_HERE>
-
-# Disabling MariaDB
-mariadb:
-  enabled: false
-```
-
-After Wordpress would be installed you can check the PVCs created under the wordpress namespace, and associated OpenEBS volume under the openebs namespace:
-
-```console
-kubectl get pvc -A
-```
-
-The output looks similar to (notice the `RWX` access mode for the wordpress PVC, and the new storage class defined earlier via the openEBS NFS provisioner):
-
-```text
-NAMESPACE   NAME                                           STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS       AGE
-openebs     nfs-pvc-b505c0af-e6ab-4623-8ad1-1bad784261d5   Bound    pvc-d3f0c597-69ba-4710-bd7d-ed29ce41ce04   5Gi        RWO            do-block-storage   20m
-wordpress   wordpress                                      Bound    pvc-b505c0af-e6ab-4623-8ad1-1bad784261d5   5Gi        RWX            rwx-storage        20m
-```
-
-Verify the associated PVs created in the cluster:
-
-```console
-kubectl get pv
-```
-
-The ouput looks similar to:
-
-```text
-NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM                                                  STORAGECLASS       REASON   AGE
-pvc-b505c0af-e6ab-4623-8ad1-1bad784261d5   5Gi        RWX            Delete           Bound    wordpress/wordpress                                    rwx-storage                 23m
-pvc-d3f0c597-69ba-4710-bd7d-ed29ce41ce04   5Gi        RWO            Delete           Bound    openebs/nfs-pvc-b505c0af-e6ab-4623-8ad1-1bad784261d5   do-block-storage            23m
+...
 ```
 
 **Note:**
