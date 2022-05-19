@@ -2,7 +2,7 @@
 
 [Otomi](https://otomi.io/) is a self-hosted PaaS for kubernetes that integrates several technologies found in the CNCF landscape into a single installable package to provide direct value to developers.
 
-Otomi stack is 100% open source and community supported, and can be found at [redkubes/otomi-core](https://github.com/redkubes/otomi-core).
+Otomi is 100% open source and community supported, and can be found at [redkubes/otomi-core](https://github.com/redkubes/otomi-core).
 
 **Notes:**
 

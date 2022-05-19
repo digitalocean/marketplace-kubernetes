@@ -1,6 +1,6 @@
 #!/bin/sh
 
-set -e
+set -eu
 
 ################################################################################
 # repo
@@ -26,7 +26,6 @@ else
 fi
 
 helm upgrade "$STACK" "$CHART" \
-  --atomic \
   --create-namespace \
   --install \
   --timeout 8m0s \
