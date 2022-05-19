@@ -16,6 +16,7 @@ CHART="triliovault-operator/k8s-triliovault-operator"
 
 ROOT_DIR=$(git rev-parse --show-toplevel)
 TVK_PATH="$ROOT_DIR/stacks/$STACK"
+TVK_LICENSE_FILE="$TVK_PATH/tvk_install_license.yaml"
 
 LATEST="$(helm show chart triliovault-operator/k8s-triliovault-operator | grep appVersion | awk -F ':' '{gsub(/ /,""); print $2 }')"
 echo "Installing TVK version: $LATEST"
@@ -115,7 +116,7 @@ access_tvk_ui () {
 install_license () {
   #This module is use to install license
   echo "Installing Freetrial license..."
-  kubectl apply -f "$TVK_PATH/tvk_install_license.yaml" --namespace "$NAMESPACE"
+  kubectl apply -f "$TVK_LICENSE_FILE" --namespace "$NAMESPACE"
   
   sleep 5
   echo "Verifying license generation job..."
