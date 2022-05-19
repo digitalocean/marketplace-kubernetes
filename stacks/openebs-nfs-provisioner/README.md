@@ -99,7 +99,7 @@ persistence:
 ```
 
 **Note:**
-For more information on this setup please visit this [container-blueprint](https://github.com/digitalocean/container-blueprints/tree/main/DOKS-wordpress)
+For more information on this setup please visit the [DOKS-Wordpress](https://github.com/digitalocean/container-blueprints/tree/main/DOKS-wordpress) blueprint.
 
 ### Tweaking Helm Values
 
