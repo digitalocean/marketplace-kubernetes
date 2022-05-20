@@ -131,6 +131,4 @@ kubectl delete ns openebs-nfs-provisioner
 
 ### Additional Resources
 
-- [Documentation](https://openebs.io/docs)
-- [OpenEBS Community Resources](https://openebs.io/community)
-- [FAQ](https://openebs.io/faq)
+- [OpenEBS NFS provisioner GitHub page](https://github.com/openebs/dynamic-nfs-provisioner)
