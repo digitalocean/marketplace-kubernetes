@@ -59,33 +59,12 @@ DigitalOcean Block Storage Volumes are mounted as read-write by a single node (R
 
 Horizontal pod autoscaling (HPA) is used to scale the WordPress Pods in a dynamically StatefulSet, hence WordPress requires a [volume](https://kubernetes.io/docs/concepts/storage/volumes/) mounted as read-write by many nodes (RWX).
 
-You will configure the default Kubernetes Storage Class (do-block-storage) provided by DigitalOcean as the backend storage for the NFS provisioner. In that case, whichever application uses the newly created Storage Class, can consume shared storage (NFS) on a DigitalOcean volume using OpenEBS NFS provisioner.
+This installation also creates a `storage class` called `rwx-storage` to diynamically provision shared volumes on top of the default Kubernetes Storage Class (do-block-storage) provided by DigitalOcean as the backend storage for the NFS provisioner. In that case, whichever application uses the newly created Storage Class, can consume shared storage (NFS) on a DigitalOcean volume using OpenEBS NFS provisioner.
 
-A typical YAML file for a StorageClass looks like the following:
+**Note:**
+For more information about the `storage class` created please see its [manifest](./assets/manifests/sc-rwx.yaml) file from the main GitHub repository.
 
-```yaml
----
-apiVersion: storage.k8s.io/v1
-kind: StorageClass
-metadata:
-  name: rwx-storage
-  annotations: 
-    openebs.io/cas-type: nsfrwx
-    cas.openebs.io/config: |
-      - name: NSFServerType
-        value: "kernel"
-      - name: BackendStorageClass
-        value: "do-block-storage"
-provisioner: openebs.io/nfsrwx
-reclaimPolicy: Delete
-```
-
-Explanations for the above configuration:
-
-- `provisioner` - defines what storage class is used for provisioning PVs (e.g. openebs.io/nfsrwx)
-- `reclaimPolicy` - dynamically provisioned volumes are automatically deleted when a user deletes the corresponding PersistentVolumeClaim
-
-You would integrate this in a typical Wordpress manifest by adding the `storageClassName` in the  `persistence` block:
+You would integrate this in a typical Wordpress manifest by adding the `storageClassName` in the `persistence` block:
 
 ```yaml
 ...

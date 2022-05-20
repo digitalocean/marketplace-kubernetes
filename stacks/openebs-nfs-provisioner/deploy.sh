@@ -15,6 +15,7 @@ STACK="openebs-nfs-provisioner"
 CHART="openebs-nfs/nfs-provisioner"
 CHART_VERSION="0.9.0"
 NAMESPACE="openebs-nfs-provisioner"
+STORAGE_CLASS_MANIFEST="assets/manifests/sc-rwx.yaml"
 
 if [ -z "${MP_KUBERNETES}" ]; then
   # use local version of values.yml
@@ -33,3 +34,5 @@ helm upgrade "$STACK" "$CHART" \
   --namespace "$NAMESPACE" \
   --values "$values" \
   --version "$CHART_VERSION"
+
+kubectl apply -f "$STORAGE_CLASS_MANIFEST"
