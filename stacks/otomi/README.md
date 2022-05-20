@@ -1,8 +1,44 @@
-# Description
+<h1 align="center">
+  <img src="https://otomi.io/img/otomi-logo.svg" width="224px"/><br/>
+  Self-hosted PaaS for Kubernetes
+</h1>
+<p align="center"><b>Deploy your apps fast and safe on any Kubernetes cluster in any cloud</b></p>
 
-[Otomi](https://otomi.io/) is a self-hosted PaaS for kubernetes that integrates several technologies found in the CNCF landscape into a single installable package to provide direct value to developers.
+## Description
 
-Otomi is 100% open source and community supported, and can be found at [redkubes/otomi-core](https://github.com/redkubes/otomi-core).
+[Otomi](https://github.com/redkubes/otomi-core) brings a PaaS experience to Kubernetes without the constraints and abstractions.
+
+No more reinventing the wheel when building and maintaining your own K8s based (developer) platform.
+
+---
+
+### Otomi Features 🎉  
+
+✅  Drag and Drop popular `open-source` apps to create your own preferred suite
+
+✅  GitOps with `Argo CD` out-of-the-box
+
+✅  Advanced ingress architecture. Expose services with just a few clicks
+
+✅  Configure `network policies` for internal ingress and external egress
+
+✅  Deploy `Knative` serverless workloads without writing any YAML
+
+✅  Create and manage `secrets` in HashiCorp Vault and use them in your workloads
+
+✅  Create Kubernetes `Jobs` and `Cron Jobs` without writing any YAML
+
+✅  `Role-based access` to all integrated applications based on group membership
+
+✅  Policy enforcement based on a default set of `security policies`
+
+✅  Direct access to `logs and metrics` of your deployed workloads
+
+✅  Onboard new development teams or projects within minutes in a comprehensive `multi-tenant` setup
+
+✅  Make development teams `self-serving` by providing access to predefined automation tasks
+
+✅  Bring your favorite `IdP, DNS and/or CA`
 
 **Notes:**
 
@@ -77,7 +113,7 @@ NOTE:
   ```bash
   # On Mac
   sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain ~/Downloads/ca.crt
-  # Restart the browser 
+  # Restart the browser or open it in private mode
   ```  
 
   ```powershell
@@ -86,30 +122,23 @@ NOTE:
   certutil.exe -addstore root <downloaded cert path>
   # Or 
   Import-Certificate -FilePath "<downloaded cert path>" -CertStoreLocation Cert:\LocalMachine\Root
-  # Restart the browser 
+  # Restart the browser or open it in private mode
   ```
 
 ### Post-install configurations
 
 - In the side menu of Otomi Console under `Platform`, select `Apps` and click on the **Drone** app
-- Click on the `play` button in the top right. A new tab will open for Drone
-- Sign in locally with as `otomi-admin` and the password provided in the logs of the installer job.
+- Click on the `play` button in the top right. A new tab will open for Drone and click `CONTINUE`
+- Sign in locally with as `otomi-admin` and the `password` provided in the logs of the installer job.
 - Click on `Authorize Application`
-- Click on `Submit on the Complete your Drone Registration page. You don't need to fill in your Email, Full Name or Company Name if you don't want to
+- Click on `SUBMIT` on the Complete your Drone Registration page. You don't need to fill in your Email, Full Name or Company Name if you don't want to
 - Click on the `otomi/values` repository
-- Click on `+ Activate Repository`
+- Click on `+ ACTIVATE REPOSITORY`
 
 <img src="./img/otomi-drone-activate.gif" alt="activate drone" width="1080" height="570"/>
 
-### Upgrading Otomi
-
-To be done
-
-### Uninstalling Otomi
-
-To be done
-
+Now head to the [workshops](https://github.com/redkubes/workshops) to explore Otomi through a series of hands-on labs. 
 ### Additional Resources
 
-- [Workshops: Explore Otomi through series of hands-on labs](https://github.com/redkubes/workshops)
 - [Otomi Documentation](https://otomi.io/docs/installation/)
+- [Otomi Slack](https://otomi.slack.com/ssb/redirect#/shared-invite/email)
