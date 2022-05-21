@@ -15,7 +15,7 @@ STACK="openebs-nfs-provisioner"
 CHART="openebs-nfs/nfs-provisioner"
 CHART_VERSION="0.9.0"
 NAMESPACE="openebs-nfs-provisioner"
-STORAGE_CLASS_MANIFEST="assets/manifests/sc-rwx.yaml"
+STORAGE_CLASS_MANIFEST="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/openebs-nfs-provisioner/assets/manifests/sc-rwx.yaml"
 
 if [ -z "${MP_KUBERNETES}" ]; then
   # use local version of values.yml
