@@ -8,32 +8,32 @@
 
 [Otomi](https://github.com/redkubes/otomi-core) brings a full PaaS experience to Kubernetes without any constraints or abstractions on top of the tools you already love and use. No more reinventing the wheel when building and maintaining your own Kubernetes based (developer) platform.
 
-It consists out of a complete suite of pre-configured, integrated and automated applications for Kubernetes (like Istio, Knative, Harbor, Prometheus, Argo CD), combined with developer self-service, and offered as a single installable package.
+It consists of a complete suite of pre-configured, integrated and automated applications for Kubernetes (like Istio, Knative, Harbor, Prometheus, Argo CD), combined with developer self-service, and offered as a single installable package.
 
 **Core features**
 
-1. Drag and Drop popular open-source apps to create your own preferred suite
-2. An advanced ingress architecture. Expose services with just a few clicks
-3. Configure network policies for internal ingress and external egress
-4. Create Kubernetes Jobs and Cron Jobs without writing any YAML
-5. Onboard (development) teams or projects within minutes in a comprehensive multi-tenant setup
-6. Make developers self-serving by providing access to predefined automation tasks
+- Drag and Drop popular open-source apps to create your preferred suite
+- An advanced ingress architecture. Expose services with just a few clicks
+- Configure network policies for internal ingress and external egress
+- Create Kubernetes Jobs and Cron Jobs without writing any YAML
+- Onboard (development) teams or projects within minutes in a comprehensive multi-tenant setup
+- Make developers self-serving by providing access to predefined automation tasks
 
 **Optional (if app is activated)**
 
-1. Deploy serverless workloads without writing any YAML
-2. Create and manage secrets in HashiCorp Vault and use them in your workloads
-3. GitOps with Argo CD out-of-the-box
-4. Policy enforcement based on a default set of security policies
-5. Full observability based on Prometheus, Grafana, Loki and Alert manager
-6. Store images in Harbor
+- Deploy serverless workloads without writing any YAML
+- Create and manage secrets in HashiCorp Vault and use them in your workloads
+- GitOps with Argo CD out-of-the-box
+- Policy enforcement is based on a default set of security policies
+- Full observability based on Prometheus, Grafana, Loki and Alert manager
+- Store images in Harbor
 <!-- 7. Runtime container vulnerability scanning -->
 
 **Notes:**
 
 - This stack requires a minimum configuration of 4 nodes at the $0.13/hour plan (2.5GB memory/2 vCPUs)
 - If you have access to `professional plans`, then we recommend using a configuration of 3 nodes at the $0.19/hour plan (6 GB/ 4vCPUs)
-- Otomi is installed with a auto generated CA and uses the public IP of the load balancer with nip.io for all hostnames. See the Otomi [documentation](https://otomi.io/docs/installation/optional) for advanced configurations using DNS, value encryption, Let's Encrypt and Azure Active Directory as IdP.
+- Otomi is installed with an auto-generated CA and uses the public IP of the load balancer with nip.io for all hostnames. See the Otomi [documentation](https://otomi.io/docs/installation/optional) for advanced configurations using DNS, value encryption, Let's Encrypt and Azure Active Directory as IdP.
 
 ## Software included
 
@@ -88,7 +88,7 @@ The output looks similar to the following:
 
   <img src="./img/otomi-console-login.png" alt="otomi console login" width="1080" height="570" align="center"/>
 
-- Add the auto generated CA to your keychain/credential manager (optional)
+- Add the auto-generated CA to your keychain/credential manager (optional)
 
 <img src="./img/download-ca.png" alt="download ca" width="1080" height="570"/>
 
@@ -99,7 +99,7 @@ NOTE:
 ```
 
 - In the left menu of Otomi Console, click on "Download CA"
-- Double click the downloaded CA.crt or add the CA to your keychain on your mac using the following command:
+- Double click the downloaded `ca.crt` or add the CA to your keychain on your mac using the following command:
   
   ```bash
   # On Mac
