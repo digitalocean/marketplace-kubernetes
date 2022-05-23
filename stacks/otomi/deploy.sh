@@ -13,7 +13,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="otomi"
 CHART="otomi/otomi"
-CHART_VERSION="0.5.5"
+CHART_VERSION="0.5.6"
 NAMESPACE="default"
 
 if [ -z "${MP_KUBERNETES}" ]; then

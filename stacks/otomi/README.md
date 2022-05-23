@@ -20,25 +20,26 @@ It consists out of a complete suite of pre-configured, integrated and automated 
 6. Make developers self-serving by providing access to predefined automation tasks
 
 **Optional (if app is activated)**
+
 1. Deploy serverless workloads without writing any YAML
 2. Create and manage secrets in HashiCorp Vault and use them in your workloads
 3. GitOps with Argo CD out-of-the-box
 4. Policy enforcement based on a default set of security policies
 5. Full observability based on Prometheus, Grafana, Loki and Alert manager
 6. Store images in Harbor
-7. Runtime container vulnerability scanning
-
+<!-- 7. Runtime container vulnerability scanning -->
 
 **Notes:**
 
 - This stack requires a minimum configuration of 4 nodes at the $0.13/hour plan (2.5GB memory/2 vCPUs)
-- Otomi is installed with a auto generated CA and uses the public IP of the load balancer with nip.io for all hostnames. See the Otomi [documentaion](https://otomi.io/docs/installation/optional) for advanced configurations using DNS, value encryption, Let's Encrypt and Azure Active Directory as IdP.
+- If you have access to `professional plans`, then we recommend using a configuration of 3 nodes at the $0.19/hour plan (6 GB/ 4vCPUs)
+- Otomi is installed with a auto generated CA and uses the public IP of the load balancer with nip.io for all hostnames. See the Otomi [documentation](https://otomi.io/docs/installation/optional) for advanced configurations using DNS, value encryption, Let's Encrypt and Azure Active Directory as IdP.
 
 ## Software included
 
 | Package               | Application Version   |License                                                                                    |
 | ---| ---- | ------------- |
-| otomi | [v0.16.3](https://github.com/redkubes/otomi-core/releases/tag/v0.16.3) | [Apache 2.0](https://github.com/redkubes/otomi-core/blob/main/LICENSE) |
+| otomi | [v0.16.4](https://github.com/redkubes/otomi-core/releases/tag/v0.16.4) | [Apache 2.0](https://github.com/redkubes/otomi-core/blob/main/LICENSE) |
 
 ## Getting Started
 
@@ -128,6 +129,7 @@ NOTE:
 <img src="./img/otomi-drone-activate.gif" alt="activate drone" width="1080" height="570"/>
 
 Now head to the [workshops](https://github.com/redkubes/workshops) to explore Otomi through a series of hands-on labs. 
+
 ### Additional Resources
 
 - [Otomi Documentation](https://otomi.io/docs/installation/)
