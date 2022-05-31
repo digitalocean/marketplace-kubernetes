@@ -2,7 +2,7 @@
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
-  name: rwx-storage
+  name: nfs-rwx-storage
   annotations: 
     openebs.io/cas-type: nsfrwx
     cas.openebs.io/config: |
