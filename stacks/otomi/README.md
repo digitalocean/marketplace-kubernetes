@@ -39,7 +39,7 @@ It consists of a complete suite of pre-configured, integrated and automated appl
 
 | Package               | Application Version   |License                                                                                    |
 | ---| ---- | ------------- |
-| otomi | [v0.16.4](https://github.com/redkubes/otomi-core/releases/tag/v0.16.4) | [Apache 2.0](https://github.com/redkubes/otomi-core/blob/main/LICENSE) |
+| otomi | [v0.16.x](https://github.com/redkubes/otomi-core/releases/) | [Apache 2.0](https://github.com/redkubes/otomi-core/blob/main/LICENSE) |
 
 ## Getting Started
 
@@ -129,6 +129,12 @@ NOTE:
 <img src="./img/otomi-drone-activate.gif" alt="activate drone" width="1080" height="570"/>
 
 Now head to the [workshops](https://github.com/redkubes/workshops) to explore Otomi through a series of hands-on labs. 
+
+## Upgrade Instructions
+
+Upgrading to a new version of Otomi can be easily done via the `otomi-console` as shown in the picture below
+
+<img src="./img/otomi-upgrade.png" alt="upgrade-otomi" width="1080" height="570"/>
 
 ### Additional Resources
 
