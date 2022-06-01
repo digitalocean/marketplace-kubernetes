@@ -21,12 +21,12 @@ if [ -z "${MP_KUBERNETES}" ]; then
   ROOT_DIR=$(git rev-parse --show-toplevel)
   values="$ROOT_DIR/stacks/openebs-nfs-provisioner/values.yml"
   # use local version of sc-rwx.yaml
-  STORAGE_CLASS_MANIFEST="$ROOT_DIR/stacks/openebs-nfs-provisioner/assets/manifests/sc-rwx.yaml"
+  STORAGE_CLASS_MANIFEST="$ROOT_DIR/stacks/openebs-nfs-provisioner/assets/manifests/sc-nfs-rwx.yaml"
 else
   # use github hosted master version of values.yml
   values="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/openebs-nfs-provisioner/values.yml"
   # use github hosted master version of sc-rwx.yaml
-  STORAGE_CLASS_MANIFEST="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/openebs-nfs-provisioner/assets/manifests/sc-rwx.yaml"
+  STORAGE_CLASS_MANIFEST="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/openebs-nfs-provisioner/assets/manifests/sc-nfs-rwx.yaml"
 fi
 
 helm upgrade "$STACK" "$CHART" \

@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    test: nfs-share
+  name: nfs-share-test
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      test: nfs-share
+  template:
+    metadata:
+      labels:
+        test: nfs-share
+    spec:
+      volumes:
+        # NFS test volume
+        - name: nfs-share-test
+          persistentVolumeClaim:
+            claimName: nfs-pvc
+        # Downward API volume
+        # https://kubernetes.io/docs/tasks/inject-data-application/downward-api-volume-expose-pod-information/
+        - name: podinfo
+          downwardAPI:
+            items:
+              - path: "name"
+                fieldRef:
+                  fieldPath: metadata.name
+      containers:
+        - name: nfs-test-exec
+          image: k8s.gcr.io/busybox
+          args:
+            - /bin/sh
+            - -c
+            - while [ 1 ];
+              do echo "[$(date '+%Y-%m-%d %H:%M:%S')][NFS-RWX-TEST] NODE=$MY_NODE_NAME POD=$MY_POD_NAME POD_IP=$MY_POD_IP" >> /mnt/nfs-test/nfs-rwx.log;
+              sleep 10;
+              done
+          volumeMounts:
+            # Volume mount for testing NFS RWX
+            - name: nfs-share-test
+              mountPath: /mnt/nfs-test
+            # Mount for Downward API introspection
+            - name: podinfo
+              mountPath: /etc/podinfo
+          env:
+            - name: MY_POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: MY_POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: MY_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
