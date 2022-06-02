@@ -1,6 +1,8 @@
 # Description
 
-The [OpenEBS Dynamic NFS Provisioner](https://github.com/openebs/dynamic-nfs-provisioner) helps developers run Kubernetes [StatefulSets](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset), and provides fast and reliable [Container Attached Storage](https://openebs.io/docs/concepts/cas) support. The OpenEBS NFS implementation enables dynamic volume provisioning on top of the block storage of your cloud provider (e.g. [DigitalOcean Block Storage](https://www.digitalocean.com/products/block-storage)). Pods running on different nodes can access same data, thus you can use the [RWX access mode](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes) for persistent volumes.
+[OpenEBS Dynamic NFS PV Provisioner](https://github.com/openebs/dynamic-nfs-provisioner) helps developers easily deploy Kubernetes workloads that require fast and highly reliable shared NFS storage. It can be used to dynamically provision NFS Volumes using different kinds (local or network) of block storage available on the Kubernetes nodes. Using NFS Volumes, you can share volume data across the pods running on different node machines. You can easily create NFS Volumes using OpenEBS Dynamic NFS Provisioner and use it anywhere.
+
+Under the hood, the NFS provisioner runs a NFS server pod for each shared storage volume. It uses DigitalOcean block storage (do-block-storage) as the backing volume for NFS.
 
 **Note:**
 
@@ -8,7 +10,7 @@ This stack requires a minimum configuration of 2 Nodes at the $10/month plan (2G
 
 ## OpenEBS Dynamic NFS Provisioner Overview Diagram
 
-The following diagram shows how OpenEBS Dynamic NFS Provisioner works on a Kubernetes cluster in conjunction with a Wordpress deployment:
+The following diagram shows how OpenEBS Dynamic NFS Provisioner works on a Kubernetes cluster (based on the example used in the getting started section):
 
 ![OpenEBS Dynamic NFS Provisioner Overview](assets/images/arch_openebs.png)
 
@@ -18,15 +20,13 @@ The following diagram shows how OpenEBS Dynamic NFS Provisioner works on a Kuber
 | --------| ------------------- | ------------------ | ------- |
 | OpenEBS Dynamic NFS provisioner | [0.9.0](https://github.com/openebs/dynamic-nfs-provisioner/tree/v0.9.0/deploy/helm/charts) | [0.9.0](https://github.com/openebs/dynamic-nfs-provisioner/releases/tag/nfs-provisioner-0.9.0) | [Apache 2.0](https://github.com/openebs/dynamic-nfs-provisioner/blob/develop/LICENSE) |
 
-## Getting Started
-
 ### Connecting to Your Cluster
 
-You can connect to your DigitalOcean Kubernetes cluster by following the official [how-to guide](https://www.digitalocean.com/docs/kubernetes/how-to/connect-to-cluster/).
+You can connect to your DigitalOcean Kubernetes cluster by following our [how-to guide](https://www.digitalocean.com/docs/kubernetes/how-to/connect-to-cluster).
 
-For additional instructions on configuring a [DigitalOcean Kubernetes](https://cloud.digitalocean.com/kubernetes/clusters/) cluster, see the following [guide](https://github.com/digitalocean/Kubernetes-Starter-Kit-Developers/tree/main/01-setup-DOKS#how-to-set-up-a-digitalocean-managed-kubernetes-cluster-doks).
+For additional instructions on configuring a [DigitalOcean Kubernetes](https://cloud.digitalocean.com/kubernetes/clusters) cluster, see the following [guide](https://github.com/digitalocean/Kubernetes-Starter-Kit-Developers/tree/main/01-setup-DOKS#how-to-set-up-a-digitalocean-managed-kubernetes-cluster-doks).
 
-### Confirming OpenEBS NFS Provisioner is Running
+### Confirming that OpenEBS NFS Provisioner is Running
 
 First, verify that the Helm installation was successful by running following command:
 
@@ -38,53 +38,40 @@ If the installation was successful, the `STATUS` column value in the output read
 
 ```text
 NAME                    NAMESPACE               REVISION        UPDATED                                 STATUS          CHART                   APP VERSION
-openebs-nfs-provisioner openebs-nfs-provisioner 1               2022-05-17 10:08:02.345252 +0300 EEST   deployed        nfs-provisioner-0.9.0   0.9.0 
+openebs-nfs-provisioner openebs-nfs-provisioner 1               2022-05-17 10:08:02.345252 +0300 EEST   deployed        nfs-provisioner-0.9.0   0.9.0
 ```
 
-Next, verify that the `openebs-nfs-provisioner` Pod is up and running:
+Next, verify that the `openebs-nfs-provisioner` pod is up and running with the following command:
 
 ```console
 kubectl get pods --all-namespaces -l name=openebs-nfs-provisioner
 ```
 
-The output looks similar to:
+If it's running, the pod listed in the output are in a `READY` state and the `STATUS` reads `Running`:
 
 ```text
 NAMESPACE                 NAME                                       READY   STATUS    RESTARTS   AGE
 openebs-nfs-provisioner   openebs-nfs-provisioner-5cfd76f4fc-5k7wf   1/1     Running   0          11m
 ```
 
-All Pod(s) should be in a `Running` state.
+Finally, verify if the read-write storage class `nfs-rwx-storage` is created.
+
+```console
+kubectl get storageclass nfs-rwx-storage
+```
+
+This should result in an output as below:
+
+```text
+NAME              PROVISIONER         RECLAIMPOLICY   VOLUMEBINDINGMODE   ALLOWVOLUMEEXPANSION   AGE
+nfs-rwx-storage   openebs.io/nfsrwx   Delete          Immediate           false                  5d15h
+```
+
+Note that you can create your own storage class, and as many as you like. As a reference, here is the [manifest for the nfs-rwx-storage class](assets/manifests/sc-nfs-rwx.yaml).
 
 ### Testing RWX Access Mode for OpenEBS NFS Volumes
 
-To benefit from the OpenEBS NFS provisioner RWX functionality, you need to define a new storage class to dynamically provision NFS volumes on top of the DigitalOcean block storage (`do-block-storage`). Then, applications can use the new storage class for shared access of PVs.
-
-Below example shows a typical definition for the OpenEBS NFS storage class:
-
-```yaml
-apiVersion: storage.k8s.io/v1
-kind: StorageClass
-metadata:
-  name: nfs-rwx-storage
-  annotations: 
-    openebs.io/cas-type: nsfrwx
-    cas.openebs.io/config: |
-      - name: NSFServerType
-        value: "kernel"
-      - name: BackendStorageClass
-        value: "do-block-storage"
-provisioner: openebs.io/nfsrwx
-reclaimPolicy: Delete
-```
-
-Above configuration instructs OpenEBS to use `do-block-storage` as the `BackendStorageClass`, via the `cas.openebs.io/config` annotation.
-
-**Note:**
-
-You don't need to apply the above manifest by hand because it's already handled by the OpenEBS NFS Provisioner 1-click app.
-
-Next, you will create a new PVC referencing the OpenEBS `nfs-rwx-storage` class:
+First, you will create a new PVC referencing the OpenEBS `nfs-rwx-storage` class:
 
 ```yaml
 apiVersion: v1
@@ -127,7 +114,7 @@ Next, create the [nfs-share-test](assets/manifests/nfs-share-test.yaml) deployme
 kubectl apply -f https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/openebs-nfs-provisioner/assets/manifests/nfs-share-test.yaml
 ```
 
-Above manifest will create the `nfs-share-test` deployment with a replica count of 3, and mounts same volume (`nfs-share-test`) for all pods to consume. Then, the Kubernetes [Downward API]( https://kubernetes.io/docs/tasks/inject-data-application/downward-api-volume-expose-pod-information) is used to read each Pod metadata (such as Node name, Pod Name/IP), and write the details in a single log file from the NFS share (`/mnt/nfs-test/nfs-rwx.log`).
+Above manifest will create the `nfs-share-test` deployment with a replica count of 3, and mounts same volume (`nfs-share-test`) for all pods to consume. Then, the Kubernetes [Downward API](https://kubernetes.io/docs/tasks/inject-data-application/downward-api-volume-expose-pod-information) is used to read each Pod metadata (such as Node name, Pod Name/IP), and write the details in a single log file from the NFS share (`/mnt/nfs-test/nfs-rwx.log`).
 
 Now, inspect `nfs-share-test` deployment Pods status:
 
@@ -165,16 +152,134 @@ The output looks similar to:
 ...
 ```
 
-Each pod should be able to write to the same log file (`nfs-rwx.log`), and publish its metadata each 10 seconds.
+Each pod should be able to write to the same log file (`nfs-rwx.log`), and publish its metadata each 10 seconds. This confirms that NFS storage is working.
+
+To delete the test application, use the following. However, keep the applications running if you want to further explore the failure cases in the section below.
+
+```shell
+kubectl delete -f https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/openebs-nfs-provisioner/assets/manifests/nfs-pvc.yaml
+kubectl delete -f https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/openebs-nfs-provisioner/assets/manifests/nfs-share-test.yaml
+```
+
+### Failure Cases for NFS provisioner
+
+Note the nfs-pvc-* pod name in openebs-nfs-provisioner namespace. This pod is running the NFS server, which is sharing the nfs-pvc volume.
+
+```text
+~ kubectl get pods -n openebs-nfs-provisioner -o wide
+NAME                                                            READY   STATUS    RESTARTS     AGE    IP             NODE                   NOMINATED NODE   READINESS GATES
+nfs-pvc-509d7613-b141-4edd-b0d5-59ae9f2a0eb3-5c49b6d9f6-7rhw2   1/1     Running   0            153m   10.244.0.109   pool-vc6axdi2c-ct7j3   <none>           <none>
+openebs-nfs-provisioner-5cfd76f4fc-47xls                        1/1     Running   1 (8h ago)   8h     10.244.1.157   pool-vc6axdi2c-ct7x4   <none>           <none>
+```
+
+You can see how this is a single point of failure. Two obvious failure scenarios are:
+
+- The nfs-pvc-* pod itself is terminated unexpectedly.
+- The underlying node of nfs-pvc-* pod is terminated. Note that if the underlying node is drained, then the nfs server pod will have a chance to reschedule, hence minimizing the impact.
+
+How do we determine the NFS server outage when any of the above happen? We can use the same application from the above section, and watch the time gap in the logs because of the incident. In the normal scenario, data is read and logs are written for every pod in 10 sec interval:
+
+```text
+~ kubectl exec -it deployments/nfs-share-test -- tail -f /mnt/nfs-test/nfs-rwx.log
+
+[2022-06-01 08:36:16][NFS-RWX-TEST] NODE=pool-vc6axdi2c-ct7x4 POD=nfs-share-test-67bf984f88-2qw6q POD_IP=10.244.1.247
+[2022-06-01 08:36:19][NFS-RWX-TEST] NODE=pool-vc6axdi2c-ct7j3 POD=nfs-share-test-67bf984f88-nxbrg POD_IP=10.244.0.82
+[2022-06-01 08:36:25][NFS-RWX-TEST] NODE=pool-vc6axdi2c-cezr9 POD=nfs-share-test-67bf984f88-56sxz POD_IP=10.244.1.120
+[2022-06-01 08:36:26][NFS-RWX-TEST] NODE=pool-vc6axdi2c-ct7x4 POD=nfs-share-test-67bf984f88-2qw6q POD_IP=10.244.1.247
+[2022-06-01 08:36:29][NFS-RWX-TEST] NODE=pool-vc6axdi2c-ct7j3 POD=nfs-share-test-67bf984f88-nxbrg POD_IP=10.244.0.82
+[2022-06-01 08:36:35][NFS-RWX-TEST] NODE=pool-vc6axdi2c-cezr9 POD=nfs-share-test-67bf984f88-56sxz POD_IP=10.244.1.120
+[2022-06-01 08:36:36][NFS-RWX-TEST] NODE=pool-vc6axdi2c-ct7x4 POD=nfs-share-test-67bf984f88-2qw6q POD_IP=10.244.1.247
+[2022-06-01 08:36:39][NFS-RWX-TEST] NODE=pool-vc6axdi2c-ct7j3 POD=nfs-share-test-67bf984f88-nxbrg POD_IP=10.244.0.82
+[2022-06-01 08:36:45][NFS-RWX-TEST] NODE=pool-vc6axdi2c-cezr9 POD=nfs-share-test-67bf984f88-56sxz POD_IP=10.244.1.120
+```
+
+Now, kill the nfs-pvc-* pod, and watch the gap in the logs. In this particular test, you can see ~90 seconds of delay for NFS server to be fully functional after getting killed:
+
+```text
+[2022-06-01 08:37:56][NFS-RWX-TEST] NODE=pool-vc6axdi2c-ct7x4 POD=nfs-share-test-67bf984f88-2qw6q POD_IP=10.244.1.247
+[2022-06-01 08:37:59][NFS-RWX-TEST] NODE=pool-vc6axdi2c-ct7j3 POD=nfs-share-test-67bf984f88-nxbrg POD_IP=10.244.0.82
+[2022-06-01 08:38:05][NFS-RWX-TEST] NODE=pool-vc6axdi2c-cezr9 POD=nfs-share-test-67bf984f88-56sxz POD_IP=10.244.1.120
+[2022-06-01 08:38:06][NFS-RWX-TEST] NODE=pool-vc6axdi2c-ct7x4 POD=nfs-share-test-67bf984f88-2qw6q POD_IP=10.244.1.247
+[2022-06-01 08:38:09][NFS-RWX-TEST] NODE=pool-vc6axdi2c-ct7j3 POD=nfs-share-test-67bf984f88-nxbrg POD_IP=10.244.0.82
+[2022-06-01 08:38:15][NFS-RWX-TEST] NODE=pool-vc6axdi2c-cezr9 POD=nfs-share-test-67bf984f88-56sxz POD_IP=10.244.1.120
+[2022-06-01 08:38:25][NFS-RWX-TEST] NODE=pool-vc6axdi2c-cezr9 POD=nfs-share-test-67bf984f88-56sxz POD_IP=10.244.1.120
+[2022-06-01 08:40:11][NFS-RWX-TEST] NODE=pool-vc6axdi2c-ct7j3 POD=nfs-share-test-67bf984f88-nxbrg POD_IP=10.244.0.82
+[2022-06-01 08:40:14][NFS-RWX-TEST] NODE=pool-vc6axdi2c-cezr9 POD=nfs-share-test-67bf984f88-56sxz POD_IP=10.244.1.120
+```
+
+Now, kill the underlying node (go to droplet page in your cloud console and kill the droplet directly). Around 7 minutes of downtime is expected for tests. Also, note that the NFS server has to be restarted as well, as it kept waiting for the volume to be available:
+
+```text
+[2022-06-01 08:47:04][NFS-RWX-TEST] NODE=pool-vc6axdi2c-cezr9 POD=nfs-share-test-67bf984f88-56sxz POD_IP=10
+[2022-06-01 08:47:14][NFS-RWX-TEST] NODE=pool-vc6axdi2c-cezr9 POD=nfs-share-test-67bf984f88-56sxz POD_IP=10
+[2022-06-01 08:47:23][NFS-RWX-TEST] NODE=pool-vc6axdi2c-ct7x4 POD=nfs-share-test-67bf984f88-2qw6q POD_IP=10
+[2022-06-01 08:54:56][NFS-RWX-TEST] NODE=pool-vc6axdi2c-ct7x4 POD=nfs-share-test-67bf984f88-jlstx POD_IP=10
+[2022-06-01 08:56:47][NFS-RWX-TEST] NODE=pool-vc6axdi2c-cezr9 POD=nfs-share-test-67bf984f88-56sxz POD_IP=10
+[2022-06-01 08:56:47][NFS-RWX-TEST] NODE=pool-vc6axdi2c-ct7x4 POD=nfs-share-test-67bf984f88-2qw6q POD_IP=10
+[2022-06-01 08:56:48][NFS-RWX-TEST] NODE=pool-vc6axdi2c-ct7x4 POD=nfs-share-test-67bf984f88-jlstx POD_IP=10
+[2022-06-01 08:56:57][NFS-RWX-TEST] NODE=pool-vc6axdi2c-cezr9 POD=nfs-share-test-67bf984f88-56sxz POD_IP=10
+```
+
+**It is very important to be aware of the the service impact due to these unexpected events, and design your application accordingly.**
+
+### Benchmarking OpenEBS NFS Performance
+
+Benchmarking is subjective and dependent on your specific needs. For example, if you are storing 2MB+ size files on your NFS server, then benchmarking for 4K sized blocks is not appropriate. Saying this, a good comparison benchmark would be the overhead created by NFS server vs. DigitalOcean block storage. A well-known tool is [fio](https://github.com/axboe/fio). [Kubestr](https://github.com/kastenhq/kubestr) provides a CLI-based wrapper for using fio on Kubernetes. Download kubestr to your laptop, and you can benchmark any storage class with just one command with the default fio configuration:
+
+```text
+~ kubestr fio -s rwx-storage -z 50Gi 
+PVC created kubestr-fio-pvc-87mg8
+Pod created kubestr-fio-pod-wjtnn
+Running FIO test (default-fio) on StorageClass (rwx-storage) with a PVC of Size (50Gi)
+Elapsed time- 2m1.099989659s
+FIO test results:
+
+FIO version - fio-3.20
+Global options - ioengine=libaio verify=0 direct=1 gtod_reduce=1
+
+JobName: read_iops
+  blocksize=4K filesize=2G iodepth=64 rw=randread
+read:
+  IOPS=1086.609985 BW(KiB/s)=4363
+  iops: min=554 max=1934 avg=1090.666626
+  bw(KiB/s): min=2216 max=7736 avg=4362.666504
+
+JobName: write_iops
+  blocksize=4K filesize=2G iodepth=64 rw=randwrite
+write:
+  IOPS=1085.600220 BW(KiB/s)=4359
+  iops: min=554 max=1938 avg=1088.033325
+  bw(KiB/s): min=2216 max=7752 avg=4352.133301
+
+JobName: read_bw
+  blocksize=128K filesize=2G iodepth=64 rw=randread
+read:
+  IOPS=1086.641846 BW(KiB/s)=139625
+  iops: min=554 max=1940 avg=1090.833374
+  bw(KiB/s): min=70912 max=248320 avg=139626.671875
+
+JobName: write_bw
+  blocksize=128k filesize=2G iodepth=64 rw=randwrite
+write:
+  IOPS=1087.179199 BW(KiB/s)=139695
+  iops: min=552 max=1936 avg=1089.833374
+  bw(KiB/s): min=70656 max=247808 avg=139501.406250
+
+Disk stats (read/write):
+  -  OK
+~
+```
+
+You can repeat similar command for do-block-storage.
 
 ### Tweaking Helm Values
 
-The OpenEBS dynamic NFS provisioner stack provides some custom values to start with. Please have a look at the [values](./values.yml) file from the main GitHub repository.
+The OpenEBS dynamic NFS provisioner stack provides some custom values to start with. Please have a look at the [values](values.yml) file from the main GitHub repository.
 
 You can always inspect all the available options, as well as the default values for the OpenEBS dynamic NFS provisioner Helm chart by running below command:
 
 ```console
-helm show values helm show values openebs-nfs/nfs-provisioner --version 0.9.0 --version 0.9.0
+helm show values openebs-nfs/nfs-provisioner --version 0.9.0 --version 0.9.0
 ```
 
 After tweaking the Helm values file (`values.yml`) according to your needs, you can always apply the changes via `helm upgrade` command, as shown below:
@@ -189,7 +294,7 @@ helm upgrade openebs-nfs-provisioner openebs-nfs/nfs-provisioner --version 0.9.0
 
 You can check what versions are available to upgrade by navigating to the [openebs/dynamic-nfs-provisioner](https://github.com/openebs/dynamic-nfs-provisioner) official releases page from GitHub.
 
-To upgrade the stack to a newer version, run the following command, replacing the `< >` placeholders with their corresponding information:
+To upgrade the stack to a newer version, run the following command, replacing the `<>` placeholders with their corresponding information:
 
 ```console
 helm upgrade openebs-nfs-provisioner openebs-nfs/nfs-provisioner \
@@ -198,7 +303,7 @@ helm upgrade openebs-nfs-provisioner openebs-nfs/nfs-provisioner \
   --values <YOUR_HELM_VALUES_FILE>
 ```
 
-See [helm upgrade](https://helm.sh/docs/helm/helm_upgrade/) for command documentation.
+See [helm upgrade](https://helm.sh/docs/helm/helm_upgrade) for command documentation.
 
 ## Uninstalling OpenEBS NFS Provisioner Stack
 
