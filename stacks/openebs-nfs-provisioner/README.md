@@ -207,7 +207,7 @@ Now, kill the nfs-pvc-* pod, and watch the gap in the logs. In this particular t
 [2022-06-01 08:40:14][NFS-RWX-TEST] NODE=pool-vc6axdi2c-cezr9 POD=nfs-share-test-67bf984f88-56sxz POD_IP=10.244.1.120
 ```
 
-Now, kill the underlying node (go to droplet page in your cloud console and kill the droplet directly). Around 7 minutes of downtime is expected for tests. Also, note that the NFS server has to be restarted as well, as it kept waiting for the volume to be available:
+Now, kill the underlying node (go to droplet page in your cloud console and kill the droplet directly). Around 4-7 minutes of downtime is expected in this failure scenario. In one particular test, the NFS server has to be restarted as well, as it kept waiting for the volume to be available. 
 
 ```text
 [2022-06-01 08:47:04][NFS-RWX-TEST] NODE=pool-vc6axdi2c-cezr9 POD=nfs-share-test-67bf984f88-56sxz POD_IP=10
