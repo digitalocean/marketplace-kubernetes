@@ -224,7 +224,7 @@ Now, kill the underlying node (go to droplet page in your cloud console and kill
 
 ### Benchmarking OpenEBS NFS Performance
 
-Benchmarking is subjective and dependent on your specific needs. For example, if you are storing 2MB+ size files on your NFS server, then benchmarking for 4K sized blocks is not appropriate. Saying this, a good comparison benchmark would be the overhead created by NFS server vs. DigitalOcean block storage. A well-known tool is [fio](https://github.com/axboe/fio). [Kubestr](https://github.com/kastenhq/kubestr) provides a CLI-based wrapper for using fio on Kubernetes. Download kubestr to your laptop, and you can benchmark any storage class with just one command with the default fio configuration:
+Benchmarking is subjective (iops, throughput, and latency for different configurations) and dependent on your specific needs. For example, if you are storing 2MB+ size files on your NFS server, then benchmarking for 4K sized blocks is not appropriate. Saying this, a good starter benchmark would be to do a basic measurement and be aware of the limits. A well-known tool is [fio](https://github.com/axboe/fio). [Kubestr](https://github.com/kastenhq/kubestr) provides a CLI-based wrapper for using fio on Kubernetes. Download kubestr to your laptop, and you can benchmark any storage class with just one command with the default fio configuration:
 
 ```text
 ~ kubestr fio -s rwx-storage -z 50Gi 
@@ -270,7 +270,6 @@ Disk stats (read/write):
 ~
 ```
 
-You can repeat similar command for do-block-storage.
 
 ### Tweaking Helm Values
 
