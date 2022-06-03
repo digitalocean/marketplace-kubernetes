@@ -144,6 +144,6 @@ NOTE:
 
 ### Additional Resources
 
-- [Otomi Documentation](https://otomi.io/docs/installation/)cc
+- [Otomi Documentation](https://otomi.io/docs/installation/)
 - [Otomi Slack](https://otomi.slack.com/ssb/redirect#/shared-invite/email)
 
