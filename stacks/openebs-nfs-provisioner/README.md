@@ -6,7 +6,8 @@ Under the hood, the NFS provisioner runs a NFS server pod for each shared storag
 
 **Note:**
 
-This stack requires a minimum configuration of 2 Nodes at the $10/month plan (2GB memory / 1 vCPU).
+- This stack requires a minimum configuration of 2 Nodes at the $10/month plan (2GB memory / 1 vCPU).
+- A 1Gi block storage volume is required as well for testing the dynamic NFS provisioner.
 
 ## OpenEBS Dynamic NFS Provisioner Overview Diagram
 
@@ -157,11 +158,11 @@ Each pod should be able to write to the same log file (`nfs-rwx.log`), and publi
 To delete the test application, use the following. However, keep the applications running if you want to further explore the failure cases in the section below.
 
 ```shell
-kubectl delete -f https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/openebs-nfs-provisioner/assets/manifests/nfs-pvc.yaml
 kubectl delete -f https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/openebs-nfs-provisioner/assets/manifests/nfs-share-test.yaml
+kubectl delete -f https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/openebs-nfs-provisioner/assets/manifests/nfs-pvc.yaml
 ```
 
-### Failure Cases for NFS provisioner
+### Failure Cases for NFS Provisioner
 
 Note the nfs-pvc-* pod name in openebs-nfs-provisioner namespace. This pod is running the NFS server, which is sharing the nfs-pvc volume.
 
@@ -270,7 +271,6 @@ Disk stats (read/write):
 ~
 ```
 
-
 ### Tweaking Helm Values
 
 The OpenEBS dynamic NFS provisioner stack provides some custom values to start with. Please have a look at the [values](values.yml) file from the main GitHub repository.
@@ -314,11 +314,27 @@ helm uninstall openebs-nfs-provisioner -n openebs-nfs-provisioner
 
 **Note:**
 
-The command will delete all the associated Kubernetes resources installed by the `openebs-nfs-provisioner` Helm chart, except the namespace itself. To delete the `openebs-nfs-provisioner namespace` as well, run the following command:
+- The Helm uninstall command will delete all the associated Kubernetes resources installed by the `openebs-nfs-provisioner` Helm chart, except the namespace itself. To delete the `openebs-nfs-provisioner namespace` as well, run the following command:
 
-```console
-kubectl delete ns openebs-nfs-provisioner
-```
+    ```console
+    kubectl delete ns openebs-nfs-provisioner
+    ```
+
+- You have to manually delete the DO block storage volume created by the NFS PVC used for testing, if no longer needed. You can do this either via the DigitalOcean [volumes web panel](https://cloud.digitalocean.com/volumes), or `doctl`:
+
+    ```console
+    $ doctl compute volume list --format ID,Name,Size
+
+    ID                                      Name                                        Size
+    c1c46cab-e30b-11ec-932d-0a58ac14c29b    pvc-150c7961-18ec-497f-8a3e-bb5e0d29299c    5 GiB
+    f3c4cc73-e30b-11ec-99e3-0a58ac14c1da    pvc-dec8c104-4542-4657-a5ae-661a5476dee2    1 GiB
+    ```
+
+    Then, delete the corresponding volume by ID. Please bear in mind that your ID might differ in the volume listing, so make sure to pick the right one and replace the `<>` placeholders accordingly:
+
+    ```console
+    doctl compute volume delete <YOUR_NFS_VOLUME_ID>
+    ```
 
 ### Additional Resources
 
