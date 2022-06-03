@@ -136,7 +136,14 @@ Upgrading to a new version of Otomi can be easily done via the `otomi-console` a
 
 <img src="./img/otomi-upgrade.png" alt="upgrade-otomi" width="1080" height="570"/>
 
+
+```bash
+NOTE:
+# The upgrade must be incremental, e.g.: 0.16.4 -> 0.16.5 -> 0.16.6
+```
+
 ### Additional Resources
 
-- [Otomi Documentation](https://otomi.io/docs/installation/)
+- [Otomi Documentation](https://otomi.io/docs/installation/)cc
 - [Otomi Slack](https://otomi.slack.com/ssb/redirect#/shared-invite/email)
+
