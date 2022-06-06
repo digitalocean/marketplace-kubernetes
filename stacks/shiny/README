@@ -1,0 +1,5 @@
+1. Verify that Shiny is running with
+kubectl get pods -A
+
+2. Forward port 3838 with
+kubectl -n shiny port-forward deploy/shiny 3838

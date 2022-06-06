@@ -1,0 +1,21 @@
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMCluster
+metadata:
+  name: vmcluster
+spec:
+  retentionPeriod: "12"
+  vmstorage:
+      replicaCount: 2
+      image:
+        repository: victoriametrics/vmstorage
+        tag: v1.76.0-cluster
+  vmselect:
+      replicaCount: 2
+      image:
+        repository: victoriametrics/vmselect
+        tag: v1.76.0-cluster
+  vminsert:
+      replicaCount: 2
+      image:
+        repository: victoriametrics/vminsert
+        tag: v1.76.0-cluster

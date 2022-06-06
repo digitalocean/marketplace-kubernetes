@@ -13,9 +13,10 @@ helm repo update > /dev/null
 ################################################################################
 STACK="triliovault-operator"
 CHART="triliovault-operator/k8s-triliovault-operator"
-CHART_VERSION="2.6.4"
+LATEST="$(helm show chart triliovault-operator/k8s-triliovault-operator | grep appVersion | awk -F ':' '{gsub(/ /,""); print $2 }')"
+echo "Upgrading TVK to latest version: $LATEST"
+CHART_VERSION=$LATEST
 NAMESPACE="tvk"
-#HOME=$ROOT_DIR
 
 # Upgrade triliovault operator
 echo "Upgrading Triliovault operator..."
@@ -39,6 +40,12 @@ helm upgrade "$STACK" "$CHART" \
   --values "$values" \
   --version "$CHART_VERSION"
 
+retcode=$?
+if [ "$retcode" -ne 0 ]; then
+  echo "There is some error during triliovault-operator upgrade using helm, please contanct Trilio support"
+  return 1
+fi
+
 until (kubectl get pods --namespace "$NAMESPACE" -l "release=triliovault-operator" 2>/dev/null | grep Running); do sleep 3; done
 
 ################################################################################
@@ -48,6 +55,9 @@ until (kubectl get pods --namespace "$NAMESPACE" -l "release=triliovault-operato
 install_tvm () {
   # Upgrade triliovault manager
   echo "Upgrading Triliovault manager..."
+  
+  # Replace TVM.yaml with latest version
+  sed -i '/^spec:/{n;s/trilioVaultAppVersion:.*/trilioVaultAppVersion: '$LATEST'/;}' $ROOT_DIR/stacks/$STACK/triliovault-manager.yaml
 
   kubectl apply -f "$TVM" --namespace "$NAMESPACE"
   retcode=$?
@@ -58,11 +68,12 @@ install_tvm () {
   fi
 
   until (kubectl get pods --namespace "$NAMESPACE" -l "triliovault.trilio.io/owner=triliovault-manager" 2>/dev/null | grep Running); do sleep 3; done
-
-  until (kubectl get pods --namespace "$NAMESPACE" -l app=k8s-triliovault-control-plane 2>/dev/null | grep Running); do sleep 3; done
-
-  until (kubectl get pods --namespace "$NAMESPACE" -l app=k8s-triliovault-admission-webhook 2>/dev/null | grep Running); do sleep 3; done
-
+  until (kubectl get pods --namespace "$NAMESPACE" -l app=k8s-triliovault-exporter 2>/dev/null | grep 1/1); do sleep 3; done
+  until (kubectl get pods --namespace "$NAMESPACE" -l "app.kubernetes.io/name=k8s-triliovault-ingress-nginx" 2>/dev/null | grep 1/1); do sleep 3; done
+  until (kubectl get pods --namespace "$NAMESPACE" -l app=k8s-triliovault-web 2>/dev/null | grep 1/1); do sleep 3; done
+  until (kubectl get pods --namespace "$NAMESPACE" -l app=k8s-triliovault-web-backend 2>/dev/null | grep 1/1); do sleep 3; done
+  until (kubectl get pods --namespace "$NAMESPACE" -l app=k8s-triliovault-control-plane 2>/dev/null | grep 2/2); do sleep 3; done
+  until (kubectl get pods --namespace "$NAMESPACE" -l app=k8s-triliovault-admission-webhook 2>/dev/null | grep 1/1); do sleep 3; done
 }
 
 ################################################################################
@@ -70,4 +81,3 @@ install_tvm () {
 ################################################################################
 
 install_tvm
-

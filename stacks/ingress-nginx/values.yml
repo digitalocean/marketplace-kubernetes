@@ -1,0 +1,20 @@
+## Stack name: ingress-nginx/ingress-nginx
+## Ref: https://github.com/kubernetes/ingress-nginx/tree/helm-chart-4.0.13/charts/ingress-nginx/
+##
+
+controller:
+  # A replica count of minimum 2 ensures high availability for Nginx Ingress main application Pods
+  replicaCount: 2
+  service:
+    type: LoadBalancer
+
+  ## Enable the metrics of the NGINX Ingress controller https://kubernetes.github.io/ingress-nginx/user-guide/monitoring/
+  metrics:
+    enabled: true
+  podAnnotations:
+    controller:
+      metrics:
+        service:
+          servicePort: "9090"
+    prometheus.io/port: "10254"
+    prometheus.io/scrape: "true"

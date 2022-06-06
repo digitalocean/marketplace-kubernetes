@@ -1,152 +1,143 @@
 # Description
-[Ambassador Edge Stack](https://getambassador.io/) is a popular, high-performance [Ingress Controller](https://www.getambassador.io/products/edge-stack/api-gateway/) and [API Gateway](https://www.getambassador.io/learn/kubernetes-glossary/api-gateway/) built on [Envoy Proxy](https://www.envoyproxy.io/). Envoy Proxy was designed from the ground up for [cloud-native](https://www.getambassador.io/learn/kubernetes-glossary/cloud-native/) applications. Ambassador exposes Envoy's functionality as [Custom Resource Definitions](https://www.getambassador.io/learn/kubernetes-glossary/custom-resource-definition/), with integrated support for rate limiting, authentication, load balancing, observability, and more.
 
-The DigitalOcean 1-click application installs the [Helm 3](https://helm.sh/docs/intro/install/) version of Ambassador Edge Stack.  This version includes the Authentication and Rate Limiting plugins as well as the Dev Portal.  It also includes the option of upgrading your installation to include Service Preview and MicroCD, two Edge Stack components that improve and streamline the developer self-service model.  To explore the features of these components, see the links below.
+[Ambassador Edge Stack](https://getambassador.io/) is an [Ingress Controller](https://www.getambassador.io/products/edge-stack/api-gateway/) and [API Gateway](https://www.getambassador.io/learn/kubernetes-glossary/api-gateway/) built on [Envoy Proxy](https://www.envoyproxy.io/). Envoy Proxy is designed for [cloud-native](https://www.getambassador.io/learn/kubernetes-glossary/cloud-native/) applications. Ambassador exposes Envoy's functionality as [Custom Resource Definitions](https://www.getambassador.io/learn/kubernetes-glossary/custom-resource-definition/), with integrated rate limiting, authentication, load balancing, and observability.
 
-Edge Stack Components:
-  - [Rate Limiting](https://www.getambassador.io/docs/latest/topics/using/rate-limits/rate-limits/): Rate limit to ensure the reliability, security and scalability of your microservices.
-  - [Authentication](https://www.getambassador.io/products/edge-stack/api-gateway/security-authentication): Built-in [OAuth2](https://www.getambassador.io/learn/kubernetes-glossary/oauth/) and [JWT](https://www.getambassador.io/learn/kubernetes-glossary/jwt/) authentication with the ability to drop in custom AuthService plugins.
-  - [Dev Portal](https://www.getambassador.io/docs/latest/topics/using/dev-portal/): Lightweight, simple [API](https://www.getambassador.io/learn/kubernetes-glossary/api/) resource for OpenAPI and Swagger documentation.
-  - [Service Preview](https://www.getambassador.io/docs/latest/topics/using/edgectl/): Develop locally as if you're in the cloud.  Service preview allows you to build and simulate a [microservice](https://www.getambassador.io/learn/kubernetes-glossary/microservices/) and respond as if it's in the cluster.
-  - [MicroCD](https://www.getambassador.io/docs/latest/topics/using/projects/): Quick, streamlined [GitOps](https://www.getambassador.io/learn/kubernetes-glossary/gitops/) style development tool to quickly push out and share version 0 prototypes.
+**Note:**
 
-Note: This stack requires a minimum configuration of 2 Nodes at the $10/month plan (2GB memory / 1 vCPU).
+**Ambassador Edge Stack 2.X introduces some changes that aren't backwards-compatible with 1.X. If you already have an existing installation that uses 1.X and you want to upgrade to version 2.X, please use the following [guide for upgrade](https://www.getambassador.io/docs/edge-stack/latest/topics/install/upgrade/helm/edge-stack-1.14/edge-stack-2.1/#upgrade-productname-1142-to-productname-version-helm).**
 
-Thank you to all the [contributors](https://github.com/datawire/ambassador/graphs/contributors) whose hard work make this software valuable for users.  If you'd like to contribute to the project, check out the [Ambassador Repository](https://github.com/datawire/ambassador) and submit a Pull Request!
+The DigitalOcean 1-click application installs the [Helm 3](https://helm.sh/docs/intro/install/) version of Ambassador Edge Stack.  This version includes the Authentication and Rate Limiting plugins, as well as the Dev Portal. It also includes the option of upgrading your installation to include Service Preview and MicroCD, two Edge Stack components that improve and streamline the developer self-service model. To explore the features of these components, see the following links.
 
-# Software included
+**Edge Stack Components:**
 
-| Package               | Version                                        | License                                                                                    |
-| --------------------- | ---------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| Ambassador Edge Stack | 1.6.0 | [Apache 2.0](https://github.com/datawire/ambassador/blob/master/LICENSE) |
+- [Rate Limiting](https://www.getambassador.io/docs/edge-stack/2.1/topics/using/rate-limits/rate-limits/): Rate limit to ensure the reliability, security and scalability of your micro-services.
+- [Authentication](https://www.getambassador.io/docs/edge-stack/2.1/topics/running/aes-extensions/authentication/): Built-in [OAuth2](https://www.getambassador.io/docs/edge-stack/2.1/topics/using/filters/oauth2/) and [JWT](https://www.getambassador.io/docs/edge-stack/2.1/topics/using/filters/jwt/) authentication with the ability to drop in custom AuthService plugins.
 
-# Getting Started
+**Note:** This stack requires a minimum configuration of 2 Nodes at the $10/month plan (2GB memory / 1 vCPU).
 
-### Getting Started with DigitalOcean Kubernetes
-As you get started with Kubernetes on DigitalOcean be sure to check out how to connect to your cluster using `kubectl` and `doctl`:
-https://www.digitalocean.com/docs/kubernetes/how-to/connect-to-cluster/
- 
-Additional instructions are included in the DigitalOcean Kubernetes control panel:
-https://cloud.digitalocean.com/kubernetes/clusters/ 
+## Software included
 
-#### Quick Start
-If you just want to give this app a quick spin without `doctl` give the following a try.
+| Package               | Application Version   | Helm Chart Version |License                                                                                    |
+| ---| ---- | ---- | ------------- |
+| Ambassador Edge Stack | 2.1.2 | [7.2.2](https://artifacthub.io/packages/helm/datawire/edge-stack/7.2.2) | [Apache 2.0](https://github.com/datawire/ambassador/blob/master/LICENSE) |
 
-Assuming you have done the following:
-1. Created a cluster in the DigitalOcean control panel (https://cloud.digitalocean.com/kubernetes/clusters/).
-1. Downloaded the Kubernetes config file to ~/Downloads directory on your local machine. The config file will have a name like `monitoring-k8s-1-15-3-do-1-sfo-kubeconfig.yaml`.
-1. Installed Kubernetes command line tool, `kubectl`, (https://kubernetes.io/docs/tasks/tools/install-kubectl/) on your local machine.
+## Getting Started
 
-Copy the Kubernetes config file to the default directory `kubectl` looks in.
-```
-cp ~/.kube/config  ~/.kube/config.bkup
-cp  ~/Downloads/monitoring-k8s-1-15-3-do-1-sfo-kubeconfig.yaml  ~/.kube/config
-```
-You should now be able to connect to your DigitalOcean Kubernetes Cluster and successfully run commands like:
-```
-kubectl get pods -A
+### Connecting to Your Cluster
+
+You can connect to your DigitalOcean Kubernetes cluster by following our [how-to guide](https://www.digitalocean.com/docs/kubernetes/how-to/connect-to-cluster/).
+
+For additional instructions on configuring a [DigitalOcean Kubernetes](https://cloud.digitalocean.com/kubernetes/clusters/) cluster, see the following guides:
+
+- [How to Set Up a DigitalOcean Managed Kubernetes Cluster (DOKS)](https://github.com/digitalocean/Kubernetes-Starter-Kit-Developers/tree/main/01-setup-DOKS#how-to-set-up-a-digitalocean-managed-kubernetes-cluster-doks)
+- [How to Set up DigitalOcean Container Registry](https://github.com/digitalocean/Kubernetes-Starter-Kit-Developers/tree/main/02-setup-DOCR#how-to-set-up-digitalocean-container-registry)
+
+### Confirming that Ambassador Ingress Controller is Running
+
+First, verify that the Helm installation was successful by running following command:
+
+```bash
+helm ls -n ambassador
 ```
 
-### Confirm Ambassador is running: 
-After you are able to successfully connect to your DigitalOcean Kubernetes cluster you’ll be able to see Ambassador Operator running in the `ambassador` namespace by issuing:
- ```
- kubectl get pods -n ambassador
- ``` 
- Confirm all `ambassador` pods are in a “`Running`” state under the “`STATUS`” column:
+If the installation was successful, the `STATUS` column value in the output reads `deployed`:
 
-```
-NAME                                READY   STATUS    RESTARTS   AGE
-ambassador-79c76bb8-64x96           1/1     Running   0          11m
-ambassador-79c76bb8-bzlqn           1/1     Running   0          11m
-ambassador-79c76bb8-c2b6x           1/1     Running   0          11m
-ambassador-redis-6594476754-hgqbb   1/1     Running   0          11m
+```text
+NAME       NAMESPACE  REVISION UPDATED                              STATUS   CHART            APP VERSION
+edge-stack ambassador 1        2022-02-14 18:02:21.554041 +0200 EET deployed edge-stack-7.2.2 2.1.2
 ```
 
-### Exposing a Service with Ambassador
+Next, verify that the Ambassador Ingress pods are up and running with the following command:
 
-To test our deployment, we are going to deploy a sample application to deliver random quotes to users.  The manifest below describes a Quote deployment exposed via a Quote service.
-
-```yaml
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: quote
-spec:
-  ports:
-  - name: http
-    port: 80
-    targetPort: 8080
-  selector:
-    app: quote
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: quote
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: quote
-  strategy:
-    type: RollingUpdate
-  template:
-    metadata:
-      labels:
-        app: quote
-    spec:
-      containers:
-      - name: backend
-        image: quay.io/datawire/quote:0.3.0
-        ports:
-        - name: http
-          containerPort: 8080
+```console
+kubectl get pods --all-namespaces -l app.kubernetes.io/name=edge-stack
 ```
 
-1. Apply with `kubectl apply -f quote.yaml`.
+If they're running, all pods listed in the output are in a `READY` state and the `STATUS` for each reads `Running`:
 
-1. We have our deployment and it's exposed with a service, but we still cannot connect to it without telling Ambassador where it is.  This is where the [Mapping](https://getambassador.io/docs/latest/topics/using/intro-mappings/) comes into play.  With a mapping, we can use kube-dns to let Ambassador know exactly where to look for the Quote service when the right request comes in.
-
-    ```yaml
-    ---
-    apiVersion: getambassador.io/v2
-    kind: Mapping
-    metadata:
-      name: backend
-    spec:
-      prefix: /backend/
-      service: quote
-    ```
-
-1. Apply the mapping with `kubectl apply -f quote-backend.yaml`.
-
-1. Test that it works by using `curl -k https://{{AMBASSADOR_IP}}/backend/` in your terminal.  You should see something similar to the following:
-
-    ```bash
-    {
-        "server": "bleak-kumquat-n9qg6ra1",
-        "quote": "Non-locality is the driver of truth. By summoning, we vibrate.",
-        "time": "2020-05-08T18:33:54.578661743Z"
-    }% 
-    ```
-    - The IP address can be obtained by running:
-      ```bash
-      kubectl get svc -n ambassador -o 'go-template={{range .status.loadBalancer.ingress}}{{print .ip "\n"}}{{end}}'
-      ```
-
-### Upgrading
-
-To upgrade Ambassador Edge Stack, use the following:
+```text
+NAMESPACE    NAME                          READY   STATUS    RESTARTS   AGE
+ambassador   edge-stack-688f84d947-dv244   1/1     Running   0          5m39s
+ambassador   edge-stack-688f84d947-r4qcs   1/1     Running   0          5m39s
+ambassador   edge-stack-688f84d947-snzmh   1/1     Running   0          5m39s
 ```
-kubectl apply -f https://www.getambassador.io/yaml/aes-crds.yaml
-helm repo update && helm upgrade -n ambassador ambassador datawire/ambassador
+
+Then, inspect the external IP address of your Ambassador Ingress Controller Load Balancer by running following command:
+
+```console
+kubectl get svc -n ambassador
+```
+
+If installed correctly, the output has the `EXTERNAL-IP` column, containing a valid IP address:
+
+```text
+NAME               TYPE           CLUSTER-IP      EXTERNAL-IP      PORT(S)                      AGE
+edge-stack         LoadBalancer   10.245.88.194   134.209.131.93   80:32617/TCP,443:31000/TCP   6m19s
+edge-stack-admin   ClusterIP      10.245.66.159   <none>           8877/TCP,8005/TCP            6m19s
+edge-stack-redis   ClusterIP      10.245.188.44   <none>           6379/TCP                     6m19s
+```
+
+Finally, Ambassador Edge Stack should now be successfully installed and running, but in order to get started deploying Services and test routing to them you need to configure a few more resources:
+
+- The [Listener](https://github.com/digitalocean/Kubernetes-Starter-Kit-Developers/blob/main/03-setup-ingress-controller/ambassador.md#step-2---defining-the-listener-for-ambassador-edge-stack) Resource is required to configure which ports the Ambassador Edge Stack pods listen on so that they can begin responding to requests.
+- The [Mapping](https://github.com/digitalocean/Kubernetes-Starter-Kit-Developers/blob/main/03-setup-ingress-controller/ambassador.md#step-6---configuring-the-ambassador-edge-stack-mappings-for-hosts) Resouce is used to configure routing requests to services in your cluster.
+- The [Host](https://github.com/digitalocean/Kubernetes-Starter-Kit-Developers/blob/main/03-setup-ingress-controller/ambassador.md#step-3---defining-the-hosts-for-ambassador-edge-stack) Resource configures TLS termination for enablin HTTPS communication.
+
+For more details about checking Ingress Controller deployment status and functionality, lease refer to the [Ambassador](https://github.com/digitalocean/Kubernetes-Starter-Kit-Developers/blob/main/03-setup-ingress-controller/ambassador.md) Ingress Controller tutorial.
+
+### Tweaking Helm Values
+
+The Ambassador Ingress stack provides some custom values to start with. Please have a look at the [values](./values.yml) file from the main GitHub repository (explanations are provided inside, where necessary).
+
+You can always inspect all the available options, as well as the default values for the Ambassador Ingress Helm chart by running below command:
+
+```console
+helm show values datawire/edge-stack --version 7.2.2
+```
+
+After tweaking the Helm values file (`values.yml`) according to your needs, you can always apply the changes via `helm upgrade` command, as shown below:
+
+```console
+helm upgrade edge-stack datawire/edge-stack --version 7.2.2 \
+  --namespace ambassador \
+  --values values.yml
+```
+
+### Upgrading the Ambassador Ingress Chart
+
+You can check what versions are available to upgrade by navigating to the [emissary-ingress](https://github.com/emissary-ingress/emissary) official releases page from GitHub. Alternatively, you can use [ArtifactHUB](https://artifacthub.io/packages/helm/datawire/edge-stack).
+
+To upgrade the stack to a newer version, run the following command, replacing the `< >` placeholders with their corresponding information:
+
+```console
+helm upgrade edge-stack datawire/edge-stack \
+  --version <INGRESS_AMBASSADOR_STACK_NEW_VERSION> \
+  --namespace ambassador \
+  --values <YOUR_HELM_VALUES_FILE>
+```
+
+See [helm upgrade](https://helm.sh/docs/helm/helm_upgrade/) for command documentation.
+
+### Uninstalling
+
+To uninstall Ambassador Ingress Controller, you need to have Helm 3 installed. Once installed, run the following `uninstall` command:
+
+```bash
+helm uninstall edge-stack -n ambassador
+```
+
+And then the following `delete` commands:
+
+```bash
+kubectl delete ns ambassador
+
+kubectl delete -f https://app.getambassador.io/yaml/edge-stack/2.1.2/aes-crds.yaml
 ```
 
 ### Additional Resources
-  - [Quick Start](https://www.getambassador.io/docs/latest/tutorials/getting-started/)
-  - [Documentation](https://www.getambassador.io/docs/latest/)
-  - [Kubernetes Glossary](https://www.getambassador.io/learn/kubernetes-glossary/)
-  - [Ambassador Community Resources](https://www.getambassador.io/community/)
-  - [Community Slack Channel](https://join.slack.com/t/datawire-oss/shared_invite/zt-8rbpcp4x-vqcfpwmJYxcCVSL1CPxGLw)
-  - [FAQ](https://www.getambassador.io/docs/latest/about/faq/)
+
+- [Documentation](https://www.getambassador.io/docs/latest/)
+- [Kubernetes Glossary](https://www.getambassador.io/learn/kubernetes-glossary/)
+- [Ambassador Community Resources](https://www.getambassador.io/community/)
+- [Community Slack Channel](https://join.slack.com/t/datawire-oss/shared_invite/zt-8rbpcp4x-vqcfpwmJYxcCVSL1CPxGLw)
+- [FAQ](https://www.getambassador.io/docs/latest/about/faq/)

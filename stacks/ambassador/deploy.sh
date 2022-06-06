@@ -5,15 +5,15 @@ set -e
 ################################################################################
 # repo
 ################################################################################
-helm repo add datawire https://getambassador.io
+helm repo add datawire https://app.getambassador.io --force-update
 helm repo update > /dev/null
 
 ################################################################################
 # chart
 ################################################################################
-STACK="ambassador"
-CHART="datawire/ambassador"
-CHART_VERSION="6.5.13"
+STACK="edge-stack"
+CHART="datawire/edge-stack"
+CHART_VERSION="7.2.2"
 NAMESPACE="ambassador"
 
 if [ -z "${MP_KUBERNETES}" ]; then
@@ -25,12 +25,14 @@ else
   values="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/ambassador/values.yml"
 fi
 
-kubectl apply -f https://getambassador.io/yaml/aes-crds.yaml
+# Before installing Ambassador 2.X itself, you must configure your Kubernetes cluster to support the getambassador.io/v3alpha1 and getambassador.io/v2 configuration resources. This is required.
+kubectl apply -f https://app.getambassador.io/yaml/edge-stack/2.1.2/aes-crds.yaml
 
 helm upgrade "$STACK" "$CHART" \
-  --install \
+  --atomic \
   --create-namespace \
+  --install \
   --namespace "$NAMESPACE" \
   --version "$CHART_VERSION" \
   --values "$values" \
-  --wait
+  --timeout 10m0s

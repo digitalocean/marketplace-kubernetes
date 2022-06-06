@@ -13,7 +13,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="wordpress"
 CHART="bitnami/wordpress"
-CHART_VERSION="10.6.12"
+CHART_VERSION="13.0.22"
 NAMESPACE="wordpress"
 
 if [ -z "${MP_KUBERNETES}" ]; then
@@ -30,5 +30,6 @@ helm upgrade "$STACK" "$CHART" \
   --create-namespace \
   --install \
   --namespace "$NAMESPACE" \
+  --version "$CHART_VERSION" \
   --values "$values" \
-  --version "$CHART_VERSION"
+  --timeout 10m0s
