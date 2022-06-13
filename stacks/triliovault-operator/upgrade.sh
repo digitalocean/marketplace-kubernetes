@@ -34,7 +34,7 @@ else
   # use github hosted master version of values.yml
   values="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/triliovault-operator/values.yml"
   TVM="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/triliovault-operator/triliovault-manager.yaml"
-  TVK_LICENSE_FILE="$TVK_PATH/tvk_install_license.yaml"
+  TVK_LICENSE_FILE="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/triliovault-operator/tvk_install_license.yaml"
 fi
 
 helm upgrade "$STACK" "$CHART" \
