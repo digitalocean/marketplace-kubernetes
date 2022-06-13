@@ -7,7 +7,7 @@ helm repo update > /dev/null
 
 STACK="op-scim-bridge"
 CHART="op-scim-bridge/op-scim"
-CHART_VERSION="2.3.1"
+CHART_VERSION="2.4.0"
 NAMESPACE="op-scim-bridge"
 STORAGE_CLASS="do-block-storage"
 
