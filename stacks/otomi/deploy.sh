@@ -13,7 +13,6 @@ helm repo update > /dev/null
 ################################################################################
 STACK="otomi"
 CHART="otomi/otomi"
-CHART_VERSION="0.5.6"
 NAMESPACE="default"
 
 if [ -z "${MP_KUBERNETES}" ]; then
@@ -30,5 +29,4 @@ helm upgrade "$STACK" "$CHART" \
   --install \
   --timeout 8m0s \
   --namespace "$NAMESPACE" \
-  --values "$values" \
-  --version "$CHART_VERSION"
+  --values "$values" 
