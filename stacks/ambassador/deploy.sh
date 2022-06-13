@@ -5,7 +5,7 @@ set -e
 ################################################################################
 # repo
 ################################################################################
-helm repo add datawire https://app.getambassador.io
+helm repo add datawire https://app.getambassador.io --force-update
 helm repo update > /dev/null
 
 ################################################################################

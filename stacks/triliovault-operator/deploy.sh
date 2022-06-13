@@ -17,9 +17,9 @@ LATEST="$(helm show chart triliovault-operator/k8s-triliovault-operator | grep a
 echo "Installing TVK version: $LATEST"
 CHART_VERSION=$LATEST
 NAMESPACE="tvk"
-#HOME=$ROOT_DIR
 INSTALL_TVM=true
 TVK_HOSTNAME="tvk.doks.com"
+TVK_INSTANCE_NAME="tvk-instance-digital-ocean"
 INGRESS_SERVICE_TYPE="NodePort"
 
 # Install triliovault operator and triliovault manager
@@ -43,6 +43,7 @@ helm upgrade "$STACK" "$CHART" \
   --version "$CHART_VERSION" \
   --set installTVK.enabled="$INSTALL_TVM" \
   --set installTVK.ingressConfig.host="$TVK_HOSTNAME" \
+  --set installTVK.tvkInstanceName="$TVK_INSTANCE_NAME" \
   --set installTVK.ComponentConfiguration.ingressController.service.type="$INGRESS_SERVICE_TYPE"
 
 retcode=$?
@@ -110,52 +111,23 @@ access_tvk_ui () {
 
 install_license () {
   #This module is use to install license
-  echo "Installing required packages.."
-
-  pip3 install requests
-  pip3 install beautifulsoup4
-  pip3 install lxml
-
   echo "Installing Freetrial license..."
+  kubectl apply -f tvk_install_license.yaml --namespace "$NAMESPACE"
+  
+  sleep 5
+  echo "Verifying license generation job..."
+  until (kubectl get pods --namespace tvk -l "job-name=tvk-license-do" 2>/dev/null | grep Completed); do sleep 3; done
 
-  cat <<EOF | python3
-#!/usr/bin/python3
+  echo "Verifying license status on namespace $NAMESPACE ..."
+  lic_status=$(kubectl get license trilio-license --namespace $NAMESPACE -o 'jsonpath={.status.status}')
+  exp_status="Active"
 
-from bs4 import BeautifulSoup
-import requests
-import sys
-import subprocess
-
-headers = {'Content-type': 'application/x-www-form-urlencoded; charset=utf-8'}
-endpoint="https://doc.trilio.io:5000/8d92edd6-514d-4acd-90f6-694cb8d83336/0061K00000i9ORf"
-result = subprocess.check_output("kubectl get ns $NAMESPACE -o=jsonpath='{.metadata.uid}'", shell=True)
-kubeid = result.decode("utf-8")
-data = "kubescope=clusterscoped&kubeuid={0}".format(kubeid)
-r = requests.post(endpoint, data=data, headers=headers)
-contents=r.content
-soup = BeautifulSoup(contents, 'lxml')
-sys.stdout = open("tvk_do_license.yaml", "w")
-print(soup.body.find('div', attrs={'class':'yaml-content'}).text)
-sys.stdout.close()
-result = subprocess.check_output("kubectl apply -f tvk_do_license.yaml --namespace $NAMESPACE", shell=True)
-EOF
-
-sleep 5
-echo "Verifying license status on namespace $NAMESPACE ..."
-lic_status=$(kubectl get license test-license-1 --namespace $NAMESPACE -o 'jsonpath={.status.status}')
-exp_status="Active"
-
-if [ "$lic_status" != "$exp_status" ] ; then
-  echo "License installation failed, license status is '$lic_status'"
-else
-  echo "License is installed successfully, license status is '$lic_status'"
-  if [ -e "tvk_do_license.yaml" ] ; then
-    echo "Deleting TVK license file tvk_do_license.yaml"
-    rm tvk_do_license.yaml
+  if [ "$lic_status" != "$exp_status" ] ; then
+    echo "License installation failed, license status is '$lic_status'"
   else
-    echo "TVK license file not found"
+    echo "License is installed successfully, license status is '$lic_status'"
   fi
-fi
+
 }
 
 ################################################################################
