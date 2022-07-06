@@ -2,7 +2,7 @@
 
 set -e
 
-helm repo add op-scim-bridge https://raw.githubusercontent.com/1Password/op-scim-helm/main/
+helm repo add op-scim-bridge https://1password.github.io/op-scim-helm
 helm repo update > /dev/null
 
 STACK="op-scim-bridge"
