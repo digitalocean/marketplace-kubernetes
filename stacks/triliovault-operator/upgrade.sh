@@ -5,7 +5,7 @@ set -e
 ################################################################################
 # repo
 ################################################################################
-helm repo add triliovault-operator http://charts.k8strilio.net/trilio-stable/k8s-triliovault-operator
+helm repo add triliovault-operator http://charts.k8strilio.net/trilio-stable/k8s-triliovault-operator --force-update
 helm repo update > /dev/null
 
 ################################################################################
