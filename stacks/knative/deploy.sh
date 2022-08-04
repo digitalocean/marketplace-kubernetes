@@ -2,7 +2,7 @@
 
 set -e
 
-OPERATOR_VERSION="1.2.2"
+OPERATOR_VERSION="1.5.1"
 
 if [ -z "${MP_KUBERNETES}" ]; then
   # use local version of knative serving and eventing manifests

@@ -44,7 +44,7 @@ Below diagram shows how Argo CD manages Helm applications hosted using a Git rep
 
 | Package | Argo CD Version | Helm Chart Version | License |
 |---------|-----------------| ------------------ |-------- |
-| Argo CD | [2.3.1](https://github.com/argoproj/argo-cd/releases/tag/v2.3.1) | [4.2.1](https://github.com/argoproj/argo-helm/releases/tag/argo-cd-4.2.1) |[Apache 2.0](https://github.com/argoproj/argo-cd/blob/master/LICENSE) |
+| Argo CD | [2.4.0](https://github.com/argoproj/argo-cd/releases/tag/v2.4.0) | [4.9.4](https://github.com/argoproj/argo-helm/releases/tag/argo-cd-4.9.4) |[Apache 2.0](https://github.com/argoproj/argo-cd/blob/master/LICENSE) |
 
 ## Getting Started
 
@@ -64,7 +64,7 @@ The output looks similar to the following:
 
 ```text
 NAME    NAMESPACE       REVISION        UPDATED                                 STATUS          CHART           APP VERSION
-argocd  argocd          1               2022-04-04 17:45:41.52626 +0300 EEST    deployed        argo-cd-4.2.1   v2.3.1 
+argocd  argocd          1               2022-04-04 17:45:41.52626 +0300 EEST    deployed        argo-cd-4.9.4   v2.4.0 
 ```
 
 The `STATUS` column value should be `deployed`.
@@ -99,13 +99,13 @@ The argocd stack provides some custom values to start with. See the [values](./v
 You can inspect all the available options, as well as the default values for the argo-cd Helm chart by running the following command:
 
 ```console
-helm show values argo/argo-cd --version 4.2.1
+helm show values argo/argo-cd --version 4.9.4
 ```
 
 After customizing the Helm values file (`values.yml`), you can apply the changes via the `helm upgrade` command, as shown below:
 
 ```console
-helm upgrade argocd argo/argo-cd --version 4.2.1 \
+helm upgrade argocd argo/argo-cd --version 4.9.4 \
   --namespace argocd \
   --values values.yml
 ```

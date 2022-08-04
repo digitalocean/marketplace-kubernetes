@@ -46,8 +46,8 @@ helm ls -n ingress-nginx
 The output looks similar to the following:
 
 ```text
-NAME         	NAMESPACE    	REVISION	UPDATED                             	STATUS  	CHART                     	APP VERSION
-ingress-nginx	ingress-nginx	1       	2022-04-18 18:12:41.623665 -0400 EDT	deployed	ingress-nginx-4.1.0-beta.1	1.2.0-beta.1
+NAME            NAMESPACE       REVISION        UPDATED                                 STATUS          CHART                   APP VERSION
+ingress-nginx   ingress-nginx   1               2022-08-02 10:55:25.064553 +0300 EEST   deployed        ingress-nginx-4.1.3     1.2.1 
 ```
 
 The `STATUS` column value should be `deployed`.
@@ -82,9 +82,9 @@ ingress-nginx-controller             LoadBalancer   10.245.156.128   67.207.70.1
 ingress-nginx-controller-admission   ClusterIP      10.245.18.58     <none>          443/TCP                      3m
 ingress-nginx-controller-metrics     ClusterIP      10.245.193.76    <none>          10254/TCP                    3m
 ```
- 
+
 Check that the `EXTERNAL-IP` column has a valid IP address.
- 
+
 ### Tweaking Helm Values
 
 The NGINX Ingress stack provides some custom values to start with. See the [values](./values.yml) file from the main GitHub repository for more information.

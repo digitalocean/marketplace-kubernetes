@@ -24,7 +24,7 @@ A Loki-based logging stack consists of 3 components:
 
 | Package               | Application Version   | Helm Chart Version |License                                                                                    |
 | ---| ---- | ---- | ------------- |
-| Loki Stack | 2.1.0 | [2.5.1](https://artifacthub.io/packages/helm/grafana/loki-stack/2.5.1) | [Apache 2.0](https://github.com/grafana/loki/blob/main/LICENSE) |
+| Loki Stack | 2.6.3 | [2.1.0](https://artifacthub.io/packages/helm/grafana/loki-stack/2.6.3) | [Apache 2.0](https://github.com/grafana/loki/blob/main/LICENSE) |
 
 ## Getting Started
 
@@ -49,7 +49,7 @@ If the installation was successful, the `STATUS` column value in the output read
 
 ```text
 NAME NAMESPACE  REVISION UPDATED                              STATUS   CHART            APP VERSION
-loki loki-stack 1        2022-02-16 14:47:29.497728 +0200 EET deployed loki-stack-2.5.1 v2.1.0
+loki loki-stack 1        2022-02-16 14:47:29.497728 +0200 EET deployed loki-stack-2.6.3 v2.1.0
 ```
 
 Next, verify that the Loki pods are up and running with the following command:
@@ -93,7 +93,7 @@ The `loki-stack` has custom default Helm values. See the [values](./values.yml) 
 To inspect the stack's current values, run the following command:
 
 ```console
-helm show values grafana/loki-stack --version 2.5.1
+helm show values grafana/loki-stack --version 2.6.3
 ```
 
 To change these values, open the Helm values file `values.yml`, change whatever values you want, save and exit the file, and apply the changes by running `helm upgrade` command:
@@ -112,7 +112,7 @@ To upgrade the stack to a newer version, run the following command, replacing th
 
 ```console
 helm upgrade loki grafana/loki-stack \
-  --version <KUBE_Loki_STACK_NEW_VERSION> \
+  --version <KUBE_LOKI_STACK_NEW_VERSION> \
   --namespace loki-stack \
   --values <YOUR_HELM_VALUES_FILE>
 ```

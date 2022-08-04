@@ -38,7 +38,7 @@ The diagram below shows a simple example for backend services monitoring, as wel
 
 | Package | Prometheus Version | Prometheus Operator Version | Helm Chart Version | License |
 |---------|--------------------|-----------------------------| ------------------ |-------- |
-| Kubernetes Prometheus Stack | [2.32.1](https://github.com/prometheus/prometheus/releases/tag/v2.32.1) | [0.53.1](https://github.com/prometheus-operator/prometheus-operator/releases/tag/v0.53.1) | [30.0.1](https://github.com/prometheus-community/helm-charts/releases/tag/kube-prometheus-stack-30.0.1)  | [Apache 2.0](https://github.com/prometheus-operator/kube-prometheus/blob/main/LICENSE) |
+| Kubernetes Prometheus Stack | [2.34.0](https://github.com/prometheus/prometheus/releases/tag/v2.34.0) | [0.56.3](https://github.com/prometheus-operator/prometheus-operator/releases/tag/v0.56.3) | [35.5.1](https://github.com/prometheus-community/helm-charts/releases/tag/kube-prometheus-stack-35.5.1)  | [Apache 2.0](https://github.com/prometheus-operator/kube-prometheus/blob/main/LICENSE) |
 
 ## Getting Started
 
@@ -58,7 +58,7 @@ The output looks similar to the following:
 
 ```text
 NAME                    NAMESPACE               REVISION  UPDATED               STATUS    CHART                         APP VERSION
-kube-prometheus-stack   kube-prometheus-stack   1         2022-02-16 16:02:48   deployed  kube-prometheus-stack-30.0.1  0.53.1
+kube-prometheus-stack   kube-prometheus-stack   1         2022-02-16 16:02:48   deployed  kube-prometheus-stack-35.5.1  0.56.3
 ```
 
 The `STATUS` column value should be `deployed`.
@@ -101,7 +101,8 @@ You can connect to Grafana by port forwarding the `kube-prometheus-stack-grafana
 ```console
 kubectl port-forward svc/kube-prometheus-stack-grafana 3000:80 -n kube-prometheus-stack
 ```
-Use the default credentials: `admin/prom-operator` as specified in the [values.yml](values.yml#L52). 
+
+Use the default credentials: `admin/prom-operator` as specified in the [values.yml](values.yml#L52).
 
 Next, launch a web browser of your choice, and enter the following URL: http://localhost:3000. You can take a look around, and see what dashboards are available for you to use from the [kubernetes-mixin](https://github.com/kubernetes-monitoring/kubernetes-mixin) project as an example, by navigating to the following URL: http://localhost:3000/dashboards?tag=kubernetes-mixin.
 
@@ -112,13 +113,13 @@ The `kube-prometheus-stack` provides some custom values to start with. See the [
 You can inspect all the available options, as well as the default values for the `kube-prometheus-stack` Helm chart by running the following command:
 
 ```console
-helm show values prometheus-community/kube-prometheus-stack --version 30.0.1
+helm show values prometheus-community/kube-prometheus-stack --version 35.5.1
 ```
 
 After customizing the Helm values file (`values.yml`), you can apply the changes via the `helm upgrade` command, as shown below:
 
 ```console
-helm upgrade kube-prometheus-stack prometheus-community/kube-prometheus-stack --version 30.0.1 \
+helm upgrade kube-prometheus-stack prometheus-community/kube-prometheus-stack --version 35.5.1 \
   --namespace kube-prometheus-stack \
   --values values.yml
 ```
@@ -168,7 +169,7 @@ After adding required services to monitor, you need to upgrade the stack via the
 
 ```console
 helm upgrade kube-prometheus-stack prometheus-community/kube-prometheus-stack \
-  --version 30.0.1 \
+  --version 35.5.1 \
   --namespace kube-prometheus-stack \
   --values values.yml
 ```

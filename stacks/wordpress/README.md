@@ -13,8 +13,8 @@ This DigitalOcean Marketplace Kubernetes 1-Click installs [WordPress](https://gi
 
 | Package               | Application Version   | Helm Chart Version |License                                                                                    |
 | ---| ---- | ---- | ------------- |
-| WordPress | 5.9.1 | [13.0.22](https://artifacthub.io/packages/helm/bitnami/wordpress/13.0.22) | [GPLv2](https://wordpress.org/about/license/) |
-| MariaDB | 10.5.15 | [13.0.22](https://artifacthub.io/packages/helm/bitnami/wordpress/13.0.22) | [GPLv2](https://mariadb.com/kb/en/library/mariadb-license/) |
+| WordPress | 6.0.1 | [15.0.11](https://artifacthub.io/packages/helm/bitnami/wordpress/15.0.11) | [GPLv2](https://wordpress.org/about/license/) |
+| MariaDB | 10.6.8 | [15.0.11](https://artifacthub.io/packages/helm/bitnami/wordpress/1.0.22) | [GPLv2](https://mariadb.com/kb/en/library/mariadb-license/) |
 
 ## Getting Started
 
@@ -40,7 +40,7 @@ The output looks similar to (notice that the `STATUS` column value is `deployed`
 
 ```text
 NAME      NAMESPACE REVISION UPDATED                              STATUS   CHART             APP VERSION
-wordpress wordpress 1        2022-03-10 14:56:39.419223 +0200 EET deployed wordpress-13.0.22 5.9.1
+wordpress wordpress 1        2022-03-10 14:56:39.419223 +0200 EET deployed wordpress-15.0.11 6.0.1
 ```
 
 Next, verify if the WordPress and MariaDB Pods are up and running:
@@ -109,13 +109,13 @@ The WordPress stack provides some custom values to start with. Please have a loo
 You can always inspect all the available options, as well as the default values for the WordPress Helm chart by running below command:
 
 ```console
-helm show values bitnami/wordpress --version 13.0.22
+helm show values bitnami/wordpress --version 15.0.11
 ```
 
 After tweaking the Helm values file (`values.yml`) according to your needs, you can always apply the changes via `helm upgrade` command, as shown below:
 
 ```console
-helm upgrade wordpress bitnami/wordpress --version 13.0.22\
+helm upgrade wordpress bitnami/wordpress --version 15.0.11 \
   --namespace wordpress \
   --values values.yml
 ```
@@ -137,7 +137,7 @@ See [helm upgrade](https://helm.sh/docs/helm/helm_upgrade/) for command document
 
 ### Uninstalling
 
-To uninstall WordPress, you'll need to have Helm 3 installed. Once install, run the following:
+To uninstall WordPress, you'll need to have Helm 3 installed. Once installed, run the following:
 
 ```bash
 helm uninstall wordpress -n wordpress
