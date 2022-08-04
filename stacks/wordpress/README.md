@@ -14,7 +14,7 @@ This DigitalOcean Marketplace Kubernetes 1-Click installs [WordPress](https://gi
 | Package               | Application Version   | Helm Chart Version |License                                                                                    |
 | ---| ---- | ---- | ------------- |
 | WordPress | 6.0.1 | [15.0.11](https://artifacthub.io/packages/helm/bitnami/wordpress/15.0.11) | [GPLv2](https://wordpress.org/about/license/) |
-| MariaDB | 10.6.8 | [15.0.11](https://artifacthub.io/packages/helm/bitnami/wordpress/1.0.22) | [GPLv2](https://mariadb.com/kb/en/library/mariadb-license/) |
+| MariaDB | 10.6.8 | [15.0.11](https://artifacthub.io/packages/helm/bitnami/wordpress/15.0.11) | [GPLv2](https://mariadb.com/kb/en/library/mariadb-license/) |
 
 ## Getting Started
 
