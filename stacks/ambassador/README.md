@@ -15,7 +15,7 @@ The DigitalOcean 1-click application installs the [Helm 3](https://helm.sh/docs/
 
 **Note:**
 This stack requires a minimum configuration of 2 Nodes at the $10/month plan (2GB memory / 1 vCPU).
-this stack also adds a $12/month Load Balancer.
+The Ambassador 1-Click app also includes a $12/month DigitalOcean Load Balancer to ensure that ingress traffic is distributed across all of the nodes in your DOKS cluster.
 
 ## Software included
 

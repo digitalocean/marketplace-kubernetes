@@ -6,9 +6,9 @@ This DigitalOcean Marketplace Kubernetes 1-Click installs [WordPress](https://gi
 
 **Notes:**
 
-- This stack requires a minimum configuration of 2 Nodes at the $10/month plan (2GB memory / 1 vCPU).
-- The WordPress stack 1-Click App also includes a $1/month block storage for both WordPress and MariaDB.
-- The Wordpress stack 1-Click APP also adds a $12/month Load Balancer.
+This stack requires a minimum configuration of 2 Nodes at the $10/month plan (2GB memory / 1 vCPU).
+The WordPress 1-Click App also includes a $1/month block storage for both WordPress and MariaDB.
+The Wordpress 1-Click app also includes a $12/month DigitalOcean Load Balancer to ensure that ingress traffic is distributed across all of the nodes in your DOKS cluster.
 
 ## Software included
 
