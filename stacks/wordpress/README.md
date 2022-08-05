@@ -8,6 +8,7 @@ This DigitalOcean Marketplace Kubernetes 1-Click installs [WordPress](https://gi
 
 - This stack requires a minimum configuration of 2 Nodes at the $10/month plan (2GB memory / 1 vCPU).
 - The WordPress stack 1-Click App also includes a $1/month block storage for both WordPress and MariaDB.
+- The Wordpress stack 1-Click APP also adds a $12/month Load Balancer.
 
 ## Software included
 
@@ -99,6 +100,11 @@ Next, extract the credentials to see admin your WordPress site:
 ```console
 kubectl get secret --namespace wordpress wordpress -o jsonpath="{.data.wordpress-password}" | base64 --decode
 ```
+
+Finally, open a web browser and navigate to the WordPress admin panel using the `http://$WORDPRESS_IP/admin` address and login with the `admin` user and the password you got from the `kubernetes secret` above.
+
+**Note:**
+Once this chart is deployed, it is not possible to change the application's access credentials, such as usernames or passwords, using Helm. To change these application credentials after deployment, delete any persistent volumes (PVs) used by the chart and re-deploy it, or use the application's built-in administrative tools if available.
 
 Checkout the [WordPress docs](https://wordpress.org/support/) for more info on using WordPress.
 

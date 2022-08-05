@@ -459,7 +459,7 @@ kubectl delete KnativeEventing knative-eventing -n knative-eventing
 Remove the Knative Operator:
 
 ```console
-OPERATOR_VERSION="1.2.2"
+OPERATOR_VERSION="1.5.1"
 
 kubectl delete -f "https://github.com/knative/operator/releases/download/knative-v${OPERATOR_VERSION}/operator.yaml"
 ```

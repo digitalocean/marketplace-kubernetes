@@ -24,7 +24,7 @@ A Loki-based logging stack consists of 3 components:
 
 | Package               | Application Version   | Helm Chart Version |License                                                                                    |
 | ---| ---- | ---- | ------------- |
-| Loki Stack | 2.6.3 | [2.1.0](https://artifacthub.io/packages/helm/grafana/loki-stack/2.6.3) | [Apache 2.0](https://github.com/grafana/loki/blob/main/LICENSE) |
+| Loki Stack | 2.1.0 | [2.6.3](https://artifacthub.io/packages/helm/grafana/loki-stack/2.6.3) | [Apache 2.0](https://github.com/grafana/loki/blob/main/LICENSE) |
 
 ## Getting Started
 
@@ -99,7 +99,7 @@ helm show values grafana/loki-stack --version 2.6.3
 To change these values, open the Helm values file `values.yml`, change whatever values you want, save and exit the file, and apply the changes by running `helm upgrade` command:
 
 ```console
-helm upgrade loki grafana/loki-stack --version 2.5.1 \
+helm upgrade loki grafana/loki-stack --version 2.6.3 \
   --namespace loki-stack \
   --values values.yml
 ```

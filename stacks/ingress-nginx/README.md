@@ -13,7 +13,7 @@ To know more about the community maintained version of the NGINX Ingress Control
 **Notes:**
 
 - DigitalOcean uses Helm v3 to deploy the NGINX Ingress Controller to your DOKS cluster.
-- The NGINX Ingress Controller 1-Click App also includes a $10/month DigitalOcean Load Balancer to ensure that ingress traffic is distributed across all of the nodes in your DOKS cluster.
+- The NGINX Ingress Controller 1-Click App also includes a $12/month DigitalOcean Load Balancer to ensure that ingress traffic is distributed across all of the nodes in your DOKS cluster.
 
 ## NGINX Example Setup Diagram
 
