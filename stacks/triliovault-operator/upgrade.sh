@@ -14,10 +14,6 @@ helm repo update > /dev/null
 STACK="triliovault-operator"
 CHART="triliovault-operator/k8s-triliovault-operator"
 
-ROOT_DIR=$(git rev-parse --show-toplevel)
-TVK_PATH="$ROOT_DIR/stacks/$STACK"
-TVK_LICENSE_FILE="$TVK_PATH/tvk_install_license.yaml"
-
 LATEST="$(helm show chart triliovault-operator/k8s-triliovault-operator | grep appVersion | awk -F ':' '{gsub(/ /,""); print $2 }')"
 echo "Upgrading TVK to latest version: $LATEST"
 CHART_VERSION=$LATEST
@@ -28,6 +24,9 @@ echo "Upgrading Triliovault operator..."
 
 if [ -z "${MP_KUBERNETES}" ]; then
   # use local version of values.yml
+  ROOT_DIR=$(git rev-parse --show-toplevel)
+  TVK_PATH="$ROOT_DIR/stacks/$STACK"
+  TVK_LICENSE_FILE="$TVK_PATH/tvk_install_license.yaml"
   values="$TVK_PATH/values.yml"
   TVM="$TVK_PATH/triliovault-manager.yaml"
 else
