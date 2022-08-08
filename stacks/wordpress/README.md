@@ -7,14 +7,15 @@ This DigitalOcean Marketplace Kubernetes 1-Click installs [WordPress](https://gi
 **Notes:**
 
 - This stack requires a minimum configuration of 2 Nodes at the $10/month plan (2GB memory / 1 vCPU).
-- The WordPress stack 1-Click App also includes a $1/month block storage for both WordPress and MariaDB.
+- The WordPress 1-Click App also includes a $1/month block storage for both WordPress and MariaDB.
+- The Wordpress 1-Click app also includes a $12/month DigitalOcean Load Balancer to ensure that ingress traffic is distributed across all of the nodes in your DOKS cluster.
 
 ## Software included
 
 | Package               | Application Version   | Helm Chart Version |License                                                                                    |
 | ---| ---- | ---- | ------------- |
-| WordPress | 5.9.1 | [13.0.22](https://artifacthub.io/packages/helm/bitnami/wordpress/13.0.22) | [GPLv2](https://wordpress.org/about/license/) |
-| MariaDB | 10.5.15 | [13.0.22](https://artifacthub.io/packages/helm/bitnami/wordpress/13.0.22) | [GPLv2](https://mariadb.com/kb/en/library/mariadb-license/) |
+| WordPress | 6.0.1 | [15.0.11](https://artifacthub.io/packages/helm/bitnami/wordpress/15.0.11) | [GPLv2](https://wordpress.org/about/license/) |
+| MariaDB | 10.6.8 | [15.0.11](https://artifacthub.io/packages/helm/bitnami/wordpress/15.0.11) | [GPLv2](https://mariadb.com/kb/en/library/mariadb-license/) |
 
 ## Getting Started
 
@@ -40,7 +41,7 @@ The output looks similar to (notice that the `STATUS` column value is `deployed`
 
 ```text
 NAME      NAMESPACE REVISION UPDATED                              STATUS   CHART             APP VERSION
-wordpress wordpress 1        2022-03-10 14:56:39.419223 +0200 EET deployed wordpress-13.0.22 5.9.1
+wordpress wordpress 1        2022-03-10 14:56:39.419223 +0200 EET deployed wordpress-15.0.11 6.0.1
 ```
 
 Next, verify if the WordPress and MariaDB Pods are up and running:
@@ -100,6 +101,11 @@ Next, extract the credentials to see admin your WordPress site:
 kubectl get secret --namespace wordpress wordpress -o jsonpath="{.data.wordpress-password}" | base64 --decode
 ```
 
+Finally, open a web browser and navigate to the WordPress admin panel using the `http://$WORDPRESS_IP/admin` address and login with the `admin` user and the password you got from the `kubernetes secret` above.
+
+**Note:**
+Once this chart is deployed, it is not possible to change the application's access credentials, such as usernames or passwords, using Helm. To change these application credentials after deployment, delete any persistent volumes (PVs) used by the chart and re-deploy it, or use the application's built-in administrative tools if available.
+
 Checkout the [WordPress docs](https://wordpress.org/support/) for more info on using WordPress.
 
 ### Tweaking Helm Values
@@ -109,13 +115,13 @@ The WordPress stack provides some custom values to start with. Please have a loo
 You can always inspect all the available options, as well as the default values for the WordPress Helm chart by running below command:
 
 ```console
-helm show values bitnami/wordpress --version 13.0.22
+helm show values bitnami/wordpress --version 15.0.11
 ```
 
 After tweaking the Helm values file (`values.yml`) according to your needs, you can always apply the changes via `helm upgrade` command, as shown below:
 
 ```console
-helm upgrade wordpress bitnami/wordpress --version 13.0.22\
+helm upgrade wordpress bitnami/wordpress --version 15.0.11 \
   --namespace wordpress \
   --values values.yml
 ```
@@ -137,7 +143,7 @@ See [helm upgrade](https://helm.sh/docs/helm/helm_upgrade/) for command document
 
 ### Uninstalling
 
-To uninstall WordPress, you'll need to have Helm 3 installed. Once install, run the following:
+To uninstall WordPress, you'll need to have Helm 3 installed. Once installed, run the following:
 
 ```bash
 helm uninstall wordpress -n wordpress

@@ -9,4 +9,4 @@ metadata:
   name: knative-eventing
   namespace: knative-eventing
 spec:
-  version: "0.26.3"
+  version: "1.5.0"

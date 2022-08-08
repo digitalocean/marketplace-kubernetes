@@ -1,5 +1,5 @@
 ## Chart: argo/argo-cd
-## Ref: https://github.com/argoproj/argo-helm/tree/argo-cd-4.2.1/charts/argo-cd
+## Ref: https://github.com/argoproj/argo-helm/tree/argo-cd-4.9.4/charts/argo-cd
 ##
 
 # Main Argo CD server replica count

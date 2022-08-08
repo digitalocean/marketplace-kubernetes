@@ -1,5 +1,5 @@
 ## Chart: jetstack/cert-manager
-## Ref: https://github.com/cert-manager/cert-manager/blob/v1.6.1/deploy/charts/cert-manager/
+## Ref: https://github.com/cert-manager/cert-manager/blob/v1.8.0/deploy/charts/cert-manager/
 ##
 
 # Cert-Manager requires a number of CRD resources to be installed beforehand

@@ -1,5 +1,5 @@
 ## Stack name: grafana/loki-stack
-## Ref: https://artifacthub.io/packages/helm/grafana/loki-stack/2.5.1
+## Ref: https://artifacthub.io/packages/helm/grafana/loki-stack/2.6.3
 ##
 
 loki:

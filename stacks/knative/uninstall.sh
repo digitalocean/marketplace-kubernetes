@@ -2,7 +2,7 @@
 
 set -e
 
-OPERATOR_VERSION="1.2.2"
+OPERATOR_VERSION="1.5.1"
 
 # Remove Knative Serving and Eventing resources first
 kubectl delete KnativeServing knative-serving -n knative-serving

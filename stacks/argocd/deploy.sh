@@ -13,7 +13,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="argocd"
 CHART="argo/argo-cd"
-CHART_VERSION="4.2.1"
+CHART_VERSION="4.9.4"
 NAMESPACE="argocd"
 
 if [ -z "${MP_KUBERNETES}" ]; then

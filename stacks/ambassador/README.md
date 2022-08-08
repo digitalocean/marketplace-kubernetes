@@ -13,13 +13,16 @@ The DigitalOcean 1-click application installs the [Helm 3](https://helm.sh/docs/
 - [Rate Limiting](https://www.getambassador.io/docs/edge-stack/2.1/topics/using/rate-limits/rate-limits/): Rate limit to ensure the reliability, security and scalability of your micro-services.
 - [Authentication](https://www.getambassador.io/docs/edge-stack/2.1/topics/running/aes-extensions/authentication/): Built-in [OAuth2](https://www.getambassador.io/docs/edge-stack/2.1/topics/using/filters/oauth2/) and [JWT](https://www.getambassador.io/docs/edge-stack/2.1/topics/using/filters/jwt/) authentication with the ability to drop in custom AuthService plugins.
 
-**Note:** This stack requires a minimum configuration of 2 Nodes at the $10/month plan (2GB memory / 1 vCPU).
+**Notes:**
+
+- This stack requires a minimum configuration of 2 Nodes at the $10/month plan (2GB memory / 1 vCPU).
+- The Ambassador 1-Click app also includes a $12/month DigitalOcean Load Balancer to ensure that ingress traffic is distributed across all of the nodes in your DOKS cluster.
 
 ## Software included
 
 | Package               | Application Version   | Helm Chart Version |License                                                                                    |
 | ---| ---- | ---- | ------------- |
-| Ambassador Edge Stack | 2.1.2 | [7.2.2](https://artifacthub.io/packages/helm/datawire/edge-stack/7.2.2) | [Apache 2.0](https://github.com/datawire/ambassador/blob/master/LICENSE) |
+| Ambassador Edge Stack | 2.2.2 | [7.3.2](https://artifacthub.io/packages/helm/datawire/edge-stack/7.3.2) | [Apache 2.0](https://github.com/datawire/ambassador/blob/master/LICENSE) |
 
 ## Getting Started
 
@@ -44,7 +47,7 @@ If the installation was successful, the `STATUS` column value in the output read
 
 ```text
 NAME       NAMESPACE  REVISION UPDATED                              STATUS   CHART            APP VERSION
-edge-stack ambassador 1        2022-02-14 18:02:21.554041 +0200 EET deployed edge-stack-7.2.2 2.1.2
+edge-stack ambassador 1        2022-02-14 18:02:21.554041 +0200 EET deployed edge-stack-7.3.2 2.2.2
 ```
 
 Next, verify that the Ambassador Ingress pods are up and running with the following command:
@@ -92,13 +95,13 @@ The Ambassador Ingress stack provides some custom values to start with. Please h
 You can always inspect all the available options, as well as the default values for the Ambassador Ingress Helm chart by running below command:
 
 ```console
-helm show values datawire/edge-stack --version 7.2.2
+helm show values datawire/edge-stack --version 7.3.2
 ```
 
 After tweaking the Helm values file (`values.yml`) according to your needs, you can always apply the changes via `helm upgrade` command, as shown below:
 
 ```console
-helm upgrade edge-stack datawire/edge-stack --version 7.2.2 \
+helm upgrade edge-stack datawire/edge-stack --version 7.3.2 \
   --namespace ambassador \
   --values values.yml
 ```
@@ -131,7 +134,7 @@ And then the following `delete` commands:
 ```bash
 kubectl delete ns ambassador
 
-kubectl delete -f https://app.getambassador.io/yaml/edge-stack/2.1.2/aes-crds.yaml
+kubectl delete -f https://app.getambassador.io/yaml/edge-stack/2.3.0/aes-crds.yaml
 ```
 
 ### Additional Resources

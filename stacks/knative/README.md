@@ -1,6 +1,5 @@
 # Description
 
-
 [Knative](https://knative.dev) is an open-source solution to build and deploy serverless applications using Kubernetes as the underlying platform. In addition to application development, developers may also have infrastructure tasks such as maintaining Kubernetes manifests for application deployment, rolling back to a previous revision, traffic routing, scaling up or down workloads to meet load demand, etc. Knative reduces the boilerplate needed for spinning up workloads in Kubernetes, such as creating deployments, services, ingress objects, etc. Knative also helps you implement best practices in production systems (e.g. blue-green, canary deployments), application observability (logs and metrics), and support for event-driven applications.
 
 Knative comprises of two main components:
@@ -44,9 +43,9 @@ Minimum system requirements for Knative are as follows:
 
 | Package | Application Version | License |
 |---------|---------------------|---------|
-| Knative Operator | [1.2.2](https://github.com/knative/operator/releases/tag/knative-v1.2.2) | [Apache 2.0](https://github.com/knative/operator/blob/main/LICENSE) |
-| Knative Serving | [1.2.3](https://github.com/knative/serving/releases/tag/knative-v1.2.3) | [Apache 2.0](https://github.com/knative/serving/blob/main/LICENSE) |
-| Knative Eventing | [0.26.3](https://github.com/knative/eventing/releases/tag/v0.26.3) | [Apache 2.0](https://github.com/knative/eventing/blob/main/LICENSE) |
+| Knative Operator | [1.5.1](https://github.com/knative/operator/releases/tag/knative-v1.5.1) | [Apache 2.0](https://github.com/knative/operator/blob/main/LICENSE) |
+| Knative Serving | [1.5.0](https://github.com/knative/serving/releases/tag/knative-v1.5.0) | [Apache 2.0](https://github.com/knative/serving/blob/main/LICENSE) |
+| Knative Eventing | [1.5.0](https://github.com/knative/eventing/releases/tag/knative-v1.5.0) | [Apache 2.0](https://github.com/knative/eventing/blob/main/LICENSE) |
 
 ## Getting Started
 
@@ -85,11 +84,11 @@ Serving is one of the main components of Knative. Check if it is running by usin
 kubectl get KnativeServing knative-serving -n knative-serving
 ```
 
-The output looks similar to the following: 
+The output looks similar to the following:
 
 ```text
 NAME              VERSION   READY   REASON
-knative-serving   1.2.3     True
+knative-serving   1.5.0     True
 ```
 
 The `READY` column should have a value of `True`.
@@ -129,7 +128,7 @@ The output looks similar to:
 
 ```text
 NAME               VERSION   READY   REASON
-knative-eventing   0.26.3    True
+knative-eventing   1.5.0    True
 ```
 
 Then, run the following command to check if all Knative Eventing deployments are healthy:
@@ -187,7 +186,7 @@ kind: KnativeServing
 metadata:
   name: knative-serving
 spec:
-  version: "1.2.3"
+  version: "1.5.0"
   ingress:
     kourier:
       enabled: true
@@ -198,7 +197,7 @@ spec:
 
 Explanations for the above configuration:
 
-- `spec.version`: Tells Knative Operator what version of `KnativeServing` to install in your DOKS cluster (for example, `1.2.3`).
+- `spec.version`: Tells Knative Operator what version of `KnativeServing` to install in your DOKS cluster (for example, `1.5.0`).
 - `spec.ingress` and `spec.config.network`: Tells Knative what implementation to use for the networking layer (for example, Kourier).
 
 In the previous example, Knative uses Kourier as the default networking implementation to handle ingress configuration. You can also choose other available options such as Istio and Contour. Note that Kourier is the option which comes bundled with Knative. For the other networking implementations mentioned earlier, you need to install the stacks separately. For example, install the Istio stack.
@@ -224,10 +223,10 @@ metadata:
   name: knative-eventing
   namespace: knative-eventing
 spec:
-  version: "0.26.3"
+  version: "1.5.0"
 ```
 
-In the previous configuration, the Knative Operator installs the `0.26.3` version of `KnativeEventing` component in your DOKS cluster, via the `spec.version` field. If no version is specified, then the latest one available is picked automatically. You can also configure other options like message broker configurations, resources requests and limits for the underlying containers, etc.
+In the previous configuration, the Knative Operator installs the `1.5.0` version of `KnativeEventing` component in your DOKS cluster, via the `spec.version` field. If no version is specified, then the latest one available is picked automatically. You can also configure other options like message broker configurations, resources requests and limits for the underlying containers, etc.
 
 **Note:**
 
@@ -323,7 +322,7 @@ If you do not have a real DNS setup yet, you can quickly test the service by cre
     ```
 
     The `EXTERNAL-IP` column gives you the Kourier ingress controller's public IP address.
-    
+
 2. Create a new entry for your Knative service in the `/etc/hosts` file by replacing the `<>` placeholders:
 
     ```text
@@ -337,7 +336,7 @@ If you do not have a real DNS setup yet, you can quickly test the service by cre
     ```
 
 It takes several seconds for Knative to cold start your serverless application.
- 
+
 4. Get specific information about each resource type in the `knative-samples` namespace using the `kn` command:
 
 - List available `services`:
@@ -418,6 +417,29 @@ kubectl apply -f <YOUR_KNATIVE_EVENTING_MANIFEST_FILE>
 
 See [Upgrade via the Knative Operator Guide](https://knative.dev/docs/install/upgrade/upgrade-installation-with-operator) for more information on how to upgrade the components, as well as the allowed migration paths.
 
+**Notes:**
+Please also note that if you attempt to upgrade from version `0.x.x` to version `1.x.x` you will get a message in the `knative operator` informing you that: `Version migration is not eligible with message: not supported to upgrade or downgrade across the MAJOR version.` To upgrade to a `MAJOR` version you should remove the existing `Knative Serving` or `Knative Eventing` resources and add new ones as follows:
+
+First remove the Knative Serving resource:
+
+  ```console
+  kubectl delete KnativeServing knative-serving -n knative-serving
+  ```
+
+  or Knative Eventing resource:
+
+  ```console
+  kubectl delete KnativeEventing knative-eventing -n knative-eventing
+  ```
+
+Next, add a new major version in the `spec.version` field of the Eventing/Serving CRDs shown above and apply with `kubectl`:
+
+```console
+kubectl apply -f <YOUR_KNATIVE_SERVING_MANIFEST_FILE>
+
+kubectl apply -f <YOUR_KNATIVE_EVENTING_MANIFEST_FILE>
+```
+
 ## Uninstalling Knative
 
 Knative Operator prevents unsafe removal of Knative resources. Even if the Knative Serving and Knative Eventing resources are successfully removed, all the CRDs in Knative are still kept in the cluster. All your resources relying on Knative CRDs can still work.
@@ -437,7 +459,7 @@ kubectl delete KnativeEventing knative-eventing -n knative-eventing
 Remove the Knative Operator:
 
 ```console
-OPERATOR_VERSION="1.2.2"
+OPERATOR_VERSION="1.5.1"
 
 kubectl delete -f "https://github.com/knative/operator/releases/download/knative-v${OPERATOR_VERSION}/operator.yaml"
 ```

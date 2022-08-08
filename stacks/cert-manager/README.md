@@ -20,7 +20,7 @@ The following diagram shows how Cert-Manager works in conjunction with the Nginx
 
 | Package | Cert-Manager Version | Helm Chart Version | License |
 |---------|----------------------|--------------------|---------|
-| Cert-Manager | [1.6.1](https://github.com/cert-manager/cert-manager/releases/tag/v1.6.1) | [1.6.1](https://artifacthub.io/packages/helm/cert-manager/cert-manager/1.6.1) | [Apache 2.0](https://github.com/cert-manager/cert-manager/blob/master/LICENSE) |
+| Cert-Manager | [1.8.0](https://github.com/cert-manager/cert-manager/releases/tag/v1.8.0) | [1.8.0](https://artifacthub.io/packages/helm/cert-manager/cert-manager/1.8.0) | [Apache 2.0](https://github.com/cert-manager/cert-manager/blob/master/LICENSE) |
 
 ## Getting Started
 
@@ -45,7 +45,7 @@ If the installation was successful, the `STATUS` column value in the output read
 
 ```text
 NAME            NAMESPACE       REVISION        UPDATED                                 STATUS          CHART                   APP VERSION
-cert-manager    cert-manager    1               2022-02-21 18:49:08.264191 +0200 EET    deployed        cert-manager-v1.6.1     v1.6.1
+cert-manager    cert-manager    1               2022-02-21 18:49:08.264191 +0200 EET    deployed        cert-manager-v1.8.0     v1.8.0
 ```
 
 Next, verify that the Cert-Manager pods are up and running with the following command:
@@ -70,13 +70,13 @@ The `cert-manager` has custom default Helm values. See the [values](./values.yml
 To inspect its current values, run the following command:
 
 ```console
-helm show values jetstack/cert-manager --version 1.6.1
+helm show values jetstack/cert-manager --version 1.8.0
 ```
 
 To change these values, open the Helm values file `values.yml`, change whatever values you want, save and exit the file, and apply the changes by running `helm upgrade` command:
 
 ```console
-helm upgrade cert-manager jetstack/cert-manager --version 1.6.1 \
+helm upgrade cert-manager jetstack/cert-manager --version 1.8.0 \
   --namespace cert-manager \
   --values values.yml
 ```
