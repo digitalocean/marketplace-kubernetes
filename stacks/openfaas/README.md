@@ -16,12 +16,12 @@ You can find out more about OpenFaaS at [the official website](https://www.openf
 
 | Package               | Application Version   |License                                                                                    |
 | ---| ---- | ------------- |
-| Prometheus | [2.11.0](https://github.com/prometheus/prometheus/releases/tag/v2.11.0) | [Apache 2.0](https://github.com/prometheus/prometheus/blob/master/LICENSE) |
+| Prometheus | [2.36.2](https://github.com/prometheus/prometheus/releases/tag/v2.36.2) | [Apache 2.0](https://github.com/prometheus/prometheus/blob/master/LICENSE) |
 | Alertmanager | [0.18.0](https://github.com/prometheus/alertmanager/releases/tag/v0.18.0) | [Apache 2.0](https://github.com/prometheus/prometheus/blob/master/LICENSE) |
 | NATS Streaming | [0.22.0](https://github.com/nats-io/nats-streaming-server/releases/tag/v0.22.0) | [Apache 2.0](https://github.com/nats-io/nats-streaming-server/blob/master/LICENSE) |
-| faas-netes | [0.14.2](https://github.com/openfaas/faas-netes/releases/tag/0.14.2) | [MIT](https://github.com/openfaas/faas-netes/blob/master/LICENSE) |
-| faas | [0.21.3](https://github.com/openfaas/faas/releases/tag/0.21.3) | [MIT](https://github.com/openfaas/faas/blob/master/LICENSE) |
-| nats-queue-worker | [0.12.2](https://github.com/openfaas/nats-queue-worker/releases/tag/0.12.2) | [MIT](https://github.com/openfaas/nats-queue-worker/blob/master/LICENSE) |
+| faas-netes | [0.15.1](https://github.com/openfaas/faas-netes/releases/tag/0.15.1) | [MIT](https://github.com/openfaas/faas-netes/blob/master/LICENSE) |
+| faas | [0.23.0](https://github.com/openfaas/faas/releases/tag/0.23.0) | [MIT](https://github.com/openfaas/faas/blob/master/LICENSE) |
+| nats-queue-worker | [0.13.1](https://github.com/openfaas/nats-queue-worker/releases/tag/0.13.1) | [MIT](https://github.com/openfaas/nats-queue-worker/blob/master/LICENSE) |
 
 ## Getting Started
 
@@ -46,7 +46,7 @@ If the installation was successful, the `STATUS` column value in the output read
 
 ```text
 NAME          NAMESPACE REVISION UPDATED                              STATUS   CHART                APP VERSION
-openfaas      openfaas  1        2022-03-02 10:40:25.804165 +0200 EET deployed openfaas-10.0.13
+openfaas      openfaas  1        2022-03-02 10:40:25.804165 +0200 EET deployed openfaas-10.2.2
 ```
 
 Next, verify that the OpenFaaS pods are up and running with the following command:
@@ -71,13 +71,13 @@ OpenFaaS is now successfully installed and running.
 OpenFaaS has custom default Helm values. To inspect its current values, run the following command:
 
 ```console
-helm show values openfaas/openfaas --version 10.0.13
+helm show values openfaas/openfaas --version 10.2.2
 ```
 
 To change these values, open the Helm values file `values.yml`, change whatever values you want, save and exit the file, and apply the changes by running `helm upgrade` command:
 
 ```console
-helm upgrade openfaas openfaas/openfaas --version 10.0.13 \
+helm upgrade openfaas openfaas/openfaas --version 10.2.2 \
   --namespace openfaas \
   --values values.yml
 ```
@@ -103,6 +103,18 @@ ingress-nginx-controller-admission   ClusterIP      10.245.133.50    <none>     
 ```
 
 Create a DNS A record pointing to your IngressController's public IP in your DNS manager. For specific instructions on how to do this, see the official [OpenFaaS documentation](https://docs.openfaas.com/reference/ssl/kubernetes-with-cert-manager/#create-a-dns-record).
+
+Install `cert-manager`:
+
+```shell
+helm install \
+  cert-manager \
+  --namespace cert-manager \
+  --create-namespace \
+  --set installCRDs=true \
+  --version v1.8.0 \
+  jetstack/cert-manager
+```
 
 Then, create an issuer. For convenience, this tutorial uses the Let's Encrypt production API. Create the following YAML file and replace `<your-email-here>` with the contact email that you want the TLS certificate to show.
 
@@ -161,7 +173,6 @@ Upgrade via `helm`:
 ```console
 helm upgrade openfaas \
     --namespace openfaas \
-    --reuse-values \
     --values tls.yaml \
     openfaas/openfaas
 ```
@@ -181,7 +192,7 @@ NAME           READY   SECRET         AGE
 openfaas-crt   True    openfaas-crt   152m
 ```
 
-Now, you can access the OpenFaaS UI and start creating functions.
+Now, you can access the OpenFaaS UI at your configured domain using the `admin` user and start creating functions.
 
 **Note:**
 To retrieve the OpenFaaS credentials, run the following command:
