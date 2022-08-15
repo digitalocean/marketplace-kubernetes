@@ -38,10 +38,10 @@ fi
 if [ -z "${MP_KUBERNETES}" ]; then
   # use local version of values.yml
   ROOT_DIR=$(git rev-parse --show-toplevel)
-  values="$ROOT_DIR/stacks/litespeed-webadc/values.yml"
+  values="$ROOT_DIR/stacks/ls-k8s-webadc/values.yml"
 else
   # use github hosted master version of values.yml
-  values="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/litespeed-webadc/values.yml"
+  values="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/ls-k8s-webadc/values.yml"
 fi
 
 helm upgrade "$STACK" "$CHART" \
