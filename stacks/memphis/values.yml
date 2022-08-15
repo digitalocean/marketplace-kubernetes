@@ -1,10 +1,11 @@
-# memphis/memphis
 rootPwd: ""
 connectionToken: ""
 analytics: true
 dashboard:
   port: 80
+image: ""
 logsRetentionInDays: 3
+teston: ""
 #####################################
 #                                   #
 #  NATS Server Configuration BEGIN  #
@@ -12,7 +13,7 @@ logsRetentionInDays: 3
 #####################################
 nats:
   #image: nats:2.7.2-alpine
-  image: memphisos/memphis-nats:2.7.2-alpine3.15
+  image: memphisos/memphis-nats:2.8.4-alpine3.15
   pullPolicy: IfNotPresent
 
   # The servers name prefix, must be used for example when we want a NATS cluster
