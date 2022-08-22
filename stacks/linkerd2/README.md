@@ -4,7 +4,7 @@
 
 This stack is open source and community supported, and can be found at [github.com/digitalocean/marketplace-kubernetes/tree/master/stacks/linkerd2](https://github.com/digitalocean/marketplace-kubernetes/tree/master/stacks/linkerd2). If you have large production needs, see the [Buoyant Enterprise Support](https://buoyant.io/commercial-support/?utm_source=DigitalOcean&utm_campaign=Marketplace).
 
-**Notes:** 
+**Notes:**
 
 - The Linkerd2 CLI is recommended to interact with Linkerd2 and instructions are provided to add your specific service.
 
@@ -14,7 +14,7 @@ This stack is open source and community supported, and can be found at [github.c
 
 | Package               | Application Version   |License                                                                                    |
 | ---| ---- | ------------- |
-| linkerd2 | [2.11.1](https://github.com/linkerd/linkerd2/releases/tag/stable-2.11.1) | [Apache 2.0](https://github.com/linkerd/linkerd2/blob/master/LICENSE) |
+| linkerd2 | [2.11.4](https://github.com/linkerd/linkerd2/releases/tag/stable-2.11.4) | [Apache 2.0](https://github.com/linkerd/linkerd2/blob/master/LICENSE) |
 
 ## Getting Started
 
@@ -38,6 +38,7 @@ linkerd-destination      1/1     1            1           4m6s
 linkerd-identity         1/1     1            1           4m11s
 linkerd-proxy-injector   1/1     1            1           4m3s
 ```
+
 All pods should be in a `READY` state.
   
 Next, check if the Linkerd on-cluster metrics stack installation was successful by running the following command:
@@ -82,6 +83,13 @@ Verify that the CLI is installed by running:
 linkerd version
 ```
 
+The output looks similar to the following:
+
+```text
+Client version: stable-2.11.2
+Server version: stable-2.11.4
+```
+
 You can now view the Linkerd dashboard by running:
 
 ```console
@@ -123,7 +131,7 @@ linkerd version --client
 The output looks similar to the following:
 
 ```text
-Client version: stable-2.11.1
+Client version: stable-2.11.2
 ```
 
 ### Upgrading the Linkerd Control Plane

@@ -15,7 +15,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="openfaas"
 CHART="openfaas/openfaas"
-CHART_VERSION="10.0.13"
+CHART_VERSION="10.2.2"
 NAMESPACE="openfaas"
 
 if [ -z "${MP_KUBERNETES}" ]; then
