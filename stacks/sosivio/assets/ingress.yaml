@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: dashboard
+  namespace: sosivio
+spec:
+  rules:
+  - host: dashboard-sosivio.<YOUR_DOMAIN>
+    http:
+      paths:
+      - backend:
+          service:
+            name: dashboard
+            port:
+              number: 8088
+        path: /
+        pathType: Prefix
