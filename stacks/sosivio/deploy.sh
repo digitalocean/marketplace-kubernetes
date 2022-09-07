@@ -30,6 +30,6 @@ helm upgrade "$STACK" "$CHART" \
   --create-namespace \
   --install \
   --timeout 8m0s \
-  --namespace "$NAMESPACE" 
+  --namespace "$NAMESPACE" \
   --version "$CHART_VERSION" \
   --set expose=PortForward
