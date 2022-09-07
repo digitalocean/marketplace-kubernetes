@@ -13,7 +13,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="sosivio"
 CHART="sosivio/sosivio"
-CHART_VERSION="1.4.2"
+CHART_VERSION="1.4.3"
 NAMESPACE="sosivio"
 
 if [ -z "${MP_KUBERNETES}" ]; then
