@@ -13,7 +13,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="sosivio"
 CHART="sosivio/sosivio"
-CHART_VERSION="1.4.2"
+CHART_VERSION="1.4.3"
 NAMESPACE="sosivio"
 
 if [ -z "${MP_KUBERNETES}" ]; then
@@ -30,6 +30,6 @@ helm upgrade "$STACK" "$CHART" \
   --create-namespace \
   --install \
   --timeout 8m0s \
-  --namespace "$NAMESPACE" 
+  --namespace "$NAMESPACE" \
   --version "$CHART_VERSION" \
   --set expose=PortForward
