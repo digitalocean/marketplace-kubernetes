@@ -1,0 +1,10 @@
+# paralus/ztka
+deploy:
+  elasticsearch:
+    enable: true
+  postgresql:
+    enable: true
+
+kratos:
+  kratos:
+    development: true
