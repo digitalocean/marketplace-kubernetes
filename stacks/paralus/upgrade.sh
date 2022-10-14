@@ -5,7 +5,7 @@ set -e
 ################################################################################
 # repo
 ################################################################################
-helm repo add stable https://paralus.github.io/helm-charts
+helm repo add paralus https://paralus.github.io/helm-charts
 helm repo update > /dev/null
 
 ################################################################################
