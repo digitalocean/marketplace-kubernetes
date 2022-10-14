@@ -13,7 +13,7 @@ To add your application to the [DigitalOcean Marketplace](https://marketplace.di
 1. Run the following commands to create your `deploy.sh`, `upgrade.sh`, `uninstall.sh` and `values.yml` files. They will be located in `stacks/$APP_NAME`:
 ```bash
 export HELM_REPO_NAME=$REPO_NAME
-export HELM_REPO_URL=https://charts.helm.sh/your-helm-repo
+export HELM_REPO_URL=$REPO_URL
 export STACK_NAME=$APP_NAME
 export CHART_NAME=$REPO_NAME/$APP_NAME
 export CHART_VERSION=1.0.0
