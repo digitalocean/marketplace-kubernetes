@@ -12,10 +12,10 @@ To add your application to the [DigitalOcean Marketplace](https://marketplace.di
 1. Create a git branch that includes the name of your app (example: `$APP_NAME-first-pr`)
 1. Run the following commands to create your `deploy.sh`, `upgrade.sh`, `uninstall.sh` and `values.yml` files. They will be located in `stacks/$APP_NAME`:
 ```bash
-export HELM_REPO_NAME=stable
-export HELM_REPO_URL=https://charts.helm.sh/stable
+export HELM_REPO_NAME=$REPO_NAME
+export HELM_REPO_URL=https://charts.helm.sh/your-helm-repo
 export STACK_NAME=$APP_NAME
-export CHART_NAME=$APP_NAME/$APP_NAME
+export CHART_NAME=$REPO_NAME/$APP_NAME
 export CHART_VERSION=1.0.0
 export NAMESPACE=$APP_NAME
 
