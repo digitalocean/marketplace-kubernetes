@@ -12,21 +12,22 @@ To add your application to the [DigitalOcean Marketplace](https://marketplace.di
 1. Create a git branch that includes the name of your app (example: `$APP_NAME-first-pr`)
 1. Run the following commands to create your `deploy.sh`, `upgrade.sh`, `uninstall.sh` and `values.yml` files. They will be located in `stacks/$APP_NAME`:
 ```bash
-export HELM_REPO_NAME=stable
-export HELM_REPO_URL=https://charts.helm.sh/stable
+export HELM_REPO_NAME=$REPO_NAME
+export HELM_REPO_URL=$REPO_URL
 export STACK_NAME=$APP_NAME
-export CHART_NAME=$APP_NAME/$APP_NAME
+export CHART_NAME=$REPO_NAME/$APP_NAME
 export CHART_VERSION=1.0.0
 export NAMESPACE=$APP_NAME
 
 ./utils/generate-stack.sh
 ```
 6. Optionally, customize your `deploy.sh`, `upgrade.sh`, `uninstall.sh` and specify your Helm chart's configuration values in `values.yml`. Both can be found in `stacks/$APP_NAME`
-7. Test out installing your stack by deploying it locally to a k8s cluster: `./stacks/$APP_NAME/deploy.sh`
-8. Test out upgrading your stack by updating it locally on a k8s cluster: `./stacks/$APP_NAME/upgrade.sh`
-9. Test out uninstalling your stack by deleting it locally from a k8s cluster: `./stacks/$APP_NAME/uninstall.sh`
-10. Open a PR
-11. Once the PR is reviewed and merged by DigitalOcean, visit the [DigitalOcean Marketplace Vendor Portal](https://cloud.digitalocean.com/vendorportal) and submit your App Listing, refering to this PR in the appropriate input field.
+7. Run `chmod +x *.sh` from within `stacks/$APP_NAME` to ensure all of your scripts are executable
+8. Test out installing your stack by deploying it locally to a k8s cluster: `./stacks/$APP_NAME/deploy.sh`
+9. Test out upgrading your stack by updating it locally on a k8s cluster: `./stacks/$APP_NAME/upgrade.sh`
+10. Test out uninstalling your stack by deleting it locally from a k8s cluster: `./stacks/$APP_NAME/uninstall.sh`
+11. Open a PR
+12. Once the PR is reviewed and merged by DigitalOcean, visit the [DigitalOcean Marketplace Vendor Portal](https://cloud.digitalocean.com/vendorportal) and submit your App Listing, refering to this PR in the appropriate input field.
 
 ## Updating Your Application
 1. To deploy a newer version of your app's Helm chart, simply update the `CHART_VERSION` value in your `stacks/$APP_NAME/deploy.sh` file. If necessary, update your `values.yml` as well.
