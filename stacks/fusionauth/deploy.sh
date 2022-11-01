@@ -35,7 +35,7 @@ helm repo update > /dev/null
 
 # Install PostgresSQL and Elasticsearch
 helm install db bitnami/postgresql --create-namespace "$NAMESPACE" --namespace "$NAMESPACE" --set auth.username=fusionauth --set auth.password="$DB_PASSWORD" --set auth.database=fusionauth
-helm install search bitnami/elasticsearch --namespace "$NAMESPACE" -f elastic-search-values.yaml
+helm install search bitnami/elasticsearch --namespace "$NAMESPACE" -f search-values.yaml
 
 helm upgrade "$STACK" "$CHART" \
   --atomic \
