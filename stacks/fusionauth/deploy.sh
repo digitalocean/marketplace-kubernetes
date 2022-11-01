@@ -34,12 +34,8 @@ helm repo add fusionauth https://fusionauth.github.io/charts
 helm repo update > /dev/null
 
 # Install PostgresSQL and Elasticsearch
-helm install db bitnami/postgresql --set auth.username=fusionauth --set auth.password="$DB_PASSWORD" --set auth.database=fusionauth --set image.debug=true --namespace "$NAMESPACE"
-helm install search bitnami/elasticsearch --create-namespace --namespace "$NAMESPACE" -f elastic-search-values.yaml
-
-# Export the FusionAuth service
-export SVC_NAME=$(kubectl get svc --namespace fusionauth -l "app.kubernetes.io/name=fusionauth,app.kubernetes.io/instance=fusionauth" -o jsonpath="{.items[0].metadata.name}")
-kubectl port-forward svc/$SVC_NAME 9011:9011 -n "$NAMESPACE"
+helm install db bitnami/postgresql --create-namespace "$NAMESPACE" --namespace "$NAMESPACE" --set auth.username=fusionauth --set auth.password="$DB_PASSWORD" --set auth.database=fusionauth
+helm install search bitnami/elasticsearch --namespace "$NAMESPACE" -f elastic-search-values.yaml
 
 helm upgrade "$STACK" "$CHART" \
   --atomic \
