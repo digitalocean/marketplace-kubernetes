@@ -1,4 +1,3 @@
-![FusionAuth logo circle logo](/stacks/fusionauth/assets/img/fa_logo_purple_orange.png "FusionAuth logo")
 # Description 
 
 FusionAuth is a modern platform for Customer Identity and Access Management (CIAM). FusionAuth provides APIs and a responsive web user interface to support login, registration, localized email, multi-factor authentication, reporting and much more.
