@@ -11,7 +11,7 @@ helm repo update > /dev/null
 ################################################################################
 # chart
 ################################################################################
-STACK="wordpress"
+STACK="wordpress-kubernetes"
 CHART="bitnami/wordpress"
 NAMESPACE="wordpress"
 
@@ -27,6 +27,6 @@ fi
 helm upgrade "$STACK" "$CHART" \
   --namespace "$NAMESPACE" \
   --values "$values" \
-  --set wordpressPassword=$(kubectl get secret --namespace "wordpress" wordpress -o jsonpath="{.data.wordpress-password}" | base64 --decode) \
-  --set mariadb.auth.rootPassword=$(kubectl get secret --namespace "wordpress" wordpress-mariadb -o jsonpath="{.data.mariadb-root-password}" | base64 --decode) \
-  --set mariadb.auth.password=$(kubectl get secret --namespace "wordpress" wordpress-mariadb -o jsonpath="{.data.mariadb-password}" | base64 --decode)
+  --set wordpressPassword=$(kubectl get secret --namespace "wordpress" wordpress-kubernetes -o jsonpath="{.data.wordpress-password}" | base64 --decode) \
+  --set mariadb.auth.rootPassword=$(kubectl get secret --namespace "wordpress" wordpress-kubernetes-mariadb -o jsonpath="{.data.mariadb-root-password}" | base64 --decode) \
+  --set mariadb.auth.password=$(kubectl get secret --namespace "wordpress" wordpress-kubernetes-mariadb -o jsonpath="{.data.mariadb-password}" | base64 --decode)

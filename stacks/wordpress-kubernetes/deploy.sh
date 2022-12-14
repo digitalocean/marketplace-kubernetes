@@ -11,7 +11,7 @@ helm repo update > /dev/null
 ################################################################################
 # chart
 ################################################################################
-STACK="wordpress"
+STACK="wordpress-kubernetes"
 CHART="bitnami/wordpress"
 CHART_VERSION="15.0.11"
 NAMESPACE="wordpress"
