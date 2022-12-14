@@ -15,10 +15,9 @@ CHART="fusionauth/fusionauth"
 CHART_VERSION="0.10.10"
 NAMESPACE="fusionauth"
 
-# Generate password for db user
-export LC_CTYPE=C
-#DB_PASSWORD=`cat /dev/random | tr -dc '[:alnum:]' | head -c 42`
-DB_PASSWORD=password123
+
+DB_POSTGRES_USER_PASSWORD=`cat /dev/urandom | tr -dc '[:alnum:]' | head -c 42`
+DB_FUSIONAUTH_USER_PASSWORD=`cat /dev/urandom | tr -dc '[:alnum:]' | head -c 42`
 
 if [ -z "${MP_KUBERNETES}" ]; then
   # use local version of values.yml
@@ -37,10 +36,9 @@ helm repo update > /dev/null
 
 #echo "Password $DB_PASSWORD"
 # Install PostgresSQL and Elasticsearch
-helm install db bitnami/postgresql --create-namespace --namespace "$NAMESPACE" --set auth.enablePostgresUser=true --set auth.postgresPassword=password
+helm install db bitnami/postgresql --create-namespace --namespace "$NAMESPACE" --set auth.enablePostgresUser=true --set auth.postgresPassword="$DB_POSTGRES_USER_PASSWORD" --set image.tag=14.6.0-debian-11-r11
 helm install search bitnami/elasticsearch --namespace "$NAMESPACE" -f search-values.yaml
 
-#read -t 20 -p "I am going to wait for 20 seconds only ..."
 
 helm upgrade "$STACK" "$CHART" \
   --atomic \
@@ -53,6 +51,6 @@ helm upgrade "$STACK" "$CHART" \
   --set database.host=db-postgresql.fusionauth.svc.cluster.local  \
   --set search.host=search-elasticsearch.fusionauth.svc.cluster.local  \
   --set database.user=fusionauth \
-  --set database.password="$DB_PASSWORD" \
+  --set database.password="$DB_FUSIONAUTH_USER_PASSWORD" \
   --set database.root.user=postgres \
-  --set database.root.password=password
+  --set database.root.password="$DB_POSTGRES_USER_PASSWORD"

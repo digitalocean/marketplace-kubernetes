@@ -14,9 +14,10 @@ NAMESPACE="fusionauth"
 helm uninstall -n "$NAMESPACE" search
 helm uninstall -n "$NAMESPACE" db
 helm uninstall "$STACK" --namespace "$NAMESPACE"
-kubectl delete pvc data-db-postgresql-0 -n fusionauth
 
 helm repo remove stable
 helm repo remove bitnami
 helm repo remove fusionauth
+
+kubectl delete ns fusionauth
 
