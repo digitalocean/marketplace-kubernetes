@@ -13,7 +13,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="awx-operator"
 CHART="awx-operator"
-CHART_VERSION="1.1.1"
+CHART_VERSION="1.1.2"
 NAMESPACE="awx"
 
 if [ -z "${MP_KUBERNETES}" ]; then
