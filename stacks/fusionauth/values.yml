@@ -9,8 +9,6 @@ replicaCount: 1
 image:
   # image.repository -- The name of the docker repository for fusionauth-app
   repository: fusionauth/fusionauth-app
-  # image.repository -- The docker tag to pull for fusionauth-app
-  tag: 1.40.2
   # image.pullPolicy -- Kubernetes image pullPolicy to use for fusionauth-app
   pullPolicy: IfNotPresent
 

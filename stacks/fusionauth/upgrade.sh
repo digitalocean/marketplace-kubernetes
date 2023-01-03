@@ -6,7 +6,10 @@ set -e
 # repo
 ################################################################################
 helm repo add stable https://charts.helm.sh/stable
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm repo add fusionauth https://fusionauth.github.io/charts
 helm repo update > /dev/null
+
 
 ################################################################################
 # chart
@@ -25,5 +28,10 @@ else
 fi
 
 helm upgrade "$STACK" "$CHART" \
+--set database.user=fusionauth \
+--set database.existingSecret=fusionauth-credentials \
 --namespace "$NAMESPACE" \
---values "$values"
+--values "$values" \
+--set app.memory=3072M \
+--set database.host=db-postgresql.fusionauth.svc.cluster.local  \
+--set search.host=search-elasticsearch.fusionauth.svc.cluster.local  \
