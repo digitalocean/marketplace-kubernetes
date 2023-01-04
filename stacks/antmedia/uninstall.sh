@@ -5,11 +5,9 @@ set -e
 ################################################################################
 # chart
 ################################################################################
-STACK="wordpress"
-NAMESPACE="wordpress"
+STACK="antmedia"
+NAMESPACE="antmedia"
 
 
 helm uninstall "$STACK" \
   --namespace "$NAMESPACE"
-
-kubectl delete ns "$NAMESPACE"
