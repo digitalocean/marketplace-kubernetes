@@ -55,7 +55,7 @@ fullnameOverride: ""
 
 service:
   # service.type -- Type of Kubernetes service to create
-  type: ClusterIP
+  type: LoadBalancer
   # service.port -- Port for the Kubernetes service to expose
   port: 9011
   # service.annotations -- Extra annotations to add to service object
@@ -67,7 +67,7 @@ database:
   # database.protocol -- Should either be postgresql or mysql. Protocol for jdbc connection to database
   protocol: postgresql
   # database.host -- Hostname or ip of the database instance
-  host: ""
+  host: "db-postgresql.fusionauth.svc.cluster.local"
   # database.host -- Port of the database instance
   port: 5432
   # database.tls -- Configures whether or not to use tls when connecting to the database
@@ -81,13 +81,13 @@ database:
   # database.existingSecret -- The name of an existing secret that contains the database passwords
   existingSecret: ""
   # database.user -- Database username for fusionauth to use in normal operation
-  user: ""
+  user: "fusionauth"
   # database.password -- Database password for fusionauth to use in normal operation - not required if database.existingSecret is configured
   password: ""
   # These credentials are used for bootstrapping the database
   root:
     # database.root.user -- Database username for fusionauth to use during initial bootstrap - not required if you have manually bootstrapped your database
-    user: ""
+    user: "postgres"
     # database.root.password -- Database password for fusionauth to use during initial bootstrap - not required if database.existingSecret is configured
     password: ""
 
@@ -97,7 +97,7 @@ search:
   # search.engine -- Protocol to use when connecting to elasticsearch. Ignored when search.engine is NOT elasticsearch
   protocol: http
   # search.host -- Hostname or ip to use when connecting to elasticsearch. Ignored when search.engine is NOT elasticsearch
-  host: ""
+  host: "search-elasticsearch.fusionauth.svc.cluster.local"
   # search.port -- Port to use when connecting to elasticsearch. Ignored when search.engine is NOT elasticsearch
   port: 9200
   # search.user -- Username to use with basic auth when connecting to elasticsearch. Ignored when search.engine is NOT elasticsearch
@@ -107,7 +107,7 @@ search:
 
 app:
   # app.memory -- Configures the amount of memory Java can use
-  memory: 512M
+  memory: 3072M
   # app.memory -- Configures runtime mode for fusionauth. Should be 'development' or 'production'
   # learn more about the difference here: https://fusionauth.io/docs/v1/tech/reference/configuration
   runtimeMode: development

@@ -28,13 +28,9 @@ else
 fi
 
 # Retrieve current password and set it again during upgrade.
-DB_FUSIONAUTH_USER_PASSWORD=$(kubectl -n $NAMESPACE get secrets fusionauth-credentials -o jsonpath='{.data.password}' | base64 -D)
+DB_FUSIONAUTH_USER_PASSWORD=$(kubectl -n $NAMESPACE get secrets fusionauth-credentials -o jsonpath='{.data.password}' | base64 -d)
 
 helm upgrade "$STACK" "$CHART" \
 --namespace "$NAMESPACE" \
 --values "$values" \
---set app.memory=3072M \
---set database.user=fusionauth \
---set database.password="$DB_FUSIONAUTH_USER_PASSWORD" \
---set database.host=db-postgresql.fusionauth.svc.cluster.local \
---set search.host=search-elasticsearch.fusionauth.svc.cluster.local \
+--set database.password="$DB_FUSIONAUTH_USER_PASSWORD"
