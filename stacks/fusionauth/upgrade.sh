@@ -27,11 +27,14 @@ else
   values="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/fusionauth/values.yml"
 fi
 
+# Retrieve current password and set it again during upgrade.
+DB_FUSIONAUTH_USER_PASSWORD=$(kubectl -n $NAMESPACE get secrets fusionauth-credentials -o jsonpath='{.data.password}' | base64 -D)
+
 helm upgrade "$STACK" "$CHART" \
---set database.user=fusionauth \
---set database.existingSecret=fusionauth-credentials \
 --namespace "$NAMESPACE" \
 --values "$values" \
 --set app.memory=3072M \
---set database.host=db-postgresql.fusionauth.svc.cluster.local  \
---set search.host=search-elasticsearch.fusionauth.svc.cluster.local  \
+--set database.user=fusionauth \
+--set database.password="$DB_FUSIONAUTH_USER_PASSWORD" \
+--set database.host=db-postgresql.fusionauth.svc.cluster.local \
+--set search.host=search-elasticsearch.fusionauth.svc.cluster.local \
