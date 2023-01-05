@@ -12,7 +12,7 @@ set -e
 ################################################################################
 STACK="fusionauth"
 CHART="fusionauth/fusionauth"
-CHART_VERSION="0.11.0"
+CHART_VERSION="0.12.1"
 NAMESPACE="fusionauth"
 
 
