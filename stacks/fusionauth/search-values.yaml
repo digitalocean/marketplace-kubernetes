@@ -1,0 +1,23 @@
+---
+# Permit co-located instances for solitary minikube virtual machines.
+antiAffinity: "soft"
+
+# Shrink default JVM heap.
+esJavaOpts: "-Xmx1024m -Xms1024m"
+
+# Allocate smaller chunks of memory per pod.
+resources:
+  requests:
+    cpu: "250m"
+    memory: "1536M"
+  limits:
+    cpu: "1500m"
+    memory: "2048M"
+
+# Request smaller persistent volumes.
+volumeClaimTemplate:
+  accessModes: [ "ReadWriteOnce" ]
+  storageClassName: "standard"
+  resources:
+    requests:
+      storage: 2Gi
