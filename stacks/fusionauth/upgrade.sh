@@ -21,10 +21,10 @@ NAMESPACE="fusionauth"
 if [ -z "${MP_KUBERNETES}" ]; then
   # use local version of values.yml
   ROOT_DIR=$(git rev-parse --show-toplevel)
-  values="$ROOT_DIR/stacks/fusionauth/values.yml"
+  VALUES="$ROOT_DIR/stacks/fusionauth/values.yml"
 else
   # use github hosted master version of values.yml
-  values="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/fusionauth/values.yml"
+  VALUES="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/fusionauth/values.yml"
 fi
 
 # Retrieve current passwords and set them again during upgrade.
@@ -33,6 +33,6 @@ DB_POSTGRES_USER_PASSWORD=$(kubectl -n $NAMESPACE get secrets fusionauth-credent
 
 helm upgrade "$STACK" "$CHART" \
 --namespace "$NAMESPACE" \
---values "$values" \
+--values "$VALUES" \
 --set database.password="$DB_FUSIONAUTH_USER_PASSWORD" \
 --set database.root.password="$DB_POSTGRES_USER_PASSWORD"
