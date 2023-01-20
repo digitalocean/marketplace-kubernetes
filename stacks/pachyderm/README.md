@@ -65,6 +65,8 @@ pachctl             2.4.4
 pachd               2.4.4
 ```
 
+You can also access the web interface at `http://<IP ADDRESS HERE>`
+
 ---
 
 ## You are now ready to start the [Beginner Tutorial](<https://docs.pachyderm.com/latest/getting_started/beginner_tutorial/>)!
