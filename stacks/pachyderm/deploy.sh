@@ -16,7 +16,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="pachyderm"
 CHART="pachyderm/pachyderm"
-CHART_VERSION="2.1"
+CHART_VERSION="2.4.4"
 NAMESPACE="pachyderm"
 
 if [ -z "${MP_KUBERNETES}" ]; then
@@ -29,9 +29,8 @@ else
 fi
 
 helm upgrade "$STACK" "$CHART" \
-  --atomic \
   --create-namespace \
   --install \
   --namespace "$NAMESPACE" \
   --values "$values" \
-  --version "$CHART_VERSION"
+  --version "$CHART_VERSION" --debug

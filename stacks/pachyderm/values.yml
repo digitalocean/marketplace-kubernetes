@@ -1,3 +1,17 @@
 # SPDX-FileCopyrightText: Pachyderm, Inc. <info@pachyderm.com>
 # SPDX-License-Identifier: Apache-2.0
 deployTarget: LOCAL
+proxy:
+  enabled: true
+  service:
+    type: LoadBalancer
+    annotations:
+      service.beta.kubernetes.io/do-loadbalancer-name: "do-mktplace-pach-lb"
+      service.beta.kubernetes.io/do-loadbalancer-size-slug: "lb-small"
+      service.beta.kubernetes.io/do-loadbalancer-healthcheck-port: "80"
+      service.beta.kubernetes.io/do-loadbalancer-healthcheck-protocol: "http"
+      service.beta.kubernetes.io/do-loadbalancer-healthcheck-path: "/"
+      service.beta.kubernetes.io/do-loadbalancer-healthcheck-check-interval-seconds: "3"
+      service.beta.kubernetes.io/do-loadbalancer-healthcheck-response-timeout-seconds: "5"
+      service.beta.kubernetes.io/do-loadbalancer-healthcheck-unhealthy-threshold: "3"
+      service.beta.kubernetes.io/do-loadbalancer-healthcheck-healthy-threshold: "5"

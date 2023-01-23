@@ -14,3 +14,5 @@ NAMESPACE="pachyderm"
 
 helm uninstall "$STACK" \
   --namespace "$NAMESPACE"
+
+kubectl delete pvc -n "$NAMESPACE" -l suite=pachyderm -l release=pachyderm
