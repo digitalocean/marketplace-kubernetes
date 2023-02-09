@@ -12,7 +12,7 @@ helm repo update > /dev/null
 # chart
 ################################################################################
 STACK="kubecost"
-CHART="kubecost/cost-analyzer"
+CHART="cost-analyzer/cost-analyzer"
 NAMESPACE="kubecost"
 
 if [ -z "${MP_KUBERNETES}" ]; then
