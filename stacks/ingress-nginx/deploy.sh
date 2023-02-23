@@ -5,8 +5,8 @@ set -e
 ################################################################################
 # repo
 ################################################################################
-darwin-amd64/helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-darwin-amd64/helm repo update > /dev/null
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm repo update > /dev/null
 
 ################################################################################
 # chart
@@ -26,7 +26,7 @@ else
 fi
 
 # A timeout of 10m is needed for the Nginx Helm installation, due to the fact that DO load balancers may take a while to spin up
-darwin-amd64/helm upgrade "$STACK" "$CHART" \
+helm upgrade "$STACK" "$CHART" \
   --atomic \
   --create-namespace \
   --install \
