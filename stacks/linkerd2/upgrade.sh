@@ -2,7 +2,7 @@
 
 set -e
 
-LINKERD2_VERSION="stable-2.11.4"
+LINKERD2_VERSION="stable-2.12.4"
 TMP_DIR=$(mktemp -d)
 
 # determine OS
@@ -33,7 +33,10 @@ $BINARY upgrade | kubectl apply --prune -l linkerd.io/control-plane-ns=linkerd \
 # ensure services are running
 kubectl get deployments -o custom-columns=NAME:.metadata.name | tail -n +2 | while read -r line
 do
-  kubectl rollout status -w deployment/"$line"
+  if [ ! -z "$line" ]
+  then 
+    kubectl rollout status -w deployment/"$line"
+  fi
 done
 
 # upgrade the viz extension
