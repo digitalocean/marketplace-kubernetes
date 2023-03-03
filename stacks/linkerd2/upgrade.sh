@@ -36,6 +36,8 @@ do
   if [ ! -z "$line" ]
   then 
     kubectl rollout status -w deployment/"$line"
+  else
+    break
   fi
 done
 
