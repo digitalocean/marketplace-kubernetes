@@ -13,7 +13,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="kube-state-metrics"
 CHART="bitnami/kube-state-metrics"
-CHART_VERSION="2.2.0"
+CHART_VERSION="3.2.0"
 NAMESPACE="kube-system"
 
 if [ -z "${MP_KUBERNETES}" ]; then
