@@ -2,7 +2,7 @@
 
 set -e
 
-LINKERD2_VERSION="stable-2.11.4"
+LINKERD2_VERSION="stable-2.12.4"
 TMP_DIR=$(mktemp -d)
 
 # determine OS
@@ -23,12 +23,18 @@ wget -q $URL -O "$BINARY" && chmod +x "$BINARY"
 kubectl config set-context --current --namespace=linkerd
 
 # deploy linkerd
+$BINARY install --crds --ignore-cluster | kubectl apply -f -
 $BINARY install --ignore-cluster | kubectl apply -f -
 
 # ensure services are running
 kubectl get deployments -o custom-columns=NAME:.metadata.name | tail -n +2 | while read -r line
 do
-  kubectl rollout status -w deployment/"$line"
+  if [ ! -z "$line" ]
+  then 
+    kubectl rollout status -w deployment/"$line"
+  else
+    break
+  fi
 done
 
 # install the viz extension

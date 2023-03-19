@@ -13,7 +13,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="ingress-nginx"
 CHART="ingress-nginx/ingress-nginx"
-CHART_VERSION="4.1.3"
+CHART_VERSION="4.5.2"
 NAMESPACE="ingress-nginx"
 
 if [ -z "${MP_KUBERNETES}" ]; then
