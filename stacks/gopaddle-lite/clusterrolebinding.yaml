@@ -1,12 +1,18 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"rbac.authorization.k8s.io/v1","kind":"ClusterRoleBinding","metadata":{"annotations":{},"name":"gopaddle"},"roleRef":{"apiGroup":"rbac.authorization.k8s.io","kind":"ClusterRole","name":"gopaddle"},"subjects":[{"kind":"ServiceAccount","name":"default","namespace":"gp-lite-4-2"}]}
+  creationTimestamp: "2023-02-27T20:16:57Z"
+  name: gopaddle
+  resourceVersion: "187059"
+  uid: 54047b1a-cb13-4fe9-ae70-68b196f9e80b
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
   name: gopaddle
 subjects:
 - kind: ServiceAccount
   name: default
   namespace: gp-lite-4-2
-roleRef:
-  kind: ClusterRole
-  name: gopaddle
-  apiGroup: rbac.authorization.k8s.io

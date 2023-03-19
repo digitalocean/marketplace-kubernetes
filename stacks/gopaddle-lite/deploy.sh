@@ -13,7 +13,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="gp-lite-4-2"
 CHART="gopaddle/gp-installer"
-CHART_VERSION="4.2.5"
+CHART_VERSION="4.2.6"
 NAMESPACE="gp-lite-4-2"
 
 if [ -z "${MP_KUBERNETES}" ]; then
@@ -32,6 +32,16 @@ fi
 kubectl apply -f "$clusterrole"
 kubectl apply -f "$clusterrolebinding"
 
+# Get the first node's external IP, if it exists
+FIRST_NODE_EXT_IP=$(kubectl get nodes -o json | jq -r '.items[0].status.addresses[] | select(.type=="ExternalIP") | .address' 2>/dev/null)
+
+# If there's no external IP, get the internal IP
+if [ -z "$FIRST_NODE_EXT_IP" ]; then
+        FIRST_NODE_IP=$(kubectl get nodes -o json | jq -r '.items[0].status.addresses[] | select(.type=="InternalIP") | .address')
+else
+        FIRST_NODE_IP="$FIRST_NODE_EXT_IP"
+fi
+
 helm upgrade "$STACK" "$CHART" \
   --atomic \
   --create-namespace \
@@ -39,4 +49,5 @@ helm upgrade "$STACK" "$CHART" \
   --timeout 15m0s \
   --namespace "$NAMESPACE" \
   --values "$values" \
+  --set global.cluster.nodeIP="$FIRST_NODE_IP" \
   --version "$CHART_VERSION"
