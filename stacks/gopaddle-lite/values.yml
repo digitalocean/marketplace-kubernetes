@@ -1,0 +1,144 @@
+# gopaddle/gopaddle-lite
+global:
+  # ******************************************************
+  # installer: Parameters required to install the required gopaddle edition and the depepdency charts
+  # - edition: Possible values - 'Enterprise' or 'Lite'
+  #   (1) Enterprise - Installs the Enterprise edition of gopaddle
+  #   (2) Lite - Install the community edition of gopaddle
+  # - chart: Sub-chart to be installed. 
+  #   'gp-core' sub-chart has the gopaddle core services. 
+  #   'rabbitmq' sub-chart has the rabbitmq service required for gopaddle build agent. 
+  #   Order of installation: gp-core services require rabbitmq services to be up and running. 
+  #   Install 'rabbitmq' chart before installing 'gp-core'.
+  #   (1) gp-core - installs the services under 'gp-core' dependency chart
+  #   (2) rabbitmq - installs the services under 'rabbitmq' dependency chart.
+  # ******************************************************
+  installer:
+    edition: lite
+    arch: adm64
+    chart:
+      gp-core: true
+      rabbitmq: true
+
+  # ******************************************************
+  # airgapped: Parameters to configure when gopaddle is installed in airgapped mode
+  # - enabled: Set it to 'true' to enable airgapped installation 
+  #   ie., when OUTBOUND access from the cluster to the internet is limited
+  #   Pre-requisite: Load the gopaddle images to the cluster local cache (or) in to private  
+  #   Docker Registry before installing the chart
+  # - imageRegistryType: Possible values 'local' or 'private'.
+  #   (1) local - docker images from the node's container cache are used
+  #   (2) private - images are pulled from the private docker registry.
+  # - imageRegistryInfo: Paramaters to access Docker Private Registry
+  #   - registryUrl: registry endpoint. 
+  #     Eg. registry.gopaddle.io:30710 to pull the gopaddle build agent and the add-ons
+  #   - repoPath: project and repository path where gopaddle build agent and add-ons images are available.
+  #     Eg. /gp-registry-group/gp-registry-project
+  #   - authType: Authentication type to access the Docker Private Registry. 
+  #     Possible values: 'dockerConfig' (or) 'basic'
+  #   - dockerConfig: base64 string of docker auth configuration
+  #     step 1: docker login <docker-registry-endpoint>
+  #     step 2: cat ~/.docker/config.json | base64
+  #   - basicAuth: username and password configuration of the Docker Private Registry
+  #   - imageSecret: Kubernetes secret with the docker config to access the Docker Registry. 
+  #     imageSecret is required to pull gopaddle core images from the Docker Registry
+  #     step 1: kubectl create ns gp-onprem-4-2
+  #     step 2: docker login <docker-registry-endpoint>
+  #     step 3: kubectl create secret generic gp-onprem-4-2-image-secret \ 
+  #             --from-file=.dockerconfigjson=~/.docker/config.json \ 
+  #             --type=kubernetes.io/dockerconfigjson -n gp-onprem-4-2
+  # ******************************************************
+  airgapped:
+    enabled: false
+    imageRegistryType: local
+    imageRegistryInfo:
+      registryUrl: #registry.gopaddle.io:30710
+      repoPath: #/gp-registry-group/gp-registry-project
+      authType: basic
+      dockerConfig: #base64 docker config
+      basicAuth:
+        registryUserName: #root
+        registryPassword: #password
+      imageSecret: #secretname
+
+  # ******************************************************
+  # routingType: Possible values 'NodePortWithOutIngress' (or) 'NodePortWithIngress' (or) 'LoadBalancer'
+  # 1. NodePortWithOutIngress - gopaddle endpoints are accessed without ingress routes. 
+  #    Ports     : 30000 - RabbitMQ, 30003 - GUI dashboard, 30004 - API gateway
+  #    Websockets: 30005 - CostManager, 30006 - ActivityManager
+  # 2. NodePortWithIngress - gopaddle endpoints are accessed with ingress routes.
+  #    Ports     : 30000 - RabbitMQ, 30001 - HTTP, 30002 - HTTPS
+  #    Requires TLS and domain configuration
+  # 3. LoadBalancer - gopaddle endpoints are accessed with ingress and Loadbalancer.
+  #    Ports     : 30000 - RabbitMQ, 80 - HTTPS, 443 - HTTPS
+  #    Requires TLS and domain configuration
+  # ******************************************************
+  routingType: NodePortWithOutIngress
+
+  # ******************************************************
+  # accessMode: Possible values 'public' (or) 'private'
+  # (1) public - when INBOUND access to the gopaddle endpoint is possible
+  # (2) private - when INBOUND access to the gopaddle endpoint is limited
+  # ******************************************************
+  accessMode: private
+
+  # ******************************************************
+  # staticIP: Static IP to use as gopaddle endpoint across Kubernetes Cluster restarts.
+  # Applicable for routingTypes 'NodePortWithOutIngress' and 'NodePortWithIngress'
+  # ******************************************************
+  #staticIP:
+
+  # ******************************************************
+  # cluster: Provider type of the Kubernetes cluster
+  # Possible values: 'hpe' (or) 'other'
+  # (1) hpe - HPE Ezmeral Container Runtime (v5.3 with Kubernetes version 1.18.6). 
+  #     In case of HPE, gopaddle installs kubectl-hpecp tool v3.4.14 in gopaddle services
+  # (2) other - microk8s or any other opensource compatible Kubernetes environment
+  # ******************************************************
+  cluster:
+    provider: other 
+
+  # ******************************************************
+  # nodeSelector: Select one or more nodes on which gopaddle services can be installed. 
+  # kubernetes.io/hostname - hostname Label of the node on which gopaddle service can be installed.
+  # 'kubernetes.io/hostname' can be replaced with any labelSelector supported by Kubernetes cluster
+  # When no nodeSelector is set, Kubernetes can schedule gopaddle services on any eligible node in the cluster.
+  # ******************************************************
+  #nodeSelector:
+  #  kubernetes.io/hostname: ""
+
+  # ******************************************************
+  # storageClassName: When provided, the storage class will be used to provision gopaddle's stateful services
+  # Possible values: microk8s-hostpath (or) any storageClass available in the cluster. 
+  # When ignored, default storageClass in the cluster will be used.
+  # ******************************************************
+  #storageClassName: microk8s-hostpath
+  storageClassName: do-block-storage
+
+  # ******************************************************
+  # gopaddle: DNS and TLS configurations for the gopaddle gateway service
+  # domainName - Required when routingType is 'NodePortWithIngress' (or) 'LoadBalancer'
+  # https: Possible values 'true' (or) 'false'
+  # Enable https to access gopaddle dashboard on HTTPS endpoint
+  # step 1: kubectl create ns gp-onprem-4-2
+  # step 2: kubectl create secret tls gp-onprem-4-2-lb-portal-tls \
+  #         --cert=<path-to-cert-file> --key=<path-to-key-file> -n gp-onprem-4-2
+  # ******************************************************
+  gopaddle:
+    domainName: 
+    secretName: gp-onprem-4-2-lb-portal-tls
+    https: false
+
+  # ******************************************************
+  # gopaddleWebhook: DNS and TLS configurations for the gopaddle webhook service
+  # domainName - Required when routingType is 'NodePortWithIngress' (or) 'LoadBalancer'
+  # https: Possible values 'true' (or) 'false'
+  # Enable https to use Continuous Integration 
+  # step 1: kubectl create ns gp-onprem-4-2
+  # step 2: kubectl create secret tls gp-onprem-4-2-lb-webhook-tls \
+  #         --cert=<path-to-cert-file> --key=<path-to-key-file> -n gp-onprem-4-2
+  # ******************************************************
+  gopaddleWebhook:
+    domainName:  
+    secretName: gp-onprem-4-2-lb-webhook-tls
+    https: false
