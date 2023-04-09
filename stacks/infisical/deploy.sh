@@ -13,7 +13,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="infisical"
 CHART="infisical-helm-charts/infisical"
-CHART_VERSION="0.1.16"
+CHART_VERSION="0.1.17"
 NAMESPACE="infisical"
 
 if [ -z "${MP_KUBERNETES}" ]; then
