@@ -5,24 +5,23 @@ set -e
 ################################################################################
 # repo
 ################################################################################
-helm repo add netdata https://netdata.github.io/helmchart
+helm repo add someengineering https://helm.some.engineering
 helm repo update > /dev/null
 
 ################################################################################
 # chart
 ################################################################################
-STACK="netdata"
-CHART="netdata/netdata"
-CHART_VERSION="3.7.47"
-NAMESPACE="netdata"
+STACK="resoto"
+CHART="someengineering/resoto"
+NAMESPACE="resoto"
 
 if [ -z "${MP_KUBERNETES}" ]; then
   # use local version of values.yml
   ROOT_DIR=$(git rev-parse --show-toplevel)
-  values="$ROOT_DIR/stacks/netdata/values.yml"
+  values="$ROOT_DIR/stacks/resoto/values.yml"
 else
   # use github hosted master version of values.yml
-  values="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/netdata/values.yml"
+  values="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/resoto/values.yml"
 fi
 
 helm upgrade "$STACK" "$CHART" \
@@ -31,4 +30,4 @@ helm upgrade "$STACK" "$CHART" \
   --install \
   --namespace "$NAMESPACE" \
   --values "$values" \
-  --version "$CHART_VERSION"
+  --timeout 20m
