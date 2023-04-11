@@ -15,4 +15,3 @@ helm uninstall "$STACK" --namespace "$NAMESPACE"
 helm repo remove fusionauth
 
 kubectl delete ns fusionauth
-

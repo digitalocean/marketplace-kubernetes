@@ -21,3 +21,4 @@ helm uninstall prometheus-operator\
 
 helm uninstall cert-manager \
   --namespace cert-manager
+kubectl delete --ignore-not-found=true namespace "$NAMESPACE"
