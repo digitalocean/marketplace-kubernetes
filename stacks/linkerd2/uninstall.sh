@@ -28,4 +28,3 @@ $BINARY uninstall | kubectl delete -f -
 
 # cleanup
 rm -rf "$TMP_DIR"
-kubectl delete --ignore-not-found=true namespace "$NAMESPACE"
