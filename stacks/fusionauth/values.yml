@@ -1,0 +1,293 @@
+# fusionauth/fusionauth
+
+# Default values for fusionauth.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# replicaCount -- The number of fusionauth-app instances to run
+replicaCount: 1
+image:
+  # image.repository -- The name of the docker repository for fusionauth-app
+  repository: fusionauth/fusionauth-app
+  # image.pullPolicy -- Kubernetes image pullPolicy to use for fusionauth-app
+  pullPolicy: IfNotPresent
+
+# imagePullSecrets -- Configures kubernetes secrets to use for pulling private images
+imagePullSecrets: [ ]
+
+# - spec for Container:
+# kubectl explain pod.spec.initContainers
+# kubectl explain pod.spec.initContainers --recursive
+extraInitContainers: [ ]
+
+initContainers:
+  waitForDb: true
+  waitForEs: true
+  # This image should contain `nc`, `wget` and a shell of some kind to do a simple loop.
+  image:
+    # initContainers.image.repository -- Docker image to use for initContainers
+    repository: busybox
+    # initContainers.image.repository -- Tag to use for initContainers docker image
+    tag: latest
+  # initContainers.resources -- Resource requests and limits to use for initContainers
+  resources:
+    { }
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #  cpu: 100m
+    #  memory: 128Mi
+    # requests:
+  #  cpu: 100m
+  #  memory: 128Mi
+
+# - spec for Container:
+# kubectl explain pod.spec.containers
+# kubectl explain pod.spec.containers --recursive
+extraContainers: [ ]
+
+# nameOverride -- Overrides resource names
+nameOverride: ""
+# fullnameOverride -- Overrides full resource names
+fullnameOverride: ""
+
+service:
+  # service.type -- Type of Kubernetes service to create
+  type: LoadBalancer
+  # service.port -- Port for the Kubernetes service to expose
+  port: 9011
+  # service.annotations -- Extra annotations to add to service object
+  annotations: { }
+  # service.spec -- Any extra fields to add to the service object spec
+  spec: { }
+
+database:
+  # database.protocol -- Should either be postgresql or mysql. Protocol for jdbc connection to database
+  protocol: postgresql
+  # database.host -- Hostname or ip of the database instance
+  host: "db-postgresql.fusionauth.svc.cluster.local"
+  # database.host -- Port of the database instance
+  port: 5432
+  # database.tls -- Configures whether or not to use tls when connecting to the database
+  tls: false
+  # database.tlsMode -- If tls is enabled, this configures the mode
+  tlsMode: require
+  # database.name -- Name of the fusionauth database
+  name: fusionauth
+
+  # To use an existing secret, set `existingSecret` to the name of the secret. We expect at most two keys: `password` is required. `rootpassword` is only required if `database.root.user` is set.
+  # database.existingSecret -- The name of an existing secret that contains the database passwords
+  existingSecret: ""
+  # database.user -- Database username for fusionauth to use in normal operation
+  user: "fusionauth"
+  # database.password -- Database password for fusionauth to use in normal operation - not required if database.existingSecret is configured
+  password: ""
+  # These credentials are used for bootstrapping the database
+  root:
+    # database.root.user -- Database username for fusionauth to use during initial bootstrap - not required if you have manually bootstrapped your database
+    user: "postgres"
+    # database.root.password -- Database password for fusionauth to use during initial bootstrap - not required if database.existingSecret is configured
+    password: ""
+
+search:
+  # search.engine -- Defines backend for fusionauth search capabilities. Valid values for engine are 'elasticsearch' or 'database'.
+  engine: elasticsearch
+  # search.engine -- Protocol to use when connecting to elasticsearch. Ignored when search.engine is NOT elasticsearch
+  protocol: http
+  # search.host -- Hostname or ip to use when connecting to elasticsearch. Ignored when search.engine is NOT elasticsearch
+  host: "search-elasticsearch.fusionauth.svc.cluster.local"
+  # search.port -- Port to use when connecting to elasticsearch. Ignored when search.engine is NOT elasticsearch
+  port: 9200
+  # search.user -- Username to use with basic auth when connecting to elasticsearch. Ignored when search.engine is NOT elasticsearch
+  # user: ""
+  # search.password -- Password to use with basic auth when connecting to elasticsearch. Ignored when search.engine is NOT elasticsearch
+  # password: ""
+
+app:
+  # app.memory -- Configures the amount of memory Java can use
+  memory: 3072M
+  # app.memory -- Configures runtime mode for fusionauth. Should be 'development' or 'production'
+  # learn more about the difference here: https://fusionauth.io/docs/v1/tech/reference/configuration
+  runtimeMode: development
+
+# environment - Configure additional environment variables. Should only be used for things that are not explicitly set elsewhere in the chart.
+environment:
+  [ ]
+  # - name: POD_IP
+  #   valueFrom:
+  #     fieldRef:
+  #       fieldPath: status.podIP
+  # - name: FUSIONAUTH_API_KEY
+  #   value: test
+  # Its important to add /kickstart/<file> as prefix to your kickstart file else it won't work! All other files will be mounted below /kickstart/
+  # => Use this environment variable to override the default location '/kickstart/kickstart.json' which is autom. set when kickstart.enabled is set
+# - name: FUSIONAUTH_APP_KICKSTART_FILE
+#   value: /kickstart/kickstart.json
+
+kickstart:
+  enabled: false
+  data:
+    { }
+    # kickstart.json: |
+    #    {
+    #      "variables": {
+    #        "defaultTenantId": "d7d09513-a3f5-401c-9685-34ab6c552453",
+    #        "adminEmail": "admin@fusionauth.io",
+    #        "adminPassword": "password"
+    #      },
+    #      "apiKeys": [
+    #        {
+    #          "key": "bf69486b-4733-4470-a592-f1bfce7af580",
+    #          "description": "Core API Key"
+    #        }
+    #      ],
+    #      "requests": [
+    #        {
+    #          "method": "POST",
+    #          "url": "/api/user/registration",
+    #          "body": {
+    #            "user": {
+    #              "email": "#{adminEmail}",
+    #              "password": "#{adminPassword}"
+    #            },
+    #            "registration": {
+    #              "applicationId": "#{FUSIONAUTH_APPLICATION_ID}",
+    #              "roles": [
+    #                "admin"
+    #              ]
+    #            }
+    #          }
+    #        }
+    #      ]
+    #    }
+    # setup-password.html: |
+    #    <div>Test</div>
+  # setup-password.txt: |
+  #    Hallo
+
+lifecycle:
+  { }
+  # # lifecycle.postStart -- postStart lifecycle command for fusionauth container
+  # postStart:
+  #   exec:
+  #     command: ["/bin/sh", "-c", "echo Hello from the postStart handler > /usr/share/message"]
+  # # lifecycle.preStop -- preStop lifecycle command for fusionauth container
+  # preStop:
+#   exec:
+#     command: ["/bin/bash","-c","kill -3 1"]
+
+podDisruptionBudget:
+  # podDisruptionBudget.enabled -- Enables creation of a PodDisruptionBudget
+  enabled: false
+
+ingress:
+  # ingress.enabled -- Enables ingress creation for fusionauth.
+  enabled: false
+  # ingress.annotations -- Configure annotations to add to the ingress object
+  annotations:
+    { }
+  # kubernetes.io/ingress.class: nginx
+  # kubernetes.io/tls-acme: "true"
+  paths: [ ]
+  # - path: /*
+  #   pathType: Prefix
+  # ingress.extraPaths -- Define complete path objects, will be inserted before regular paths. Can be useful for things like ALB Ingress Controller actions
+  extraPaths: [ ]
+  # ingress.hosts -- List of hostnames to configure the ingress with
+  hosts:
+    [ ]
+  # - chart-example.local
+  # ingress.tls -- List of secrets used to configure TLS for the ingress.
+  tls: [ ]
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+# resources -- Define resource requests and limits for fusionauth-app.
+resources:
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  limits:
+    cpu: 3000m
+    memory: 3500Mi
+  requests:
+    cpu: 300m
+    memory: 256Mi
+
+## Autoscaling parameters
+autoscaling:
+  enabled: false
+  # minReplicas: 1
+  # maxReplicas: 10
+  # targetCPU: 50
+  # targetMemory: 50
+
+# nodeSelector -- Define nodeSelector for kubernetes to use when scheduling fusionauth pods.
+nodeSelector: { }
+
+# tolerations -- Define tolerations for kubernetes to use when scheduling fusionauth pods.
+tolerations: [ ]
+
+# affinty -- Define affinity for kubernetes to use when scheduling fusionauth pods.
+affinity: { }
+
+# topologySpreadConstraints -- Define topologySpreadConstraints for kubernetes to use
+# when scheduling fusionauth pods.
+topologySpreadConstraints: [ ]
+
+# dnsConfig -- Define dnsConfig for fusionauth pods.
+dnsConfig: { }
+# dnsPolicy -- Define dnsPolicy for fusionauth pods.
+dnsPolicy: ClusterFirst
+
+# annotations -- Define annotations for fusionauth deployment.
+annotations: { }
+# podAnnotations -- Define annotations for fusionauth pods.
+podAnnotations: { }
+
+# livenessProbe -- Configures a livenessProbe to ensure fusionauth is running
+livenessProbe:
+  httpGet:
+    path: /
+    port: http
+  failureThreshold: 3
+  periodSeconds: 30
+  timeoutSeconds: 5
+# readinessProbe -- Configures a readinessProbe to ensure fusionauth is ready for requests
+readinessProbe:
+  httpGet:
+    path: /
+    port: http
+  failureThreshold: 5
+  timeoutSeconds: 5
+# startupProbe -- Configures a startupProbe to ensure fusionauth has finished starting up
+startupProbe:
+  httpGet:
+    path: /
+    port: http
+  failureThreshold: 20
+  periodSeconds: 10
+  timeoutSeconds: 5
+
+# extraVolumes -- Define extra Volumes. Allow to add existing claimName
+extraVolumes:
+  [ ]
+  # - name: custom-css-data
+#   persistentVolumeClaim:
+#     claimName: custom-css-data
+
+# extraVolumes -- Associate mountPath for each  extraVolumes
+extraVolumeMounts:
+  [ ]
+# - name: custom-css-data
+#   mountPath: /usr/local/fusionauth/fusionauth-app/web/custom
+
+serviceAccount:
+  # serviceAccount.create -- If set to true service account will be created. Otherwise, the default service account will be used
+  create: false
+  # serviceAccount.name -- Service account name to use. If not set the "default" service account will be used
+  name: ""

@@ -1,0 +1,53 @@
+# pixie-operator/pixie-operator-chart
+## Vizier configuration
+# The name of the Vizier instance deployed to the cluster.
+name: "pixie"
+# The name of the cluster that the Vizier is monitoring. If empty,
+# a random name will be generated.
+clusterName: ""
+# The version of the Vizier instance deployed to the cluster. If empty,
+# the operator will automatically deploy the latest version.
+version: ""
+# The deploy key is used to link the deployed Vizier to a specific user/project.
+# This is required if not specifying a customDeployKeySecret, and can be generated through the UI or CLI.
+deployKey: ""
+# The deploy key may be read from a custom secret in the Pixie namespace. This secret should be formatted where the
+# key of the deploy key is "deploy-key".
+customDeployKeySecret: ""
+# Whether auto-update should be disabled.
+disableAutoUpdate: false
+# Whether the metadata service should use etcd for in-memory storage. Recommended
+# only for clusters which do not have persistent volumes configured.
+useEtcdOperator: false
+# The address of the Pixie cloud instance that the Vizier should be connected to.
+# This should only be updated when using a self-hosted version of Pixie Cloud.
+cloudAddr: "withpixie.ai:443"
+# DevCloudNamespace should be specified only for self-hosted versions of Pixie cloud which have no ingress to help
+# redirect traffic to the correct service. The DevCloudNamespace is the namespace that the dev Pixie cloud is
+# running on, for example: "plc-dev".
+devCloudNamespace: ""
+# A memory limit applied specifically to PEM pods. If none is specified, a default limit of 2Gi is set.
+pemMemoryLimit: ""
+# A memory request applied specifically to PEM pods. If none is specified, it will default to pemMemoryLimit.
+pemMemoryRequest: ""
+# DataAccess defines the level of data that may be accesssed when executing a script on the cluster.
+dataAccess: "Full"
+pod:
+  # Optional custom annotations to add to deployed pods.
+  annotations: {}
+  # Optional custom labels to add to deployed pods.
+  labels: {}
+  resources: {}
+  # limits:
+  #   cpu: 500m
+  #   memory: 7Gi
+  # requests:
+  #   cpu: 100m
+  #   memory: 5Gi
+  nodeSelector: {}
+# A set of custom patches to apply to the deployed Vizier resources.
+# The key should be the name of the resource to apply the patch to, and the value is the patch to apply.
+# Currently, only a JSON format is accepted, such as:
+# `{"spec": {"template": {"spec": { "tolerations": [{"key": "test", "operator": "Exists", "effect": "NoExecute" }]}}}}`
+patches: {}
+

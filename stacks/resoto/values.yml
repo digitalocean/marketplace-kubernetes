@@ -1,0 +1,4 @@
+resotocore:
+  # Create a public reachable endpoint for the resoto service
+  service:
+    type: LoadBalancer

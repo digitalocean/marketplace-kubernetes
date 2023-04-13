@@ -2,19 +2,24 @@
 
 set -e
 
-helm repo add op-scim-bridge https://raw.githubusercontent.com/1Password/op-scim-helm/main/
+REPO_URL="https://1password.github.io/op-scim-helm"
+REPO_NAME="1password"
+
+helm repo add "$REPO_NAME" "$REPO_URL"
 helm repo update > /dev/null
 
-STACK="op-scim-bridge"
-CHART="op-scim-bridge/op-scim"
-CHART_VERSION="2.3.0"
-NAMESPACE="op-scim-bridge"
+CHART_NAME="op-scim-bridge"
+CHART_VERSION="2.9.4"
 
-helm upgrade "$STACK" "$CHART" \
+RELEASE="op-scim-bridge"
+NAMESPACE="op-scim-bridge"
+STORAGE_CLASS="do-block-storage"
+
+helm upgrade "$RELEASE" "$REPO_NAME/$CHART_NAME" \
   --atomic \
   --install \
   --timeout 8m0s \
   --create-namespace \
   --namespace "$NAMESPACE" \
-  --version "$CHART_VERSION"
-
+  --version "$CHART_VERSION" \
+  --set scim.credentialsVolume.storageClass="$STORAGE_CLASS"

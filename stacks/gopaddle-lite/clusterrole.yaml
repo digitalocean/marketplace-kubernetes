@@ -1,0 +1,347 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"rbac.authorization.k8s.io/v1","kind":"ClusterRole","metadata":{"annotations":{},"name":"gopaddle"},"rules":[{"apiGroups":["apps"],"resources":["deployments","statefulsets","replicasets","daemonsets","configmaps","endpoints","limitranges","namespaces","nodes","persistentvolumeclaims","persistentvolumes","pods","replicationcontrollers","resourcequotas","secrets","services"],"verbs":["get","list","watch","create","update","patch","delete","deletecollection"]},{"apiGroups":["batch"],"resources":["jobs","cronjobs"],"verbs":["get","list","watch","create","update","patch","delete","deletecollection"]},{"apiGroups":["autoscaling"],"resources":["horizontalpodautoscalers"],"verbs":["get","list","watch","create","update","patch","delete","deletecollection"]},{"apiGroups":[""],"resources":["rollBacks","namespaces","services","configmaps","secrets","pods","pods/log","pods/status","persistentVolumes","persistentVolumeClaims","networkpolicies","serviceaccounts","endpoints","limitranges","persistentvolumeclaims","persistentvolumes","replicationcontrollers","resourcequotas","ingresses","nodes/proxy","events","bindings"],"verbs":["get","list","watch","create","update","patch","delete","deletecollection"]},{"apiGroups":["extensions","networking.k8s.io"],"resources":["networkpolicies","ingresses","ingresses/status","daemonsets","deployments","replicasets","daemonsets/status","deployments/scale","deployments/status","replicasets/scale","replicasets/status","replicationcontrollers/scale"],"verbs":["get","list","watch","create","update","patch","delete","deletecollection"]},{"apiGroups":["extensions","networking.k8s.io"],"resources":["ingressclasses"],"verbs":["get","list","watch","update"]},{"apiGroups":["extensions"],"resources":["daemonsets","deployments","replicasets","ingresses/status"],"verbs":["get","list","watch","create","update","patch","delete","deletecollection"]},{"apiGroups":["storage.k8s.io"],"resources":["storageclasses"],"verbs":["get","list","watch","create","update","patch","delete","deletecollection"]},{"apiGroups":["rbac.authorization.k8s.io"],"resources":["roles","rolebindings","clusterroles","clusterrolebindings"],"verbs":["get","list","watch","create","update","patch","delete","deletecollection"]},{"apiGroups":[""],"resources":["nodes"],"verbs":["get","list","watch","update"]},{"nonResourceURLs":["/metrics","/api/*/v1/*/application/clusterInfo/*/datacollector/eventhandler"],"verbs":["get"]},{"apiGroups":[""],"resources":["namespaces","namespaces/status","nodes","persistentvolumeclaims","persistentvolumeclaims/status","pods","services","services/status","resourcequotas","replicationcontrollers","replicationcontrollers/scale","replicationcontrollers/status","limitranges","persistentvolumeclaims","persistentvolumes","endpoints","secrets","configmaps","resourcequotas/status"],"verbs":["list","get","watch"]},{"apiGroups":["extensions"],"resources":["daemonsets","deployments","replicasets"],"verbs":["list","watch"]},{"apiGroups":["apps"],"resources":["statefulsets"],"verbs":["get","list","watch"]},{"apiGroups":["batch"],"resources":["cronjobs","jobs","jobs/status","cronjobs/status"],"verbs":["list","watch","get"]},{"apiGroups":["autoscaling"],"resources":["horizontalpodautoscalers","horizontalpodautoscalers/status"],"verbs":["list","get","watch"]},{"apiGroups":[""],"resourceNames":["ingress-controller-leader"],"resources":["configmaps"],"verbs":["get","update"]},{"apiGroups":[""],"resources":["configmaps"],"verbs":["create"]},{"apiGroups":["apps"],"resources":["controllerrevisions","daemonsets/status","deployments/scale","deployments/status","statefulsets/scale","statefulsets/status","replicasets/scale","replicasets/status"],"verbs":["get","list","watch"]},{"apiGroups":["discovery.k8s.io"],"resources":["endpointslices"],"verbs":["get","list","watch"]},{"apiGroups":["policy"],"resources":["poddisruptionbudgets","poddisruptionbudgets/status"],"verbs":["get","list","watch"]},{"apiGroups":["acme.cert-manager.io"],"resources":["challenges","orders"],"verbs":["get","list","watch"]},{"apiGroups":["cert-manager.io"],"resources":["certificaterequests","issuers","certificates"],"verbs":["get","list","watch"]},{"apiGroups":["metrics.k8s.io"],"resources":["nodes","pods"],"verbs":["get","list","watch"]},{"apiGroups":[""],"resources":["pods/exec"],"verbs":["create"]}]}
+  creationTimestamp: "2023-02-27T20:16:52Z"
+  name: gopaddle
+  resourceVersion: "794343"
+  uid: 268a4d3b-a4d9-45d3-abd6-0e33a6eb541f
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - volumeattachments
+  verbs:
+  - list
+  - watch
+- apiGroups:
+  - apps
+  resources:
+  - deployments
+  - statefulsets
+  - replicasets
+  - daemonsets
+  - configmaps
+  - endpoints
+  - limitranges
+  - namespaces
+  - nodes
+  - persistentvolumeclaims
+  - persistentvolumes
+  - pods
+  - replicationcontrollers
+  - resourcequotas
+  - secrets
+  - services
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+  - deletecollection
+- apiGroups:
+  - batch
+  resources:
+  - jobs
+  - cronjobs
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+  - deletecollection
+- apiGroups:
+  - autoscaling
+  resources:
+  - horizontalpodautoscalers
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+  - deletecollection
+- apiGroups:
+  - ""
+  resources:
+  - rollBacks
+  - namespaces
+  - services
+  - configmaps
+  - secrets
+  - pods
+  - pods/log
+  - pods/status
+  - persistentVolumes
+  - persistentVolumeClaims
+  - networkpolicies
+  - serviceaccounts
+  - endpoints
+  - limitranges
+  - persistentvolumeclaims
+  - persistentvolumes
+  - replicationcontrollers
+  - resourcequotas
+  - ingresses
+  - nodes/proxy
+  - events
+  - bindings
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+  - deletecollection
+- apiGroups:
+  - extensions
+  - networking.k8s.io
+  resources:
+  - networkpolicies
+  - ingresses
+  - ingresses/status
+  - daemonsets
+  - deployments
+  - replicasets
+  - daemonsets/status
+  - deployments/scale
+  - deployments/status
+  - replicasets/scale
+  - replicasets/status
+  - replicationcontrollers/scale
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+  - deletecollection
+- apiGroups:
+  - extensions
+  - networking.k8s.io
+  resources:
+  - ingressclasses
+  verbs:
+  - get
+  - list
+  - watch
+  - update
+- apiGroups:
+  - extensions
+  resources:
+  - daemonsets
+  - deployments
+  - replicasets
+  - ingresses/status
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+  - deletecollection
+- apiGroups:
+  - storage.k8s.io
+  resources:
+  - storageclasses
+  - volumeattachments
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+  - deletecollection
+- apiGroups:
+  - rbac.authorization.k8s.io
+  resources:
+  - roles
+  - rolebindings
+  - clusterroles
+  - clusterrolebindings
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+  - deletecollection
+- apiGroups:
+  - ""
+  resources:
+  - nodes
+  verbs:
+  - get
+  - list
+  - watch
+  - update
+- nonResourceURLs:
+  - /metrics
+  - /api/*/v1/*/application/clusterInfo/*/datacollector/eventhandler
+  verbs:
+  - get
+- apiGroups:
+  - ""
+  resources:
+  - namespaces
+  - namespaces/status
+  - nodes
+  - persistentvolumeclaims
+  - persistentvolumeclaims/status
+  - pods
+  - services
+  - services/status
+  - resourcequotas
+  - replicationcontrollers
+  - replicationcontrollers/scale
+  - replicationcontrollers/status
+  - limitranges
+  - persistentvolumeclaims
+  - persistentvolumes
+  - endpoints
+  - secrets
+  - configmaps
+  - resourcequotas/status
+  - storageclasses
+  verbs:
+  - list
+  - get
+  - watch
+- apiGroups:
+  - extensions
+  resources:
+  - daemonsets
+  - deployments
+  - replicasets
+  verbs:
+  - list
+  - watch
+- apiGroups:
+  - apps
+  resources:
+  - statefulsets
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - batch
+  resources:
+  - cronjobs
+  - jobs
+  - jobs/status
+  - cronjobs/status
+  verbs:
+  - list
+  - watch
+  - get
+- apiGroups:
+  - autoscaling
+  resources:
+  - horizontalpodautoscalers
+  - horizontalpodautoscalers/status
+  verbs:
+  - list
+  - get
+  - watch
+- apiGroups:
+  - ""
+  resourceNames:
+  - ingress-controller-leader
+  resources:
+  - configmaps
+  verbs:
+  - get
+  - update
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  verbs:
+  - create
+- apiGroups:
+  - apps
+  resources:
+  - controllerrevisions
+  - daemonsets/status
+  - deployments/scale
+  - deployments/status
+  - statefulsets/scale
+  - statefulsets/status
+  - replicasets/scale
+  - replicasets/status
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - discovery.k8s.io
+  resources:
+  - endpointslices
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - policy
+  resources:
+  - poddisruptionbudgets
+  - poddisruptionbudgets/status
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - acme.cert-manager.io
+  resources:
+  - challenges
+  - orders
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - cert-manager.io
+  resources:
+  - certificaterequests
+  - issuers
+  - certificates
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - metrics.k8s.io
+  resources:
+  - nodes
+  - pods
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - pods/exec
+  verbs:
+  - create

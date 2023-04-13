@@ -34,9 +34,9 @@ across nodes to ensure availability.
 
 | Package  | Version | License |
 | ------------- | ------------- | ------------- |
-| VictoriaMetrics Cluster  | 1.72.0  | Apache 2.0  |
-| vmagent  | 1.72.0  | Apache 2.0  |
-| vmoperator  | 0.22.1  | Apache 2.0  |
+| VictoriaMetrics Cluster  | [1.87.1](https://docs.victoriametrics.com/CHANGELOG.html#v1871)  | Apache 2.0  |
+| vmagent  | [1.87.1](https://docs.victoriametrics.com/CHANGELOG.html#v1871)  | Apache 2.0  |
+| vmoperator  | [0.30.4](https://github.com/VictoriaMetrics/operator/releases/tag/v0.30.4)  | Apache 2.0  |
 
 ## Getting started after deploying VictoriaMetrics Cluster
 

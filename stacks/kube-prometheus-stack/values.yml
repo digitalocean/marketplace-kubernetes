@@ -1,11 +1,90 @@
-# prometheus-community/kube-prometheus-stack
+## Stack name: prometheus-community/kube-prometheus-stack
+## Ref: https://github.com/prometheus-community/helm-charts/tree/kube-prometheus-stack-35.5.1/charts/kube-prometheus-stack
+##
 
+
+## Manages Prometheus and Alertmanager components
+##
+prometheusOperator:
+  enabled: true
+
+## Deploy a Prometheus instance
+##
+prometheus:
+  enabled: true
+
+  ## Example service monitors
+  ##
+  ## Uncomment the following section to enable ingress-nginx service monitoring
+  ##
+  # additionalServiceMonitors:
+  #   - name: "ingress-nginx-monitor"
+  #     selector:
+  #       matchLabels:
+  #         app.kubernetes.io/name: ingress-nginx
+  #     namespaceSelector:
+  #       matchNames:
+  #         - ingress-nginx
+  #     endpoints:
+  #       - port: "metrics"
+
+
+  ## Prometheus StorageSpec for persistent data
+  ## ref: https://github.com/prometheus-operator/prometheus-operator/blob/master/Documentation/user-guides/storage.md
+  ##
+  prometheusSpec:
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: do-block-storage
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 5Gi
+
+## Configuration for Grafana
+## ref: https://grafana.com/
+##
+## Deploy a Grafana instance
+##
 grafana:
+  enabled: true
+  adminPassword: prom-operator # Please change the default password in production !!!
   persistence:
     enabled: true
-    size: 10Gi
+    storageClassName: do-block-storage
+    accessModes: ["ReadWriteOnce"]
+    size: 5Gi
 
-prometheus:
-  prometheusSpec:
-    podMonitorSelectorNilUsesHelmValues: false
-    serviceMonitorSelectorNilUsesHelmValues: false
+## Configuration for Alertmanager
+## ref: https://prometheus.io/docs/alerting/alertmanager/
+##
+## Deploy an Alertmanager instance
+##
+alertmanager:
+  enabled: true
+
+
+## Create default rules for monitoring the cluster
+##
+## Disable `etcd` and `kubeScheduler` rules (managed by DOKS, so metrics are not accessible)
+##
+defaultRules:
+  create: true
+  rules:
+    etcd: false
+    kubeScheduler: false
+
+## Component scraping kube scheduler
+##
+## Disabled because it's being managed by DOKS, so it's not accessible
+##
+kubeScheduler:
+  enabled: false
+
+## Component scraping etcd
+##
+## Disabled because it's being managed by DOKS, so it's not accessible
+##
+kubeEtcd:
+  enabled: false

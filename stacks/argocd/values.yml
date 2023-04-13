@@ -1,0 +1,14 @@
+## Chart: argo/argo-cd
+## Ref: https://github.com/argoproj/argo-helm/tree/argo-cd-4.9.4/charts/argo-cd
+##
+
+# Main Argo CD server replica count
+server:
+  replicas: 2
+  env:
+    - name: ARGOCD_API_SERVER_REPLICAS
+      value: '2'
+
+# Argo CD repository server replica count
+repoServer:
+  replicas: 2
