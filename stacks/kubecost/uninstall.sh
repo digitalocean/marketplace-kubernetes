@@ -11,3 +11,4 @@ NAMESPACE="kubecost"
 
 helm uninstall "$STACK" \
   --namespace "$NAMESPACE"
+kubectl delete --ignore-not-found=true namespace "$NAMESPACE"
