@@ -13,8 +13,8 @@ helm repo update > /dev/null
 ################################################################################
 STACK="cloudcasa"
 CHART="cloudcasa-helmchart/cloudcasa"
-CHART_VERSION="3.0.0"
-NAMESPACE="default"
+CHART_VERSION="3.3.0"
+NAMESPACE="cloudcasa-io"
 
 if [ -z "${MP_KUBERNETES}" ]; then
   # use local version of values.yml
