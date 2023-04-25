@@ -13,7 +13,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="apache-pulsar"
 CHART="apache/pulsar"
-CHART_VERSION="2.9.3"
+CHART_VERSION="3.0.0"
 NAMESPACE="pulsar"
 
 if [ -z "${MP_KUBERNETES}" ]; then
@@ -26,7 +26,6 @@ else
 fi
 
 helm upgrade "$STACK" "$CHART" \
-  --atomic \
   --create-namespace \
   --install \
   --timeout 10m0s \
