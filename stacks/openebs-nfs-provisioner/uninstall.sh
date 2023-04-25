@@ -22,3 +22,4 @@ else
 fi
 
 kubectl delete -f "$STORAGE_CLASS_MANIFEST"
+kubectl delete --ignore-not-found=true namespace "$NAMESPACE"

@@ -5,8 +5,8 @@ set -e
 ################################################################################
 # chart
 ################################################################################
-STACK="loki"
-NAMESPACE="loki-stack"
+STACK="cloudcasa"
+NAMESPACE="cloudcasa-io"
 
 helm uninstall "$STACK" \
   --namespace "$NAMESPACE"
