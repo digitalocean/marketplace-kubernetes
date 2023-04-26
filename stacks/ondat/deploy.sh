@@ -13,7 +13,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="ondat"
 CHART="ondat/ondat"
-CHART_VERSION="0.0.1"
+CHART_VERSION="0.2.9"
 NAMESPACE="ondat"
 
 if [ -z "${MP_KUBERNETES}" ]; then

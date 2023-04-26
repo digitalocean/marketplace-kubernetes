@@ -13,7 +13,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="metrics-server"
 CHART="metrics-server/metrics-server"
-CHART_VERSION="3.8.2"
+CHART_VERSION="3.10.0"
 NAMESPACE="metrics-server"
 
 if [ -z "${MP_KUBERNETES}" ]; then
@@ -23,6 +23,11 @@ if [ -z "${MP_KUBERNETES}" ]; then
 else
   # use github hosted master version of values.yml
   values="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/metrics-server/values.yml"
+fi
+
+if helm history "${STACK}" -n "${NAMESPACE}" | grep -q 'pending-install'; then
+   echo "another installation is in progress, sleeping for 30 seconds"
+   sleep 30
 fi
 
 helm upgrade "$STACK" "$CHART" \

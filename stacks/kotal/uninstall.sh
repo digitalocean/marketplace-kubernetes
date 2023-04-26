@@ -5,9 +5,10 @@ set -e
 ################################################################################
 # chart
 ################################################################################
-STACK="antmedia"
-NAMESPACE="antmedia"
+STACK="kotal"
+NAMESPACE="kotal"
 
 
 helm uninstall "$STACK" \
   --namespace "$NAMESPACE"
+kubectl delete --ignore-not-found=true namespace "$NAMESPACE"

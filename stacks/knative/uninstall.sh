@@ -10,3 +10,4 @@ kubectl delete KnativeEventing knative-eventing -n knative-eventing
 
 # Remove Knative Operator
 kubectl delete -f "https://github.com/knative/operator/releases/download/knative-v${OPERATOR_VERSION}/operator.yaml"
+kubectl delete --ignore-not-found=true namespace "$NAMESPACE"
