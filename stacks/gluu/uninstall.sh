@@ -2,5 +2,5 @@
 
 set -e
 
-kubectl delete -f https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/gluu/yaml/gluu.yaml
+kubectl delete --ignore-not-found=true -f https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/gluu/yaml/gluu.yaml
 

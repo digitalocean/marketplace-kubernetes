@@ -11,3 +11,4 @@ NAMESPACE="op-scim-bridge"
 
 helm uninstall "$STACK" \
   --namespace "$NAMESPACE"
+kubectl delete --ignore-not-found=true namespace "$NAMESPACE"
