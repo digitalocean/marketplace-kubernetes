@@ -2,12 +2,16 @@
 
 set -e
 
-OPERATOR_VERSION="1.5.1"
+OPERATOR_VERSION="1.10.0"
 
-# Remove Knative Serving and Eventing resources first
-kubectl delete KnativeServing knative-serving -n knative-serving
-kubectl delete KnativeEventing knative-eventing -n knative-eventing
+kubectl delete --ignore-not-found=true -f "https://github.com/knative/serving/releases/download/knative-v${OPERATOR_VERSION}/serving-core.yaml"
+kubectl delete --ignore-not-found=true -f "https://github.com/knative/serving/releases/download/knative-v${OPERATOR_VERSION}/serving-crds.yaml"
+kubectl delete --ignore-not-found=true -f "https://github.com/knative/net-kourier/releases/download/knative-v${OPERATOR_VERSION}/kourier.yaml"
+
+kubectl delete --ignore-not-found=true -f "https://github.com/knative/eventing/releases/download/knative-v${OPERATOR_VERSION}/eventing-crds.yaml"
+kubectl delete --ignore-not-found=true -f "https://github.com/knative/eventing/releases/download/knative-v${OPERATOR_VERSION}/eventing-core.yaml"
+
+kubectl delete --ignore-not-found=true -f "https://github.com/knative/eventing/releases/download/knative-v${OPERATOR_VERSION}/mt-channel-broker.yaml"
 
 # Remove Knative Operator
-kubectl delete -f "https://github.com/knative/operator/releases/download/knative-v${OPERATOR_VERSION}/operator.yaml"
-kubectl delete --ignore-not-found=true namespace "$NAMESPACE"
+kubectl delete --ignore-not-found=true -f "https://github.com/knative/operator/releases/download/knative-v${OPERATOR_VERSION}/operator.yaml" --wait
