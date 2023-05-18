@@ -14,7 +14,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="paralus"
 CHART="paralus/ztka"
-CHART_VERSION="0.1.7"
+CHART_VERSION="0.2.4"
 NAMESPACE="paralus"
 
 if [ -z "${MP_KUBERNETES}" ]; then
