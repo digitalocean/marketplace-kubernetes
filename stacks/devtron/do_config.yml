@@ -1,0 +1,5 @@
+
+minimum_resource_requirements:
+  node_count: 1
+  cpu: "2"
+  memory: "4GB"
