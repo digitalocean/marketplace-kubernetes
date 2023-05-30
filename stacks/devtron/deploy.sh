@@ -13,7 +13,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="devtron"
 CHART="devtron/devtron-operator"
-CHART_VERSION="0.22.54"
+CHART_VERSION="0.22.55"
 NAMESPACE="devtroncd"
 
 if [ -z "${MP_KUBERNETES}" ]; then
