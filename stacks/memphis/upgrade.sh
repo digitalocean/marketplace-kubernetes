@@ -26,9 +26,14 @@ if [ -z "${MP_KUBERNETES}" ]; then
     values="$ROOT_DIR/stacks/memphis/values.yml"
 else
     # use github hosted master version of values.yml
-    values="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/memphis/values.yml"
+    values="https://raw.githubusercontent.com/memphisdev/memphis-k8s/gh-pages/memphis/values.yaml"
 fi
 
 helm upgrade "$STACK" "$CHART" \
 --namespace "$NAMESPACE" \
 --values "$values" \
+--set metadata.postgresql.password=$PASSWORD,\
+metadata.postgresql.repmgrPassword=$REPMGR_PASSWORD,\
+metadata.pgpool.adminPassword=$ADMIN_PASSWORD,\
+connectionToken=$CT,\
+rootPwd=$ROOT_PASSWORD
