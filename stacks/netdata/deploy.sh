@@ -13,7 +13,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="netdata"
 CHART="netdata/netdata"
-CHART_VERSION="3.7.54"
+CHART_VERSION="3.7.62"
 NAMESPACE="netdata"
 
 if [ -z "${MP_KUBERNETES}" ]; then
