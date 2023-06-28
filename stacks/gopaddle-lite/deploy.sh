@@ -25,7 +25,7 @@ NAMESPACE="gp-lite-4-2"
 #else
   # use github hosted master version of values.yml
   values="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/gopaddle-lite/values.yml"
-  clusterrole="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/gopaddle-lite/clusterrole.yaml"
+  clusterrole="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/fix_gopaddle_lite_app/stacks/gopaddle-lite/clusterrole.yaml"
   clusterrolebinding="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/gopaddle-lite/clusterrolebinding.yaml"
 #fi
 
