@@ -27,11 +27,11 @@ else
 fi
 
 # Get the first node's external IP, if it exists
-FIRST_NODE_EXT_IP=$(kubectl get nodes -o json | jq -r '.items[0].status.addresses[] | select(.type=="ExternalIP") | .address' 2>/dev/null)
+FIRST_NODE_EXT_IP=$(kubectl get nodes -o jsonpath='{$.items[0].status.addresses[?(@.type=="ExternalIP")].address}' 2>/dev/null)
 
 # If there's no external IP, get the internal IP
 if [ -z "$FIRST_NODE_EXT_IP" ]; then
-        FIRST_NODE_IP=$(kubectl get nodes -o json | jq -r '.items[0].status.addresses[] | select(.type=="InternalIP") | .address')
+        FIRST_NODE_IP=$(kubectl get nodes -o jsonpath='{$.items[0].status.addresses[?(@.type=="InternalIP")].address}' 2>/dev/null)
 else
         FIRST_NODE_IP="$FIRST_NODE_EXT_IP"
 fi
