@@ -1,6 +1,6 @@
 #!/bin/sh
 
-set -eu
+set -e
 
 ################################################################################
 # repo
@@ -14,6 +14,7 @@ helm repo update > /dev/null
 STACK="otomi"
 CHART="otomi/otomi"
 NAMESPACE="default"
+VERSION="1.24"
 
 if [ -z "${MP_KUBERNETES}" ]; then
   # use local version of values.yml
@@ -29,4 +30,5 @@ helm upgrade "$STACK" "$CHART" \
   --install \
   --timeout 8m0s \
   --namespace "$NAMESPACE" \
+  --set cluster.k8sVersion="$VERSION" \
   --values "$values" 
