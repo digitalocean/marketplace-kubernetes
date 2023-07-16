@@ -19,6 +19,8 @@ ROOT_PASSWORD=$(kubectl get secret --namespace "memphis" memphis-creds -o jsonpa
 PASSWORD=$(kubectl get secret --namespace "memphis" memphis-metadata -o jsonpath="{.data.password}" | base64 -d)
 REPMGR_PASSWORD=$(kubectl get secret --namespace "memphis" memphis-metadata -o jsonpath="{.data.repmgr-password}" | base64 -d)
 ADMIN_PASSWORD=$(kubectl get secret --namespace "memphis" memphis-metadata-coordinator -o jsonpath="{.data.admin-password}" | base64 -d)
+ENCRYPTION_SECRET_KEY=$(kubectl get secret --namespace "memphis" memphis-creds -o jsonpath="{.data.ENCRYPTION_SECRET_KEY}" | base64 -d)
+
 
 if [ -z "${MP_KUBERNETES}" ]; then
     # use local version of values.yml
@@ -35,5 +37,6 @@ helm upgrade "$STACK" "$CHART" \
 --set metadata.postgresql.password=$PASSWORD,\
 metadata.postgresql.repmgrPassword=$REPMGR_PASSWORD,\
 metadata.pgpool.adminPassword=$ADMIN_PASSWORD,\
-connectionToken=$CT,\
-rootPwd=$ROOT_PASSWORD
+memphis.creds.connectionToken=$CT,\
+memphis.creds.rootPwd=$ROOT_PASSWORD,\
+memphis.creds.encryptionSecretKey=$ENCRYPTION_SECRET_KEY
