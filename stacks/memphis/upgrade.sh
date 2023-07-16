@@ -39,4 +39,5 @@ metadata.postgresql.repmgrPassword=$REPMGR_PASSWORD,\
 metadata.pgpool.adminPassword=$ADMIN_PASSWORD,\
 memphis.creds.connectionToken=$CT,\
 memphis.creds.rootPwd=$ROOT_PASSWORD,\
-memphis.creds.encryptionSecretKey=$ENCRYPTION_SECRET_KEY
+memphis.creds.encryptionSecretKey=$ENCRYPTION_SECRET_KEY,\
+memphis.source=digitalocean
