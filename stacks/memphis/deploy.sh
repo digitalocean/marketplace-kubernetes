@@ -25,4 +25,5 @@ helm upgrade "$STACK" "$CHART" \
   --timeout 8m0s \
   --namespace "$NAMESPACE" \
   --values "$values" \
-  --version "$CHART_VERSION"
+  --version "$CHART_VERSION" \
+  --set memphis.source=digitalocean
