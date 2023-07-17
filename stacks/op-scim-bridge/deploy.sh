@@ -9,11 +9,14 @@ helm repo add "$REPO_NAME" "$REPO_URL"
 helm repo update > /dev/null
 
 CHART_NAME="op-scim-bridge"
-CHART_VERSION="2.10.2"
+CHART_VERSION="2.10.3"
 
 RELEASE="op-scim-bridge"
 NAMESPACE="op-scim-bridge"
 STORAGE_CLASS="do-block-storage"
+
+ROOT_DIR=$(git rev-parse --show-toplevel)
+VALUES_FILE="$ROOT_DIR/stacks/op-scim-bridge/values.yml"
 
 helm upgrade "$RELEASE" "$REPO_NAME/$CHART_NAME" \
   --atomic \
@@ -22,4 +25,5 @@ helm upgrade "$RELEASE" "$REPO_NAME/$CHART_NAME" \
   --create-namespace \
   --namespace "$NAMESPACE" \
   --version "$CHART_VERSION" \
+  --values "$VALUES_FILE" \
   --set scim.credentialsVolume.storageClass="$STORAGE_CLASS"

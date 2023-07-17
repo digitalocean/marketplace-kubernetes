@@ -1,0 +1,6 @@
+scim:
+  credentials:
+    volume:
+      enabled: true
+    secrets:
+      enabled: false
