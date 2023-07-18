@@ -25,5 +25,4 @@ helm upgrade "$RELEASE" "$REPO_NAME/$CHART_NAME" \
   --create-namespace \
   --namespace "$NAMESPACE" \
   --version "$CHART_VERSION" \
-  --values "$VALUES_FILE" \
-  --set scim.credentialsVolume.storageClass="$STORAGE_CLASS"
+  --values "$VALUES_FILE" 
