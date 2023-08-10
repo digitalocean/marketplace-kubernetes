@@ -1,0 +1,7 @@
+scim:
+  credentials:
+    volume:
+      enabled: true
+      storageClass: "do-block-storage"
+    secrets:
+      enabled: false
