@@ -6,10 +6,11 @@ FusionAuth is a modern platform for Customer Identity and Access Management (CIA
 
 | Package       | Application Version | License                                                       |
 |---------------|---------------------|---------------------------------------------------------------|
-| FusionAuth    | 1.42.0              | [License](https://fusionauth.io/license)                      |
+| FusionAuth    | 1.47.1              | [License](https://fusionauth.io/license)                      |
 
 ### Resources
-This stack was successfully tested with a Digital Ocean Kubernetes Cluster with 6 GB RAM and 4 vCPUs.
+This stack requires a Digital Ocean Kubernetes Cluster with minimum of 3 nodes of 4 GB RAM and 2 vCPUs each.
+
 ### FusionAuth running at...
 Once the FusionAuth stack is installed in the DigitalOcean 1-Click Apps Marketplace you should:
 1. Run `helm list -n fusionauth` to confirm stack was deployed. You should have 3 deployments: db, fusionauth, search.

@@ -37,8 +37,8 @@ helm repo add fusionauth https://fusionauth.github.io/charts
 helm repo update > /dev/null
 
 # Install PostgresSQL and Elasticsearch
-helm install db bitnami/postgresql --create-namespace --namespace "$NAMESPACE" --set auth.enablePostgresUser=true --set auth.postgresPassword="$DB_POSTGRES_USER_PASSWORD" --set image.tag=14.6.0-debian-11-r11
-helm install search bitnami/elasticsearch --namespace "$NAMESPACE" -f "$SEARCH_VALUES"
+helm install --atomic db bitnami/postgresql --create-namespace --namespace "$NAMESPACE" --set auth.enablePostgresUser=true --set auth.postgresPassword="$DB_POSTGRES_USER_PASSWORD" --set image.tag=14.9.0-debian-11-r2
+helm install --atomic search bitnami/elasticsearch --namespace "$NAMESPACE" -f "$SEARCH_VALUES"
 
 
 helm upgrade "$STACK" "$CHART" \
