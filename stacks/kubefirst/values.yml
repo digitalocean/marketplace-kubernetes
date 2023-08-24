@@ -1,0 +1,5 @@
+# kubefirst/kubefirst
+console:
+  installMethod: digitalocean-marketplace
+kubefirst-api:
+  installMethod: digitalocean-marketplace
