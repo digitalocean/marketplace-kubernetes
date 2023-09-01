@@ -1,13 +1,12 @@
 #!/bin/sh
 
-set -eu
+set -e
 
 ################################################################################
 # chart
 ################################################################################
-STACK="otomi"
-NAMESPACE="otomi"
-
+STACK="jaeger"
+NAMESPACE="jaeger"
 
 helm uninstall "$STACK" \
   --namespace "$NAMESPACE"
