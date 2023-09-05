@@ -13,7 +13,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="otomi"
 CHART="otomi/otomi"
-NAMESPACE="default"
+NAMESPACE="otomi"
 VERSION="1.24"
 
 if [ -z "${MP_KUBERNETES}" ]; then
@@ -26,9 +26,10 @@ else
 fi
 
 helm upgrade "$STACK" "$CHART" \
+  --atomic \
   --create-namespace \
   --install \
   --timeout 8m0s \
   --namespace "$NAMESPACE" \
   --set cluster.k8sVersion="$VERSION" \
-  --values "$values" 
+  --values "$values"
