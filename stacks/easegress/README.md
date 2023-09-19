@@ -269,16 +269,12 @@ Hostname: hello-deployment-5657495f59-x7b5x
 You can get the `NODE_IP` and `NODE_PORT` by running the following command:
 
 ```text
-kubectl -n easegress get svc
-NAME               TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)                      AGE
-easegress          NodePort    10.233.53.71    <none>        8080:30780/TCP               5h13m
-easegress-hs       ClusterIP   None            <none>        2381/TCP,2380/TCP,2379/TCP   5h13m
-easegress-public   NodePort    10.233.25.139   <none>        2381:31255/TCP               5h13m
-```
+export NODE_PORT=$(kubectl get --namespace easegress -o jsonpath="{.spec.ports[0].nodePort}" services easegress)
+export NODE_IP=$(kubectl get nodes --namespace easegress -o jsonpath="{.items[0].status.addresses[0].address}")
+echo http://$NODE_IP:$NODE_PORT
 
-- `NODE_IP` is the IP address of the node where the Easegress pod is running.
-- `NODE_PORT` is the port number of the `easegress` service, in my case, it is `30780`.
-- Also, you can use `CLUSTER_IP` and `PORT` to access the hello application, in my case, it is `http://10.233.53.71:8080`.
+http://10.108.162.15:30780
+```
 
 ## Upgrading Easegress Stack
 
