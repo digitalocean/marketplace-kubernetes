@@ -17,7 +17,7 @@
 
 | Package   | Easegress Version                                        | Helm Chart Version                                                                      | License                                                            |
 |-----------|----------------------------------------------------------|-----------------------------------------------------------------------------------------|--------------------------------------------------------------------|
-| Easegress | [latest](https://github.com/megaease/easegress/releases) | [1.0.0](https://github.com/megaease/easegress-helm-charts/releases/tag/easegress-1.0.0) | [Apache 2.0](https://github.com/apache/pulsar/blob/master/LICENSE) |
+| Easegress | [latest](https://github.com/megaease/easegress/releases) | [1.0.1](https://github.com/megaease/easegress-helm-charts/releases/tag/easegress-1.0.1) | [Apache 2.0](https://github.com/apache/pulsar/blob/master/LICENSE) |
 
 ## Getting Started
 
@@ -37,7 +37,7 @@ The output looks similar to the following:
 
 ```text
 NAME     	NAMESPACE	REVISION	UPDATED                               	STATUS  	CHART          	APP VERSION
-easegress	easegress	1       	2023-09-19 02:42:24.14856881 +0000 UTC	deployed	easegress-1.0.0	2.6.1
+easegress	easegress	1       	2023-09-19 02:42:24.14856881 +0000 UTC	deployed	easegress-1.0.1	2.6.1
 ```
 
 The `STATUS` column value should be `deployed`.
@@ -283,6 +283,8 @@ You can check what versions are available to upgrade, by navigating to the [Ease
 Then, to upgrade the Easegress stack to a newer version, please run the following command, replacing the `<>` placeholders:
 
 ```console
+helm repo update easegress
+
 helm upgrade easegress easegress/easegress \
   --version <EASEGRESS_NEW_VERSION> \
   --namespace easegress \
