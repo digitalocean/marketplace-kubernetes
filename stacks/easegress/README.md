@@ -37,7 +37,7 @@ The output looks similar to the following:
 
 ```text
 NAME     	NAMESPACE	REVISION	UPDATED                               	STATUS  	CHART          	APP VERSION
-easegress	easegress	1       	2023-09-19 02:42:24.14856881 +0000 UTC	deployed	easegress-1.0.1	2.6.1
+easegress	easegress	1       	2023-09-28 07:02:16.476342598 +0000 UTC	deployed	easegress-1.0.3	2.6.1
 ```
 
 The `STATUS` column value should be `deployed`.
@@ -64,13 +64,13 @@ The Easegress stack provides some custom values to start with. See the [values](
 You can inspect all the available options, as well as the default values for the Easegress Helm chart by running the following command:
 
 ```console
-helm show values easegress/easegress --version 1.0.0
+helm show values easegress/easegress --version 1.0.3
 ```
 
 After customizing the Helm values file (`values.yml`), you can apply the changes via the `helm upgrade` command, as shown below:
 
 ```console
-helm upgrade easegress easegress/easegress --version 1.0.0 \
+helm upgrade easegress easegress/easegress --version 1.0.3 \
   --namespace easegress \
   --values values.yml
 ```
@@ -82,7 +82,7 @@ To verify that Easegress is running, you can create a basic ingress controller a
 First, attach in a shell session to the Easegress pod:
 
 ```console
-k -n easegress exec -ti easegress-0 /bin/sh
+kubectl -n easegress exec -ti easegress-0 /bin/sh
 ```
 
 You can see the client tools in the `/opt/easegress/bin` directory:
@@ -253,28 +253,20 @@ ingress-example   easegress   www.example.com,*.megaease.com             80     
 After a while, we can leverage the below command to access both versions of the hello application:
 
 ```text
-$ curl http://<NODE_IP>:<NODE_PORT> -HHost:www.megaease.com
+$ curl http://<EXTERNAL-IP>:8080 -HHost:www.megaease.com
 Hello, world!
 Version: 2.0.0
 Hostname: hello-deployment-5657495f59-x7b5x
 
-curl http://<NODE_IP>:<NODE_PORT> -HHost:www.example.com
+curl http://<EXTERNAL-IP>:8080 -HHost:www.example.com
 Hello, world!
 Version: 1.0.0
 Hostname: hello-deployment-5657495f59-x7b5x
 ```
 
 * NOTE:
-
-You can get the `NODE_IP` and `NODE_PORT` by running the following command:
-
-```text
-export NODE_PORT=$(kubectl get --namespace easegress -o jsonpath="{.spec.ports[0].nodePort}" services easegress)
-export NODE_IP=$(kubectl get nodes --namespace easegress -o jsonpath="{.items[0].status.addresses[0].address}")
-echo http://$NODE_IP:$NODE_PORT
-
-http://10.108.162.15:30780
-```
+1. You can get the EXTERNAL-IP by running `kubectl get svc --namespace easegress easegress -o jsonpath='{.status.loadBalancer.ingress[0].ip}'`.
+2. Easegress Port is 2381， 8080 is the port of ingress controller.
 
 ## Upgrading Easegress Stack
 
