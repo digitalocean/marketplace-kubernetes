@@ -11,7 +11,7 @@ helm repo update > /dev/null
 ################################################################################
 # chart
 ################################################################################
-STACK="webb.ai"
+STACK="webbai-agent"
 CHART="webb.ai/webbai-agent"
 NAMESPACE="webbai"
 
