@@ -1,12 +1,12 @@
 #!/bin/sh
 
-set -eu
+set -e
 
 ################################################################################
 # chart
 ################################################################################
-STACK="otomi"
-NAMESPACE="otomi"
+STACK="op-scim-bridge"
+NAMESPACE="op-scim-bridge"
 
 
 helm uninstall "$STACK" \

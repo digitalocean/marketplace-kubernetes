@@ -13,7 +13,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="memphis"
 CHART="memphis/memphis"
-CHART_VERSION="0.4.0"
+CHART_VERSION="1.2.2"
 NAMESPACE="memphis"
 
 values="https://raw.githubusercontent.com/memphisdev/memphis-k8s/gh-pages/memphis/values.yaml"
@@ -25,4 +25,5 @@ helm upgrade "$STACK" "$CHART" \
   --timeout 8m0s \
   --namespace "$NAMESPACE" \
   --values "$values" \
-  --version "$CHART_VERSION"
+  --version "$CHART_VERSION" \
+  --set memphis.source=digitalocean

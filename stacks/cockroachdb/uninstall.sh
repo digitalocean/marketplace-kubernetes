@@ -1,12 +1,12 @@
 #!/bin/sh
 
-set -eu
+set -e
 
 ################################################################################
 # chart
 ################################################################################
-STACK="otomi"
-NAMESPACE="otomi"
+STACK="cockroachdb"
+NAMESPACE="cockroachdb"
 
 
 helm uninstall "$STACK" \

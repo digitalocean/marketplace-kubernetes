@@ -7,7 +7,7 @@ set -e
 ################################################################################
 STACK="triliovault-operator"
 NAMESPACE="tvk"
-ROOT_DIR=$(git rev-parse --show-toplevel)
+#ROOT_DIR=$(git rev-parse --show-toplevel)
 
 echo "Make sure that there are no backups in inprogress state"
 

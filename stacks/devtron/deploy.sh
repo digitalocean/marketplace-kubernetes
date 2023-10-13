@@ -5,31 +5,30 @@ set -e
 ################################################################################
 # repo
 ################################################################################
-helm repo add otomi https://otomi.io/otomi-core
+helm repo add devtron https://helm.devtron.ai
 helm repo update > /dev/null
 
 ################################################################################
 # chart
 ################################################################################
-STACK="otomi"
-CHART="otomi/otomi"
-NAMESPACE="otomi"
-VERSION="1.24"
+STACK="devtron"
+CHART="devtron/devtron-operator"
+CHART_VERSION="0.22.55"
+NAMESPACE="devtroncd"
 
 if [ -z "${MP_KUBERNETES}" ]; then
   # use local version of values.yml
   ROOT_DIR=$(git rev-parse --show-toplevel)
-  values="$ROOT_DIR/stacks/otomi/values.yml"
+  values="$ROOT_DIR/stacks/devtron/values.yml"
 else
   # use github hosted master version of values.yml
-  values="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/otomi/values.yml"
+  values="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/devtron/values.yml"
 fi
 
 helm upgrade "$STACK" "$CHART" \
-  --atomic \
   --create-namespace \
   --install \
-  --timeout 20m0s \
+  --timeout 8m0s \
   --namespace "$NAMESPACE" \
-  --set cluster.k8sVersion="$VERSION" \
-  --values "$values"
+  --values "$values" \
+  --version "$CHART_VERSION"

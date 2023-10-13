@@ -5,31 +5,25 @@ set -e
 ################################################################################
 # repo
 ################################################################################
-helm repo add otomi https://otomi.io/otomi-core
+helm repo add cloudcasa-helmchart https://catalogicsoftware.github.io/cloudcasa-helmchart/
 helm repo update > /dev/null
 
 ################################################################################
 # chart
 ################################################################################
-STACK="otomi"
-CHART="otomi/otomi"
-NAMESPACE="otomi"
-VERSION="1.24"
+STACK="cloudcasa"
+CHART="cloudcasa-helmchart/cloudcasa"
+NAMESPACE="default"
 
 if [ -z "${MP_KUBERNETES}" ]; then
   # use local version of values.yml
   ROOT_DIR=$(git rev-parse --show-toplevel)
-  values="$ROOT_DIR/stacks/otomi/values.yml"
+  values="$ROOT_DIR/stacks/cloudcasa/values.yml"
 else
   # use github hosted master version of values.yml
-  values="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/otomi/values.yml"
+  values="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/cloudcasa/values.yml"
 fi
 
 helm upgrade "$STACK" "$CHART" \
-  --atomic \
-  --create-namespace \
-  --install \
-  --timeout 20m0s \
-  --namespace "$NAMESPACE" \
-  --set cluster.k8sVersion="$VERSION" \
-  --values "$values"
+--namespace "$NAMESPACE" \
+--values "$values" \

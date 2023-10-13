@@ -1,13 +1,12 @@
 #!/bin/sh
 
-set -eu
+set -e
 
 ################################################################################
 # chart
 ################################################################################
-STACK="otomi"
-NAMESPACE="otomi"
-
+STACK="vmoperator"
+NAMESPACE="victoria-metrics"
 
 helm uninstall "$STACK" \
   --namespace "$NAMESPACE"
