@@ -29,7 +29,7 @@ helm upgrade "$STACK" "$CHART" \
   --atomic \
   --create-namespace \
   --install \
-  --timeout 8m0s \
+  --timeout 20m0s \
   --namespace "$NAMESPACE" \
   --set cluster.k8sVersion="$VERSION" \
   --values "$values"
