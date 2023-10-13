@@ -27,6 +27,6 @@ fi
 helm upgrade "$STACK" "$CHART" \
   --create-namespace \
   --install \
-  --timeout 8m0s \
+  --timeout 20m0s \
   --namespace "$NAMESPACE" \
   --values "$values" 
