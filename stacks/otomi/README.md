@@ -24,7 +24,7 @@
 ## Getting Started
 
 ### Prerequisites
-Get familiar with supported kubernetes versions at https://otomi.io/product/roadmap
+Get familiar with supported Kubernetes versions at https://otomi.io/product/roadmap
 
 ### How to Connect to Your Cluster
 
@@ -59,7 +59,7 @@ For performing hands-on labs look into: https://otomi.io/docs/for-devs/get-start
 ## Upgrade Instructions
 
 Upgrading to a new version of Otomi can be easily done via the `otomi-console`. 
-From the left menu bar follow: `Settings` then in rhe main screen click `Otomi` and find `Version` input form. Fill a new version
+From the left menu bar follow: `Settings` then in the main screen click `Otomi` and find `Version` input form. Fill a new version
 
 
 ```bash
