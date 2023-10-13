@@ -13,7 +13,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="easegress"
 CHART="easegress/easegress"
-CHART_VERSION="1.0.0"
+CHART_VERSION="1.0.3"
 NAMESPACE="easegress"
 
 if [ -z "${MP_KUBERNETES}" ]; then
