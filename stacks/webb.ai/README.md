@@ -24,7 +24,7 @@ Please follow the official documentation to read and learn more about [webb.ai](
 
 | Package      | resource collector version | traffic collector version | Helm package version | License |
 |--------------|----------------------------|---------------------------|--------------------- |---------|
-| webbai-agent | v0.4.8                     | v0.8.3.1                  | [0.1.5](https://github.com/webb-ai/helm-charts/releases/tag/webbai-agent-0.1.5) | [Apache 2.0](https://github.com/webb-ai/k8s-agent/blob/master/LICENSE)
+| webbai-agent | v0.5.0                     | v0.8.3.2                  | [0.1.6](https://github.com/webb-ai/helm-charts/releases/tag/webbai-agent-0.1.6) | [Apache 2.0](https://github.com/webb-ai/k8s-agent/blob/master/LICENSE)
 
 ## Getting Started
 

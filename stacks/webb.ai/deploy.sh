@@ -13,7 +13,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="webbai-agent"
 CHART="webb.ai/webbai-agent"
-CHART_VERSION="0.1.5"
+CHART_VERSION="0.1.6"
 NAMESPACE="webbai"
 
 if [ -z "${MP_KUBERNETES}" ]; then
