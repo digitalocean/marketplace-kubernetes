@@ -27,3 +27,6 @@ fi
 helm upgrade "$STACK" "$CHART" \
 --namespace "$NAMESPACE" \
 --values "$values" \
+--reuse-values
+
+
