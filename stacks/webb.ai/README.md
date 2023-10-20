@@ -15,7 +15,7 @@ The Webb.ai RCA solution includes:
 
 **Notes:**
 
-- Webb.ai is currently in early access. After installing the helm chart in your Kubernetes cluster, please email do_access@webb.ai to get access to Webb's web console to get full functionality.
+- **Webb.ai is currently in early access. After installing the helm chart in your Kubernetes cluster, please email do_access@webb.ai to get access to Webb's web console to get full functionality.**
 - DigitalOcean is using Helm v3 to deploy webb.ai to your DOKS cluster.
 
 Please follow the official documentation to read and learn more about [webb.ai](https://docs.webb.ai).
