@@ -1,0 +1,18 @@
+# kubearmor/kubearmor-operator
+autoDeploy: true
+
+kubearmorOperator:
+  name: kubearmor-operator
+  image:
+    repository: kubearmor/kubearmor-operator
+    tag: latest
+  imagePullPolicy: IfNotPresent
+
+kubearmorConfig:
+  defaultCapabilitiesPosture: audit
+  defaultFilePosture: audit
+  defaultNetworkPosture: audit
+  defaultVisibility: process,network
+  enableStdOutLogs: false
+  enableStdOutAlerts: false
+  enableStdOutMsgs: false
