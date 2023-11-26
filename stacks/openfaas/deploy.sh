@@ -15,7 +15,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="openfaas"
 CHART="openfaas/openfaas"
-CHART_VERSION="10.2.2"
+CHART_VERSION="14.1.19"
 NAMESPACE="openfaas"
 
 if [ -z "${MP_KUBERNETES}" ]; then
@@ -37,7 +37,5 @@ helm upgrade "$STACK" "$CHART" \
   --install \
   --timeout 8m0s \
   --namespace "$NAMESPACE" \
-  --set functionNamespace=openfaas-fn \
-  --set generateBasicAuth=true \
   --values "$values" \
   --version "$CHART_VERSION"

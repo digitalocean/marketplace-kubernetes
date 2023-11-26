@@ -1,8 +1,8 @@
 # Description
 
-[OpenFaaS](https://docs.openfaas.com/) is an open-source project that enables users to deploy applications to Kubernetes in a serverless style. It can package and deploy any micro-service, API, binary, or function. Once you deploy [a workload](https://docs.openfaas.com/reference/workloads/) via the [OpenFaaS CLI](https://docs.openfaas.com/cli/install/), it can auto-scale your code in response to user  demand based on API or UI metrics.
+[OpenFaaS](https://docs.openfaas.com/) Community Edition (CE) is an open-source project that enables users to deploy applications to Kubernetes in a serverless style. It can package and deploy any micro-service, API, binary, or function. Once you deploy [a workload](https://docs.openfaas.com/reference/workloads/) via the [OpenFaaS CLI](https://docs.openfaas.com/cli/install/), it can auto-scale your code in response to user  demand based on API or UI metrics.
 
-OpenFaaS comes with built-in auto-scaling, [detailed metrics](https://docs.openfaas.com/architecture/metrics/), and [queue-processing](https://docs.openfaas.com/reference/async/). It also provides pre-made functions and a series of templates for languages such as C#, Java, Go, Ruby, and PHP,
+OpenFaaS CE comes with built-in auto-scaling, [detailed metrics](https://docs.openfaas.com/architecture/metrics/), and [queue-processing](https://docs.openfaas.com/reference/async/). It also provides pre-made functions and a series of templates for languages such as C#, Java, Go, Ruby, and PHP,
 
 You can access your workloads through the OpenFaaS gateway and trigger them with [event sources](https://docs.openfaas.com/reference/triggers/) such as Kafka, RabbitMQ, Redis and Cron.
 
@@ -10,18 +10,18 @@ OpenFaaS is built around extendable open interfaces, which allow you to [enable 
 
 You can find out more about OpenFaaS at [the official website](https://www.openfaas.com/) or take the [free online workshop](https://github.com/openfaas/workshop/).
 
-**Note:** This stack requires a minimum configuration of 2 Nodes at the $10/month plan (2GB memory / 1 vCPU).
+**Note:** This stack requires a minimum configuration of 3 Nodes with 2vCPU and 4GB of RAM each.
 
 ## Software Included
 
 | Package               | Application Version   |License                                                                                    |
 | ---| ---- | ------------- |
-| Prometheus | [2.36.2](https://github.com/prometheus/prometheus/releases/tag/v2.36.2) | [Apache 2.0](https://github.com/prometheus/prometheus/blob/master/LICENSE) |
-| Alertmanager | [0.18.0](https://github.com/prometheus/alertmanager/releases/tag/v0.18.0) | [Apache 2.0](https://github.com/prometheus/prometheus/blob/master/LICENSE) |
-| NATS Streaming | [0.22.0](https://github.com/nats-io/nats-streaming-server/releases/tag/v0.22.0) | [Apache 2.0](https://github.com/nats-io/nats-streaming-server/blob/master/LICENSE) |
-| faas-netes | [0.15.1](https://github.com/openfaas/faas-netes/releases/tag/0.15.1) | [MIT](https://github.com/openfaas/faas-netes/blob/master/LICENSE) |
-| faas | [0.23.0](https://github.com/openfaas/faas/releases/tag/0.23.0) | [MIT](https://github.com/openfaas/faas/blob/master/LICENSE) |
-| nats-queue-worker | [0.13.1](https://github.com/openfaas/nats-queue-worker/releases/tag/0.13.1) | [MIT](https://github.com/openfaas/nats-queue-worker/blob/master/LICENSE) |
+| Prometheus | [v2.47.2](https://github.com/prometheus/prometheus/releases/tag/v2.47.2) | [Apache 2.0](https://github.com/prometheus/prometheus/blob/master/LICENSE) |
+| alert-manager | [v0.26.0](https://github.com/prometheus/alertmanager/releases/tag/v0.26.0) | [Apache 2.0](https://github.com/prometheus/prometheus/blob/master/LICENSE) |
+| NATS Streaming | [0.25.5](https://github.com/nats-io/nats-streaming-server/releases/tag/v0.25.5) | [Apache 2.0](https://github.com/nats-io/nats-streaming-server/blob/master/LICENSE) |
+| faas-netes CE | [0.17.2](https://github.com/openfaas/faas-netes/releases/tag/0.17.2) | [MIT](https://github.com/openfaas/faas-netes/blob/master/LICENSE) |
+| faas CE | [0.27.3](https://github.com/openfaas/faas/releases/tag/0.27.3) | [MIT](https://github.com/openfaas/faas/blob/master/LICENSE) |
+| nats-queue-worker CE | [0.14.1](https://github.com/openfaas/nats-queue-worker/releases/tag/0.14.1) | [MIT](https://github.com/openfaas/nats-queue-worker/blob/master/LICENSE) |
 
 ## Getting Started
 
@@ -46,7 +46,7 @@ If the installation was successful, the `STATUS` column value in the output read
 
 ```text
 NAME          NAMESPACE REVISION UPDATED                              STATUS   CHART                APP VERSION
-openfaas      openfaas  1        2022-03-02 10:40:25.804165 +0200 EET deployed openfaas-10.2.2
+openfaas      openfaas  1        2022-03-02 10:40:25.804165 +0200 EET deployed openfaas-14.1.19
 ```
 
 Next, verify that the OpenFaaS pods are up and running with the following command:
@@ -71,13 +71,13 @@ OpenFaaS is now successfully installed and running.
 OpenFaaS has custom default Helm values. To inspect its current values, run the following command:
 
 ```console
-helm show values openfaas/openfaas --version 10.2.2
+helm show values openfaas/openfaas --version 14.1.19
 ```
 
 To change these values, open the Helm values file `values.yml`, change whatever values you want, save and exit the file, and apply the changes by running `helm upgrade` command:
 
 ```console
-helm upgrade openfaas openfaas/openfaas --version 10.2.2 \
+helm upgrade openfaas openfaas/openfaas --version 14.1.19 \
   --namespace openfaas \
   --values values.yml
 ```
@@ -112,7 +112,7 @@ helm install \
   --namespace cert-manager \
   --create-namespace \
   --set installCRDs=true \
-  --version v1.8.0 \
+  --version v1.13.2 \
   jetstack/cert-manager
 ```
 
