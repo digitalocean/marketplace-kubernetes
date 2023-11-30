@@ -1,0 +1,4 @@
+# ngrok/kubernetes-ingress-controller
+credentials:
+  secret:
+    name: ngrok-auth
