@@ -13,7 +13,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="memphis"
 CHART="memphis/memphis"
-CHART_VERSION="null"
+CHART_VERSION="v1.3.0"
 NAMESPACE="memphis"
 
 values="https://raw.githubusercontent.com/memphisdev/memphis-k8s/gh-pages/memphis/values.yaml"
