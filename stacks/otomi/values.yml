@@ -1,6 +1,5 @@
 # otomi/otomi
 
 cluster:
-  k8sVersion: '1.22'
   name: otomi-on-digital-ocean
   provider: digitalocean

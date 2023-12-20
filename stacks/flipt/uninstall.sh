@@ -1,14 +1,13 @@
 #!/bin/sh
 
-set -eu
+set -e
 
 ################################################################################
 # chart
 ################################################################################
-STACK="otomi"
-NAMESPACE="otomi"
+STACK="flipt"
+NAMESPACE="flipt"
 
 
 helm uninstall "$STACK" \
   --namespace "$NAMESPACE"
-kubectl delete --ignore-not-found=true namespace "$NAMESPACE"

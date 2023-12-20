@@ -1,14 +1,13 @@
 #!/bin/sh
 
-set -eu
+set -e
 
 ################################################################################
 # chart
 ################################################################################
-STACK="otomi"
-NAMESPACE="otomi"
+STACK="ngrok-ingress-controller"
+NAMESPACE="ngrok-ingress-controller"
 
 
 helm uninstall "$STACK" \
   --namespace "$NAMESPACE"
-kubectl delete --ignore-not-found=true namespace "$NAMESPACE"

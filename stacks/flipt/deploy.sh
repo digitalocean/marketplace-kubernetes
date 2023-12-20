@@ -5,30 +5,29 @@ set -e
 ################################################################################
 # repo
 ################################################################################
-helm repo add netdata https://netdata.github.io/helmchart
+helm repo add flipt https://helm.flipt.io
 helm repo update > /dev/null
 
 ################################################################################
 # chart
 ################################################################################
-STACK="netdata"
-CHART="netdata/netdata"
-CHART_VERSION="3.7.80"
-NAMESPACE="netdata"
+STACK="flipt"
+CHART="flipt/flipt"
+NAMESPACE="flipt"
 
 if [ -z "${MP_KUBERNETES}" ]; then
   # use local version of values.yml
   ROOT_DIR=$(git rev-parse --show-toplevel)
-  values="$ROOT_DIR/stacks/netdata/values.yml"
+  values="$ROOT_DIR/stacks/flipt/values.yml"
 else
   # use github hosted master version of values.yml
-  values="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/netdata/values.yml"
+  values="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/flipt/values.yml"
 fi
 
 helm upgrade "$STACK" "$CHART" \
   --atomic \
   --create-namespace \
   --install \
+  --timeout 8m0s \
   --namespace "$NAMESPACE" \
   --values "$values" \
-  --version "$CHART_VERSION"

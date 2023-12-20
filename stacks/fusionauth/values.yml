@@ -5,10 +5,11 @@
 # Declare variables to be passed into your templates.
 
 # replicaCount -- The number of fusionauth-app instances to run
-replicaCount: 1
+replicaCount: 2
 image:
   # image.repository -- The name of the docker repository for fusionauth-app
   repository: fusionauth/fusionauth-app
+  tag: 1.47.1
   # image.pullPolicy -- Kubernetes image pullPolicy to use for fusionauth-app
   pullPolicy: IfNotPresent
 
@@ -211,9 +212,9 @@ resources:
   # choice for the user. This also increases chances charts run on environments with little
   # resources, such as Minikube. If you do want to specify resources, uncomment the following
   # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  limits:
-    cpu: 3000m
-    memory: 3500Mi
+  #  limits:
+  #    cpu: 3000m
+  #    memory: 3500Mi
   requests:
     cpu: 300m
     memory: 256Mi
