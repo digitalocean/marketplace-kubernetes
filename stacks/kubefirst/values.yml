@@ -1,5 +1,8 @@
-# kubefirst/kubefirst
 console:
   installMethod: digitalocean-marketplace
-kubefirst-api:
+  ingress:
+    enabled: false
+global:
+  cloudProvider: digitalocean 
+  clusterType: bootstrap 
   installMethod: digitalocean-marketplace
