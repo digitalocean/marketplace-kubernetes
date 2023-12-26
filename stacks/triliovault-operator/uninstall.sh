@@ -6,7 +6,7 @@ set -e
 # Delete TVK license, manage and operator chart
 ################################################################################
 STACK="triliovault-operator"
-NAMESPACE="tvk"
+NAMESPACE="trilio-system"
 #ROOT_DIR=$(git rev-parse --show-toplevel)
 
 echo "Make sure that there are no backups in inprogress state"

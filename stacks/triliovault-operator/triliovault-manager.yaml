@@ -5,7 +5,7 @@ metadata:
     triliovault: triliovault
   name: triliovault-manager
 spec:
-  trilioVaultAppVersion: latest
+  trilioVaultAppVersion: 4.0.0
   applicationScope: Cluster
   tvkInstanceName: tvk-instance-digital-ocean
   # TVK components configuration, currently supports control-plane, web, exporter, web-backend, ingress-controller, admission-webhook.

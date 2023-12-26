@@ -17,7 +17,7 @@ CHART="triliovault-operator/k8s-triliovault-operator"
 LATEST="$(helm show chart triliovault-operator/k8s-triliovault-operator | grep appVersion | awk -F ':' '{gsub(/ /,""); print $2 }')"
 echo "Installing TVK version: $LATEST"
 CHART_VERSION=$LATEST
-NAMESPACE="tvk"
+NAMESPACE="trilio-system"
 INSTALL_TVM=true
 TVK_HOSTNAME="tvk.doks.com"
 TVK_INSTANCE_NAME="tvk-instance-digital-ocean"
