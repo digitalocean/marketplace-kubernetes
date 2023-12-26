@@ -17,7 +17,7 @@ CHART="triliovault-operator/k8s-triliovault-operator"
 LATEST="$(helm show chart triliovault-operator/k8s-triliovault-operator | grep appVersion | awk -F ':' '{gsub(/ /,""); print $2 }')"
 echo "Upgrading TVK to latest version: $LATEST"
 CHART_VERSION=$LATEST
-NAMESPACE="tvk"
+NAMESPACE="trilio-system"
 
 # Upgrade triliovault operator
 echo "Upgrading Triliovault operator..."

@@ -2,7 +2,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: tvk-license-do
-  namespace: tvk
+  namespace: trilio-system
 spec:
   backoffLimit: 0
   completions: 1
