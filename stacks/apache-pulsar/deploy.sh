@@ -13,7 +13,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="apache-pulsar"
 CHART="apache/pulsar"
-CHART_VERSION="3.0.0"
+CHART_VERSION="3.1.0"
 NAMESPACE="pulsar"
 
 if [ -z "${MP_KUBERNETES}" ]; then

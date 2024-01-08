@@ -2,7 +2,7 @@
 
 set -e
 
-OPERATOR_VERSION="1.10.0"
+OPERATOR_VERSION="1.11.6"
 
 kubectl apply -f "https://github.com/knative/serving/releases/download/knative-v${OPERATOR_VERSION}/serving-crds.yaml"
 kubectl apply -f "https://github.com/knative/serving/releases/download/knative-v${OPERATOR_VERSION}/serving-core.yaml"
