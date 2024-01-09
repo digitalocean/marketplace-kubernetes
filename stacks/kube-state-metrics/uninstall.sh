@@ -6,7 +6,7 @@ set -e
 # chart
 ################################################################################
 STACK="kube-state-metrics"
-NAMESPACE="kube-system"
+NAMESPACE="kube-state-metrics"
 
 
 helm uninstall "$STACK" \

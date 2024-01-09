@@ -13,7 +13,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="wordpress-kubernetes"
 CHART="bitnami/wordpress"
-CHART_VERSION="15.0.11"
+CHART_VERSION="19.0.4"
 NAMESPACE="wordpress"
 
 if [ -z "${MP_KUBERNETES}" ]; then
