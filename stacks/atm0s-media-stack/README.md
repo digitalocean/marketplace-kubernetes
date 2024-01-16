@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-1. Kubernetes 1.17+
+1. Kubernetes >= 1.23+
 2. Access to your cluster with kubectl and helm
 
 ### Firewalls
