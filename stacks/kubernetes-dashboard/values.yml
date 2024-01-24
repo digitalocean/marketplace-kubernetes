@@ -1,0 +1,17 @@
+# kubernetes-dashboard/kubernetes-dashboard
+# Reference source: https://raw.githubusercontent.com/kubernetes/dashboard/master/charts/helm-chart/kubernetes-dashboard/values.yaml
+# Alternately you get get the default values.yaml by using: helm pull kubernetes-dashboard/kubernetes-dashboard --untar. This will download the entire package to your local directory
+
+
+app:
+  ingress:
+    enabled: false
+
+metricsScraper:
+  enabled: false
+
+nginx:
+  enabled: false
+
+cert-manager:
+  enabled: false

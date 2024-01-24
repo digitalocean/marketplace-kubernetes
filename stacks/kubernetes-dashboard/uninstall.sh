@@ -5,10 +5,9 @@ set -e
 ################################################################################
 # chart
 ################################################################################
-STACK="kube-state-metrics"
-NAMESPACE="kube-state-metrics"
+STACK="kubernetes-dashboard"
+NAMESPACE="kubernetes-dashboard"
 
 
 helm uninstall "$STACK" \
   --namespace "$NAMESPACE"
-kubectl delete --ignore-not-found=true namespace "$NAMESPACE"

@@ -1,0 +1,8 @@
+console:
+  installMethod: digitalocean-marketplace
+  ingress:
+    enabled: false
+global:
+  cloudProvider: digitalocean 
+  clusterType: bootstrap 
+  installMethod: digitalocean-marketplace
