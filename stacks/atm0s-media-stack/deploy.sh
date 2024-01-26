@@ -13,7 +13,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="atm0s-media-stack"
 CHART="8xff/atm0s-media-stack"
-CHART_VERSION="0.1.2"
+CHART_VERSION="0.1.0"
 NAMESPACE="atm0s-media"
 
 if [ -z "${MP_KUBERNETES}" ]; then

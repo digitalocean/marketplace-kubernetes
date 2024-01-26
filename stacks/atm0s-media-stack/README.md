@@ -41,11 +41,11 @@ For a deep dive into the technical aspects of network architecture, please refer
 
 | Package         | Server Version | Helm Chart Version |
 | --------------- | -------------- | ------------------ |
-| Webrtc          | 0.1.0          | 0.1.0              |
-| RTMP            | 0.1.0          | 0.1.0              |
-| Token Generator | 0.1.0          | 0.1.0              |
-| Gateway         | 0.1.0          | 0.1.0              |
-| Connector       | 0.1.0          | 0.1.0              |
+| Webrtc          | 0.1.2          | 0.1.0              |
+| RTMP            | 0.1.2          | 0.1.0              |
+| Token Generator | 0.1.2          | 0.1.0              |
+| Gateway         | 0.1.2          | 0.1.0              |
+| Connector       | 0.1.2          | 0.1.0              |
 | Nats            | 2.10           | 0.1.0              |
 
 ## Prerequisites
