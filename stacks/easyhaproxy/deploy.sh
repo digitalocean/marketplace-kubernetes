@@ -18,7 +18,7 @@ master_node_exists=$(kubectl get nodes --selector=easyhaproxy/node=master -o jso
 # If there is no node with the label, then label the first node
 if [ -z "$master_node_exists" ]; then
     masternode=$(kubectl get nodes -o jsonpath='{.items[0].metadata.name}')
-    kubectl label nodes $(masternode) "easyhaproxy/node=master" --overwrite
+    kubectl label nodes "$masternode" "easyhaproxy/node=master" --overwrite
 fi
 
 ################################################################################
