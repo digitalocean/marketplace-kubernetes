@@ -14,6 +14,11 @@ Key Features
 - Facilitates the configuration of Ingress rules for services.
 - Provides load balancing capabilities.
 
+## Install
+
+- Enable the EasyHAProxy in the Digital Ocean marketplace
+- Create a Digital Ocean Load Balance pointing to your Kubernetes Cluster. 
+
 ## How to set up your application for EasyHAProxy
 
 You need to add to your application ingress annotations to expose your service to the internet.
@@ -28,7 +33,15 @@ metadata:
   .
 ```
 
-If you want to try a simple example, you can deploy the following application:
+## Additional Resources
+
+For further details about EasyHAProxy, please refer to the [documentation](https://easyhaproxy.com/).
+
+## Troubleshooting
+
+### Check if the EasyHAProxy is running properly
+
+You can install the "Static Http Server"  and define the domain you want to validate as the example below:
 
 ```shell
 helm repo add byjg https://opensource.byjg.com/helm
@@ -39,11 +52,8 @@ helm upgrade --install mysite byjg/static-httpserver \
     --set parameters.title=Welcome
 ```
 
-## Additional Resources
 
-For further details about EasyHAProxy, please refer to the [documentation](https://easyhaproxy.com/).
-
-## Troubleshooting
+### EasyHAProxy Container not Starting
 
 Due to limitations in the HAProxy community edition, EasyHAProxy functions solely as a standalone service, regardless of the number of nodes present.
 
