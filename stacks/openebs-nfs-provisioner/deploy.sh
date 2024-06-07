@@ -5,7 +5,7 @@ set -e
 ################################################################################
 # repo
 ################################################################################
-helm repo add openebs https://openebs.github.io/openebs
+helm repo add --force-update openebs https://openebs.github.io/openebs
 helm repo update > /dev/null
 
 ################################################################################
