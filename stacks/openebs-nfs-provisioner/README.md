@@ -19,7 +19,7 @@ The following diagram shows how OpenEBS Dynamic NFS Provisioner works on a Kuber
 
 | Package | Application Version | Helm Chart Version | License |
 | --------| ------------------- | ------------------ | ------- |
-| OpenEBS Dynamic NFS provisioner | [0.9.0](https://github.com/openebs/dynamic-nfs-provisioner/tree/v0.9.0/deploy/helm/charts) | [0.9.0](https://github.com/openebs/dynamic-nfs-provisioner/releases/tag/nfs-provisioner-0.9.0) | [Apache 2.0](https://github.com/openebs/dynamic-nfs-provisioner/blob/develop/LICENSE) |
+| OpenEBS Dynamic NFS provisioner | [0.11.0](https://github.com/openebs/dynamic-nfs-provisioner/tree/v0.9.0/deploy/helm/charts) | [0.9.0](https://github.com/openebs/dynamic-nfs-provisioner/releases/tag/nfs-provisioner-0.9.0) | [Apache 2.0](https://github.com/openebs/dynamic-nfs-provisioner/blob/develop/LICENSE) |
 
 ### Connecting to Your Cluster
 
