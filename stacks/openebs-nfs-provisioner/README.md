@@ -9,17 +9,17 @@ Under the hood, the NFS provisioner runs a NFS server pod for each shared storag
 - This stack requires a minimum configuration of 2 Nodes at the $10/month plan (2GB memory / 1 vCPU).
 - A 1Gi block storage volume is required as well for testing the dynamic NFS provisioner.
 
-## OpenEBS Dynamic NFS Provisioner Overview Diagram
+## OpenEBS NFS Provisioner Overview Diagram
 
 The following diagram shows how OpenEBS Dynamic NFS Provisioner works on a Kubernetes cluster (based on the example used in the getting started section):
 
-![OpenEBS Dynamic NFS Provisioner Overview](assets/images/arch_openebs.png)
+![OpenEBS NFS Provisioner Overview](assets/images/arch_openebs.png)
 
 ## Software included
 
-| Package | Application Version | Helm Chart Version | License |
-| --------| ------------------- | ------------------ | ------- |
-| OpenEBS Dynamic NFS provisioner | [0.9.0](https://github.com/openebs/dynamic-nfs-provisioner/tree/v0.9.0/deploy/helm/charts) | [0.9.0](https://github.com/openebs/dynamic-nfs-provisioner/releases/tag/nfs-provisioner-0.9.0) | [Apache 2.0](https://github.com/openebs/dynamic-nfs-provisioner/blob/develop/LICENSE) |
+| Package | License |
+| --------| ------- |
+| OpenEBS NFS provisioner | [Apache 2.0](https://github.com/openebs/openebs/blob/main/LICENSE) |
 
 ### Connecting to Your Cluster
 
@@ -273,9 +273,9 @@ Disk stats (read/write):
 
 ### Tweaking Helm Values
 
-The OpenEBS dynamic NFS provisioner stack provides some custom values to start with. Please have a look at the [values](values.yml) file from the main GitHub repository.
+The OpenEBS NFS provisioner stack provides some custom values to start with. Please have a look at the [values](values.yml) file from the main GitHub repository.
 
-You can always inspect all the available options, as well as the default values for the OpenEBS dynamic NFS provisioner Helm chart by running below command:
+You can always inspect all the available options, as well as the default values for the OpenEBS NFS provisioner Helm chart by running below command:
 
 ```console
 helm show values openebs-nfs/nfs-provisioner --version 0.9.0 --version 0.9.0
@@ -291,13 +291,13 @@ helm upgrade openebs-nfs-provisioner openebs-nfs/nfs-provisioner --version 0.9.0
 
 ### Upgrading the OpenEBS Dynamic NFS Provisioner Chart
 
-You can check what versions are available to upgrade by navigating to the [openebs/dynamic-nfs-provisioner](https://github.com/openebs/dynamic-nfs-provisioner) official releases page from GitHub.
+You can check what versions are available to upgrade by navigating to the [openebs/openebs](https://github.com/openebs/openebs) official releases page from GitHub.
 
 To upgrade the stack to a newer version, run the following command, replacing the `<>` placeholders with their corresponding information:
 
 ```console
 helm upgrade openebs-nfs-provisioner openebs-nfs/nfs-provisioner \
-  --version <OPENEBS_DYNAMIC_NFS_PROVISIONER_STACK_NEW_VERSION> \
+  --version <OPENEBS__NFS_PROVISIONER_STACK_NEW_VERSION> \
   --namespace openebs-nfs-provisioner \
   --values <YOUR_HELM_VALUES_FILE>
 ```
@@ -338,7 +338,8 @@ helm uninstall openebs-nfs-provisioner -n openebs-nfs-provisioner
 
 ### Additional Resources
 
-- [OpenEBS NFS Provisioner on GitHub](https://github.com/openebs/dynamic-nfs-provisioner)
+- [OpenEBS NFS Provisioner on GitHub](https://github.com/openebs/openebs)
+- [Installation guide](https://openebs.io/docs/quickstart-guide/installation)
 - [Deploying Wordpress on DigitalOcean using OpenEBS NFS Provisioner](https://github.com/digitalocean/container-blueprints/tree/main/DOKS-wordpress)
 - [Configuring Node Affinity for NFS Volumes](https://github.com/openebs/dynamic-nfs-provisioner/blob/develop/docs/tutorial/node-affinity.md)
 - [Setting Resource requirements for NFS Server](https://github.com/openebs/dynamic-nfs-provisioner/blob/develop/docs/tutorial/configure-nfs-server-resource-requirements.md)

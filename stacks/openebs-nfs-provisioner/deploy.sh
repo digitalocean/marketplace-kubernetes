@@ -5,7 +5,7 @@ set -e
 ################################################################################
 # repo
 ################################################################################
-helm repo add openebs-nfs https://openebs.github.io/dynamic-nfs-provisioner
+helm repo add openebs https://openebs.github.io/openebs
 helm repo update > /dev/null
 
 ################################################################################
@@ -13,7 +13,6 @@ helm repo update > /dev/null
 ################################################################################
 STACK="openebs-nfs-provisioner"
 CHART="openebs-nfs/nfs-provisioner"
-CHART_VERSION="0.11.0"
 NAMESPACE="openebs-nfs-provisioner"
 
 if [ -z "${MP_KUBERNETES}" ]; then
@@ -33,9 +32,10 @@ helm upgrade "$STACK" "$CHART" \
   --atomic \
   --create-namespace \
   --install \
+  --set cstor.enabled=true \
+  --set nfs-provisioner.enabled=true \
   --timeout 8m0s \
   --namespace "$NAMESPACE" \
-  --values "$values" \
-  --version "$CHART_VERSION"
+  --values "$values"
 
 kubectl apply -f "$STORAGE_CLASS_MANIFEST"
