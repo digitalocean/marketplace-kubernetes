@@ -1,3 +1,4 @@
 # openebs-nfs
 nfsStorageClass:
   backendStorageClass: "do-block-storage"
+  enabled: false

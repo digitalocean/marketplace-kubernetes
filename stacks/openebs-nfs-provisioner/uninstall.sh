@@ -5,7 +5,7 @@ set -e
 ################################################################################
 # chart
 ################################################################################
-STACK="openebs-nfs-provisioner"
+STACK="openebs"
 NAMESPACE="openebs-nfs-provisioner"
 
 helm uninstall "$STACK" \
