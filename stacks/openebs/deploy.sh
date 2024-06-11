@@ -5,7 +5,7 @@ set -e
 ################################################################################
 # repo
 ################################################################################
-helm repo add openebs https://openebs.github.io/charts
+helm repo add --force-update openebs https://openebs.github.io/openebs
 helm repo update > /dev/null
 
 ################################################################################
@@ -13,8 +13,8 @@ helm repo update > /dev/null
 ################################################################################
 STACK="openebs"
 CHART="openebs/openebs"
-CHART_VERSION="3.0.2"
 NAMESPACE="openebs"
+CHART_VERSION="4.0.1"
 
 if [ -z "${MP_KUBERNETES}" ]; then
   # use local version of values.yml
@@ -26,9 +26,10 @@ else
 fi
 
 helm upgrade "$STACK" "$CHART" \
-  --atomic \
   --create-namespace \
   --install \
+  --set openebs-crds.csi.volumeSnapshots.enabled=false \
+  --timeout 20m0s \
   --namespace "$NAMESPACE" \
   --values "$values" \
   --version "$CHART_VERSION"
