@@ -1,0 +1,15 @@
+# Dynamically provisioned PVC:
+# A bucket or path inside bucket will be created automatically
+# for the PV and removed when the PV will be removed
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: csi-s3-pvc
+  namespace: default
+spec:
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: csi-s3
