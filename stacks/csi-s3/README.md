@@ -104,7 +104,7 @@ At this stage you'll see a new bucket created in your DigitalOcean account:
 
 <img src="assets/images/spaces-console.png" alt="Spaces Console" style="max-width: 600px;">
 
-And you'll see the S3 bucket created in the provisioner logs `kubectl logs -l app=csi-s3-provisioner -c csi-s3 -n kube-system`
+And you'll see the S3 bucket created in the provisioner logs `kubectl logs -l app=csi-s3-provisioner -n csi-s3`
 
 ```text
 Defaulted container "csi-provisioner" out of: csi-provisioner, csi-s3
@@ -146,20 +146,17 @@ spec:
 
 If the pod can start, everything should be working.
 
-2. Test the mount
+**Test the mount**
 
-```bash
-kubectl exec -it pod/csi-s3-test-nginx -- bash
-mount | grep fuse
-```
+1. Enter into the example pod container using `kubectl exec -it pod/csi-s3-test-nginx -- bash`
+
+This will give you shell inside the nginx container, now we can check to see our S3 Fuse mount using `mount | grep fuse`
 
 ```text
 pvc-035763df-0488-4941-9a34-f637292eb95c: on /usr/share/nginx/html/s3 type fuse.geesefs (rw,nosuid,nodev,relatime,user_id=65534,group_id=0,default_permissions,allow_other)
 ```
 
-`touch /usr/share/nginx/html/s3/hello_world`
-
-You'll see a blank `hello_world` created in your bucket:
+Create a file in the directory that we mounted the PV to with `touch /usr/share/nginx/html/s3/hello_world`, you'll see a blank `hello_world` created in your bucket too
 
 <img src="assets/images/spaces-files-listing.png" alt="hello world file" style="max-width: 600px;">
 
