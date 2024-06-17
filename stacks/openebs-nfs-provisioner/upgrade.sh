@@ -5,14 +5,14 @@ set -e
 ################################################################################
 # repo
 ################################################################################
-helm repo add --force-update openebs https://openebs.github.io/openebs
+helm repo add openebs-nfs https://openebs-archive.github.io/dynamic-nfs-provisioner
 helm repo update > /dev/null
 
 ################################################################################
 # chart
 ################################################################################
-STACK="openebs"
-CHART="openebs/openebs"
+STACK="openebs-nfs-provisioner"
+CHART="openebs-nfs/nfs-provisioner"
 NAMESPACE="openebs-nfs-provisioner"
 
 if [ -z "${MP_KUBERNETES}" ]; then
@@ -24,12 +24,6 @@ else
     values="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/openebs-nfs-provisioner/values.yml"
 fi
 
-helm upgrade "$STACK" --namespace "$NAMESPACE" \
-  "$CHART" \
-  --set nfs-provisioner.enabled=true \
-  --set lvm-localpv.crds.lvmLocalPv.enabled=false \
-  --set zfs-localpv.crds.zfsLocalPv.enabled=false \
-  --set mayastor.agents.core.rebuild.partial.enabled=false \
-  --set openebs-crds.csi.volumeSnapshots.enabled=false \
-  --timeout 20m0s \
-  --version "$CHART_VERSION"
+helm upgrade "$STACK" "$CHART" \
+    --namespace "$NAMESPACE" \
+    --values "$values"
