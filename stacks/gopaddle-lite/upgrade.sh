@@ -11,10 +11,10 @@ helm repo update > /dev/null
 ################################################################################
 # chart
 ################################################################################
-STACK="gopaddle"
-CHART="gopaddle/gopaddle"
-NAMESPACE="gopaddle"
-CHART_VERSION="5.0"
+OLD_STACK="gp-lite-4-2"
+OLD_CHART="gopaddle/gp-installer"
+OLD_NAMESPACE="gp-lite-4-2"
+CHART_VERSION="5"
 
 
 if [ -z "${MP_KUBERNETES}" ]; then
@@ -36,7 +36,9 @@ fi
 #         FIRST_NODE_IP="$FIRST_NODE_EXT_IP"
 # fi
 
-helm upgrade "$STACK" "$CHART" \
-  --namespace "$NAMESPACE" \
+kubectl delete all --all --namespace "$OLD_NAMESPACE" --ignore-not-found=true
+
+helm upgrade "$OLD_STACK" "$OLD_CHART" \
+  --namespace "$OLD_NAMESPACE" \
   --values "$values" \
   --version "$CHART_VERSION"
