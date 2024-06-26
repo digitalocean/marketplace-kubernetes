@@ -26,16 +26,6 @@ else
     values="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/gopaddle-lite/values.yml"
 fi
 
-# Get the first node's external IP, if it exists
-# FIRST_NODE_EXT_IP=$(kubectl get nodes -o jsonpath='{$.items[0].status.addresses[?(@.type=="ExternalIP")].address}' 2>/dev/null)
-
-# # If there's no external IP, get the internal IP
-# if [ -z "$FIRST_NODE_EXT_IP" ]; then
-#         FIRST_NODE_IP=$(kubectl get nodes -o jsonpath='{$.items[0].status.addresses[?(@.type=="InternalIP")].address}' 2>/dev/null)
-# else
-#         FIRST_NODE_IP="$FIRST_NODE_EXT_IP"
-# fi
-
 kubectl delete all --all --namespace "$OLD_NAMESPACE" --ignore-not-found=true
 
 helm upgrade "$OLD_STACK" "$OLD_CHART" \
