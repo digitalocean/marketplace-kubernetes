@@ -13,7 +13,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="kubefirst"
 CHART="kubefirst/kubefirst"
-CHART_VERSION="2.4.6"
+CHART_VERSION="2.4.16"
 NAMESPACE="kubefirst"
 
 if [ -z "${MP_KUBERNETES}" ]; then
