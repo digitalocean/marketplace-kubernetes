@@ -29,19 +29,14 @@ else
   SEARCH_VALUES="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/fusionauth/search-values.yaml"
 fi
 
-
-echo 1
 # Add repos and update
 helm repo add stable https://charts.helm.sh/stable
 helm repo add bitnami https://charts.bitnami.com/bitnami
 helm repo add fusionauth https://fusionauth.github.io/charts
 helm repo update > /dev/null
-echo 2
 # Install PostgresSQL and Elasticsearch
 helm install --atomic db bitnami/postgresql --create-namespace --namespace "$NAMESPACE" --set auth.enablePostgresUser=true --set auth.postgresPassword="$DB_POSTGRES_USER_PASSWORD" --set image.tag=14.9.0-debian-11-r2
-echo 3
 helm install --atomic search bitnami/elasticsearch --namespace "$NAMESPACE" -f "$SEARCH_VALUES"
-echo 4
 
 helm upgrade "$STACK" "$CHART" \
   --atomic \
@@ -52,4 +47,3 @@ helm upgrade "$STACK" "$CHART" \
   --version "$CHART_VERSION" \
   --set database.password="$DB_FUSIONAUTH_USER_PASSWORD" \
   --set database.root.password="$DB_POSTGRES_USER_PASSWORD"
-echo 5
