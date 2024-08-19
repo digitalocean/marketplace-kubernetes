@@ -12,12 +12,11 @@ set -e
 ################################################################################
 STACK="fusionauth"
 CHART="fusionauth/fusionauth"
-CHART_VERSION="0.12.1"
+CHART_VERSION="1.0.8"
 NAMESPACE="fusionauth"
 
-
-DB_POSTGRES_USER_PASSWORD=`cat /dev/urandom | tr -dc '[:alnum:]' | head -c 42`
-DB_FUSIONAUTH_USER_PASSWORD=`cat /dev/urandom | tr -dc '[:alnum:]' | head -c 42`
+DB_POSTGRES_USER_PASSWORD=`LC_CTYPE=C LC_ALL=C tr -dc '[:alnum:]' < /dev/urandom | head -c 42`
+DB_FUSIONAUTH_USER_PASSWORD=`LC_CTYPE=C LC_ALL=C tr -dc '[:alnum:]' < /dev/urandom | head -c 42`
 
 if [ -z "${MP_KUBERNETES}" ]; then
   # use local version of values.yml
@@ -35,11 +34,9 @@ helm repo add stable https://charts.helm.sh/stable
 helm repo add bitnami https://charts.bitnami.com/bitnami
 helm repo add fusionauth https://fusionauth.github.io/charts
 helm repo update > /dev/null
-
 # Install PostgresSQL and Elasticsearch
 helm install --atomic db bitnami/postgresql --create-namespace --namespace "$NAMESPACE" --set auth.enablePostgresUser=true --set auth.postgresPassword="$DB_POSTGRES_USER_PASSWORD" --set image.tag=14.9.0-debian-11-r2
 helm install --atomic search bitnami/elasticsearch --namespace "$NAMESPACE" -f "$SEARCH_VALUES"
-
 
 helm upgrade "$STACK" "$CHART" \
   --atomic \

@@ -24,7 +24,18 @@ volumeClaimTemplate:
 
 master:
   replicaCount: 3
-  extraRoles: "master,data,data_content,data_hot,data_warm,data_cold,data_frozen,ingest,ml,remote_cluster_client,transform"
+  extraRoles: 
+    - "master"
+    - "data"
+    - "data_content"
+    - "data_hot"
+    - "data_warm"
+    - "data_cold"
+    - "data_frozen"
+    - "ingest"
+    - "ml"
+    - "remote_cluster_client"
+    - "transform"
 ingest:
   replicaCount: 0
 coordinating:
