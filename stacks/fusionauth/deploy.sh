@@ -12,12 +12,11 @@ set -e
 ################################################################################
 STACK="fusionauth"
 CHART="fusionauth/fusionauth"
-CHART_VERSION="0.12.1"
+CHART_VERSION="1.0.8"
 NAMESPACE="fusionauth"
 
-
-DB_POSTGRES_USER_PASSWORD=`cat /dev/urandom | tr -dc '[:alnum:]' | head -c 42`
-DB_FUSIONAUTH_USER_PASSWORD=`cat /dev/urandom | tr -dc '[:alnum:]' | head -c 42`
+DB_POSTGRES_USER_PASSWORD=`LC_CTYPE=C LC_ALL=C tr -dc '[:alnum:]' < /dev/urandom | head -c 42`
+DB_FUSIONAUTH_USER_PASSWORD=`LC_CTYPE=C LC_ALL=C tr -dc '[:alnum:]' < /dev/urandom | head -c 42`
 
 if [ -z "${MP_KUBERNETES}" ]; then
   # use local version of values.yml
@@ -30,16 +29,19 @@ else
   SEARCH_VALUES="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/fusionauth/search-values.yaml"
 fi
 
+
+echo 1
 # Add repos and update
 helm repo add stable https://charts.helm.sh/stable
 helm repo add bitnami https://charts.bitnami.com/bitnami
 helm repo add fusionauth https://fusionauth.github.io/charts
 helm repo update > /dev/null
-
+echo 2
 # Install PostgresSQL and Elasticsearch
 helm install --atomic db bitnami/postgresql --create-namespace --namespace "$NAMESPACE" --set auth.enablePostgresUser=true --set auth.postgresPassword="$DB_POSTGRES_USER_PASSWORD" --set image.tag=14.9.0-debian-11-r2
+echo 3
 helm install --atomic search bitnami/elasticsearch --namespace "$NAMESPACE" -f "$SEARCH_VALUES"
-
+echo 4
 
 helm upgrade "$STACK" "$CHART" \
   --atomic \
@@ -50,3 +52,4 @@ helm upgrade "$STACK" "$CHART" \
   --version "$CHART_VERSION" \
   --set database.password="$DB_FUSIONAUTH_USER_PASSWORD" \
   --set database.root.password="$DB_POSTGRES_USER_PASSWORD"
+echo 5
