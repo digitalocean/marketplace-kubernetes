@@ -7,6 +7,6 @@ spec:
   replicaCount: 1
   image:
     repository: victoriametrics/vmagent
-    tag: v1.102.1
+    tag: v1.103.0
   remoteWrite:
     - url: "http://vminsert-vmcluster.default.svc.cluster.local:8480/insert/0/prometheus/"
