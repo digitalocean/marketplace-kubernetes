@@ -1,5 +1,0 @@
-# otomi/otomi
-
-cluster:
-  name: otomi-on-digital-ocean
-  provider: digitalocean
