@@ -27,7 +27,7 @@ Below is a diagram depicting a more complete example for an NGINX based setup:
 
 | Package | Application Version | Helm Chart Version | License |
 |---------|---------------------|--------------------| ------- |
-| NGINX Ingress Controller | v1.2.1 | [4.1.3](https://github.com/kubernetes/ingress-nginx/tree/helm-chart-4.1.3/charts/ingress-nginx)  | [Apache 2.0](https://github.com/kubernetes/ingress-nginx/blob/main/LICENSE) |
+| NGINX Ingress Controller | v1.11.2 | [4.11.2](https://github.com/kubernetes/ingress-nginx/tree/helm-chart-4.11.2/charts/ingress-nginx)  | [Apache 2.0](https://github.com/kubernetes/ingress-nginx/blob/main/LICENSE) |
 
 ## Getting Started
 
@@ -92,13 +92,13 @@ The NGINX Ingress stack provides some custom values to start with. See the [valu
 You can inspect all the available options, as well as the default values for the NGINX Ingress Helm chart by running the following command:
 
 ```console
-helm show values ingress-nginx/ingress-nginx --version 4.1.3
+helm show values ingress-nginx/ingress-nginx --version 4.11.2
 ```
 
 After customizing the Helm values file (`values.yml`), you can apply the changes via `helm upgrade` command, as shown below:
 
 ```console
-helm upgrade ingress-nginx ingress-nginx/ingress-nginx --version 4.1.3 \
+helm upgrade ingress-nginx ingress-nginx/ingress-nginx --version 4.11.2 \
   --namespace ingress-nginx \
   --values values.yml
 ```
