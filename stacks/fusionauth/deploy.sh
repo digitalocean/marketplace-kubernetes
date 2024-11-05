@@ -12,7 +12,7 @@ set -e
 ################################################################################
 STACK="fusionauth"
 CHART="fusionauth/fusionauth"
-CHART_VERSION="1.0.8"
+CHART_VERSION="1.0.10"
 NAMESPACE="fusionauth"
 
 DB_POSTGRES_USER_PASSWORD=`LC_CTYPE=C LC_ALL=C tr -dc '[:alnum:]' < /dev/urandom | head -c 42`
