@@ -19,7 +19,6 @@ fi
 
 helm upgrade "$STACK" "$CHART" \
   --atomic \
-  --create-namespace \
   --namespace "$NAMESPACE" \
   --values "$VALUES" \
   --version "$CHART_VERSION" \
