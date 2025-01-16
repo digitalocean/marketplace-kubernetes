@@ -13,7 +13,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="headlamp"
 CHART="headlamp/headlamp"
-CHART_VERSION="0.25.0"
+CHART_VERSION="0.27.0"
 NAMESPACE="headlamp"
 
 if [ -z "${MP_KUBERNETES}" ]; then
