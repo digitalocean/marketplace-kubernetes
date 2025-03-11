@@ -11,10 +11,8 @@ controller:
   ## Enable the metrics of the NGINX Ingress controller https://kubernetes.github.io/ingress-nginx/user-guide/monitoring/
   metrics:
     enabled: true
+    service:
+      servicePort: "9090"
   podAnnotations:
-    controller:
-      metrics:
-        service:
-          servicePort: "9090"
     prometheus.io/port: "10254"
     prometheus.io/scrape: "true"
