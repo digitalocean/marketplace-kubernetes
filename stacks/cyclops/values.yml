@@ -1,5 +1,8 @@
 # cyclops-ui/cyclops
 
+global:
+  installManager: digitalocean
+
 templateStore:
   - name: demo
     repo: https://github.com/cyclops-ui/templates

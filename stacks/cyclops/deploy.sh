@@ -13,7 +13,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="cyclops"
 CHART="cyclops-ui/cyclops"
-CHART_VERSION="0.14.3"
+CHART_VERSION="0.14.4"
 NAMESPACE="cyclops"
 
 if [ -z "${MP_KUBERNETES}" ]; then
