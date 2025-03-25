@@ -27,7 +27,7 @@ Below is a diagram depicting a more complete example for an NGINX based setup:
 
 | Package | Application Version | Helm Chart Version | License |
 |---------|---------------------|--------------------| ------- |
-| NGINX Ingress Controller | v1.11.2 | [4.11.2](https://github.com/kubernetes/ingress-nginx/tree/helm-chart-4.11.2/charts/ingress-nginx)  | [Apache 2.0](https://github.com/kubernetes/ingress-nginx/blob/main/LICENSE) |
+| NGINX Ingress Controller | v1.12.1 | [4.12.1](https://github.com/kubernetes/ingress-nginx/tree/helm-chart-4.12.1/charts/ingress-nginx)  | [Apache 2.0](https://github.com/kubernetes/ingress-nginx/blob/main/LICENSE) |
 
 ## Getting Started
 
