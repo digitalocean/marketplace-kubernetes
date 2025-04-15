@@ -13,7 +13,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="cloudcasa"
 CHART="cloudcasa-helmchart/cloudcasa"
-CHART_VERSION="3.4.2"
+CHART_VERSION="3.4.4"
 NAMESPACE="default"
 
 if [ -z "${MP_KUBERNETES}" ]; then
