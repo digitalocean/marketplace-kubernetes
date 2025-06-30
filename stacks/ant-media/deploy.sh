@@ -13,7 +13,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="antmedia"
 CHART="antmedia/antmedia"
-CHART_VERSION="2.12.0"
+CHART_VERSION="2.14.0"
 NAMESPACE="antmedia"
 
 if [ -z "${MP_KUBERNETES}" ]; then
