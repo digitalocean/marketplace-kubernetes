@@ -13,7 +13,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="metrics-server"
 CHART="metrics-server/metrics-server"
-CHART_VERSION="3.11.0"
+CHART_VERSION="3.12.2"
 NAMESPACE="metrics-server"
 
 if [ -z "${MP_KUBERNETES}" ]; then
