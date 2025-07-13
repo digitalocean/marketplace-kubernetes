@@ -13,7 +13,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="kube-prometheus-stack"
 CHART="prometheus-community/kube-prometheus-stack"
-CHART_VERSION="68.1.0"
+CHART_VERSION="75.9.0"
 NAMESPACE="kube-prometheus-stack"
 
 if [ -z "${MP_KUBERNETES}" ]; then

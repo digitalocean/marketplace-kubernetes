@@ -26,7 +26,7 @@ fi
 ################################################################################
 STACK="easyhaproxy"
 CHART="byjg/easyhaproxy"
-CHART_VERSION="0.1.7"
+CHART_VERSION="0.1.8"
 NAMESPACE="easyhaproxy"
 
 if [ -z "${MP_KUBERNETES}" ]; then
