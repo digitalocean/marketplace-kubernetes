@@ -12,8 +12,8 @@ helm repo update > /dev/null
 # chart
 ################################################################################
 STACK="signoz"
-CHART="charts/signoz"
-CHART_VERSION="0.84.0"
+CHART="signoz/signoz"
+CHART_VERSION="0.86.0"
 NAMESPACE="signoz"
 
 if [ -z "${MP_KUBERNETES}" ]; then
@@ -22,7 +22,7 @@ if [ -z "${MP_KUBERNETES}" ]; then
   values="$ROOT_DIR/stacks/signoz/values.yml"
 else
   # use github hosted master version of values.yml
-  values="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/signoz/values.yml"
+  values="https://raw.githubusercontent.com/signoz/charts/charts/signoz/values.yml"
 fi
 
 helm upgrade "$STACK" "$CHART" \

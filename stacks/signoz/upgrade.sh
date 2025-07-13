@@ -5,14 +5,14 @@ set -e
 ################################################################################
 # repo
 ################################################################################
-helm repo add charts https://github.com/signoz/charts.git
+helm repo add signoz  https://charts.signoz.io
 helm repo update > /dev/null
 
 ################################################################################
 # chart
 ################################################################################
 STACK="signoz"
-CHART="charts/signoz"
+CHART="signoz/signoz"
 NAMESPACE="signoz"
 
 if [ -z "${MP_KUBERNETES}" ]; then
