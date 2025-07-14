@@ -562,7 +562,7 @@ signoz:
   image:
     registry: docker.io
     repository: signoz/signoz
-    tag: v0.89.0
+    tag: latest
     pullPolicy: IfNotPresent
   # -- Image Registry Secret Names for signoz
   # If set, this has higher precedence than the root level or global value of imagePullSecrets.
@@ -803,7 +803,7 @@ schemaMigrator:
   image:
     registry: docker.io
     repository: signoz/signoz-schema-migrator
-    tag: v0.128.0
+    tag: latest
     pullPolicy: IfNotPresent
   args:
     - "--up="
@@ -953,7 +953,7 @@ otelCollector:
   image:
     registry: docker.io
     repository: signoz/signoz-otel-collector
-    tag: v0.128.0
+    tag: latest
     pullPolicy: IfNotPresent
   # -- Image Registry Secret Names for OtelCollector
   # If set, this has higher precedence than the root level or global value of imagePullSecrets.
