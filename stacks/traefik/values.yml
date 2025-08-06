@@ -1,0 +1,53 @@
+# Traefik Helm Chart Configuration
+# https://github.com/traefik/traefik-helm-chart
+
+# Enable dashboard
+dashboard:
+  enabled: true
+
+# Ingress configuration
+ingressRoute:
+  dashboard:
+    enabled: true
+
+# Service configuration
+service:
+  type: LoadBalancer
+  annotations:
+    service.beta.kubernetes.io/do-loadbalancer-type: "REGIONAL_NETWORK"
+
+# Deployment configuration
+deployment:
+  replicas: null
+
+# Auto scaling configuration
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 20
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 80
+
+# Resource limits
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 300m
+    memory: 256Mi
+
+# Security settings
+securityContext:
+  capabilities:
+    drop:
+      - ALL
+  readOnlyRootFilesystem: true
+  runAsGroup: 65532
+  runAsNonRoot: true
+  runAsUser: 65532
