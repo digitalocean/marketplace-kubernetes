@@ -39,7 +39,7 @@ clickhouse:
   # -- Whether to install clickhouse. If false, `clickhouse.host` must be set
   enabled: true
   # Zookeeper default values
-  # Ref: https://github.com/bitnami/charts/blob/main/bitnami/zookeeper/values.yaml
+  # Ref: https://github.com/signoz/charts/blob/main/signoz/zookeeper/values.yaml
   #
   # @ignored
   zookeeper:
@@ -85,7 +85,7 @@ clickhouse:
       # -- Zookeeper image registry to use.
       registry: *GLOBAL_IMAGE_REGISTRY
       # -- Zookeeper image repository to use.
-      repository: bitnami/zookeeper
+      repository: signoz/zookeeper
       # -- Zookeeper image tag.
       # Note: SigNoz ClickHouse does not support all versions of Zookeeper.
       # Please override the default only if you know what you are doing.
