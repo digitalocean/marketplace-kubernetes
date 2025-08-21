@@ -22,7 +22,7 @@ if [ -z "${MP_KUBERNETES}" ]; then
   values="$ROOT_DIR/stacks/signoz/values.yml"
 else
   # use github hosted master version of values.yml
-  values="https://raw.githubusercontent.com/signoz/charts/charts/signoz/values.yml"
+  values="https://raw.githubusercontent.com/SigNoz/charts/refs/heads/main/charts/signoz/values.yaml"
 fi
 
 helm upgrade "$STACK" "$CHART" \
