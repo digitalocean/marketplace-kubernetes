@@ -42,3 +42,7 @@ coordinating:
   replicaCount: 0
 data:
   replicaCount: 0
+
+image:
+  repository: docker.io/bitnamilegacy/elasticsearch
+  tag: "9"
