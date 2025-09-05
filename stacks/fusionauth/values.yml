@@ -295,7 +295,3 @@ serviceAccount:
   create: false
   # serviceAccount.name -- Service account name to use. If not set the "default" service account will be used
   name: ""
-
-postgresql:
-  repository: docker.io/bitnamilegacy/postgresql
-  tag: "17"
