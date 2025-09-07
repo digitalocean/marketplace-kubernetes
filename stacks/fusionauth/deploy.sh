@@ -30,6 +30,7 @@ fi
 # Add repos and update
 helm repo add fusionauth https://fusionauth.github.io/charts
 helm repo add postgres-operator-charts https://opensource.zalando.com/postgres-operator/charts/postgres-operator
+helm repo add opensearch https://opensearch-project.github.io/helm-charts/
 helm repo update > /dev/null
 
 # Installing Postgres Operator
@@ -70,7 +71,6 @@ spec:
           key: postgres-password
 EOF
 
-helm repo add opensearch https://opensearch-project.github.io/helm-charts/
 helm install search-elasticsearch opensearch/opensearch \
   --namespace "$NAMESPACE" \
   --set singleNode=true \

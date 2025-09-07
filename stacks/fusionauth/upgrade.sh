@@ -6,7 +6,8 @@ set -e
 # repo
 ################################################################################
 helm repo add stable https://charts.helm.sh/stable
-helm repo add bitnami https://charts.bitnami.com/bitnami
+helm repo add postgres-operator-charts https://opensource.zalando.com/postgres-operator/charts/postgres-operator
+helm repo add opensearch https://opensearch-project.github.io/helm-charts/
 helm repo add fusionauth https://fusionauth.github.io/charts
 helm repo update > /dev/null
 
