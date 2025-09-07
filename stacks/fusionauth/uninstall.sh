@@ -8,10 +8,7 @@ set -e
 STACK="fusionauth"
 NAMESPACE="fusionauth"
 
-#helm uninstall -n "$NAMESPACE" search
-#helm uninstall -n "$NAMESPACE" opensearch
 helm uninstall -n "$NAMESPACE" search-elasticsearch
-#helm uninstall -n "$NAMESPACE" db
 helm uninstall -n "$NAMESPACE" postgres-operator
 helm uninstall "$STACK" --namespace "$NAMESPACE"
 
