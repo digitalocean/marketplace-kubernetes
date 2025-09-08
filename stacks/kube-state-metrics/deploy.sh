@@ -5,15 +5,15 @@ set -e
 ################################################################################
 # repo
 ################################################################################
-helm repo add bitnami https://charts.bitnami.com/bitnami
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 helm repo update > /dev/null
 
 ################################################################################
 # chart
 ################################################################################
 STACK="kube-state-metrics"
-CHART="bitnami/kube-state-metrics"
-CHART_VERSION="3.8.6"
+CHART="prometheus-community/kube-state-metrics"
+CHART_VERSION="6.3.0"
 NAMESPACE="kube-state-metrics"
 
 if [ -z "${MP_KUBERNETES}" ]; then

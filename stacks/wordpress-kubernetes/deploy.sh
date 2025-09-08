@@ -26,10 +26,10 @@ else
 fi
 
 helm upgrade "$STACK" "$CHART" \
-  --atomic \
   --create-namespace \
+  --atomic \
   --install \
   --namespace "$NAMESPACE" \
   --version "$CHART_VERSION" \
   --values "$values" \
-  --timeout 10m0s
+  --timeout 15m0s

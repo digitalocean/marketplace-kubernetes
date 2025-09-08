@@ -6,6 +6,9 @@
 
 # replicaCount -- The number of fusionauth-app instances to run
 replicaCount: 2
+global:
+  security:
+    allowInsecureImages: true
 image:
   # image.repository -- The name of the docker repository for fusionauth-app
   repository: fusionauth/fusionauth-app

@@ -1,1 +1,9 @@
+image:
+  repository: bitnamilegacy/wordpress
+  tag: 6.8.2-debian-12-r1
+  pullPolicy: IfNotPresent
+
+volumePermissions:
+  enabled: true
+
 wordpressUsername: admin
