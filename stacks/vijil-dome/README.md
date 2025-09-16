@@ -44,7 +44,7 @@ $ curl "123.45.67.898/async_input_detection?api_key=abc-123&input_str=hello"
 $ curl "123.45.67.898/async_output_detection?api_key=abc-123&output_str=hello"
 ```
 
-An example of how to modify Vijil Dome's configuration. For more information look at Vijil's Dome [documentation](https://docs.vijil.ai/dome/config.html) about the subject.:
+An example of how to modify Vijil Dome's configuration. For more information look at Vijil's Dome [documentation](https://docs.vijil.ai/dome/config.html) about the subject:
 ```bash
 $ curl -XPATCH "123.45.67.898/config?api_key=xxx" \
 -H "Content-Type: application/json" \
