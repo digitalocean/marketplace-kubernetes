@@ -10,8 +10,6 @@ HELM_CHART_URL="oci://ghcr.io/vijilai/helm/vijil-dome"
 
 ROOT_DIR=$(git rev-parse --show-toplevel)
 values="$ROOT_DIR/stacks/vijil-dome/values.yml"
-secrets="$ROOT_DIR/stacks/vijil-dome/secrets.yml"
 
 helm install "$STACK" "$HELM_CHART_URL" \
-  -f "$values" \
-  -f "$secrets"
+  -f "$values"

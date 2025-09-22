@@ -4,19 +4,9 @@ Vijil Dome is an opensource guardrail system that can assist in protecting your 
 
 ## Deploying Vijil Dome
 
-Vijil Dome requires a few secrets in order to be deployed. In order to deploy it. It requires API keys so that it can make LLM requests that assist in protecting your agent. You should overwrite the existing `secrets.yml` file in this directory with your own API keys:
-
 ```bash
-secrets:
-    app:
-        DOME_API_KEY: xxx
-        OPENAI_API_KEY: xxx
-        TOGETHER_API_KEY: xxx
+./stacks/vijil-dome/deploy.sh
 ```
-
-- `DOME_API_KEY`: Is some API key you'll need to set that helps authenticate your requests.
-- `OPENAI_API_KEY`: Is an optional key that you use to make OpenAI API requests with.
-- `TOGETHER_API_KEY`: Is an optional key that is used for Together models. It's used in a few of the guardrails that Vijil Dome provides.
 
 ## Testing your Vijil Dome deployment
 
