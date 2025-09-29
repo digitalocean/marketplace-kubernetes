@@ -1,0 +1,5 @@
+# vijil-dome/vijil-dome
+cloudProvider: digitalocean
+
+# Replica count for the deployment
+replicas: 1
