@@ -9,7 +9,7 @@ helm repo add "$REPO_NAME" "$REPO_URL"
 helm repo update > /dev/null
 
 CHART_NAME="op-scim-bridge"
-CHART_VERSION="2.11.9"
+CHART_VERSION="2.11.10"
 
 RELEASE="op-scim-bridge"
 NAMESPACE="op-scim-bridge"
