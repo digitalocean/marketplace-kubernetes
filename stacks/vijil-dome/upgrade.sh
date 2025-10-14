@@ -8,7 +8,6 @@ set -e
 STACK="vijil-dome"
 HELM_CHART_URL="oci://ghcr.io/vijilai/helm/vijil-dome"
 
-ROOT_DIR=$(git rev-parse --show-toplevel)
 if [ -z "${MP_KUBERNETES}" ]; then
   # use local version of values.yml
   ROOT_DIR=$(git rev-parse --show-toplevel)
