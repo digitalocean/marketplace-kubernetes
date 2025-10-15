@@ -17,5 +17,8 @@ else
   values="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/vijil-dome/values.yml"
 fi
 
+# Create the marketplace namespace – seems like it's required for deploying through marketplace
+kubectl create namespace "marketplace"
+
 helm install "$STACK" "$HELM_CHART_URL" \
   -f "$values"
