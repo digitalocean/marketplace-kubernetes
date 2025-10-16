@@ -6,5 +6,7 @@ set -e
 # chart
 ################################################################################
 STACK="vijil-dome"
+NAMESPACE="vijil-dome"
 
-helm uninstall "$STACK"
+helm uninstall "$STACK" \
+  --namespace "$NAMESPACE"

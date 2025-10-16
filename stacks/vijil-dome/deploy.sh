@@ -7,6 +7,7 @@ set -e
 ################################################################################
 STACK="vijil-dome"
 HELM_CHART_URL="oci://ghcr.io/vijilai/helm/vijil-dome"
+NAMESPACE="vijil-dome"
 
 if [ -z "${MP_KUBERNETES}" ]; then
   # use local version of values.yml
@@ -17,8 +18,8 @@ else
   values="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/vijil-dome/values.yml"
 fi
 
-# Create the marketplace namespace – seems like it's required for deploying through marketplace
-kubectl create namespace "marketplace"
-
-helm install "$STACK" "$HELM_CHART_URL" \
+helm upgrade "$STACK" "$HELM_CHART_URL" \
+  --install \
+  --create-namespace \
+  --namespace "$NAMESPACE" \
   -f "$values"
