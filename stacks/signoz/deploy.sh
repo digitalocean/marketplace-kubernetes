@@ -13,7 +13,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="signoz"
 CHART="signoz/signoz"
-CHART_VERSION="0.86.0"
+CHART_VERSION="0.91.1"
 NAMESPACE="signoz"
 
 if [ -z "${MP_KUBERNETES}" ]; then
