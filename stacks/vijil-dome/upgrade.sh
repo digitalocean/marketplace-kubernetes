@@ -7,6 +7,7 @@ set -e
 ################################################################################
 STACK="vijil-dome"
 HELM_CHART_URL="oci://ghcr.io/vijilai/helm/vijil-dome"
+NAMESPACE="vijil-dome"
 
 if [ -z "${MP_KUBERNETES}" ]; then
   # use local version of values.yml
@@ -18,4 +19,7 @@ else
 fi
 
 helm upgrade "$STACK" "$HELM_CHART_URL" \
+  --install \
+  --create-namespace \
+  --namespace "$NAMESPACE" \
   -f "$values"
