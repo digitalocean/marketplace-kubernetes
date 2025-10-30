@@ -13,7 +13,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="cert-manager"
 CHART="jetstack/cert-manager"
-CHART_VERSION="1.13.3"
+CHART_VERSION="v1.19.1"
 NAMESPACE="cert-manager"
 
 if [ -z "${MP_KUBERNETES}" ]; then
