@@ -13,7 +13,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="traefik"
 CHART="traefik/traefik"
-CHART_VERSION="37.0.0"
+CHART_VERSION="37.3.0"
 NAMESPACE="traefik"
 
 if [ -z "${MP_KUBERNETES}" ]; then
