@@ -13,7 +13,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="metrics-server"
 CHART="metrics-server/metrics-server"
-CHART_VERSION="3.12.2"
+#CHART_VERSION="3.12.2"
 NAMESPACE="metrics-server"
 
 if [ -z "${MP_KUBERNETES}" ]; then
@@ -36,5 +36,5 @@ helm upgrade "$STACK" "$CHART" \
   --install \
   --timeout 8m0s \
   --namespace "$NAMESPACE" \
-  --values "$values" \
-  --version "$CHART_VERSION"
+  --values "$values" # \
+  #--version "$CHART_VERSION"
