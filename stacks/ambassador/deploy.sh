@@ -36,3 +36,5 @@ helm upgrade "$STACK" "$CHART" \
   --version "$CHART_VERSION" \
   --values "$values" \
   --timeout 10m0s
+
+# As of version 3.8.0 (Helm chart v8.8.0) Edge Stack requires an Ambassador Labs license key or Cloud Connect token to operate.
