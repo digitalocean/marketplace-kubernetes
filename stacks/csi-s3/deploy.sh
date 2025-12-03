@@ -13,7 +13,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="csi-s3"
 CHART="yandex-s3/csi-s3"
-CHART_VERSION="0.41.0"
+# CHART_VERSION="0.41.0"
 NAMESPACE="csi-s3"
 
 if [ -z "${MP_KUBERNETES}" ]; then
@@ -31,5 +31,5 @@ helm upgrade "$STACK" "$CHART" \
   --install \
   --timeout 8m0s \
   --namespace "$NAMESPACE" \
-  --values "$values" \
-  --version "$CHART_VERSION"
+  --values "$values" # \
+#  --version "$CHART_VERSION"

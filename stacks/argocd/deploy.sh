@@ -13,7 +13,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="argocd"
 CHART="argo/argo-cd"
-CHART_VERSION="4.9.4"
+# CHART_VERSION="4.9.4"
 NAMESPACE="argocd"
 
 if [ -z "${MP_KUBERNETES}" ]; then
@@ -31,5 +31,5 @@ helm upgrade "$STACK" "$CHART" \
   --install \
   --timeout 8m0s \
   --namespace "$NAMESPACE" \
-  --values "$values" \
-  --version "$CHART_VERSION"
+  --values "$values" # \
+#  --version "$CHART_VERSION"

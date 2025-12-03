@@ -13,7 +13,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="cert-manager"
 CHART="jetstack/cert-manager"
-CHART_VERSION="v1.19.1"
+# CHART_VERSION="v1.19.1"
 NAMESPACE="cert-manager"
 
 if [ -z "${MP_KUBERNETES}" ]; then
@@ -31,5 +31,5 @@ helm upgrade "$STACK" "$CHART" \
   --install \
   --timeout 8m0s \
   --namespace "$NAMESPACE" \
-  --values "$values" \
-  --version "$CHART_VERSION"
+  --values "$values" #\
+  # --version "$CHART_VERSION"

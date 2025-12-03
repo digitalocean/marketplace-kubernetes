@@ -13,7 +13,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="kube-prometheus-stack"
 CHART="prometheus-community/kube-prometheus-stack"
-CHART_VERSION="75.9.0"
+#CHART_VERSION="75.9.0"
 NAMESPACE="kube-prometheus-stack"
 
 if [ -z "${MP_KUBERNETES}" ]; then
@@ -36,5 +36,5 @@ helm upgrade "$STACK" "$CHART" \
   --install \
   --timeout 8m0s \
   --namespace "$NAMESPACE" \
-  --values "$values" \
-  --version "$CHART_VERSION"
+  --values "$values" # \
+  #--version "$CHART_VERSION"

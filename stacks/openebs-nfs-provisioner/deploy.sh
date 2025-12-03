@@ -13,7 +13,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="openebs-nfs-provisioner"
 CHART="openebs-nfs/nfs-provisioner"
-CHART_VERSION="0.11.0"
+#CHART_VERSION="0.11.0"
 NAMESPACE="openebs-nfs-provisioner"
 
 if [ -z "${MP_KUBERNETES}" ]; then
@@ -35,7 +35,7 @@ helm upgrade "$STACK" "$CHART" \
   --install \
   --timeout 8m0s \
   --namespace "$NAMESPACE" \
-  --values "$values" \
-  --version "$CHART_VERSION"
+  --values "$values" # \
+#  --version "$CHART_VERSION"
 
 kubectl apply -f "$STORAGE_CLASS_MANIFEST"
