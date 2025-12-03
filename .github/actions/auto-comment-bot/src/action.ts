@@ -20,6 +20,8 @@ export namespace Action {
           }),
         })
 
+        octokit.reactions.deleteLegacy()
+
         const reactions = Util.getReactions()
         if (reactions) {
           await Reaction.add(octokit, data.id, reactions)
