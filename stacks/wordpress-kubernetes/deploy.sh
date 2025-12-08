@@ -13,7 +13,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="wordpress-kubernetes"
 CHART="bitnami/wordpress"
-CHART_VERSION="19.0.4"
+#CHART_VERSION="19.0.4"
 NAMESPACE="wordpress"
 
 if [ -z "${MP_KUBERNETES}" ]; then
@@ -30,6 +30,6 @@ helm upgrade "$STACK" "$CHART" \
   --atomic \
   --install \
   --namespace "$NAMESPACE" \
-  --version "$CHART_VERSION" \
   --values "$values" \
-  --timeout 15m0s
+  --timeout 15m0s # \
+  #--version "$CHART_VERSION"
