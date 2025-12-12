@@ -1,6 +1,0 @@
-## Stack name: datawire/edge-stack
-## Ref: https://github.com/emissary-ingress/emissary/tree/chart/v7.3.2/charts/emissary-ingress
-##
-
-# Deployment replica count
-replicaCount: 2
