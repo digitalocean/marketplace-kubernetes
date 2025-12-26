@@ -2,7 +2,18 @@
 
 set -e
 
-OPERATOR_VERSION="1.20.0"
+# Define the repository
+REPO="knative/operator"
+
+# Fetch the latest release tag name from GitHub API
+OPERATOR_VERSION=$(curl -s "https://api.github.com/repos/$REPO/releases/latest" | \
+    grep '"tag_name":' | \
+    sed -E 's/.*"([^"]+)".*/\1/' | \
+    sed 's/^knative-v//' | \
+    sed 's/^v//')
+
+# Output the version
+echo "$OPERATOR_VERSION"
 
 kubectl apply -f "https://github.com/knative/serving/releases/download/knative-v${OPERATOR_VERSION}/serving-crds.yaml"
 kubectl apply -f "https://github.com/knative/serving/releases/download/knative-v${OPERATOR_VERSION}/serving-core.yaml"
@@ -20,5 +31,3 @@ kubectl apply -f "https://github.com/knative/eventing/releases/download/knative-
 # Deploy Knative Operator
 kubectl apply -f "https://github.com/knative/operator/releases/download/knative-v${OPERATOR_VERSION}/operator.yaml" --wait
 
-## ARTHUR'S NOTES: UNFORTUNATELY KNATIVE DOES NOT SUPPORT HELM FOR EASIER VERSIONING.
-# CONSIDER AN OPTION TO DYNAMICALLY PULL LATEST VERSION FROM KNATIVE RELEASE PAGE
