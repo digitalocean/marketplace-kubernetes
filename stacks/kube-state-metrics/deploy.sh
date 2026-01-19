@@ -13,7 +13,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="kube-state-metrics"
 CHART="prometheus-community/kube-state-metrics"
-CHART_VERSION="6.3.0"
+CHART_VERSION="7.1.0"
 NAMESPACE="kube-state-metrics"
 
 if [ -z "${MP_KUBERNETES}" ]; then
@@ -32,6 +32,3 @@ helm upgrade "$STACK" "$CHART" \
   --values "$values" \
   --version "$CHART_VERSION" \
   --wait
-
-### ARTHUR'S NOTE: USING LATEST VERSION RESULTED IN EXTERNAL IP MISCONFIGURATION.
-### SERVICE STARTED UP BUT WAS NOT REACHABLE

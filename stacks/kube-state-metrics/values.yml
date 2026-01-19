@@ -1,5 +1,9 @@
-# bitnami/kube-state-metrics
+# prometheus-community/kube-state-metrics
 
 global:
   labels:
     app.kubernetes.io/installed-by: digitalocean-marketplace
+
+service:
+  type: LoadBalancer
+  port: 8080
