@@ -1,0 +1,21 @@
+## Defensia Agent — DigitalOcean Kubernetes 1-Click values
+## Ref: https://github.com/defensia/agent/tree/main/charts/defensia-agent
+
+# Set your install token from https://defensia.cloud/dashboard
+token: ""
+
+image:
+  repository: ghcr.io/defensia/agent
+  pullPolicy: IfNotPresent
+
+resources:
+  limits:
+    cpu: 200m
+    memory: 128Mi
+  requests:
+    cpu: 50m
+    memory: 64Mi
+
+# Run on all nodes including control-plane
+tolerations:
+  - operator: Exists
