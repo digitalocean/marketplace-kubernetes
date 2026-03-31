@@ -1,0 +1,25 @@
+# Defensia Agent — DigitalOcean Kubernetes Marketplace defaults
+#
+# After deployment, set your Organization API Key:
+#   helm upgrade defensia-agent oci://ghcr.io/defensia/charts/defensia-agent \
+#     --set apiKey=YOUR_API_KEY -n defensia-system
+
+# Required: generate at defensia.cloud → Settings → Organization → API Keys
+apiKey: ""
+
+serverUrl: "https://defensia.cloud"
+
+# Auto-detected from kubeconfig if empty
+clusterName: ""
+
+resources:
+  limits:
+    cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 50m
+    memory: 64Mi
+
+# Run on all nodes including control-plane
+tolerations:
+  - operator: Exists
