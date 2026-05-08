@@ -22,6 +22,12 @@ INSTALL_TVM=true
 TVK_HOSTNAME="tvk.doks.com"
 TVK_INSTANCE_NAME="tvk-instance-digital-ocean"
 INGRESS_SERVICE_TYPE="NodePort"
+WEBHOOK_ABSENT_GRACE_TRIES="${TVK_WEBHOOK_ABSENT_GRACE_TRIES:-20}"
+WEBHOOK_READY_TIMEOUT_TRIES="${TVK_WEBHOOK_READY_TIMEOUT_TRIES:-100}"
+WEBHOOK_WAIT_INTERVAL_SECONDS="${TVK_WEBHOOK_WAIT_INTERVAL_SECONDS:-3}"
+LICENSE_WAIT_TIMEOUT_TRIES="${TVK_LICENSE_WAIT_TIMEOUT_TRIES:-120}"
+LICENSE_WAIT_INTERVAL_SECONDS="${TVK_LICENSE_WAIT_INTERVAL_SECONDS:-3}"
+LICENSE_JOB_NAME="${TVK_LICENSE_JOB_NAME:-tvk-license-do}"
 
 # Install triliovault operator and triliovault manager
 echo "Installing TrilioVault operator and TrilioVault Manager with one-click install functionality"
@@ -39,7 +45,7 @@ else
 fi
 
 helm upgrade "$STACK" "$CHART" \
-  --atomic \
+  --rollback-on-failure \
   --create-namespace \
   --install \
   --namespace "$NAMESPACE" \
@@ -56,15 +62,59 @@ if [ "$retcode" -ne 0 ]; then
   return 1
 fi
 
-until (kubectl get pods --namespace "$NAMESPACE" -l "release=triliovault-operator" 2>/dev/null | grep Running); do sleep 3; done
+until (kubectl get pods --namespace "$NAMESPACE" -l "release=triliovault-operator" 2>/dev/null | grep Running); do
+  echo "Waiting for TrilioVault operator (release=triliovault-operator)..."
+  kubectl get pods --namespace "$NAMESPACE" -l "release=triliovault-operator" 2>/dev/null || true
+  sleep 3
+done
 
-until (kubectl get pods --namespace "$NAMESPACE" -l "triliovault.trilio.io/owner=triliovault-manager" 2>/dev/null | grep Running); do sleep 3; done
-until (kubectl get pods --namespace "$NAMESPACE" -l app=k8s-triliovault-exporter 2>/dev/null | grep 1/1); do sleep 3; done
-until (kubectl get pods --namespace "$NAMESPACE" -l "app.kubernetes.io/name=k8s-triliovault-ingress-nginx" 2>/dev/null | grep 1/1); do sleep 3; done
-until (kubectl get pods --namespace "$NAMESPACE" -l app=k8s-triliovault-web 2>/dev/null | grep 1/1); do sleep 3; done
-until (kubectl get pods --namespace "$NAMESPACE" -l app=k8s-triliovault-web-backend 2>/dev/null | grep 1/1); do sleep 3; done
-until (kubectl get pods --namespace "$NAMESPACE" -l app=k8s-triliovault-control-plane 2>/dev/null | grep 2/2); do sleep 3; done
-until (kubectl get pods --namespace "$NAMESPACE" -l app=k8s-triliovault-admission-webhook 2>/dev/null | grep 1/1); do sleep 3; done
+until (kubectl get pods --namespace "$NAMESPACE" -l "triliovault.trilio.io/owner=triliovault-manager" 2>/dev/null | grep Running); do
+  echo "Waiting for TrilioVault Manager workloads..."
+  kubectl get pods --namespace "$NAMESPACE" -l "triliovault.trilio.io/owner=triliovault-manager" 2>/dev/null || true
+  sleep 3
+done
+until (kubectl get pods --namespace "$NAMESPACE" -l app=k8s-triliovault-exporter 2>/dev/null | grep 1/1); do
+  echo "Waiting for k8s-triliovault-exporter..."
+  kubectl get pods --namespace "$NAMESPACE" -l app=k8s-triliovault-exporter 2>/dev/null || true
+  sleep 3
+done
+until (kubectl get pods --namespace "$NAMESPACE" -l "app.kubernetes.io/name=k8s-triliovault-ingress-nginx" 2>/dev/null | grep 1/1); do
+  echo "Waiting for k8s-triliovault-ingress-nginx..."
+  kubectl get pods --namespace "$NAMESPACE" -l "app.kubernetes.io/name=k8s-triliovault-ingress-nginx" 2>/dev/null || true
+  sleep 3
+done
+until (kubectl get pods --namespace "$NAMESPACE" -l app=k8s-triliovault-web 2>/dev/null | grep 1/1); do
+  echo "Waiting for k8s-triliovault-web..."
+  kubectl get pods --namespace "$NAMESPACE" -l app=k8s-triliovault-web 2>/dev/null || true
+  sleep 3
+done
+until (kubectl get pods --namespace "$NAMESPACE" -l app=k8s-triliovault-web-backend 2>/dev/null | grep 1/1); do
+  echo "Waiting for k8s-triliovault-web-backend..."
+  kubectl get pods --namespace "$NAMESPACE" -l app=k8s-triliovault-web-backend 2>/dev/null || true
+  sleep 3
+done
+# READY n/n when all containers are ready (1/1 or 2/2 depending on chart version).
+until (kubectl get pods --namespace "$NAMESPACE" -l app=k8s-triliovault-control-plane --no-headers 2>/dev/null | awk '$2 ~ "^[0-9]+/[0-9]+$" { n = split($2, a, "/"); if (n == 2 && a[1] == a[2] && a[1] > 0) found = 1 } END { exit found ? 0 : 1 }'); do
+  echo "Waiting for k8s-triliovault-control-plane..."
+  kubectl get pods --namespace "$NAMESPACE" -l app=k8s-triliovault-control-plane 2>/dev/null || true
+  sleep 3
+done
+webhook_wait_tries=0
+until (kubectl get pods --namespace "$NAMESPACE" -l app=k8s-triliovault-admission-webhook --no-headers 2>/dev/null | awk '$2 ~ "^[0-9]+/[0-9]+$" { n = split($2, a, "/"); if (n == 2 && a[1] == a[2] && a[1] > 0) found = 1 } END { exit found ? 0 : 1 }'); do
+  webhook_wait_tries=$((webhook_wait_tries + 1))
+  echo "Waiting for k8s-triliovault-admission-webhook..."
+  webhook_pods="$(kubectl get pods --namespace "$NAMESPACE" -l app=k8s-triliovault-admission-webhook --no-headers 2>/dev/null || true)"
+  if [ -z "$webhook_pods" ] && [ "$webhook_wait_tries" -ge "$WEBHOOK_ABSENT_GRACE_TRIES" ]; then
+    echo "k8s-triliovault-admission-webhook pods not found after grace period; continuing without this optional wait."
+    break
+  fi
+  kubectl get pods --namespace "$NAMESPACE" -l app=k8s-triliovault-admission-webhook 2>/dev/null || true
+  if [ "$webhook_wait_tries" -ge "$WEBHOOK_READY_TIMEOUT_TRIES" ]; then
+    echo "Timed out waiting for k8s-triliovault-admission-webhook to become ready."
+    exit 1
+  fi
+  sleep "$WEBHOOK_WAIT_INTERVAL_SECONDS"
+done
 
 ################################################################################
 # Enable TVK Management Console using NodePort
@@ -120,16 +170,28 @@ install_license () {
   
   sleep 5
   echo "Verifying license generation job..."
-  until (kubectl get pods --namespace "$NAMESPACE" -l "job-name=tvk-license-do" 2>/dev/null | grep Completed); do sleep 3; done
+  license_wait_tries=0
+  until (kubectl get pods --namespace "$NAMESPACE" -l "job-name=$LICENSE_JOB_NAME" 2>/dev/null | grep Completed >/dev/null) || [ "$(kubectl get license trilio-license --namespace "$NAMESPACE" -o 'jsonpath={.status.status}' 2>/dev/null || true)" = "Active" ]; do
+    license_wait_tries=$((license_wait_tries + 1))
+    echo "Waiting for license job '$LICENSE_JOB_NAME' (or Active license status)..."
+    kubectl get pods --namespace "$NAMESPACE" -l "job-name=$LICENSE_JOB_NAME" 2>/dev/null || true
+    if [ "$license_wait_tries" -ge "$LICENSE_WAIT_TIMEOUT_TRIES" ]; then
+      echo "Timed out waiting for license generation."
+      echo "Diagnostic jobs that might be related to license:"
+      kubectl get jobs --namespace "$NAMESPACE" 2>/dev/null | awk 'NR==1 || /[Ll]icense|tvk/' || true
+      return 1
+    fi
+    sleep "$LICENSE_WAIT_INTERVAL_SECONDS"
+  done
 
   echo "Verifying license status on namespace $NAMESPACE ..."
-  lic_status=$(kubectl get license trilio-license --namespace $NAMESPACE -o 'jsonpath={.status.status}')
+  lic_status=$(kubectl get license trilio-license --namespace "$NAMESPACE" -o 'jsonpath={.status.status}')
   exp_status="Active"
 
   if [ "$lic_status" != "$exp_status" ] ; then
-    echo "License installation failed, license status is '$lic_status'"
+    printf 'License installation failed, license status is %s\n' "$lic_status"
   else
-    echo "License is installed successfully, license status is '$lic_status'"
+    printf 'License is installed successfully, license status is %s\n' "$lic_status"
   fi
 
 }
