@@ -45,7 +45,7 @@ else
 fi
 
 helm upgrade "$STACK" "$CHART" \
-  --rollback-on-failure \
+  --atomic \
   --create-namespace \
   --install \
   --namespace "$NAMESPACE" \
