@@ -34,9 +34,9 @@ across nodes to ensure availability.
 
 | Package  | Version | License |
 | ------------- | ------------- | ------------- |
-| VictoriaMetrics Cluster  | [1.103.0](hhttps://docs.victoriametrics.com/changelog/#v11030)  | Apache 2.0  |
-| vmagent  | [1.103.0](https://docs.victoriametrics.com/changelog/#v11030)  | Apache 2.0  |
-| vmoperator  | [0.48.3](https://docs.victoriametrics.com/operator/changelog/#v0483---29-sep-2024)  | Apache 2.0  |
+| VictoriaMetrics Cluster  | [1.133.0](https://docs.victoriametrics.com/victoriametrics/changelog/#v11330)  | Apache 2.0  |
+| vmagent  | [1.133.0](https://docs.victoriametrics.com/victoriametrics/changelog/#v11330)  | Apache 2.0  |
+| vmoperator  | [0.66.1](https://docs.victoriametrics.com/operator/changelog/#v0661)  | Apache 2.0  |
 
 ## Getting started after deploying VictoriaMetrics Cluster
 
@@ -89,6 +89,6 @@ Then open in browser `http://127.0.0.1:8481/select/0/vmui/` , enter `vm_app_upti
 ## For further documentation visit:
 
 - [https://docs.victoriametrics.com/Cluster-VictoriaMetrics.html#cluster-setup](https://docs.victoriametrics.com/Cluster-VictoriaMetrics.html#cluster-setup)
-- [https://docs.victoriametrics.com/guides](https://docs.victoriametrics.com/guides)
+- [https://docs.victoriametrics.com/guides](https://docs.victoriametrics.com/guides/)
 - [https://github.com/VictoriaMetrics/helm-charts](https://github.com/VictoriaMetrics/helm-charts)
 - [https://docs.victoriametrics.com/Articles.html](https://docs.victoriametrics.com/Articles.html)
