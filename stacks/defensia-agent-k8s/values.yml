@@ -1,0 +1,21 @@
+# Defensia Agent — DigitalOcean Marketplace values
+# https://defensia.cloud
+
+# Required: your organization API key from defensia.cloud
+apiKey: ""
+
+# Defensia server URL
+serverUrl: "https://defensia.cloud"
+
+# Resource limits
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    cpu: 500m
+    memory: 256Mi
+
+# Run on all nodes including control plane
+tolerations:
+  - operator: Exists
