@@ -1,14 +1,11 @@
 # Traefik Helm Chart Configuration
 # https://github.com/traefik/traefik-helm-chart
 
-# Enable dashboard
-dashboard:
-  enabled: true
-
 # Ingress configuration
 ingressRoute:
   dashboard:
     enabled: true
+  # https://github.com/traefik/traefik-helm-chart/blob/master/traefik/values.yaml#L240, modify the entrypoint to access dashboard
 
 # Service configuration
 service:
