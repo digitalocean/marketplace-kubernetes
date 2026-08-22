@@ -4,7 +4,7 @@ set -eu
 
 STACK="rstream-operator"
 CHART="oci://ghcr.io/rstreamlabs/rstream-operator"
-CHART_VERSION="0.5.1"
+CHART_VERSION="0.5.2"
 NAMESPACE="rstream-system"
 
 if [ -z "${MP_KUBERNETES:-}" ]; then
