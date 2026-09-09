@@ -1,0 +1,31 @@
+## Stack name: betterdb/betterdb-monitor
+## Chart ref: https://github.com/BetterDB-inc/monitor/tree/master/charts/betterdb-monitor
+## Docs: https://docs.betterdb.com/kubernetes
+
+## The chart defaults deploy a single replica with in-memory history storage
+## and a ClusterIP service. After deploy, access the dashboard with:
+##
+##   kubectl -n betterdb-monitor port-forward svc/betterdb-monitor 3001:3001
+##
+## then open http://localhost:3001 and add your Valkey/Redis connection in the
+## UI (Settings -> Connection).
+
+## Uncomment to preconfigure the Valkey/Redis instance to monitor. For a
+## password, prefer db.existingSecret over db.password (see chart values).
+##
+# db:
+#   host: my-valkey.default.svc.cluster.local
+#   port: 6379
+
+## Uncomment for durable history storage (slowlogs, metrics, events) in
+## PostgreSQL. The in-memory default loses history on pod restart.
+##
+# storage:
+#   type: postgres
+#   url: postgresql://user:password@host:5432/betterdb
+
+## Uncomment to expose the dashboard through a load balancer instead of
+## port-forwarding.
+##
+# service:
+#   type: LoadBalancer
