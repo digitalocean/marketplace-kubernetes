@@ -4,7 +4,10 @@ Simple Host Enterprise gives everyone in a company a place to publish what their
 agent builds for them: a prototype, a tracker, a report. Each thing goes live at an
 address under the person's own name, `<site>.<name>.<your domain>`, and only they
 can open it until they share it with named colleagues, a team, or the whole company.
-Colleagues find shared work by searching for the person who made it.
+Colleagues find shared work by searching for the person who made it. Each person
+can choose a published home page, write a short bio, pin sites and set their order.
+The live showcase feed follows the existing company sign-in and sharing rules;
+custom domains and short names are not available.
 
 Sign-in is the company's own identity provider (Google Workspace, Okta, Microsoft Entra
 ID or any OIDC provider). Every publish and every visit is on record. Sites are static
@@ -36,7 +39,7 @@ reported issues and contributed.
 
 | Package | Version | License |
 |---|---|---|
-| [Simple Host Enterprise](https://github.com/vineetu/simple-host-enterprise) | v0.9.2 (chart 0.1.1) | [Apache 2.0](https://github.com/vineetu/simple-host-enterprise/blob/main/LICENSE) |
+| [Simple Host Enterprise](https://github.com/vineetu/simple-host-enterprise) | v0.9.3 (chart 0.2.1) | [Apache 2.0](https://github.com/vineetu/simple-host-enterprise/blob/main/LICENSE) |
 | [PostgreSQL](https://www.postgresql.org/) | 16.11 | [PostgreSQL](https://www.postgresql.org/about/licence/) |
 | [Traefik](https://traefik.io/) | v3.7 (chart 41.6.0) | [MIT](https://github.com/traefik/traefik/blob/master/LICENSE.md) |
 | [cert-manager](https://cert-manager.io/) | v1.21.2 | [Apache 2.0](https://github.com/cert-manager/cert-manager/blob/master/LICENSE) |
@@ -100,7 +103,7 @@ certificates:
 Apply them:
 
 ```
-helm upgrade simple-host-enterprise oci://ghcr.io/vineetu/charts/simple-host-enterprise --version 0.1.1 -n simple-host --reset-then-reuse-values -f my-values.yaml
+helm upgrade simple-host-enterprise oci://ghcr.io/vineetu/charts/simple-host-enterprise --version 0.2.1 -n simple-host --reset-then-reuse-values -f my-values.yaml
 ```
 
 Point `<domain>` and `*.<domain>` (two `A` records) at the load balancer's IP:
