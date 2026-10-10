@@ -7,7 +7,7 @@ set -e
 ################################################################################
 STACK="simple-host-enterprise"
 CHART="${CHART:-oci://ghcr.io/vineetu/charts/simple-host-enterprise}"
-CHART_VERSION="0.2.1"
+CHART_VERSION="0.2.2"
 NAMESPACE="simple-host"
 
 # Keeps the settings given after install and takes the new chart's defaults,

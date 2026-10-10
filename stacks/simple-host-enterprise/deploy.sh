@@ -82,7 +82,7 @@ fi
 ################################################################################
 STACK="simple-host-enterprise"
 CHART="${CHART:-oci://ghcr.io/vineetu/charts/simple-host-enterprise}"
-CHART_VERSION="0.2.1"
+CHART_VERSION="0.2.2"
 NAMESPACE="simple-host"
 
 if [ -z "${MP_KUBERNETES}" ]; then
