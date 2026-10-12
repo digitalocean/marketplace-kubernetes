@@ -1,5 +1,28 @@
-# Installed with nothing to configure: the chart starts the database and
+# Installed with nothing else to configure: the chart starts the database and
 # generates its secrets, and Simple Host starts once a domain, sign-in and a
 # bucket are set (README.md, "Finish setup"). Every chart value, with its
 # default, is in the chart's values.yaml.
-{}
+#
+# From chart 0.2.0 the chart's defaults are provider-neutral. These are the
+# chart's DigitalOcean preset (values-digitalocean.yaml): the Traefik class
+# deploy.sh installs, Let's Encrypt through DigitalOcean DNS, Spaces, and
+# Managed PostgreSQL's port.
+postgres:
+  external:
+    port: 25060
+
+storage:
+  endpoint: https://nyc3.digitaloceanspaces.com
+  region: nyc3
+  # Spaces accepts the SSE-S3 header but does not apply it.
+  sse: none
+
+certificates:
+  createIssuer: true
+  issuer: simple-host-letsencrypt
+
+ingress:
+  className: simple-host
+
+networkPolicy:
+  ingressNamespace: simple-host-ingress
