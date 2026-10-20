@@ -13,7 +13,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="betterdb-monitor"
 CHART="betterdb/betterdb-monitor"
-CHART_VERSION="0.40.0"
+CHART_VERSION="0.49.0"
 NAMESPACE="betterdb-monitor"
 
 if [ -z "${MP_KUBERNETES}" ]; then

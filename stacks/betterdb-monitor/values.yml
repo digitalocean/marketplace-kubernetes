@@ -12,10 +12,13 @@
 
 ## Uncomment to preconfigure the Valkey/Redis instance to monitor. For a
 ## password, prefer db.existingSecret over db.password (see chart values).
+## Set db.tls to true for managed providers that require TLS (e.g. DigitalOcean
+## Managed Valkey, AWS ElastiCache).
 ##
 # db:
 #   host: my-valkey.default.svc.cluster.local
 #   port: 6379
+#   tls: true
 
 ## Uncomment for durable history storage (slowlogs, metrics, events) in
 ## PostgreSQL. The in-memory default loses history on pod restart.
