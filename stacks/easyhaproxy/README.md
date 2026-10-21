@@ -44,7 +44,7 @@ The address is in the `EXTERNAL-IP` column; it can take a minute or two to appea
 
 > **Cost:** the DigitalOcean Load Balancer and the 1 Gi block storage volume are billed to your account. See [DigitalOcean pricing](https://www.digitalocean.com/pricing).
 
-> **Note:** EasyHAProxy is designed for a single replica. Running multiple replicas can cause ACME certificate issuance failures and temporary service discovery inconsistencies. See [Limitations](https://easyhaproxy.com/docs/limitations) for details.
+> **Run a single replica.** Do not scale the `easyhaproxy` Deployment. Each replica runs its own Let's Encrypt (ACME) client: the Load Balancer can send a challenge to a replica that did not request it, so certificates fail, and the replicas together can hit the Let's Encrypt rate limits. The stack sets `replicaCount: 1`, and upgrades use the `Recreate` strategy, so two copies never run side by side. If you need several replicas for high availability, do not use ACME; provide certificates as TLS secrets (see [Custom SSL Certificates](#custom-ssl-certificates)). See [Limitations](https://opensource.byjg.com/docs/devops/docker-easy-haproxy/concepts/limitations/) for details.
 
 ## How to Set Up Your Application for EasyHAProxy
 

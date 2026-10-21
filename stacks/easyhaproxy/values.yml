@@ -1,4 +1,9 @@
 # byjg/easyhaproxy
+
+# One copy only: each replica runs its own ACME (Let's Encrypt) client, so
+# challenges reach the wrong replica and certificates fail. See the README.
+replicaCount: 1
+
 service:
   create: true
   type: LoadBalancer
