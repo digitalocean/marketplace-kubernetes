@@ -1,4 +1,18 @@
 # byjg/easyhaproxy
+service:
+  create: true
+  type: LoadBalancer
+
+persistence:
+  certbot:
+    enabled: true
+    size: 1Gi
+
+easyhaproxy:
+  stats:
+    # The Load Balancer would expose them to the internet; see the README to enable them
+    enabled: false
+
 resources:
   requests:
     cpu: "100m"

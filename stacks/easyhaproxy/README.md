@@ -23,18 +23,28 @@ EasyHAProxy operates as a Kubernetes Ingress Controller. It queries all Ingress 
 
 ## Install
 
-1. Enable EasyHAProxy from the [DigitalOcean Marketplace](https://marketplace.digitalocean.com/apps/easyhaproxy-ingress-controller).
-2. Create a DigitalOcean Load Balancer pointing to your Kubernetes cluster.
+Enable EasyHAProxy from the [DigitalOcean Marketplace](https://marketplace.digitalocean.com/apps/easyhaproxy-ingress-controller).
 
-## Deployment Configuration
+The stack creates a DigitalOcean Load Balancer for you. Point your domains to its address:
 
-EasyHAProxy can be deployed in two ways:
+```shell
+kubectl get svc -n easyhaproxy easyhaproxy
+```
 
-1. **Deployment with Service (default in DO Marketplace)**: EasyHAProxy runs as a standard Deployment with a ClusterIP Service, allowing Kubernetes to schedule it on any available node. This is the recommended approach for DigitalOcean and is configured with `service.create: true`.
+The address is in the `EXTERNAL-IP` column; it can take a minute or two to appear. EasyHAProxy also writes it to the status of every Ingress it serves (`kubectl get ingress -A`).
 
-2. **DaemonSet with node affinity**: For advanced configurations, EasyHAProxy can run as a DaemonSet restricted to a specific node (labeled `easyhaproxy/node=master`). Set `service.create: false` to use this mode.
+## What Gets Deployed
 
-> **Note:** EasyHAProxy is designed for single replica deployment. Running multiple replicas can cause ACME certificate issuance failures and temporary service discovery inconsistencies. See [Limitations](https://easyhaproxy.com/docs/limitations) for details.
+| Resource | Details |
+|---|---|
+| Deployment `easyhaproxy` | One replica; Kubernetes can schedule it on any node. |
+| Service `easyhaproxy` (type `LoadBalancer`) | DigitalOcean creates a Load Balancer for it, forwarding ports 80 and 443 (stats ports only if you enable them). |
+| PersistentVolumeClaim `easyhaproxy-certbot` (1 Gi) | Keeps the Let's Encrypt certificates across restarts. |
+| IngressClass `easyhaproxy` | Select EasyHAProxy with `spec.ingressClassName: easyhaproxy`. |
+
+> **Cost:** the DigitalOcean Load Balancer and the 1 Gi block storage volume are billed to your account. See [DigitalOcean pricing](https://www.digitalocean.com/pricing).
+
+> **Note:** EasyHAProxy is designed for a single replica. Running multiple replicas can cause ACME certificate issuance failures and temporary service discovery inconsistencies. See [Limitations](https://easyhaproxy.com/docs/limitations) for details.
 
 ## How to Set Up Your Application for EasyHAProxy
 
@@ -93,9 +103,17 @@ spec:
 ```
 
 Requirements for ACME to work:
-- Ports 80 and 443 must be publicly accessible.
-- DNS must point to your cluster's Load Balancer.
-- Set `EASYHAPROXY_CERTBOT_EMAIL` in the EasyHAProxy configuration.
+- DNS for the domain must point to the Load Balancer address (see [Install](#install)).
+- Set the e-mail used to register with Let's Encrypt. It is not set by default:
+
+```shell
+helm upgrade easyhaproxy byjg/easyhaproxy \
+  --namespace easyhaproxy \
+  --reset-then-reuse-values \
+  --set easyhaproxy.certbot.email=you@example.com
+```
+
+Issued certificates are stored on the `easyhaproxy-certbot` volume, so they survive restarts and upgrades.
 
 ### Custom SSL Certificates
 
@@ -166,7 +184,7 @@ kubectl get pods -n easyhaproxy
 Check logs for errors:
 
 ```shell
-kubectl logs -n easyhaproxy -l app=easyhaproxy --tail=100
+kubectl logs -n easyhaproxy -l app.kubernetes.io/name=easyhaproxy --tail=100
 ```
 
 ### Test with a Simple HTTP Server
@@ -184,29 +202,42 @@ helm upgrade --install mysite byjg/static-httpserver \
 
 ### Modify EasyHAProxy Configuration
 
-To update the EasyHAProxy configuration (e.g., log levels or resource requests), use Helm:
+To change the configuration (e.g., log levels), use Helm. `--reset-then-reuse-values` (Helm 3.14 or later) keeps the values you set before:
 
 ```bash
-helm upgrade --install easyhaproxy byjg/easyhaproxy \
+helm upgrade easyhaproxy byjg/easyhaproxy \
   --namespace easyhaproxy \
+  --reset-then-reuse-values \
   --set easyhaproxy.logLevel.certbot=INFO \
   --set easyhaproxy.logLevel.easyhaproxy=INFO \
-  --set easyhaproxy.logLevel.haproxy=INFO \
-  --set resources.requests.cpu=100m \
-  --set resources.requests.memory=128Mi \
-  --set service.create=true
+  --set easyhaproxy.logLevel.haproxy=INFO
 ```
+
+### Stats Page and Dashboard
+
+They are disabled by default, because the Load Balancer would expose them to the internet. To enable them, always with a password (without one they are served without a login):
+
+```bash
+helm upgrade easyhaproxy byjg/easyhaproxy \
+  --namespace easyhaproxy \
+  --reset-then-reuse-values \
+  --set easyhaproxy.stats.enabled=true \
+  --set easyhaproxy.stats.password='<a strong password>'
+```
+
+The Load Balancer then serves the stats page on port 1936 (user `admin`) and the dashboard on port 11936.
 
 ### EasyHAProxy Container Not Starting
 
-When using the default DigitalOcean Marketplace configuration (`service.create: true`), EasyHAProxy runs as a Deployment and can be scheduled on any node. If the pod is not starting:
+1. Check pod events: `kubectl describe pod -n easyhaproxy -l app.kubernetes.io/name=easyhaproxy`
+2. Check the Load Balancer was created: `kubectl get svc -n easyhaproxy easyhaproxy` and the events from `kubectl describe svc -n easyhaproxy easyhaproxy`.
+3. Check the certificate volume is bound: `kubectl get pvc -n easyhaproxy`.
 
-1. Check pod events: `kubectl describe pod -n easyhaproxy -l app=easyhaproxy`
-2. Verify the Load Balancer is properly configured.
-3. Reinstall using the Helm upgrade command above.
+## Upgrading from an Earlier Version of This Stack
 
-If using DaemonSet mode (`service.create: false`), ensure a node is labeled:
+Earlier versions of this stack ran EasyHAProxy as a DaemonSet bound to ports 80/443 of the node labeled `easyhaproxy/node=master`, with your DNS pointing to that node. Upgrading replaces it with the Deployment and a new DigitalOcean Load Balancer, **with a new IP address**:
 
-```bash
-kubectl label nodes <node-name> "easyhaproxy/node=master"
-```
+1. Run the upgrade (`upgrade.sh`, or the Helm command above).
+2. Get the Load Balancer address: `kubectl get svc -n easyhaproxy easyhaproxy`.
+3. Point your DNS records to that address. Until then your sites are not reachable.
+4. Remove the node label, which is no longer used: `kubectl label nodes --all easyhaproxy/node-`.
