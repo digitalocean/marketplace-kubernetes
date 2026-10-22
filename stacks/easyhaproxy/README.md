@@ -33,6 +33,8 @@ kubectl get svc -n easyhaproxy easyhaproxy
 
 The address is in the `EXTERNAL-IP` column; it can take a minute or two to appear. EasyHAProxy also writes it to the status of every Ingress it serves (`kubectl get ingress -A`).
 
+Until the first Ingress exists, `http://<EXTERNAL-IP>` answers with a page from EasyHAProxy explaining how to add one. It goes away as soon as an Ingress is served.
+
 ## What Gets Deployed
 
 | Resource | Details |

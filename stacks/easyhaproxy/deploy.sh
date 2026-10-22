@@ -13,7 +13,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="easyhaproxy"
 CHART="byjg/easyhaproxy"
-CHART_VERSION="2.0.6"
+CHART_VERSION="2.0.8"
 NAMESPACE="easyhaproxy"
 
 if [ -z "${MP_KUBERNETES}" ]; then
