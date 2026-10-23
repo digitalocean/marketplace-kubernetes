@@ -1,11 +1,25 @@
 # Defensia Agent — DigitalOcean Marketplace values
 # https://defensia.cloud
 
-# Required: your organization API key from defensia.cloud
-apiKey: ""
+# No apiKey here on purpose.
+#
+# A 1-click install cannot prompt for a credential, so the agent installs
+# unconnected and waits. Once the cluster owner creates the Secret below, the
+# agent picks it up and registers on its own — no restart, no reinstall:
+#
+#   kubectl -n defensia create secret generic defensia-agent-k8s \
+#     --from-literal=api-key=<ORG_API_KEY> --dry-run=client -o yaml | kubectl apply -f -
+#
+# The key is the organization API key from https://defensia.cloud/dashboard.
+# It is multi-use: one key registers every node in the cluster.
 
-# Defensia server URL
 serverUrl: "https://defensia.cloud"
+
+# DOKS runs containerd, not Docker. Mounting a socket that is not there makes
+# kubelet create a directory in its place on every node, which outlives the
+# uninstall, so the Docker mount stays off.
+dockerSocket:
+  enabled: false
 
 # Resource limits
 resources:

@@ -7,7 +7,7 @@ set -e
 ################################################################################
 STACK="defensia-agent-k8s"
 HELM_CHART_URL="oci://ghcr.io/defensia/charts/defensia-agent"
-CHART_VERSION="0.4.1"
+CHART_VERSION="0.7.0"
 NAMESPACE="defensia"
 
 if [ -z "${MP_KUBERNETES}" ]; then
