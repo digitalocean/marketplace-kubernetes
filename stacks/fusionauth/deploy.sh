@@ -12,11 +12,8 @@ set -e
 ################################################################################
 STACK="fusionauth"
 CHART="fusionauth/fusionauth"
-CHART_VERSION="1.0.14"
+CHART_VERSION="1.69.3"
 NAMESPACE="fusionauth"
-
-DB_POSTGRES_USER_PASSWORD=`LC_CTYPE=C LC_ALL=C tr -dc '[:alnum:]' < /dev/urandom | head -c 42`
-DB_FUSIONAUTH_USER_PASSWORD=`LC_CTYPE=C LC_ALL=C tr -dc '[:alnum:]' < /dev/urandom | head -c 42`
 
 if [ -z "${MP_KUBERNETES}" ]; then
   # use local version of values.yml
@@ -34,14 +31,9 @@ helm repo add opensearch https://opensearch-project.github.io/helm-charts/
 helm repo update > /dev/null
 
 # Installing Postgres Operator
-helm install postgres-operator postgres-operator-charts/postgres-operator \
+helm upgrade --install postgres-operator postgres-operator-charts/postgres-operator \
   --namespace "$NAMESPACE" \
   --create-namespace
-
-# Creating secret for Postgres
-kubectl create secret generic db-secret \
-  --from-literal=postgres-password="$DB_POSTGRES_USER_PASSWORD" \
-  -n "$NAMESPACE" --dry-run=client -o yaml | kubectl apply -f -
 
 # Creating PostgresCluster (using Zalando CRD)
 cat <<EOF | kubectl apply -f -
@@ -63,15 +55,21 @@ spec:
     fusionauth: fusionauth
   postgresql:
     version: "17"
-  env:
-    - name: POSTGRES_PASSWORD
-      valueFrom:
-        secretKeyRef:
-          name: db-secret
-          key: postgres-password
 EOF
 
-helm install search-elasticsearch opensearch/opensearch \
+ATTEMPTS=0
+until kubectl get --namespace "$NAMESPACE" \
+  secret/fusionauth.db-postgresql.credentials.postgresql.acid.zalan.do \
+  secret/postgres.db-postgresql.credentials.postgresql.acid.zalan.do >/dev/null 2>&1; do
+  ATTEMPTS=$((ATTEMPTS + 1))
+  if [ "$ATTEMPTS" -ge 150 ]; then
+    echo "PostgreSQL credential Secrets were not created within 5 minutes" >&2
+    exit 1
+  fi
+  sleep 2
+done
+
+helm upgrade --install search-elasticsearch opensearch/opensearch \
   --namespace "$NAMESPACE" \
   --set singleNode=true \
   --set persistence.enabled=false \
@@ -87,7 +85,5 @@ helm upgrade "$STACK" "$CHART" \
   --namespace "$NAMESPACE" \
   --values "$VALUES" \
   --version "$CHART_VERSION" \
-  --set database.user="fusionauth" \
-  --set database.password="$DB_FUSIONAUTH_USER_PASSWORD" \
-  --set database.root.password="$DB_POSTGRES_USER_PASSWORD" \
+  --set database.dbUser.username="fusionauth" \
   --set search.host=opensearch-cluster-master
