@@ -1,0 +1,33 @@
+# plane/plane-enterprise
+#
+# DigitalOcean Kubernetes (DOKS) defaults for the 1-Click install.
+#
+# This stack is intentionally plain: DigitalOcean's Kubernetes 1-Click flow
+# runs deploy.sh with no way for the user to pass in values or environment
+# variables, so everything here has to work with zero input. It always
+# deploys the bundled Postgres/Valkey/RabbitMQ/MinIO StatefulSets, and always
+# installs its own Traefik. If you want to point at DigitalOcean Managed
+# Databases/Spaces, or add TLS via cert-manager, do that afterwards yourself
+# with `helm upgrade` directly -- see this stack's README.
+#
+# The one thing deploy.sh does set dynamically (via `--set`, not here) is
+# license.licenseDomain, derived from Traefik's LoadBalancer IP so Plane is
+# reachable immediately with no DNS step. See deploy.sh.
+#
+# storageClass
+# ------------
+# DOKS provisions volumes dynamically through the "do-block-storage"
+# StorageClass. This chart's PVC templates render
+# `storageClassName: {{ .Values.env.storageClass | quote }}` unconditionally,
+# so leaving env.storageClass empty produces `storageClassName: ""` on every
+# PVC -- which tells Kubernetes to bind ONLY a pre-existing PV and never
+# triggers dynamic provisioning, even though "do-block-storage" is marked
+# default on the cluster. Without this override, the bundled Postgres/Valkey/
+# RabbitMQ/MinIO PVCs sit Pending forever and the install never becomes
+# ready.
+env:
+  storageClass: do-block-storage
+
+ingress:
+  enabled: true
+  ingressClass: traefik
