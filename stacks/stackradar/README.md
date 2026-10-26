@@ -61,7 +61,7 @@ OSV.dev, FIRST and CISA projects it is built on.
 | StackRadar server and UI | [0.2.0](https://github.com/lockdep/stackradar/releases/tag/v0.2.0) | [AGPL-3.0](https://github.com/lockdep/stackradar/blob/main/LICENSE) |
 | StackRadar scanner | [0.7.1](https://github.com/lockdep/stackradar-scanner/releases/tag/v0.7.1) | [Apache-2.0](https://github.com/lockdep/stackradar-scanner/blob/main/LICENSE) |
 | PostgreSQL | [18 (alpine)](https://hub.docker.com/_/postgres) | [PostgreSQL License](https://www.postgresql.org/about/licence/) |
-| Helm chart `stackradar` | [0.2.1](https://github.com/lockdep/helm-charts/tree/main/charts/stackradar) | [Apache-2.0](https://github.com/lockdep/helm-charts/blob/main/LICENSE) |
+| Helm chart `stackradar` | [0.2.2](https://github.com/lockdep/helm-charts/tree/main/charts/stackradar) | [Apache-2.0](https://github.com/lockdep/helm-charts/blob/main/LICENSE) |
 
 # Getting Started
 
@@ -126,7 +126,7 @@ itself. To include the system namespaces (CoreDNS, Cilium, the CSI
 drivers), clear the exclusion list and upgrade the release:
 
 ```console
-helm upgrade stackradar oci://ghcr.io/lockdep/helm-charts/stackradar --version 0.2.1 \
+helm upgrade stackradar oci://ghcr.io/lockdep/helm-charts/stackradar --version 0.2.2 \
   --namespace stackradar --reuse-values --set scanner.scanner.excludeNamespaces=""
 ```
 
@@ -145,14 +145,14 @@ The stack installs the chart's defaults plus the generated secrets. Inspect
 every available option with
 
 ```console
-helm show values oci://ghcr.io/lockdep/helm-charts/stackradar --version 0.2.1
+helm show values oci://ghcr.io/lockdep/helm-charts/stackradar --version 0.2.2
 ```
 
 and apply your own values with `--reuse-values`, which keeps the release
 pointed at the generated secrets:
 
 ```console
-helm upgrade stackradar oci://ghcr.io/lockdep/helm-charts/stackradar --version 0.2.1 \
+helm upgrade stackradar oci://ghcr.io/lockdep/helm-charts/stackradar --version 0.2.2 \
   --namespace stackradar --reuse-values --values my-values.yml
 ```
 

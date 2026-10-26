@@ -7,7 +7,7 @@ set -eu
 ################################################################################
 STACK="stackradar"
 CHART="oci://ghcr.io/lockdep/helm-charts/stackradar"
-CHART_VERSION="0.2.1"
+CHART_VERSION="0.2.2"
 NAMESPACE="stackradar"
 
 if [ -z "${MP_KUBERNETES:-}" ]; then
