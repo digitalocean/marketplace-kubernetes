@@ -19,7 +19,8 @@ else
   values="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/stackradar/values.yml"
 fi
 
-# --reuse-values keeps the secrets deploy.sh generated at install time.
+# --reuse-values keeps the release pointed at the Secret
+# stackradar-credentials that deploy.sh generated at install time.
 # Chart-level breaking changes between versions are listed in
 # https://github.com/lockdep/helm-charts/blob/main/charts/stackradar/UPGRADING.md
 helm upgrade "$STACK" "$CHART" \

@@ -35,11 +35,15 @@ already scanning the cluster it lands in.
 - **One Postgres, migrations on boot, no telemetry.** Nothing leaves the
   cluster except the advisory feed downloads.
 
-This 1-Click generates every secret at install time (session signing key,
-scanner key, database password), so no two installs share a credential.
+This 1-Click generates every secret at install time (database password,
+session signing key, scanner key, first admin password) into the Secret
+`stackradar-credentials`, so no two installs share a credential. Helm does
+not own that Secret: it survives an uninstall together with the database
+volume, so a reinstall opens the same data.
 
-**Sizing.** The chart requests about 0.6 vCPU and 2 GiB of memory in total
-and creates one 10 GiB block storage volume for PostgreSQL. A single
+**Sizing.** The chart requests 0.5 vCPU and 2.25 GiB of memory in total
+and creates one 10 GiB volume for PostgreSQL from the cluster's default
+StorageClass (`do-block-storage` on DOKS). A single
 2 vCPU / 4 GB node runs it for evaluation; for a cluster with hundreds of
 distinct images, give the server pod room to grow to its 2 GiB limit and
 use a node pool of 2 vCPU / 4 GB nodes or larger. The first start downloads
@@ -99,14 +103,15 @@ machine:
 kubectl -n stackradar port-forward svc/stackradar-client 3000:3000
 ```
 
-Open http://localhost:3000 and sign in with
+Read the generated admin password:
 
-| | |
-|---|---|
-| Email | `admin@stackradar.local` |
-| Password | `admin` |
+```console
+kubectl -n stackradar get secret stackradar-credentials \
+  -o jsonpath='{.data.admin-password}' | base64 -d; echo
+```
 
-You are asked to change the password before anything else loads. Do it.
+Open http://localhost:3000 and sign in as `admin@stackradar.local` with that
+password. You are asked to change it before anything else loads.
 
 A yellow strip above every page says **Vulnerability database is being
 built** while the server downloads and imports OSV, EPSS and KEV in the
@@ -131,8 +136,8 @@ For a hostname instead of a port-forward, enable the chart's Ingress or
 Gateway API `HTTPRoute` with your own values and upgrade the release; the
 [self-hosting guide](https://github.com/lockdep/stackradar/blob/main/docs/self-hosting/helm.md)
 walks through Ingress, TLS and sign-in with GitHub, Google or any OpenID
-Connect provider. Change the admin password before exposing the install
-beyond localhost.
+Connect provider. Change the first admin password before exposing the
+install beyond localhost.
 
 ### Tweaking Helm chart values
 
@@ -143,8 +148,8 @@ every available option with
 helm show values oci://ghcr.io/lockdep/helm-charts/stackradar --version 0.2.1
 ```
 
-and apply your own values with `--reuse-values`, which keeps the generated
-secrets:
+and apply your own values with `--reuse-values`, which keeps the release
+pointed at the generated secrets:
 
 ```console
 helm upgrade stackradar oci://ghcr.io/lockdep/helm-charts/stackradar --version 0.2.1 \
@@ -163,9 +168,11 @@ the same scanner chart reports to either.
 helm uninstall stackradar -n stackradar
 ```
 
-The PostgreSQL volume is kept so an uninstall is not a data loss, and so is
-the `stackradar` ServiceAccount; nothing cluster-scoped is left behind. To
-remove both: `kubectl delete namespace stackradar`.
+Three objects are kept so an uninstall is not a data loss: the PostgreSQL
+volume, the `stackradar-credentials` Secret holding its password, and the
+`stackradar` ServiceAccount. Installing again picks all three up. Nothing
+cluster-scoped is left behind. To remove everything, data included:
+`kubectl delete namespace stackradar`.
 
 ### Additional Resources
 
