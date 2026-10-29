@@ -3,27 +3,18 @@
 set -e
 
 ################################################################################
-# repo
-################################################################################
-helm repo  add main https://charts.kubesphere.io/main
-helm repo update > /dev/null
-
-################################################################################
 # chart
 ################################################################################
 STACK="kubesphere"
-CHART="main/ks-installer"
 NAMESPACE="kubesphere-system"
 
-if [ -z "${MP_KUBERNETES}" ]; then
-    # use local version of values.yml
-    ROOT_DIR=$(git rev-parse --show-toplevel)
-    values="$ROOT_DIR/stacks/kubesphere/values.yml"
-else
-    # use github hosted master version of values.yml
-    values="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/kubesphere/values.yml"
+helm status "$STACK" --namespace "$NAMESPACE" > /dev/null
+
+LEGACY_INSTALLER=$(kubectl get deployment ks-installer \
+    --namespace "$NAMESPACE" --ignore-not-found --output=name)
+if [ -n "$LEGACY_INSTALLER" ]; then
+    printf '%s\n' "Legacy ks-installer detected. Migrate KubeSphere 3.x before using this upgrade script." >&2
+    exit 1
 fi
 
-helm upgrade "$STACK" "$CHART" \
---namespace "$NAMESPACE" \
---values "$values" \
+exec sh "$(dirname "$0")/deploy.sh"
