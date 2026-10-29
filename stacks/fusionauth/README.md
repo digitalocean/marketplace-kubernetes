@@ -1,15 +1,15 @@
-# Description 
+# Description
 
 FusionAuth is a modern platform for Customer Identity and Access Management (CIAM). FusionAuth provides APIs and a responsive web user interface to support login, registration, localized email, multi-factor authentication, reporting and much more.
 
 ## Software included
 
-| Package       | Application Version | License                                                       |
-|---------------|---------------------|---------------------------------------------------------------|
-| FusionAuth    | 1.47.1              | [License](https://fusionauth.io/license)                      |
+| Package       | Chart Version | Application Version | License                                  |
+|---------------|---------------|---------------------|------------------------------------------|
+| FusionAuth    | 1.69.3        | 1.69.3              | [License](https://fusionauth.io/license) |
 
 ### Resources
-This stack requires a Digital Ocean Kubernetes Cluster with minimum of 3 nodes of 4 GB RAM and 2 vCPUs each.
+This stack requires Kubernetes 1.23.0 or later and a Digital Ocean Kubernetes Cluster with minimum of 3 nodes of 4 GB RAM and 2 vCPUs each.
 
 ### FusionAuth running at...
 Once the FusionAuth stack is installed in the DigitalOcean 1-Click Apps Marketplace you should:
