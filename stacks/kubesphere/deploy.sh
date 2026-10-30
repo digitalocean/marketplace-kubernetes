@@ -27,7 +27,7 @@ else
 fi
 
 helm upgrade "$STACK" "$CHART_DIR" \
-  --rollback-on-failure \
+  --atomic \
   --cleanup-on-fail \
   --wait --timeout 10m \
   --create-namespace \
