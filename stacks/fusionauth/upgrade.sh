@@ -17,6 +17,7 @@ helm repo update > /dev/null
 ################################################################################
 STACK="fusionauth"
 CHART="fusionauth/fusionauth"
+CHART_VERSION="1.69.3"
 NAMESPACE="fusionauth"
 
 if [ -z "${MP_KUBERNETES}" ]; then
@@ -28,12 +29,9 @@ else
   VALUES="https://raw.githubusercontent.com/digitalocean/marketplace-kubernetes/master/stacks/fusionauth/values.yml"
 fi
 
-# Retrieve current passwords and set them again during upgrade.
-DB_FUSIONAUTH_USER_PASSWORD=$(kubectl -n $NAMESPACE get secrets fusionauth-credentials -o jsonpath='{.data.password}' | base64 -d)
-DB_POSTGRES_USER_PASSWORD=$(kubectl -n $NAMESPACE get secrets fusionauth-credentials -o jsonpath='{.data.rootpassword}' | base64 -d)
-
 helm upgrade "$STACK" "$CHART" \
 --namespace "$NAMESPACE" \
 --values "$VALUES" \
---set database.password="$DB_FUSIONAUTH_USER_PASSWORD" \
---set database.root.password="$DB_POSTGRES_USER_PASSWORD"
+--version "$CHART_VERSION" \
+--set database.dbUser.username="fusionauth" \
+--set search.host=opensearch-cluster-master

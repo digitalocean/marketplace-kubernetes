@@ -6,13 +6,10 @@
 
 # replicaCount -- The number of fusionauth-app instances to run
 replicaCount: 2
-global:
-  security:
-    allowInsecureImages: true
 image:
   # image.repository -- The name of the docker repository for fusionauth-app
   repository: fusionauth/fusionauth-app
-  tag: 1.53.3
+  tag: 1.69.3
   # image.pullPolicy -- Kubernetes image pullPolicy to use for fusionauth-app
   pullPolicy: IfNotPresent
 
@@ -26,13 +23,13 @@ extraInitContainers: [ ]
 
 initContainers:
   waitForDb: true
-  waitForEs: true
+  waitForSearch: true
   # This image should contain `nc`, `wget` and a shell of some kind to do a simple loop.
   image:
     # initContainers.image.repository -- Docker image to use for initContainers
     repository: busybox
     # initContainers.image.repository -- Tag to use for initContainers docker image
-    tag: latest
+    tag: "1.36.1"
   # initContainers.resources -- Resource requests and limits to use for initContainers
   resources:
     { }
@@ -64,8 +61,6 @@ service:
   port: 9011
   # service.annotations -- Extra annotations to add to service object
   annotations: { }
-  # service.spec -- Any extra fields to add to the service object spec
-  spec: { }
 
 database:
   # database.protocol -- Should either be postgresql or mysql. Protocol for jdbc connection to database
@@ -81,19 +76,28 @@ database:
   # database.name -- Name of the fusionauth database
   name: fusionauth
 
-  # To use an existing secret, set `existingSecret` to the name of the secret. We expect at most two keys: `password` is required. `rootpassword` is only required if `database.root.user` is set.
-  # database.existingSecret -- The name of an existing secret that contains the database passwords
-  existingSecret: ""
-  # database.user -- Database username for fusionauth to use in normal operation
-  user: "fusionauth"
-  # database.password -- Database password for fusionauth to use in normal operation - not required if database.existingSecret is configured
-  password: ""
-  # These credentials are used for bootstrapping the database
-  root:
-    # database.root.user -- Database username for fusionauth to use during initial bootstrap - not required if you have manually bootstrapped your database
-    user: "postgres"
-    # database.root.password -- Database password for fusionauth to use during initial bootstrap - not required if database.existingSecret is configured
+  # database.dbUser -- Database credentials for fusionauth to use in normal operation
+  dbUser:
+    # database.dbUser.username -- Database username for fusionauth to use in normal operation
+    username: "fusionauth"
+    # database.dbUser.password -- Database password for fusionauth to use in normal operation
     password: ""
+    # database.dbUser.existingSecret -- Existing secret containing the normal database user password
+    existingSecret:
+      enabled: true
+      name: "fusionauth.db-postgresql.credentials.postgresql.acid.zalan.do"
+      passwordKey: password
+  # database.rootUser -- Database credentials used for bootstrapping the database
+  rootUser:
+    # database.rootUser.username -- Database username for fusionauth to use during initial bootstrap
+    username: "postgres"
+    # database.rootUser.password -- Database password for fusionauth to use during initial bootstrap
+    password: ""
+    # database.rootUser.existingSecret -- Existing secret containing the root database user password
+    existingSecret:
+      enabled: true
+      name: "postgres.db-postgresql.credentials.postgresql.acid.zalan.do"
+      passwordKey: password
 
 search:
   # search.engine -- Defines backend for fusionauth search capabilities. Valid values for engine are 'elasticsearch' or 'database'.
@@ -104,6 +108,9 @@ search:
   host: "search-elasticsearch.fusionauth.svc.cluster.local"
   # search.port -- Port to use when connecting to elasticsearch. Ignored when search.engine is NOT elasticsearch
   port: 9200
+  # search.basicAuth -- Configures elasticsearch basic auth credentials
+  basicAuth:
+    enabled: false
   # search.user -- Username to use with basic auth when connecting to elasticsearch. Ignored when search.engine is NOT elasticsearch
   # user: ""
   # search.password -- Password to use with basic auth when connecting to elasticsearch. Ignored when search.engine is NOT elasticsearch
