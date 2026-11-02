@@ -1,0 +1,40 @@
+# Vyogo Frappe & ERPNext Operator for Kubernetes
+# Developed by Vyogo Technologies (https://vyogo.tech)
+# Chart source: https://github.com/vyogotech/frappe-operator/tree/release/helm/frappe-operator
+# Full default values: helm show values frappe-operator/frappe-operator
+
+# The 1-click installs only the control plane.
+examples:
+  createBench: false
+  createSite: false
+
+# MariaDB Operator (bundled subchart) for MariaDB database provisioning.
+# Installed by default as MariaDB is Frappe's primary database engine.
+# If you are using external databases or DO Managed PostgreSQL, set enabled: false.
+mariadb-operator:
+  enabled: true
+  crds:
+    enabled: true
+
+# KEDA (bundled subchart) for Frappe worker autoscaling
+keda:
+  enabled: true
+  crds:
+    install: true
+
+# NGINX Ingress Controller (bundled subchart) for routing traffic to sites
+ingress-nginx:
+  enabled: true
+
+# OpenEBS Dynamic NFS Provisioner (bundled subchart) providing the 'nfs-rwx-storage'
+# StorageClass for multi-replica benches backed by DigitalOcean block storage.
+openebs-nfs:
+  enabled: true
+  nfsStorageClass:
+    name: nfs-rwx-storage
+    backendStorageClass: "do-block-storage"
+    filePermissions:
+      UID: "1001"
+      GID: "0"
+      mode: "0775"
+
