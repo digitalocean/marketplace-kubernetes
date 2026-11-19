@@ -237,7 +237,19 @@ The Frappe & ERPNext Operator is designed, engineered, and maintained by **[Vyog
 
 ## License and support
 
-The Frappe & ERPNext Operator by Vyogo Technologies is licensed under the [Elastic License 2.0](https://github.com/vyogotech/frappe-operator/blob/release/LICENSE).
+| Package | Chart / App Version | License |
+|---|---|---|
+| [Frappe & ERPNext Operator](https://github.com/vyogotech/frappe-operator) | v5.5.2 (chart `5.5.2`) | [Elastic License 2.0](https://github.com/vyogotech/frappe-operator/blob/release/LICENSE) |
+| [MariaDB Operator](https://github.com/mariadb-operator/mariadb-operator) | chart `0.34.0` | [MIT](https://github.com/mariadb-operator/mariadb-operator/blob/main/LICENSE) |
+| [KEDA](https://github.com/kedacore/keda) | chart `2.16.1` | [Apache 2.0](https://github.com/kedacore/keda/blob/main/LICENSE) |
+| [NGINX Ingress Controller](https://github.com/kubernetes/ingress-nginx) | chart `4.15.1` | [Apache 2.0](https://github.com/kubernetes/ingress-nginx/blob/main/LICENSE) |
+| [OpenEBS Dynamic NFS Provisioner](https://github.com/openebs/dynamic-nfs-provisioner) | chart `0.11.0` | [Apache 2.0](https://github.com/openebs/dynamic-nfs-provisioner/blob/develop/LICENSE) |
+
+The Frappe & ERPNext Operator is authored and licensed by **Vyogo Technologies** under the [Elastic License 2.0 (ELv2)](https://github.com/vyogotech/frappe-operator/blob/release/LICENSE):
+- **Free to deploy on DOKS (no license key required):** DigitalOcean users receive a royalty-free license to install, use, and self-host the operator and any Frappe/ERPNext workloads on their own DigitalOcean Kubernetes clusters at no cost and without any license key.
+- **Managed service limitation:** Under ELv2, third parties may not redistribute or offer the operator itself to others as a competing hosted or managed SaaS control plane.
+- **Marketplace authorization & stack scripts:** Vyogo Technologies (as copyright holder and licensor) explicitly authorizes distribution via the DigitalOcean Kubernetes Marketplace. The stack scripts and configuration in this repository (`deploy.sh`, `upgrade.sh`, `uninstall.sh`, `values.yml`, `README.md`) are licensed under this repository's [Apache 2.0 License](../../LICENSE).
+
 - Managed Cloud: https://console.vyogo.cloud
 - App Catalog: https://fpm.vyogo.tech
 - Website: https://vyogo.tech
