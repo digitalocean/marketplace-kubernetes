@@ -14,13 +14,15 @@ examples:
 mariadb-operator:
   enabled: true
   crds:
-    enabled: true
+    enabled: false   # installed as a separate release by deploy.sh, so uninstall keeps them
 
-# KEDA (bundled subchart) for Frappe worker autoscaling
 keda:
   enabled: true
   crds:
     install: true
+    additionalAnnotations:
+      helm.sh/resource-policy: keep   # uninstall keeps KEDA CRDs
+
 
 # NGINX Ingress Controller (bundled subchart) for routing traffic to sites
 ingress-nginx:

@@ -67,7 +67,21 @@ spec:
 
 When using DigitalOcean Managed PostgreSQL, Frappe Operator provisions the site database and role automatically via a lightweight Kubernetes batch Job using your cluster's connection credentials, without requiring in-cluster database operators:
 
+> **Note**: Frappe PostgreSQL support is available on Frappe develop / v17 branch. Ensure your bench image supports Postgres.
+
 ```yaml
+apiVersion: vyogo.tech/v1
+kind: FrappeBench
+metadata:
+  name: pg-bench
+  namespace: default
+spec:
+  frappeVersion: "develop"
+  storageClassName: "nfs-rwx-storage"
+  apps:
+    - name: erpnext
+      source: image
+---
 apiVersion: v1
 kind: Secret
 metadata:
@@ -174,11 +188,21 @@ This uses the bundled OpenEBS dynamic NFS provisioner to create RWX volumes back
 
 ## Installation
 
-Run `deploy.sh`, which is equivalent to:
+Run `deploy.sh`. It first checks whether the cluster already has KEDA, an
+NGINX ingress controller, the `nfs-rwx-storage` StorageClass or the MariaDB Operator,
+and skips the bundled copy of each one it finds. It then runs the equivalent of:
 
 ```bash
 helm repo add frappe-operator https://vyogotech.github.io/frappe-operator/helm-repo
+helm repo add mariadb-operator https://mariadb-operator.github.io/mariadb-operator
 helm repo update
+
+# MariaDB CRDs as their own release, so uninstalling the stack keeps your databases
+helm upgrade mariadb-operator-crds mariadb-operator/mariadb-operator-crds \
+  --create-namespace \
+  --install \
+  --namespace frappe-operator-system \
+  --version 0.34.0
 
 helm upgrade frappe-operator frappe-operator/frappe-operator \
   --atomic \
@@ -186,7 +210,8 @@ helm upgrade frappe-operator frappe-operator/frappe-operator \
   --install \
   --timeout 8m0s \
   --namespace frappe-operator-system \
-  --values values.yml
+  --values values.yml \
+  --version 5.5.2
 ```
 
 Verify:
