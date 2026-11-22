@@ -1,0 +1,29 @@
+## Chart: denpex/denpex-gpu-watcher (1.4.67)
+## Ref: https://github.com/Denpex/helm-charts
+
+denpex:
+  # Optional Denpex API key (dpx_...).
+  # Leave empty to run strictly on-node with zero egress.
+  # Start a free 30-day card-free Team trial at:
+  # https://denpex.com/pricing?utm_source=digitalocean_marketplace
+  apiKey: ""
+  # Or reference a pre-created Kubernetes Secret containing key DENPEX_API_KEY:
+  # kubectl -n denpex-gpu-watcher create secret generic denpex-api-key --from-literal=DENPEX_API_KEY=dpx_...
+  existingSecret: ""
+  upload: true
+  autoCordon: false
+  cooldownSeconds: 60
+
+nodeSelector:
+  nvidia.com/gpu.present: "true"
+
+tolerations:
+  - operator: Exists
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 128Mi
+  limits:
+    cpu: 250m
+    memory: 256Mi
