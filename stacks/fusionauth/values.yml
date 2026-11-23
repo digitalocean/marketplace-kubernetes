@@ -85,7 +85,7 @@ database:
     # database.dbUser.existingSecret -- Existing secret containing the normal database user password
     existingSecret:
       enabled: true
-      name: "fusionauth.db-postgresql.credentials.postgresql.acid.zalan.do"
+      name: "fusionauth-database-credentials"
       passwordKey: password
   # database.rootUser -- Database credentials used for bootstrapping the database
   rootUser:
@@ -96,8 +96,8 @@ database:
     # database.rootUser.existingSecret -- Existing secret containing the root database user password
     existingSecret:
       enabled: true
-      name: "postgres.db-postgresql.credentials.postgresql.acid.zalan.do"
-      passwordKey: password
+      name: "fusionauth-database-credentials"
+      passwordKey: rootpassword
 
 search:
   # search.engine -- Defines backend for fusionauth search capabilities. Valid values for engine are 'elasticsearch' or 'database'.
