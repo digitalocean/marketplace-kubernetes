@@ -1,0 +1,18 @@
+# valeria-one/valeria-one
+#
+# Valeria One runs as a single app container (web + background worker) with a bundled
+# PostgreSQL. All data is stored in PostgreSQL; only the app's generated secret key is
+# persisted to its /data volume. AI, messaging and payments are optional and use the
+# user's own provider accounts.
+#
+# Common overrides (uncomment to use):
+#
+# publicUrl: "https://your-domain.example.com"   # URL the app advertises
+#
+# service:
+#   type: LoadBalancer                            # DigitalOcean provisions a load balancer
+#
+# ingress:
+#   enabled: true
+#   className: nginx
+#   host: your-domain.example.com
